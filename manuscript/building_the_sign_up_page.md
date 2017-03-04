@@ -12,7 +12,7 @@ building. But don't worry, because we're going to cover it all in this chapter!
 
 ## Preview
 
-![Preview](images/preview.png)
+![Preview](images/building_the_signup_page/preview.png)
 
 ## Source
 
