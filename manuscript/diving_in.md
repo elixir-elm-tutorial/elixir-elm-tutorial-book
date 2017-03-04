@@ -149,7 +149,7 @@ $ mix phx.server
 [info] Running Platform.Web.Endpoint with Cowboy using http://0.0.0.0:4000
 ```
 
-![Phoenix Default Start Page](images/chapter1/phoenix.png)
+![Phoenix Default Start Page](images/diving_in/phoenix.png)
 
 At this point, you might be thinking to yourself, "Whoa! That was quick and we
 already have a full back-end up and running!" Or you might be thinking, "Hmm.
@@ -335,18 +335,18 @@ Now we can access
 [http://0.0.0.0:4000/players](http://0.0.0.0:4000/players) and we should
 see the following:
 
-![Empty List of Players on Player Index Page](images/chapter1/players.png)
+![Empty List of Players on Player Index Page](images/diving_in/players.png)
 
 This is excellent! We can now add players to our platform using a web browser.
 Click the **New Player** button and try creating a couple of new players on the
 new player page
 ([http://0.0.0.0:4000/players/new](http://0.0.0.0:4000/players/new)).
 
-![New Player Page](images/chapter1/new_player.png)
+![New Player Page](images/diving_in/new_player.png)
 
 And now we have some data to work with on our players page:
 
-![List of Players with Sample Data](images/chapter1/list_players.png)
+![List of Players with Sample Data](images/diving_in/list_players.png)
 
 ## Updating our Home Page
 
@@ -420,7 +420,7 @@ Save the file and let's go back to the browser to see the changes (make sure
 the Phoenix web server is still running) at
 [`http://0.0.0.0:4000`](http://0.0.0.0:4000):
 
-![Home Page with List Players Link](images/chapter1/updated_home_page.png)
+![Home Page with List Players Link](images/diving_in/updated_home_page.png)
 
 Excellent! Phoenix comes with a **Live Reload** feature that automatically
 refreshes our application in the browser. If the Phoenix server was still
@@ -453,7 +453,7 @@ to display some results. In this example, we use the `IO` module with the
 
 And we can see the results in our browser:
 
-![Embedded Elixir](images/chapter1/embedded_elixir.png)
+![Embedded Elixir](images/diving_in/embedded_elixir.png)
 
 We can do the same thing to embed a Phoenix link on our page. We won't need to
 explicitly mention the module (`Phoenix.HTML.Link`) because we already have some
@@ -467,7 +467,7 @@ location, and some extra classes for Bootstrap to make it look nice:
 
 Our link should still work the same way (try it out!):
 
-![Link to Players Page Using Embedded Elixir](images/chapter1/elixir_link.png)
+![Link to Players Page Using Embedded Elixir](images/diving_in/elixir_link.png)
 
 ## Summary
 
