@@ -1,9 +1,10 @@
 introduction.md
-chapter1.md
-chapter2.md
-chapter2.md
-chapter3.md
-chapter4.md
-chapter5.md
+diving_in.md
+elixir_intro.md
+phoenix_intro.md
+elm_setup.md
+elm_intro.md
+elm_and_phoenix.md
+building_the_sign_up_page.md
 outline.md
 notes.md

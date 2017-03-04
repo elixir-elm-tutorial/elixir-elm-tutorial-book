@@ -1,4 +1,4 @@
-# Chapter 1: Diving In
+# Diving In
 
 Instead of simply _reading_ about Elixir and Elm, let's dive in and _experience_
 what these languages have to offer. In this chapter, we're going to avoid

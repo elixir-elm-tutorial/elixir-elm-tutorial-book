@@ -1,4 +1,4 @@
-# Chapter 2: Elm Setup
+# Elm Setup
 
 We're so excited to have our back-end up and running, but before we get too far,
 let's start taking a look at setting up our front-end too.

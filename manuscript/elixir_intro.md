@@ -1,4 +1,4 @@
-# Chapter 2: Elixir Intro
+# Elixir Intro
 
 In the last chapter, we created a full Phoenix application. By default, Phoenix
 applications contain a lot of Elixir code. But if we're just getting started
