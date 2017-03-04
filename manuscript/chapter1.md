@@ -15,7 +15,7 @@ information.
 The first step we need to take is to create the foundation for our application.
 To do that, let's open up our Terminal and run the following command:
 
-```
+```bash
 $ mix phx.new platform
 ```
 
@@ -25,7 +25,7 @@ It will ask the following question:
 
 Enter the letter `Y` and the following output will be displayed:
 
-```
+```bash
 $ mix phx.new platform
 * creating platform/config/config.exs
 * creating platform/config/dev.exs
@@ -100,13 +100,13 @@ server.
 Now that we've created the files for our Phoenix application, let's change into
 that directory:
 
-```
+```bash
 $ cd platform
 ```
 
 We can set up the database for our project by running the following command:
 
-```
+```bash
 $ mix ecto.create
 ```
 
@@ -121,7 +121,7 @@ will run much more quickly after this.
 If the database creation was successful, we'll see the following message at the
 bottom:
 
-```
+```bash
 $ mix ecto.create
 Compiling files (.ex) ...
 Generated platform app
@@ -136,7 +136,7 @@ it, and set up our database.
 Let's see what our new application looks like in the browser. To start the web
 server, we'll run the following command:
 
-```
+```bash
 $ mix phx.server
 ```
 
@@ -144,12 +144,12 @@ This will start a server and allow us to visit
 [`http://0.0.0.0:4000/`](http://0.0.0.0:4000/) to see our new
 application running live! Here is what the output will look like:
 
-```
+```bash
 $ mix phx.server
 [info] Running Platform.Web.Endpoint with Cowboy using http://0.0.0.0:4000
 ```
 
-![Phoenix Default Start Page](images/phoenix.png)
+![Phoenix Default Start Page](images/chapter1/phoenix.png)
 
 At this point, you might be thinking to yourself, "Whoa! That was quick and we
 already have a full back-end up and running!" Or you might be thinking, "Hmm.
@@ -162,7 +162,7 @@ Before we move on, let's stop the Phoenix web server. Go back to the Terminal
 where the server is running, and press Control + C on your keyboard twice to
 stop the server:
 
-```
+```bash
 $ mix phx.server
 [info] Running Platform.Endpoint with Cowboy using http://0.0.0.0:4000
 [info] Compiled 6 files into 2 files, copied 3 in 2.1 sec
@@ -192,7 +192,7 @@ we'll talk more about how it all works later.
 
 Let's generate the resource for our players with the following command:
 
-```
+```bash
 $ mix phx.gen.html Players Player players username:string score:integer
 ```
 
@@ -207,7 +207,7 @@ give us a good start to start creating a list of players.
 You'll see that the generator creates quite a few files for us, and once again
 gives us some helpful tips about what to do next:
 
-```
+```bash
 $ mix phx.gen.html Players Player players username:string score:integer
 * creating lib/platform/web/controllers/player_controller.ex
 * creating lib/platform/web/templates/player/edit.html.eex
@@ -309,14 +309,14 @@ we made. The database will need to store our player data (with the
 **username** and **score** fields that we created), and to do that we'll need
 to run a migration. Go back to the Terminal, and run the following command:
 
-```
+```bash
 $ mix ecto.migrate
 ```
 
 This will create a new database table called "players_players", and if
 everything goes according to plan then we should see the following output:
 
-```
+```bash
 $ mix ecto.migrate
 17:23:02.349 [info]  == Running Platform.Repo.Migrations.CreatePlayer.change/0 forward
 17:23:02.349 [info]  create table players
@@ -327,7 +327,7 @@ $ mix ecto.migrate
 
 Let's start our server again and see our new player resource in action:
 
-```
+```bash
 mix phx.server
 ```
 
@@ -335,18 +335,18 @@ Now we can access
 [http://0.0.0.0:4000/players](http://0.0.0.0:4000/players) and we should
 see the following:
 
-![Empty List of Players on Player Index Page](images/players.png)
+![Empty List of Players on Player Index Page](images/chapter1/players.png)
 
 This is excellent! We can now add players to our platform using a web browser.
 Click the **New Player** button and try creating a couple of new players on the
 new player page
 ([http://0.0.0.0:4000/players/new](http://0.0.0.0:4000/players/new)).
 
-![New Player Page](images/new_player.png)
+![New Player Page](images/chapter1/new_player.png)
 
 And now we have some data to work with on our players page:
 
-![List of Players with Sample Data](images/list_players.png)
+![List of Players with Sample Data](images/chapter1/list_players.png)
 
 ## Updating our Home Page
 
@@ -420,7 +420,7 @@ Save the file and let's go back to the browser to see the changes (make sure
 the Phoenix web server is still running) at
 [`http://0.0.0.0:4000`](http://0.0.0.0:4000):
 
-![Home Page with List Players Link](images/updated_home_page.png)
+![Home Page with List Players Link](images/chapter1/updated_home_page.png)
 
 Excellent! Phoenix comes with a **Live Reload** feature that automatically
 refreshes our application in the browser. If the Phoenix server was still
@@ -453,7 +453,7 @@ to display some results. In this example, we use the `IO` module with the
 
 And we can see the results in our browser:
 
-![Embedded Elixir](images/embedded_elixir.png)
+![Embedded Elixir](images/chapter1/embedded_elixir.png)
 
 We can do the same thing to embed a Phoenix link on our page. We won't need to
 explicitly mention the module (`Phoenix.HTML.Link`) because we already have some
@@ -467,7 +467,7 @@ location, and some extra classes for Bootstrap to make it look nice:
 
 Our link should still work the same way (try it out!):
 
-![Link to Players Page Using Embedded Elixir](images/elixir_link.png)
+![Link to Players Page Using Embedded Elixir](images/chapter1/elixir_link.png)
 
 ## Summary
 

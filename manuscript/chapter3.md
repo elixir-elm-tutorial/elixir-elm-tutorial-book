@@ -1,187 +1,85 @@
-# Chapter 3: Elm
+# Chapter 2: Elm Setup
 
-## HTTP Package
+We're so excited to have our back-end up and running, but before we get too far,
+let's start taking a look at setting up our front-end too.
+
+We're going to use Elm for _everything_. Because it's amazing. Elm will offer
+guarantees and features that other languages are completely unable to provide
+for us. We're going to love it.
+
+## Install Elm
 
 ```bash
-cd web/elm
-elm-package install elm-lang/http
+npm install -g elm
 ```
 
-## Elm Front-end
-
-```elm
-module Main exposing (..)
-
-import Html exposing (..)
-import Html.Attributes exposing (class)
-import Html.Events exposing (onClick)
-import Http
-import Json.Decode as Decode
-import Json.Encode as Encode
-
-
--- MAIN
-
-
-main : Program Never Model Msg
-main =
-    Html.program
-        { init = init
-        , view = view
-        , update = update
-        , subscriptions = subscriptions
-        }
-
-
-
--- MODEL
-
-
-type alias Model =
-    { players : List Player
-    }
-
-
-type alias Player =
-    { username : String
-    , score : Int
-    }
-
-
-init : ( Model, Cmd Msg )
-init =
-    ( initialModel, performPlayerFetch )
-
-
-initialModel : Model
-initialModel =
-    { players = [] }
-
-
-
--- UPDATE
-
-
-type Msg
-    = NoOp
-    | FetchPlayers (Result Http.Error (List Player))
-    | CreatePlayer (Result Http.Error Player)
-    | CreatePlayerButton
-
-
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
-    case msg of
-        NoOp ->
-            ( model, Cmd.none )
-
-        FetchPlayers (Ok newPlayers) ->
-            ( { model | players = newPlayers }, Cmd.none )
-
-        FetchPlayers (Err _) ->
-            ( model, Cmd.none )
-
-        CreatePlayer (Ok player) ->
-            ( model, performPlayerFetch )
-
-        CreatePlayer (Err _) ->
-            ( model, performPlayerFetch )
-
-        CreatePlayerButton ->
-            ( model, performPlayerCreation )
-
-
-
--- JSON Decoders
-
-
-decodePlayerData : Decode.Decoder Player
-decodePlayerData =
-    Decode.map2 Player
-        (Decode.field "username" Decode.string)
-        (Decode.field "score" Decode.int)
-
-
-decodePlayersList : Decode.Decoder (List Player)
-decodePlayersList =
-    Decode.list decodePlayerData
-
-
-decodePlayersFetch : Decode.Decoder (List Player)
-decodePlayersFetch =
-    Decode.at [ "data" ] decodePlayersList
-
-
-
--- JSON Encoding
-
-
-defaultPlayer : Encode.Value
-defaultPlayer =
-    Encode.object
-        [ ( "player"
-          , Encode.object
-                [ ( "username", Encode.string "Default" )
-                , ( "score", Encode.int 0 )
-                ]
-          )
-        ]
-
-
-
--- HTTP
-
-
-fetchPlayers : Http.Request (List Player)
-fetchPlayers =
-    Http.get "/api/players" decodePlayersFetch
-
-
-performPlayerFetch : Cmd Msg
-performPlayerFetch =
-    fetchPlayers |> Http.send FetchPlayers
-
-
-createPlayer : Http.Request Player
-createPlayer =
-    Http.post "/api/players" (Http.jsonBody defaultPlayer) decodePlayerData
-
-
-performPlayerCreation : Cmd Msg
-performPlayerCreation =
-    createPlayer |> Http.send CreatePlayer
-
-
-
--- SUBSCRIPTIONS
-
-
-subscriptions : Model -> Sub Msg
-subscriptions model =
-    Sub.none
-
-
-
--- VIEW
-
-
-view : Model -> Html Msg
-view model =
-    div []
-        [ ul [] (List.map viewPlayer model.players)
-        , createPlayerButton
-        ]
-
-
-viewPlayer : Player -> Html Msg
-viewPlayer player =
-    li []
-        [ p [] [ text player.username ]
-        , p [] [ text (toString player.score) ]
-        ]
-
-
-createPlayerButton : Html Msg
-createPlayerButton =
-    button [ class "btn btn-primary", onClick CreatePlayerButton ] [ text "Create Default Player" ]
+## Configuring Elm within Phoenix
+
+```bash
+npm install --save-dev elm elm-brunch 
+```
+
+## brunch-config.js
+
+```javascript
+exports.config = {
+  files: {
+    javascripts: { joinTo: "js/app.js" },
+    stylesheets: { joinTo: "css/app.css", order: { after: ["web/static/css/app.css"] } },
+    templates: { joinTo: "js/app.js" }
+  },
+  conventions: { assets: /^(web\/static\/assets)/ },
+  paths: { watched: [ "web/elm", "web/static", "test/static" ], public: "priv/static" },
+  plugins: {
+    babel: { ignore: [/web\/static\/vendor/] },
+    elmBrunch: { elmFolder: "web/elm", mainModules: ["Main.elm"], outputFolder: "../static/vendor" }
+  },
+  modules: { autoRequire: { "js/app.js": ["web/static/js/app"] } },
+  npm: { enabled: true }
+};
+```
+
+
+## Creating Our JSON API
+
+```bash
+mix phoenix.gen.json Api.Player players --no-model
+```
+
+## Updating the Player API Controller
+
+```elixir
+# ...
+alias Platform.Player
+# ...
+```
+
+## Updating the Router
+
+```elixir
+scope "/api", Platform do
+	pipe_through :api
+	
+	resources "/players", Api.PlayerController, except: [:new, :edit]
+end
+```
+
+## Updating the Player API View
+
+```elixir
+defmodule Platform.Api.PlayerView do
+  use Platform.Web, :view
+
+  def render("index.json", %{players: players}) do
+    %{data: render_many(players, Platform.Api.PlayerView, "player.json")}
+  end
+
+  def render("show.json", %{player: player}) do
+    %{data: render_one(player, Platform.Api.PlayerView, "player.json")}
+  end
+
+  def render("player.json", %{player: player}) do
+    %{id: player.id, username: player.username, score: player.score}
+  end
+end
 ```
