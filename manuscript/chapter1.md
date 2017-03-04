@@ -1,6 +1,6 @@
 # Chapter 1: Diving In
 
-Instead of talking about Elixir and Elm, let's just dive in and _experience_
+Instead of simply _reading_ about Elixir and Elm, let's dive in and _experience_
 what these languages have to offer. In this chapter, we're going to avoid
 seeking an explanation behind the theory, and instead focus on running the
 commands and editing the files that will help us create our application. Then
@@ -15,74 +15,74 @@ information.
 The first step we need to take is to create the foundation for our application.
 To do that, let's open up our Terminal and run the following command:
 
-```bash
-$ mix phoenix.new platform
+```
+$ mix phx.new platform
 ```
 
 It will ask the following question:
 
 > Fetch and install dependencies?
 
-Enter the letter `Y` and we should be all set. The following output should be
-displayed:
+Enter the letter `Y` and the following output will be displayed:
 
-```bash
-$ mix phoenix.new platform
+```
+$ mix phx.new platform
 * creating platform/config/config.exs
 * creating platform/config/dev.exs
 * creating platform/config/prod.exs
 * creating platform/config/prod.secret.exs
 * creating platform/config/test.exs
-* creating platform/lib/platform.ex
-* creating platform/lib/platform/endpoint.ex
-* creating platform/test/views/error_view_test.exs
-* creating platform/test/support/conn_case.ex
-* creating platform/test/support/channel_case.ex
-* creating platform/test/test_helper.exs
-* creating platform/web/channels/user_socket.ex
-* creating platform/web/router.ex
-* creating platform/web/views/error_view.ex
-* creating platform/web/web.ex
+* creating platform/lib/platform/application.ex
+* creating platform/lib/platform/web/channels/user_socket.ex
+* creating platform/lib/platform/web/views/error_helpers.ex
+* creating platform/lib/platform/web/views/error_view.ex
+* creating platform/lib/platform/web/endpoint.ex
+* creating platform/lib/platform/web/router.ex
+* creating platform/lib/platform/web/web.ex
 * creating platform/mix.exs
 * creating platform/README.md
-* creating platform/web/gettext.ex
-* creating platform/priv/gettext/errors.pot
+* creating platform/test/support/channel_case.ex
+* creating platform/test/support/conn_case.ex
+* creating platform/test/test_helper.exs
+* creating platform/test/web/views/error_view_test.exs
+* creating platform/lib/platform/web/gettext.ex
 * creating platform/priv/gettext/en/LC_MESSAGES/errors.po
-* creating platform/web/views/error_helpers.ex
+* creating platform/priv/gettext/errors.pot
 * creating platform/lib/platform/repo.ex
-* creating platform/test/support/model_case.ex
 * creating platform/priv/repo/seeds.exs
+* creating platform/test/support/data_case.ex
+* creating platform/lib/platform/web/controllers/page_controller.ex
+* creating platform/lib/platform/web/templates/layout/app.html.eex
+* creating platform/lib/platform/web/templates/page/index.html.eex
+* creating platform/lib/platform/web/views/layout_view.ex
+* creating platform/lib/platform/web/views/page_view.ex
+* creating platform/test/web/controllers/page_controller_test.exs
+* creating platform/test/web/views/layout_view_test.exs
+* creating platform/test/web/views/page_view_test.exs
 * creating platform/.gitignore
-* creating platform/brunch-config.js
-* creating platform/package.json
-* creating platform/web/static/css/app.css
-* creating platform/web/static/css/phoenix.css
-* creating platform/web/static/js/app.js
-* creating platform/web/static/js/socket.js
-* creating platform/web/static/assets/robots.txt
-* creating platform/web/static/assets/images/phoenix.png
-* creating platform/web/static/assets/favicon.ico
-* creating platform/test/controllers/page_controller_test.exs
-* creating platform/test/views/layout_view_test.exs
-* creating platform/test/views/page_view_test.exs
-* creating platform/web/controllers/page_controller.ex
-* creating platform/web/templates/layout/app.html.eex
-* creating platform/web/templates/page/index.html.eex
-* creating platform/web/views/layout_view.ex
-* creating platform/web/views/page_view.ex
+* creating platform/assets/brunch-config.js
+* creating platform/assets/css/app.css
+* creating platform/assets/css/phoenix.css
+* creating platform/assets/js/app.js
+* creating platform/assets/js/socket.js
+* creating platform/assets/package.json
+* creating platform/assets/static/robots.txt
+* creating platform/assets/static/images/phoenix.png
+* creating platform/assets/static/favicon.ico
 
 Fetch and install dependencies? [Yn] Y
 * running mix deps.get
-* running npm install && node node_modules/brunch/bin/brunch build
+* running mix deps.compile
+* running cd assets && npm install && node node_modules/brunch/bin/brunch build
 
 We are all set! Run your Phoenix application:
 
     $ cd platform
-    $ mix phoenix.server
+    $ mix phx.server
 
 You can also run your app inside IEx (Interactive Elixir) as:
 
-    $ iex -S mix phoenix.server
+    $ iex -S mix phx.server
 
 Before moving on, configure your database in config/dev.exs and run:
 
@@ -100,13 +100,13 @@ server.
 Now that we've created the files for our Phoenix application, let's change into
 that directory:
 
-```bash
+```
 $ cd platform
 ```
 
 We can set up the database for our project by running the following command:
 
-```bash
+```
 $ mix ecto.create
 ```
 
@@ -121,11 +121,11 @@ will run much more quickly after this.
 If the database creation was successful, we'll see the following message at the
 bottom:
 
-```bash
+```
 $ mix ecto.create
 Compiling files (.ex) ...
 Generated platform app
-The database for Platform.Repo has already been created
+The database for Platform.Repo has been created
 ```
 
 Nice! That means we have successfully created our Phoenix application, compiled
@@ -136,17 +136,17 @@ it, and set up our database.
 Let's see what our new application looks like in the browser. To start the web
 server, we'll run the following command:
 
-```bash
-$ mix phoenix.server
+```
+$ mix phx.server
 ```
 
 This will start a server and allow us to visit
-[`http://localhost:4000`](http://localhost:4000) to see our new
+[`http://0.0.0.0:4000/`](http://0.0.0.0:4000/) to see our new
 application running live! Here is what the output will look like:
 
-```bash
-$ mix phoenix.server
-[info] Running Platform.Endpoint with Cowboy using http://localhost:4000
+```
+$ mix phx.server
+[info] Running Platform.Web.Endpoint with Cowboy using http://0.0.0.0:4000
 ```
 
 ![Phoenix Default Start Page](images/phoenix.png)
@@ -162,9 +162,9 @@ Before we move on, let's stop the Phoenix web server. Go back to the Terminal
 where the server is running, and press Control + C on your keyboard twice to
 stop the server:
 
-```bash
-$ mix phoenix.server
-[info] Running Platform.Endpoint with Cowboy using http://localhost:4000
+```
+$ mix phx.server
+[info] Running Platform.Endpoint with Cowboy using http://0.0.0.0:4000
 [info] Compiled 6 files into 2 files, copied 3 in 2.1 sec
 [info] GET /
 [debug] Processing by Platform.PageController.index/2
@@ -192,8 +192,8 @@ we'll talk more about how it all works later.
 
 Let's generate the resource for our players with the following command:
 
-```bash
-$ mix phoenix.gen.html Player players username:string score:integer
+```
+$ mix phx.gen.html Players Player players username:string score:integer
 ```
 
 What we're doing here is creating players for our video game platform. We want
@@ -207,21 +207,21 @@ give us a good start to start creating a list of players.
 You'll see that the generator creates quite a few files for us, and once again
 gives us some helpful tips about what to do next:
 
-```bash
-$ mix phoenix.gen.html Player players username:string score:integer
-* creating web/controllers/player_controller.ex
-* creating web/templates/player/edit.html.eex
-* creating web/templates/player/form.html.eex
-* creating web/templates/player/index.html.eex
-* creating web/templates/player/new.html.eex
-* creating web/templates/player/show.html.eex
-* creating web/views/player_view.ex
-* creating test/controllers/player_controller_test.exs
-* creating web/models/player.ex
-* creating test/models/player_test.exs
-* creating priv/repo/migrations/20170205220430_create_player.exs
+```
+$ mix phx.gen.html Players Player players username:string score:integer
+* creating lib/platform/web/controllers/player_controller.ex
+* creating lib/platform/web/templates/player/edit.html.eex
+* creating lib/platform/web/templates/player/form.html.eex
+* creating lib/platform/web/templates/player/index.html.eex
+* creating lib/platform/web/templates/player/new.html.eex
+* creating lib/platform/web/templates/player/show.html.eex
+* creating lib/platform/web/views/player_view.ex
+* creating test/web/controllers/player_controller_test.exs
+* creating test/players_test.exs
+* creating lib/platform/players/player.ex
+* creating priv/repo/migrations/20170304154047_create_players_player.exs
 
-Add the resource to your browser scope in web/router.ex:
+Add the resource to your browser scope in lib/platform/web/router.ex:
 
     resources "/players", PlayerController
 
@@ -238,11 +238,11 @@ players, we'll need to add them to the **router**, and then run a **migration**
 to update the database with our new data.
 
 Phoenix makes things easy on us with the helpful Terminal notes. Let's go ahead
-and follow along. There's a file named `router.ex` inside the `web` folder.
-Let's open that file and see what it looks like:
+and follow along. Let's open the `lib/platform/web/router.ex` file and see what
+it looks like:
 
 ```elixir
-defmodule Platform.Router do
+defmodule Platform.Web.Router do
   use Platform.Web, :router
 
   pipeline :browser do
@@ -257,14 +257,14 @@ defmodule Platform.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", Platform do
+  scope "/", Platform.Web do
     pipe_through :browser # Use the default browser stack
 
     get "/", PageController, :index
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", Platform do
+  # scope "/api", Platform.Web do
   #   pipe_through :api
   # end
 end
@@ -274,12 +274,12 @@ The Phoenix router comes with two separate "pipelines" by default. One of them
 is for HTML (which we're going to use now), and the other one is for JSON
 (which we'll also use soon). And we can even see that the "scope" is already
 set up for us to access the HTML with our browser. That's how we were able to
-load up the `http://localhost:4000` URL and see the initial starter page.
+load up the `http://0.0.0.0:4000` URL and see the initial starter page.
 Don't worry if it seems confusing at first. All you need to know is that this
 block is where we'll focus for now:
 
 ```elixir
-scope "/", Platform do
+scope "/", Platform.Web do
   pipe_through :browser # Use the default browser stack
 
   get "/", PageController, :index
@@ -289,7 +289,7 @@ end
 And we're going to update it with our new players resource:
 
 ```elixir
-scope "/", Platform do
+scope "/", Platform.Web do
   pipe_through :browser # Use the default browser stack
 
   get "/", PageController, :index
@@ -298,7 +298,7 @@ end
 ```
 
 That means when we access
-[`http://localhost:4000/players`](http://localhost:4000/players), we'll
+[`http://0.0.0.0:4000/players`](http://0.0.0.0:4000/players), we'll
 soon be able to start creating the players for our video game platform.
 
 ## Running a Migration
@@ -309,14 +309,14 @@ we made. The database will need to store our player data (with the
 **username** and **score** fields that we created), and to do that we'll need
 to run a migration. Go back to the Terminal, and run the following command:
 
-```bash
+```
 $ mix ecto.migrate
 ```
 
-This will create a new database table called "players", and if everything goes
-according to plan then we should see the following output:
+This will create a new database table called "players_players", and if
+everything goes according to plan then we should see the following output:
 
-```bash
+```
 $ mix ecto.migrate
 17:23:02.349 [info]  == Running Platform.Repo.Migrations.CreatePlayer.change/0 forward
 17:23:02.349 [info]  create table players
@@ -327,20 +327,20 @@ $ mix ecto.migrate
 
 Let's start our server again and see our new player resource in action:
 
-```bash
-mix phoenix.server
+```
+mix phx.server
 ```
 
 Now we can access
-[http://localhost:4000/players](http://localhost:4000/players) and we should
+[http://0.0.0.0:4000/players](http://0.0.0.0:4000/players) and we should
 see the following:
 
 ![Empty List of Players on Player Index Page](images/players.png)
 
-This is excellent! We can now add players to our platform using the web
-browser. Click the **New Player** button and try creating a couple of new
-players on the new player page
-([http://localhost:4000/players/new](http://localhost:4000/players/new)).
+This is excellent! We can now add players to our platform using a web browser.
+Click the **New Player** button and try creating a couple of new players on the
+new player page
+([http://0.0.0.0:4000/players/new](http://0.0.0.0:4000/players/new)).
 
 ![New Player Page](images/new_player.png)
 
@@ -351,22 +351,24 @@ And now we have some data to work with on our players page:
 ## Updating our Home Page
 
 We have a working `/players` page. But when we go back to
-[`http://localhost:4000`](http://localhost:4000), we see that it's not
+[`http://0.0.0.0:4000`](http://0.0.0.0:4000), we see that it's not
 listed anywhere as a link. Let's figure out where the HTML code is coming from
 for our home page.
 
-Inside the `web` folder, there's a `templates` folder. This is where we put
-the HTML code that we want to render in the browser. And instead of standard
-`.html` files, we'll see that the files end in the `.html.eex` extension.
-That means we can enter standard HTML code in there, but we can also _embed_
-Elixir code too.
+Inside the `lib/platform/web` folder, there's a `templates` folder. This is
+where we put the HTML code that we want to render in the browser. And instead of
+ standard `.html` files, we'll see that the files end in the `.html.eex`
+extension. That means we can enter standard HTML code in there, but we can also
+embed Elixir code too.
 
-Let's open the `web/templates/page/index.html.eex` file and take a look:
+Let's open the `lib/platform/web/templates/page/index.html.eex` file and take a
+look:
 
-```html
+```embedded_elixir
 <div class="jumbotron">
-  <h2><%= gettext "Welcome to %{name}", name: "Phoenix!" %></h2>
-  <p class="lead">A productive web framework that<br />does not compromise speed and maintainability.</p>
+  <h2><%= gettext "Welcome to %{name}!", name: "Phoenix" %></h2>
+  <p class="lead">A productive web framework that<br />does not compromise speed
+  and maintainability.</p>
 </div>
 
 <div class="row marketing">
@@ -392,7 +394,8 @@ Let's open the `web/templates/page/index.html.eex` file and take a look:
         <a href="http://groups.google.com/group/phoenix-talk">Mailing list</a>
       </li>
       <li>
-        <a href="http://webchat.freenode.net/?channels=elixir-lang">#elixir-lang on freenode IRC</a>
+        <a href="http://webchat.freenode.net/?channels=elixir-lang">#elixir-lang
+        on freenode IRC</a>
       </li>
       <li>
         <a href="https://twitter.com/elixirphoenix">@elixirphoenix</a>
@@ -402,19 +405,20 @@ Let's open the `web/templates/page/index.html.eex` file and take a look:
 </div>
 ```
 
-This should look pretty familiar. It's the code that we're seeing when we load
-[`http://localhost:4000`](http://localhost:4000). In fact, let's delete
-all this code and create a simple link to our `/players` page. So we'll
-remove _all_ the existing code in the `web/templates/page/index.html.eex` file,
-and replace it with the following:
+This should look familiar in that it's mostly comprised of standard HTML code.
+It's the HTML that we're seeing when we load
+[`http://0.0.0.0:4000`](http://0.0.0.0:4000). In fact, let's delete all this
+code and create a simple link to our `/players` page. So we'll remove _all_ the
+existing code in the `lib/platform/web/templates/page/index.html.eex` file, and
+replace it with the following:
 
-```html
+```embedded_elixir
 <a href="/players">List of Players</a>
 ```
 
 Save the file and let's go back to the browser to see the changes (make sure
 the Phoenix web server is still running) at
-[`http://localhost:4000`](http://localhost:4000):
+[`http://0.0.0.0:4000`](http://0.0.0.0:4000):
 
 ![Home Page with List Players Link](images/updated_home_page.png)
 
@@ -424,3 +428,62 @@ running, then the home page was automatically regenerated and should now show
 the link to the list of players. Try out the link and it should work properly
 to send you to the `/players` page.
 
+## Writing Elixir Code
+
+Lastly, we might as well convert our link to use Elixir code instead of using
+the simple HTML version. It'll work the same way, but this will give us a chance
+to use a Phoenix feature instead of writing HTML.
+
+Phoenix gives us a
+[link](https://hexdocs.pm/phoenix_html/Phoenix.HTML.Link.html#link/2) function
+that we can use. You can see a handful of examples in the documentation.
+
+Since we're working with a `.eex` file, that means we can embed Elixir code by
+surrounding it with tags like this: `<%= ... %>`. The Elixir code that we put
+inside those tags will be evaluated, and then rendered onto the page.
+
+A helpful debugging technique while working with Elixir is to use `IO.inspect`
+to display some results. In this example, we use the `IO` module with the
+`inspect` function, and we pass it the string `"Hello World!"`:
+
+```embedded_elixir
+<a href="/players">List of Players</a>
+<%= IO.inspect "Hello" %>
+```
+
+And we can see the results in our browser:
+
+![Embedded Elixir](images/embedded_elixir.png)
+
+We can do the same thing to embed a Phoenix link on our page. We won't need to
+explicitly mention the module (`Phoenix.HTML.Link`) because we already have some
+helpful Phoenix functions available to us here in this context. But we can
+recreate our HTML link with the following code by passing the link text, the
+location, and some extra classes for Bootstrap to make it look nice:
+
+```embedded_elixir
+<%= link("List of Players", to: "/players", class: "btn btn-primary") %>
+```
+
+Our link should still work the same way (try it out!):
+
+![Link to Players Page Using Embedded Elixir](images/elixir_link.png)
+
+## Summary
+
+In this chapter, we managed to cover _a lot_ of ground. We were able to create
+the entire foundation for our application with a Phoenix back-end. We leveraged
+the Phoenix generators to create our Players resource. We also started getting
+an idea of what the Phoenix folder structure looks like, and started editing a
+couple of files here and there. We learned a little about routing and worked
+with our database.
+
+It's great because we've gotten an introductory look at how to create an Elixir
+Phoenix application. And we even created a couple of records in our application
+that we can use as we continue building.
+
+But we moved very quickly through these steps, and we don't have a solid
+understanding of how all these pieces fit together yet. In the next chapter,
+we'll delve into some Elixir basics. And instead of using generators like we
+did in this chapter, we'll manually create some features in our application so
+we can continue increasing our experience.
