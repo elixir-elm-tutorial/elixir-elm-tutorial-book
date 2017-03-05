@@ -2,6 +2,8 @@ introduction.md
 diving_in.md
 elixir_intro.md
 phoenix_intro.md
+phoenix_sign_up.md
+phoenix_authentication.md
 elm_setup.md
 elm_intro.md
 elm_and_phoenix.md
