@@ -178,9 +178,9 @@ Now you can visit `http://localhost:8000/` in your browser and see the files
 and dependencies for our project. We only have a single Elm file (`Hello.elm`),
 so let's click it to compile and see the results.
 
-![elm-reactor](images/elm-intro/elm-reactor.png)
+![elm-reactor](images/elm_intro/elm-reactor.png)
 
-![Elm Hello World Example](images/elm-intro/elm-hello-world.png)
+![Elm Hello World Example](images/elm_intro/elm-hello-world.png)
 
 ## elm-format
 
