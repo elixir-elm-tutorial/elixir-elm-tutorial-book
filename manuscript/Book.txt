@@ -8,6 +8,7 @@ elm_setup.md
 elm_intro.md
 elm_and_phoenix.md
 building_the_sign_up_page.md
+games.md
 outline.md
-notes.md
 appendix.md
+contact.md
