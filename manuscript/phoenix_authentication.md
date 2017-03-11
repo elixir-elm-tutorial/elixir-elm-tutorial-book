@@ -207,7 +207,7 @@ Open up the `lib/platform/web/controllers/player_controller.ex` file and add the
 following at the bottom (beneath the `delete/2` function):
 
 ```elixir
-defp authenticate(conn) do
+defp authenticate(conn, _opts) do
   if conn.assigns.current_user() do
     conn
   else
@@ -225,32 +225,13 @@ our site is signed in. If they are, we'll just return the connection and allow
 them to continue, otherwise if they're attempting to access a restricted
 resource, we'll display a message and redirect them beck to the index.
 
-In the same file, let's move up to the `index/2` function and add a `case`
-statement. We'll use the `authenticate/1` function that we just used to
+In the same file, we'll use the `authenticate/1` function that we just used to
 determine whether or not players should be able to render the player index page.
 
-Here is the existing `index/2` function:
+Above the `index/2` function, add the following line of code:
 
 ```elixir
-def index(conn, _params) do
-  players = Players.list_players()
-  render(conn, "index.html", players: players)
-end
-```
-
-And here's the new version using our `authenticate/1` function:
-
-```elixir
-def index(conn, _params) do
-  case authenticate(conn) do
-    %Plug.Conn{halted: true} = conn ->
-      conn
-
-    conn ->
-      players = Players.list_players()
-      render(conn, "index.html", players: players)
-  end
-end
+plug :authenticate when action in [:index]
 ```
 
 ## Testing
@@ -258,3 +239,61 @@ end
 If you're wondering if the updates above broke our tests, you're right. We
 usually run our test suite with `mix test`, but this time let's fire up our
 Phoenix server and manually test things out in the browser.
+
+Start up the Phoenix server with `mix phx.server` and try going to the players
+index page at `http://0.0.0.0:4000/players`:
+
+![Players Index Page Restricted](images/phoenix_authentication/restricted_page.png)
+
+This is great, it redirects us back to the home page because we managed to
+restrict access to the players index page. And we see the flash message
+displayed:
+
+> You must be logged in to access that page.
+
+## Logging In
+
+So how can we allow users to log in to their newly created accounts? Let's
+define a `login/2` function in our `PlayerAuthController`:
+
+```elixir
+def login(conn, player) do
+  conn
+  |> assign(:current_user, player)
+  |> put_session(:player_id, player.id)
+  |> configure_session(renew: true)
+end
+```
+
+Right after a new user player creates an account, we automatically want to log
+them into the system. So let's update the `create/2` function in our
+`PlayerController`. We'll use the pipe operator to log the player in before we
+display the flash message and redirect them:
+
+```elixir
+def create(conn, %{"player" => player_params}) do
+  case Players.create_player(player_params) do
+    {:ok, player} ->
+      conn
+      |> Platform.Web.PlayerAuthController.login(player)
+      |> put_flash(:info, "Player created successfully.")
+      |> redirect(to: player_path(conn, :show, player))
+    {:error, %Ecto.Changeset{} = changeset} ->
+      render(conn, "new.html", changeset: changeset)
+  end
+end
+```
+
+Let's try it out. Go to the `http://0.0.0.0:4000/players/new` page and create a
+new user:
+
+![Creating a New User](images/phoenix_authentication/new_user_to_login.png)
+
+So far so good. The new user we just created should be logged in. Let's try to
+access the players index page to verify. Go to the `http://0.0.0.0:4000/players`
+page in your browser:
+
+![Logged In Access to Players Index](images/phoenix_authentication/access_to_players_index.png)
+
+Success! We're able to access this page because we create a new account and
+authenticated the new player at the same time.
