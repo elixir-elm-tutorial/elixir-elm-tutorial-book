@@ -485,3 +485,28 @@ the `app.html.eex` file with the following:
   <span class="logo"></span>
 </div>
 ```
+
+## Fixing the Build
+
+Let's push a quick and dirty fix for our build. If we push our new features
+as-is they'll break the CI build. We could update the player index test to
+ensure that users are logged in, but for now let's just assert that page is
+properly redirecting users that aren't logged in.
+
+Replace the "lists all entries on index" test case with the following:
+
+```elixir
+test "redirects unauthenticated users for index page", %{conn: conn} do
+  conn = get conn, player_path(conn, :index)
+  assert html_response(conn, 302) =~ "redirect"
+end
+```
+
+## Summary
+
+**TODO: Add notes about session issue troubleshooting.**
+
+We've come a long way! We now have working features for players to create
+accounts and authenticate on our platform. Next comes the fun stuff! We'll be
+building out the games section for our platform, and getting our first taste of
+what it's like to work with Elm.
