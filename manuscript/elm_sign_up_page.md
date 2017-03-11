@@ -1,4 +1,4 @@
-# Building the Sign Up Page
+# Elm Sign Up Page
 
 Now that we have the ability to create, read, update, and delete players using
 our API, let's make a mental shift into how we want users to interact with our
