@@ -297,3 +297,191 @@ page in your browser:
 
 Success! We're able to access this page because we create a new account and
 authenticated the new player at the same time.
+
+## Sessions
+
+To complete our authentication features, we'll need to handle user sessions. We
+were able to handle logins in the previous section because we took care of it
+while creating an account, but now we'll also want to allow users to log out and
+log back in whenever they'd like.
+
+Let's start by creating a `PlayerSessionController`. Create a new file called
+`platform/lib/web/controllers/player_session_controller.ex`, and add the
+following code:
+
+```elixir
+defmodule Platform.Web.PlayerSessionController do
+  use Platform.Web, :controller
+
+  def new(conn, _) do
+    render conn, "new.html"
+  end
+
+  def create(conn, %{"session" => %{"username" => user, "password" => pass}}) do
+    case Platform.Web.PlayerAuthController.login_by_username_and_pass(conn, user, pass, repo: Platform.Repo) do
+      {:ok, conn} ->
+        conn
+        |> put_flash(:info, "Welcome back!")
+        |> redirect(to: page_path(conn, :index))
+      {:error, _reason, conn} ->
+        conn
+        |> put_flash(:error, "Invalid username/password combination.")
+        |> render("new.html")
+    end
+  end
+
+  def delete(conn, _) do
+    conn
+    |> Platform.Web.PlayerAuthController.logout()
+    |> redirect(to: page_path(conn, :index))
+  end
+end
+```
+
+This may seem like a lot at first, but we'll go through it quickly along with
+the updates we make to the `PlayerAuthController`. The `new/2` function will
+allow us to display a login page (as opposed to the sign up page that new
+players will use). When we create new sessions, we'll use a new function (which
+we'll create soon) called `login_by_username_and_pass/4`. Lastly, the `delete/2`
+function will allow us to log users out.
+
+## View and Template
+
+Let's create the view and the template for our login page. Add a new file called
+`session_view.ex` inside the `lib/platform/web/views` folder. And add the
+following to the file:
+
+```elixir
+defmodule Platform.Web.SessionView do
+  use Platform.Web, :view
+end
+```
+
+And then we'll need to create the corresponding template. Create a
+`lib/platform/templates/session` folder, and then add a `new.html.eex` file
+inside with the following content:
+
+```elixir
+<h1>Player Login</h1>
+
+<%= form_for @conn, player_session_path(@conn, :create), [as: :session], fn f -> %>
+  <div class="form-group">
+    <%= text_input f, :username, placeholder: "Enter username...", class: "form-control" %>
+  </div>
+  <div class="form-group">
+    <%= password_input f, :password, placeholder: "Enter password...", class: "form-control" %>
+  </div>
+  <%= submit "Log in", class: "btn btn-primary" %>
+<% end %>
+```
+
+## Login Routing
+
+If you were still running a Phoenix server this whole time, you've probably
+noticed we've been creating errors in our application. But we're getting close
+to a working authentication system for our application. We'll need to update
+our router to reflect our session features. Open the `lib/platform/web/router.ex`
+file and add our session resource:
+
+```elixir
+scope "/", Platform.Web do
+  pipe_through :browser # Use the default browser stack
+
+  get "/", PageController, :index
+  resources "/players", PlayerController
+  resources "/sessions", PlayerSessionController, only: [:new, :create, :delete]
+end
+```
+
+This will add only the necessary routes so our players can create and delete
+their sessions to log in and out of the platform.
+
+## Logging In and Out
+
+Lastly, we'll create the function in our `PlayerAuthController` that ties
+everything together. Add the `login_by_username_and_pass/4` function at the
+bottom of the `lib/platform/controllers/player_auth_controller.ex` file, and
+don't forget to add the `import` for our encryption at the top:
+
+```elixir
+defmodule Platform.Web.PlayerAuthController do
+  import Plug.Conn
+  import Comeonin.Bcrypt, only: [checkpw: 2, dummy_checkpw: 0]
+
+  def init(opts) do
+    Keyword.fetch!(opts, :repo)
+  end
+
+  def call(conn, repo) do
+    player_id = get_session(conn, :player_id)
+    player = player_id && repo.get(Platform.Players.Player, player_id)
+    assign(conn, :current_user, player)
+  end
+
+  def login(conn, player) do
+    conn
+    |> assign(:current_user, player)
+    |> put_session(:player_id, player.id)
+    |> configure_session(renew: true)
+  end
+
+  def login_by_username_and_pass(conn, username, given_pass, opts) do
+    repo = Keyword.fetch!(opts, :repo)
+    player = repo.get_by(Platform.Players.Player, username: username)
+
+    cond do
+      player && checkpw(given_pass, player.password_hash) ->
+        {:ok, login(conn, player)}
+      player ->
+        {:error, :unauthorized, conn}
+      true ->
+        dummy_checkpw()
+        {:error, :not_found, conn}
+    end
+  end
+
+  def logout(conn) do
+    configure_session(conn, drop: true)
+  end
+end
+```
+
+What the `login_by_username_and_pass/4` function does is to grab the player from
+the database using their `username` field. If the player exists and has the
+correct password, they will be logged in. Otherwise, we'll return an error.
+
+## Trying Things Out
+
+It's a good idea to try out these features using "incognito" browser windows.
+That will give us a way to open a new browser window in a clean state.
+
+We can test out the login page with the same `newuser` account that we created
+in the previous sections. Try entering the credentials on the new session page
+at `http://0.0.0.0:4000/sessions/new`:
+
+![Player Login Page](images/phoenix_authentication/player_login_page.png)
+
+Success! We get a welcome back message letting us know that we were able to
+log in successfully:
+
+![Successful Login](images/phoenix_authentication/successful_login_message.png)
+
+## Displaying the Player Status
+
+In the `lib/platform/web/templates/layout` folder, update the header section in
+the `app.html.eex` file with the following:
+
+```embedded_elixir
+<div class="header">
+  <ol class="breadcrumb text-right">
+  <%= if @current_user do %>
+    <li>Logged in as <strong><%= @current_user.username %></strong></li>
+    <li><%= link "Log Out", to: player_session_path(@conn, :delete, @current_user), method: "delete" %></li>
+  <% else %>
+    <li><%= link "Sign Up", to: player_path(@conn, :new) %></li>
+    <li><%= link "Log In", to: player_session_path(@conn, :new) %></li>
+  <% end %>
+  </ol>
+  <span class="logo"></span>
+</div>
+```
