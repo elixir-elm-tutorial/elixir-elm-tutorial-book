@@ -1,5 +1,13 @@
 # Elm Intro
 
+We're going to build the front-end of our application using the Elm language.
+That's going to involve using data from our back-end Phoenix application, and
+using it in an Elm single page application. Then we'll also use Elm to start
+building minigames for our platform. But before we get into all that, let's take
+a quick look about what Elm is, how it works, and why we want to use Elm.
+
+## Intro
+
 Elm is likely to look and feel a little foreign at first. But don't let that
 scare you away, because it's a _very_ strong language that can be _very_ nice
 to work with.
@@ -231,16 +239,48 @@ main =
     text "Hello World"
 ```
 
-...
+We can also add a type signature for our `main` function:
 
-## Topics
+```elm
+-- Hello.elm
+module Hello exposing (..)
 
-- Syntax Basics
-- Piping and Data Transformation
-- Pattern Matching
-- Maybe and Result
-- Elm Architecture
+import Html exposing (Html, text)
 
-## Building a Static Page
 
-...
+main : Html msg
+main =
+    text "Hello World"
+```
+
+When we create type signatures, we're restating the function name first. Then
+after the `:` character, we give the types of the arguments and the return
+value. Since this function doesn't have any arguments, we're just giving the
+return type here, which is `Html msg`. That just means we're returning some
+HTML code when we return a value from the `Html.text` function that we're using.
+
+The pipe operator we discovered in Elixir also works in Elm! In fact, we can
+rewrite our "Hello World" text in all uppercase letters with the following:
+
+```elm
+-- Hello.elm
+module Hello exposing (..)
+
+import Html exposing (Html, text)
+
+
+main : Html msg
+main =
+    "Hello World"
+        |> String.toUpper
+        |> text
+```
+
+## Summary
+
+There's a lot more to Elm than what we've covered in our simple "Hello World"
+example. But this is a good start to get a look at the syntax and see that it's
+not so scary as it might seem at first. In the next sections, we're going to
+set up our Phoenix application to use Elm for the front-end. We're also going
+to talk about the Elm Architecture, and how to pull data from our API into the
+front-end application.
