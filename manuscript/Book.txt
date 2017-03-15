@@ -10,6 +10,6 @@ elm_setup.md
 elm_and_phoenix.md
 elm_sign_up_page.md
 games.md
-outline.md
+current_outline.md
 appendix.md
 contact.md

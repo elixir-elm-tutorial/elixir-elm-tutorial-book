@@ -1,0 +1,40 @@
+# Current Outline
+
+- Introduction
+  - Metadata about Elixir, Elm, and functional programming.
+  - Prerequisites and acknowledgements.
+  - Information about the demo application.
+- Diving In
+  - Quick-paced practical introduction to the Phoenix framework.
+  - Building the initial Platform demo application.
+  - Configuring the PostgreSQL database, running the server, and routing.
+  - Generating the HTML resources for players.
+- Elixir Introduction
+  - Create a temporary Elixir application to compare of Elixir and Phoenix projects.
+  - Brief background on mix, folder structure, modules, functions,
+    documentation, tests, and interactive environment.
+  - Introduction to concepts on piping, arity, pattern matching, and guards.
+- Phoenix Introduction
+- Phoenix Sign Up
+- Phoenix Authentication
+- Phoenix API
+- Elm Introduction
+- Elm Setup
+- Elm and Phoenix
+- Elm Sign Up Page
+- Styles
+  - An attempt at making the application look nicer and easier to work with.
+  - If running short on space, potentially link to CSS code on GitHub.
+- Games
+  - Initial discussion of games and incremental approach.
+- Implementing Games
+  - ...
+- Chat Feature
+  - Using Phoenix channels to communicate with Elm over WebSockets.
+- Score Data
+  - Possibly using GenServer to extract this into a small service?
+- Appendix
+  - Brief installation instructions.
+- Contact
+  - Congrats and plea for feedback and ideas.
+  - Bonus access to Slack for live help or sharing.
