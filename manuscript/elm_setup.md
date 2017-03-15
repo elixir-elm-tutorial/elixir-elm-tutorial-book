@@ -111,6 +111,7 @@ project's root directory:
 ```gitignore
 # Elm
 /lib/platform/web/elm/elm-stuff
+/assets/vendor/main.js
 ```
 
 Now go to the `lib/platform/web/elm` folder from the command-line and run the
@@ -186,6 +187,52 @@ Players", let's add a `<div>` element where we can put our Elm application:
 ```embedded_elixir
 <%= link("List of Players", to: "/players", class: "btn btn-primary") %>
 
-<div id="elm-container"></div>
+<div class="elm-container"></div>
 ```
 
+We have a container to attach our Elm application. Let's open the
+`assets/js/app.js` file and add the following code at the very bottom:
+
+```javascript
+const elmContainer = document.querySelector("#elm-container");
+const elmApplication = Elm.Main.embed(elmContainer);
+```
+
+## Working Elm application
+
+With our configuration finished, we now have the ability to write Elm code in
+our `lib/platform/web/elm` folder. That will automatically be compiled into
+JavaScript using our minimal Brunch configuration, and then the resulting Elm
+application will be inserted into our Phoenix application on the home page
+(`lib/platform/web/templates/page/index.html.eex`).
+
+Be sure to restart your Phoenix server if it was still running, and it should
+recompile all the code necessary to get our Elm application displayed on the
+screen.
+
+![Working Elm Application Inside Phoenix](images/elm_setup/working_elm_application.png)
+
+One of the great features is that we can keep working with Elm, and our live
+reload features will allow us to see changes without needing to restart the
+server or refresh the page in the browser. Try making a small change to the
+string in our `Main.elm` file:
+
+```elm
+module Main exposing (..)
+
+import Html exposing (Html, text)
+
+
+main : Html msg
+main =
+    text "Hello from Elm inside Phoenix!"
+```
+
+And the content should be reloaded in the browser without needing a refresh!
+
+![Working Live Reload for Elm](images/elm_setup/elm_live_reload.png)
+
+## Next
+
+In the next chapter, we're going to take our game JSON data from the Phoenix
+back-end and pipe it into our Elm application.
