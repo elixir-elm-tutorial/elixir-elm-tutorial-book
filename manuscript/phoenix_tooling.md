@@ -206,11 +206,13 @@ settings are necessary for the deployment to work.
 
 There are still a couple more steps we need to take to make sure our application
 is secured to be pushed live to Heroku. Let's create a `Procfile` to tell
-Heroku which command we want to run to start the Phoenix server. Create a file
-called `Procfile` inside the `platform` folder, and on the first line add the
-following code:
+Heroku which command we want to run to start the Phoenix server. We'll also add
+a line to make sure that database migrations are successful before we start the
+server in the production environment. Create a file called `Procfile` inside
+the `platform` folder, and add the following code:
 
 ```Procfile
+release: MIX_ENV=prod mix ecto.migrate
 web: MIX_ENV=prod mix phx.server
 ```
 
