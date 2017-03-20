@@ -1,3 +1,4 @@
 introduction.md
 diving_in.md
+current_outline.md
 appendix.md

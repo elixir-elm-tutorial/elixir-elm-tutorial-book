@@ -382,19 +382,6 @@ Running mix ecto.migrate on ⬢ platform... up, run.4619 (Free)
 
 And our application should finally be working in production!
 
-## NOTE
-
-At the time of this writing, the buildpack used to generate Phoenix static
-assets has not been updated for Phoenix 1.3 yet. We can remove the buildpack
-with the following command:
-
-```bash
-$ heroku buildpacks:remove https://github.com/gjaldon/heroku-buildpack-phoenix-static.git
-```
-
-That will get the application working in production, but the assets won't load
-until the buildpack gets updated and we can add it back in.
-
 ## Continuous Integration
 
 The whole point to this long chapter was to build up to the topic of continuous

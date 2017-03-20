@@ -1,5 +1,10 @@
 # Current Outline
 
+Keep in mind that this is a _very_ early version of the Elixir and Elm
+Tutorial! This outline is an attempt to break down all the topics and concepts
+that are covered throughout the book. The structure and content is a work in
+progress.
+
 - Introduction
   - Metadata about Elixir, Elm, and functional programming.
   - Prerequisites and acknowledgements.
