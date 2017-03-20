@@ -1,4 +1,4 @@
-# Phoenix Intro
+# Phoenix Tooling
 
 Now that we have some familiarity with Elixir, let's get back to our Phoenix
 application.

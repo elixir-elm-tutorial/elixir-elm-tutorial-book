@@ -10,11 +10,16 @@
   - Configuring the PostgreSQL database, running the server, and routing.
   - Generating the HTML resources for players.
 - Elixir Introduction
-  - Create a temporary Elixir application to compare of Elixir and Phoenix projects.
+  - Create a temporary Elixir application to compare of Elixir and Phoenix
+    projects.
   - Brief background on mix, folder structure, modules, functions,
     documentation, tests, and interactive environment.
   - Introduction to concepts on piping, arity, pattern matching, and guards.
-- Phoenix Introduction
+- Phoenix Tooling
+  - Running Phoenix tests.
+  - Working with Git and GitHub.
+  - Configuring the application and deploying to Heroku.
+  - Continuous integration and deployment with TravisCI and Heroku.
 - Phoenix Sign Up
 - Phoenix Authentication
 - Phoenix API
