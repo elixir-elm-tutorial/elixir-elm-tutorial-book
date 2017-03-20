@@ -35,4 +35,4 @@ things. Feel free to stop in and say hello!
 
 Get an invite with the following link:
 
-https://elixirelmtutorial.slack.com/shared_invite/MTUzNzM1NTE2ODA3LTE0ODkyNDQ5MDYtZmQ2MDhjNGI1OA
+https://elixirelmtutorial.signup.team/
