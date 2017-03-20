@@ -21,19 +21,33 @@
   - Configuring the application and deploying to Heroku.
   - Continuous integration and deployment with TravisCI and Heroku.
 - Phoenix Sign Up
+  - Extending existing resources with new fields.
+  - Generating and running migrations.
+  - Basic queries with IEx.
+  - Updating templates and working with forms.
+  - Data validation and database seeds.
 - Phoenix Authentication
+  - Importing Hex dependencies.
+  - Working with changesets.
+  - Building an authentication plug.
+  - Adding login and session features.
 - Phoenix API
+  - Generating a JSON API for games.
 - Elm Introduction
+  - Brief intro to the Elm language and tooling.
+  - Covers modules, functions, types, formatting, and refactoring.
 - Elm Setup
+  - Introduction to Brunch and Phoenix assets.
+  - Configuring Phoenix to work with Elm.
 - Elm and Phoenix
-- Elm Sign Up Page
+  - Reading JSON API data from Phoenix.
+  - Decoding JSON and working with game data in Elm.
 - Styles
-  - An attempt at making the application look nicer and easier to work with.
+  - Attempt at making the application look nicer and easier to work with.
   - If running short on space, potentially link to CSS code on GitHub.
 - Games
   - Initial discussion of games and incremental approach.
-- Implementing Games
-  - ...
+  - Getting started with game implementation.
 - Chat Feature
   - Using Phoenix channels to communicate with Elm over WebSockets.
 - Score Data
