@@ -8,7 +8,6 @@ phoenix_api.md
 elm_intro.md
 elm_setup.md
 elm_and_phoenix.md
-elm_sign_up_page.md
 games.md
 current_outline.md
 appendix.md
