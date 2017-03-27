@@ -20,7 +20,7 @@ $ mix local.hex
 ### Phoenix
 
 ```bash
-$ mix archive.install https://github.com/phoenixframework/archives/raw/master/phoenix_new.ez
+$ mix archive.install https://github.com/phoenixframework/archives/raw/master/phx_new.ez
 ```
 
 ### PostgreSQL
