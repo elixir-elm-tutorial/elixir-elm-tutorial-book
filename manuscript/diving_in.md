@@ -10,6 +10,21 @@ running. If you haven't already set up your development environment with
 Elixir, Phoenix, and PostgreSQL, then check out the Appendix for more
 information.
 
+## Phoenix Version
+
+In this book, we're using the _latest_ version of Phoenix available. Make sure
+you're working with **Phoenix 1.3** or the commands and files will all look
+different as you work through the instructions.
+
+To fetch the latest version of Phoenix, you can use the following command:
+
+```bash
+$ mix archive.install https://github.com/phoenixframework/archives/raw/master/phx_new.ez
+```
+
+If you run the `mix help` command you should be able to see some examples that
+say `mix phx...` instead of `mix phoenix...`.
+
 ## Creating the Platform
 
 The first step we need to take is to create the foundation for our application.
