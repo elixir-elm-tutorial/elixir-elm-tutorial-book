@@ -231,8 +231,3 @@ main =
 And the content should be reloaded in the browser without needing a refresh!
 
 ![Working Live Reload for Elm](images/elm_setup/elm_live_reload.png)
-
-## Next
-
-In the next chapter, we're going to take our game JSON data from the Phoenix
-back-end and pipe it into our Elm application.
