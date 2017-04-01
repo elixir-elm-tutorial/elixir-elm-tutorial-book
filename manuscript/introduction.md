@@ -12,12 +12,12 @@ application.
 The application we'll be building will be a small game platform for the web.
 We'll use Elixir and the Phoenix web framework to create the back-end, where
 our users can log in and keep track of their scores. And then we'll use Elm on
-the front-end to create fun minigames. We'll tie everything together so that we
-can pass data back and forth between the back-end and front-end. Users on our
+the front-end to create fun minigames. We'll tie everything together so we can
+pass data back and forth between the back-end and front-end. Users on our
 platform should be able to join a chat to discuss the different minigames, and
 the scores from those games should get synced back to a central database.
-**We'll focus on building things with a strong foundation, so that we can use
-these same concepts to create different web applications as well**.
+**We'll focus on building things with a strong foundation, so we can use these
+same concepts to create different web applications as well**.
 
 ## Acknowledgements
 
@@ -30,7 +30,7 @@ his visions of the future.
 
 ## Who Is This Book For?
 
-This book is written for web developers that already have _some_ existing
+This book is written for web developers who already have _some_ existing
 experience with web programming. The goal is for the book to be a practical
 introduction to building a project with functional web programming languages
 like Elixir and Elm.
@@ -42,8 +42,8 @@ effort to gain insight into shipping a real project**.
 
 We'll walk through initial explanations to give you just enough information
 about the fundamentals and concepts so you can be productive. But there are
-other books that will provide considerably more depth when it comes to learning
-the languages themselves:
+other books that will provide more depth when it comes to learning the
+languages themselves:
 
 - [Programming Elixir](https://pragprog.com/book/elixir/programming-elixir)
   by Dave Thomas
@@ -77,10 +77,10 @@ building scalable and maintainable applications.
 - Elixir is built on top of the Erlang virtual machine, and therefore inherits
   _decades_ worth of stability and scalability.
 - Concurrency is at the heart of Elixir. Instead of getting faster processors,
-  computers these days are getting processors with more cores. That means that
-  we need to write our programs in such a way that allows them to be
-  distributed across multiple cores so that our programs can outperform our
-  competitors. As an example, you can compare the latest
+  computers these days are getting processors with more cores. That means we
+  need to write our programs in such a way that allows them to be distributed
+  across multiple cores so our programs can outperform our competitors. As an
+  example, compare the latest
   [13-inch Macbook Pro models](http://www.apple.com/shop/buy-mac/macbook-pro/13-inch)
   with dual-core processors with
   [15-inch Macbook Pro models](http://www.apple.com/shop/buy-mac/macbook-pro/15-inch)
@@ -109,12 +109,12 @@ currently available.
   provides us with an ability to make guarantees about how our programs work.
 - The Elm compiler can be a helpful guide towards writing high quality code,
   and the error messages provided are extremely helpful.
-- The elm-format tool helps with writing consistent code that's easier to read,
-  write, and maintain. While optional, this tool is _highly_ recommended for
-  Elm beginners because you can configure it to automatically format code when
-  you save a file in your editor.
-- With all the features that Elm has to offer, the net result is confidence.
-  As developers, we can be more confident that our code is performing the way
+- The elm-format tool helps with writing consistent code that is easier to
+  read, write, and maintain. While optional, this tool is _highly_ recommended
+  for Elm beginners because you can configure it to automatically format code
+  when you save a file in your editor.
+- With all the features Elm has to offer, the net result is confidence. As
+  developers, we can be more confident that our code is performing the way
   we intended, and that our programs will function properly for our users.
 - Elm code is maintainable. Refactoring is a dream, and you'll find yourself
   surprised at how easy a significant refactor can feel after coming from other
@@ -125,7 +125,7 @@ currently available.
 **Elixir and Elm are young, functional programming languages that are optimized
 for your happiness as a developer. They offer a programming experience that
 will make it fun to develop applications, and over time those applications will
-be easy to extend and maintain.**
+be easy to extend and maintain**.
 
 The primary reason to pick up new languages like Elixir and Elm is that it will
 afford you with an opportunity to acquire new ways of thinking. Many great
@@ -161,5 +161,5 @@ web frameworks, then you'll have a head start in being able to grasp the
 content and move smoothly through the book. Something to keep in mind is that
 Elixir and Elm are _functional_ languages. If you're coming from an
 _object-oriented_ background, you may find some of the programmatic approaches
-to be unfamiliar at first, but that initial discomfort will pay off well in the
+to be unfamiliar at first, but the initial discomfort will pay off well in the
 long run as you learn to solve problems in an elegant functional manner.
