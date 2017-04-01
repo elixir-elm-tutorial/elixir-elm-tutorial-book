@@ -9,7 +9,7 @@ In the last chapter, we learned that we could use the `mix test` command to run
 the tests for our simple Elixir project. We can do the same thing for our
 Phoenix project, so let's go to our `platform` folder and run `mix test`:
 
-```bash
+```shell
 $ mix test
 ...................
 
@@ -81,7 +81,7 @@ end
 
 We can run our tests again, and we should see all green:
 
-```bash
+```shell
 $ mix test
 ....................
 
@@ -105,7 +105,7 @@ like to deploy our application to Heroku.
 From inside the `platform` folder, we can run the following commands to commit
 what we have so far to git:
 
-```bash
+```shell
 git init
 git add .
 git commit -m "Initial Phoenix platform application"
@@ -117,7 +117,7 @@ following commands will allow you to push your existing application to
 GitHub (keeping in mind that you'll need to add your username in the first
 line):
 
-```bash
+```shell
 git remote add origin https://github.com/YOURUSERNAME/platform.git
 git push -u origin master
 ```
@@ -150,14 +150,14 @@ Once you have that installed, you can run the `heroku login` command to sign in
 to your account. And since we have an existing Git repository, we can use the
 following command to add our application to Heroku:
 
-```bash
+```shell
 $ heroku git:remote -a platform
 ```
 
 Now inside our `platform` folder, we can run the `git remote` command and see
 that we now have two remotes for our project:
 
-```bash
+```shell
 $ git remote
 origin
 heroku
@@ -170,7 +170,7 @@ But before we can do that we'll have to set things up for Heroku to know what
 kind of application we're building. We'll add a couple of "buildpacks" to set
 things up:
 
-```bash
+```shell
 $ heroku buildpacks:add https://github.com/HashNuke/heroku-buildpack-elixir.git
 $ heroku buildpacks:add https://github.com/gjaldon/heroku-buildpack-phoenix-static.git
 ```
@@ -180,7 +180,7 @@ the `git status` command, we'll see that nothing has changed. But we should see
 the following output to let us know that our Heroku app is configured to work
 with the Elixir code that we're going to send:
 
-```bash
+```shell
 $ heroku buildpacks:add https://github.com/HashNuke/heroku-buildpack-elixir.git
 Buildpack added. Next release on elixir-elm-tutorial will use https://github.com/HashNuke/heroku-buildpack-elixir.git.
 Run git push heroku master to create a new release using this buildpack.
@@ -221,7 +221,7 @@ configuration settings we'll need to get our app running. If we run the
 `heroku config` command right now, we'll see that we don't currently have any
 variables set up:
 
-```bash
+```shell
 $ heroku config
 === platform Config Vars
 ```
@@ -229,13 +229,13 @@ $ heroku config
 Since we're using PostgreSQL for our Phoenix application, we'll also want to
 create a free Heroku add-on for our project with the following command:
 
-```bash
+```shell
 $ heroku addons:create heroku-postgresql:hobby-dev
 ```
 
 This is what the output should look like:
 
-```bash
+```shell
 $ heroku addons:create heroku-postgresql:hobby-dev
 Creating heroku-postgresql:hobby-dev on ⬢ platform... free
 Database has been created and is available
@@ -248,7 +248,7 @@ Use heroku addons:docs heroku-postgresql to view documentation
 And if we run `heroku config` again, we'll see that we now have a `DATABASE_URL`
 variable configured (the actual URL has been removed in this example):
 
-```bash
+```shell
 $ heroku config
 === platform Config Vars
 DATABASE_URL: postgres://...
@@ -258,7 +258,7 @@ We'll also need to set a `SECRET_KEY_BASE` environment variable for production.
 Phoenix can generate a secret key for us with the following command (the key
 is shown with just X characters here):
 
-```bash
+```shell
 $ mix phx.gen.secret
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 ```
@@ -267,14 +267,14 @@ Then we can take that key and set it as the Heroku environment variable with
 the following command (replace the X characters with the one you generated
 above):
 
-```bash
+```shell
 $ heroku config:set SECRET_KEY_BASE="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 ```
 
 Now when we run the `heroku config` command we should be able to see the
 settings for both the `DATABASE_URL` and the `SECRET_KEY_BASE`.
 
-```bash
+```shell
 $ heroku config
 === platform Config Vars
 DATABASE_URL: ...
@@ -330,27 +330,27 @@ line out altogether since we're using environment variables:
 
 Let's run our tests one more time to make sure we didn't break anything:
 
-```bash
+```shell
 $ mix test
 ```
 
 If everything is still passing, then let's go ahead and commit our latest
 changes:
 
-```bash
+```shell
 $ git add .
 $ git commit -m "Update production configuration"
 ```
 
 We'll push the updates to GitHub first:
 
-```bash
+```shell
 $ git push origin master
 ```
 
 And now (the moment we've all been waiting for), we can push to Heroku:
 
-```bash
+```shell
 $ git push heroku master
 ```
 
@@ -367,14 +367,14 @@ running live in production!
 Our app is finally up and running on Heroku! The only thing left is to run the
 migrations so that our production database works. Run the following command:
 
-```bash
+```shell
 $ heroku run "mix ecto.migrate"
 ```
 
 And it should generate the successful output that the database table was
 created:
 
-```bash
+```shell
 $ heroku run "mix ecto.migrate"
 Running mix ecto.migrate on ⬢ platform... up, run.4619 (Free)
 04:49:15.381 [info]  == Running Platform.Repo.Migrations.CreatePlatform.Players.Player.change/0 forward
@@ -453,7 +453,7 @@ TravisCI command-line tool to generate an encrypted key for us.
 
 First, install the `travis` command-line tool by typing this in the Terminal:
 
-```bash
+```shell
 $ gem install travis
 ```
 
@@ -461,7 +461,7 @@ And now that we have both command-line tools for `heroku` and `travis`, we can
 run the following command from the `platform` folder, and it will automatically
 add the right information to our `.travis.yml` file:
 
-```bash
+```shell
 $ travis setup heroku
 ```
 

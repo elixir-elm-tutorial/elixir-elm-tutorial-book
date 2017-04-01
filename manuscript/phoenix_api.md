@@ -12,14 +12,14 @@ later, but this will be a good start.
 
 We'll run the Phoenix generator from the Terminal to get started:
 
-```bash
+```shell
 mix phx.gen.json Games Game games title:string description:string author_id:integer
 ```
 
 This is similar to the way we created our player resources, but this time we're
 using JSON instead of HTML. Here's the output of the command:
 
-```bash
+```shell
 $ mix phx.gen.json Games Game games title:string description:string author_id:integer
 * creating lib/platform/web/controllers/game_controller.ex
 * creating lib/platform/web/views/game_view.ex
@@ -64,7 +64,7 @@ Now that we have our resources generated and they're added to our router, we
 can run our migration to update the database with `mix ecto.migrate`. This
 creates the `games_games` table in the database:
 
-```bash
+```shell
 $ mix ecto.migrate
 Compiling 16 files (.ex)
 Generated platform app
@@ -76,7 +76,7 @@ Generated platform app
 
 Lastly, we'll run our tests to make sure everything is still working:
 
-```bash
+```shell
 $ mix test
 Compiling 16 files (.ex)
 Generated platform app
@@ -127,7 +127,7 @@ Assuming we don't have any local data that we want to keep, we can use this to
 reseed the database with `mix ecto.reset`. This task will drop the existing
 database, create a new one, run migrations, and then seed the database.
 
-```bash
+```shell
 $ mix ecto.reset
 The database for Platform.Repo has been dropped
 The database for Platform.Repo has been created

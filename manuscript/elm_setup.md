@@ -46,7 +46,7 @@ too much as we move forward.
 Inside the `assets` folder, let's run the following command to ensure our
 project works with the `elm` language and the `elm-brunch` tool:
 
-```bash
+```shell
 npm install --save-dev elm elm-brunch
 ```
 
@@ -117,14 +117,14 @@ project's root directory:
 Now go to the `lib/platform/web/elm` folder from the command-line and run the
 following command:
 
-```bash
+```shell
 elm-package install
 ```
 
 Enter the `Y` character to approve of the package plan, and we should see the
 following output:
 
-```bash
+```shell
 $ elm-package install
 Some new packages are needed. Here is the upgrade plan.
 
@@ -168,7 +168,7 @@ Now let's start up our Phoenix server with `mix phx.server`, and we should see
 a message in the Terminal about how the `Main.elm` file was compiled into an
 `app.js` file that Phoenix can use:
 
-```bash
+```shell
 $ mix phx.server
 [info] Running Platform.Web.Endpoint with Cowboy using http://0.0.0.0:4000
 07:33:05 - info: compiling

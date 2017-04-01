@@ -12,14 +12,14 @@ used in the last chapter when we created our Phoenix application, but this time
 we're just creating a small Elixir project called `temporary`. Run the following
 command in the terminal:
 
-```bash
+```shell
 $ mix new temporary
 ```
 
 The `mix` tool is a simple build tool that ships with Elixir. Here's what the
 output should look like when we create our project:
 
-```bash
+```shell
 $ mix new temporary
 * creating README.md
 * creating .gitignore
@@ -44,7 +44,7 @@ Run "mix help" for more commands.
 Let's change into the new project's directory and take a look at the files that
 were generated for us:
 
-```bash
+```shell
 cd temporary
 ```
 
@@ -73,13 +73,13 @@ the code we're writing works (and doesn't break other code too). We'll delve
 deeper into testing with our Phoenix app, but for now let's just try it out. Run
 the `mix test` command inside the `temporary` folder:
 
-```bash
+```shell
 $ mix test
 ```
 
 The output should look something like this:
 
-```bash
+```shell
 $ mix test
 Compiling 1 file (.ex)
 Generated temporary app
@@ -102,7 +102,7 @@ app while we're using it.
 In fact, if we run the `mix test` command again, we'll see that Elixir doesn't
 need to recompile the code because we haven't made any changes:
 
-```bash
+```shell
 $ mix test
 ..
 
@@ -209,7 +209,7 @@ This tells us that we should be able to run `Temporary.hello` and it should
 return `:world`. This is where things get interesting, so let's run `mix test`
 again:
 
-```bash
+```shell
 mix test
 ```
 
@@ -217,7 +217,7 @@ Since we no longer have our `hello` function, it's not surprising that our
 test failed, but the reason the test failed is actually because of the example
 in our documentation!
 
-```bash
+```shell
 $ mix test
 Compiling 1 file (.ex)
 
@@ -264,7 +264,7 @@ end
 
 Now we can run our tests again and they should pass:
 
-```bash
+```shell
 $ mix test
 Compiling 1 file (.ex)
 ..
@@ -328,7 +328,7 @@ good job of testing values, but what if something wasn't working the way we had
 expected? Let's run the following command from inside our `temporary` project
 folder:
 
-```bash
+```shell
 iex -S mix
 ```
 
@@ -410,7 +410,7 @@ end
 
 We can run `mix test` from the command-line to see the results:
 
-```bash
+```shell
 $ mix test
 ...true
 .

@@ -46,7 +46,7 @@ records from the database (`Repo`).
 We can use this function along with `iex` to interactively query for our
 existing player records:
 
-```bash
+```shell
 $ iex -S mix phx.server
 ```
 
@@ -123,14 +123,14 @@ Now we'll need to update the database to know about the new fields we want to
 use for our players. Let's run the following command to generate a migration
 file:
 
-```bash
+```shell
 $ mix ecto.gen.migration add_fields_to_players
 ```
 
 And we should see the output that it successfully generated the migration file,
 which we'll fill out next:
 
-```bash
+```shell
 $ mix ecto.gen.migration add_fields_to_players
 Compiling 3 files (.ex)
 * creating priv/repo/migrations
@@ -162,7 +162,7 @@ end
 Now we can run the migration to update our database. Run the following command
 and you should see similar output:
 
-```bash
+```shell
 $ mix ecto.migrate
 
 09:10:21.240 [info]  == Running Platform.Repo.Migrations.AddFieldsToPlayers.change/0 forward
@@ -449,7 +449,7 @@ Platform.Repo.insert!(%Platform.Players.Player{display_name: "Evan Czaplicki", u
 And we can see at the top that we can run the following `mix` command to
 populate the database with these seeds:
 
-```bash
+```shell
 mix run priv/repo/seeds.exs
 ```
 
@@ -468,7 +468,7 @@ creates a new one, runs all the migrations, and then seeds the database.
 
 Here's what it looks like in action:
 
-```bash
+```shell
 $ mix ecto.reset
 The database for Platform.Repo has been dropped
 The database for Platform.Repo has been created
@@ -493,7 +493,7 @@ INSERT INTO "players_players" ("display_name","score","username","inserted_at","
 Since we've made quite a few changes, now would be a good time to run our tests
 locally with `mix test`. If everything is passing, let's go ahead and commit our
 
-```bash
+```shell
 $ git add .
 $ git commit -m "Update player fields and adjust templates"
 ```

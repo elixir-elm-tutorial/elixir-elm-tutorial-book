@@ -95,7 +95,7 @@ Before we can run Elm code, we'll need to install Elm. There are different
 ways of doing it, but the easiest way is to use `npm` since most developers
 have Node installed already.
 
-```bash
+```shell
 npm install -g elm
 ```
 
@@ -103,7 +103,7 @@ That should be all you need. It globally installs the `elm` command on your
 machine, so you can run it from the command-line. In fact, type `elm` now and
 take a look at the output:
 
-```bash
+```shell
 $ elm
 Elm Platform 0.18.0 - a way to run all Elm tools
 
@@ -131,7 +131,7 @@ We'll use all these features at some point, but for now let's focus on two of
 them. First, we'll use the `package` option we see above to fetch the tools
 we'll use.
 
-```bash
+```shell
 $ mkdir elm
 $ cd elm
 $ elm-package install
@@ -140,7 +140,7 @@ $ elm-package install
 We're creating an empty `elm` folder, and then when we run `elm-package install`
 it's going to create all the files we need:
 
-```bash
+```shell
 $ elm-package install
 Some new packages are needed. Here is the upgrade plan.
 
@@ -176,7 +176,7 @@ All that's left is to run our program. Elm comes with a utility called
 `elm-reactor` that we can use to serve our program locally and then access
 it in our browser. Go ahead and run it from the command-line:
 
-```bash
+```shell
 $ elm-reactor
 elm-reactor 0.18.0
 Listening on http://localhost:8000

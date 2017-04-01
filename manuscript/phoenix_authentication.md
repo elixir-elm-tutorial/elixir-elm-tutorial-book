@@ -64,13 +64,13 @@ end
 Save that file, and then from the command-line we'll run the `mix` command that
 fetches dependencies:
 
-```bash
+```shell
 $ mix deps.get
 ```
 
 We'll see the following results:
 
-```bash
+```shell
 $ mix deps.get
 Running dependency resolution...
 Dependency resolution completed:

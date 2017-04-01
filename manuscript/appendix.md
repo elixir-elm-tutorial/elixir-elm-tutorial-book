@@ -7,19 +7,19 @@ be found online for installing these tools on Linux.
 
 ### Elixir
 
-```bash
+```shell
 $ brew install elixir
 ```
 
 ### Hex
 
-```bash
+```shell
 $ mix local.hex
 ```
 
 ### Phoenix
 
-```bash
+```shell
 $ mix archive.install https://github.com/phoenixframework/archives/raw/master/phx_new.ez
 ```
 
@@ -29,13 +29,13 @@ Use [Postgres.app](https://postgresapp.com/).
 
 ### Node
 
-```bash
+```shell
 $ brew install node
 ```
 
 ### Elm
 
-```bash
+```shell
 $ npm install -g elm
 ```
 
