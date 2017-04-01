@@ -1,29 +1,29 @@
 # Introduction
 
-Welcome to the world of **Elixir** and **Elm**! In this book, we'll **learn how
-to create fun, scalable, and maintainable web applications**. We'll be using a
-wide range of web technologies along with the latest ideas from new languages
-like Elixir and Elm to craft a fun web experience. Rather than focusing on
-theory, **we'll take a practical approach and build a real-world application**.
+Welcome to the world of functional web programming! In this book, we'll **learn
+how to create fun, scalable, and maintainable web applications**. We'll be
+using a wide range of web technologies along with the latest ideas from
+emerging languages like Elixir and Elm to craft a fun web experience. Rather
+than focusing on theory, we'll take a practical approach and build a real-world
+application.
 
 ## What We're Building
 
-The application we'll be building will be a **video game platform for the
-web**.  We'll use **Elixir** and the **Phoenix** web framework to create the
-_back-end_, where our users can log in and keep track of their scores. And then
-we'll use **Elm** on the _front-end_ to create fun mini-games. Then we'll tie
-everything together so that we can pass data back and forth between the
-back-end and front-end. Users on our platform should be able to join a chat to
-discuss the different mini-games, and the scores from those games should get
-synced back to a central database. **We'll focus on building things with a
-strong foundation, so that we can use these same concepts to create different
-web applications as well**.
+The application we'll be building will be a small game platform for the web.
+We'll use Elixir and the Phoenix web framework to create the back-end, where
+our users can log in and keep track of their scores. And then we'll use Elm on
+the front-end to create fun minigames. We'll tie everything together so that we
+can pass data back and forth between the back-end and front-end. Users on our
+platform should be able to join a chat to discuss the different minigames, and
+the scores from those games should get synced back to a central database.
+**We'll focus on building things with a strong foundation, so that we can use
+these same concepts to create different web applications as well**.
 
 ## Acknowledgements
 
 I would like to thank **Envy Labs** and **Code School** for fostering an
 environment where I've been able to work hard and learn and grow. I'd also like
-to thank **Jose Valim** and **Evan Czaplicki** for crafting such beautiful and
+to thank **José Valim** and **Evan Czaplicki** for crafting such beautiful and
 fun languages. Lastly, thanks to **Michael Hartl** for setting the standard for
 technical writing with The Ruby on Rails Tutorial, and **Bret Victor** for
 inspiring all of us with his visions of the future.
