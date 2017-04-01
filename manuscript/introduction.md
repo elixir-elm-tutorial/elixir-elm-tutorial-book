@@ -21,39 +21,51 @@ these same concepts to create different web applications as well**.
 
 ## Acknowledgements
 
-I would like to thank **Envy Labs** and **Code School** for fostering an
-environment where I've been able to work hard and learn and grow. I'd also like
-to thank **José Valim** and **Evan Czaplicki** for crafting such beautiful and
-fun languages. Lastly, thanks to **Michael Hartl** for setting the standard for
-technical writing with The Ruby on Rails Tutorial, and **Bret Victor** for
-inspiring all of us with his visions of the future.
+I would like to thank Envy Labs and Code School for fostering an environment
+where I've been able to work hard and learn and grow. I'd also like to thank
+José Valim and Evan Czaplicki for crafting such beautiful and fun languages.
+Lastly, thanks to Michael Hartl for setting the standard for technical writing
+with The Ruby on Rails Tutorial, and Bret Victor for inspiring all of us with
+his visions of the future.
 
 ## Who Is This Book For?
 
-This book is written for web developers that have _some_ experience, but want a
-**practical introduction to building a project with functional web programming
-languages like Elixir and Elm**. We won't assume any prior experience with
-Elixir and Elm, and consider it more likely that you've worked with languages
-like Ruby and JavaScript.
+This book is written for web developers that already have _some_ existing
+experience with web programming. The goal is for the book to be a practical
+introduction to building a project with functional web programming languages
+like Elixir and Elm.
 
-We'll try to stay focused on building our project. That means that even though
-we'll give some occasional background on why we're taking a particular
-approach, **we'll primarily skip the theory in an effort to gain insight into
-shipping a real project**.
+We won't assume any prior experience with Elixir and Elm, and consider it more
+likely that you've worked with languages like Ruby and JavaScript. But **keep
+in mind that we'll occasionally forego in-depth explanations and theory in an
+effort to gain insight into shipping a real project**.
 
-The material is also crafted in such a way that you can follow along simply by
-typing in the relevant code examples. So beginners can still learn a lot simply
-by following along and building the application, because sometimes in
-programming you need to be exposed to certain concepts and ideas before they
-become easy to understand. **The experience of building something will be fun
-and engaging, and a deeper understanding will follow with increased
-familiarity**.
+We'll walk through initial explanations to give you just enough information
+about the fundamentals and concepts so you can be productive. But there are
+other books that will provide considerably more depth when it comes to learning
+the languages themselves:
+
+- [Programming Elixir](https://pragprog.com/book/elixir/programming-elixir)
+  by Dave Thomas
+- [An Introduction to Elm](https://guide.elm-lang.org/) by Evan Czaplicki
+
+The material in this book is intended to be crafted in such a way that you can
+follow along simply by typing in the relevant code examples. So beginners can
+still learn a lot simply by following along and building the application,
+because sometimes in programming you need to be exposed to certain concepts and
+ideas before they become easy to understand. The experience of building
+something will be fun and engaging; and a deeper understanding will follow with
+increased familiarity and experience.
 
 ## Prerequisites
+
+In addition to the notes above about the intended audience for this book, here
+are some additional prerequisites to keep in mind:
 
 - Some experience with HTML and CSS.
 - Familiarity with the command line and a text editor.
 - Preferably previous experience with Git and GitHub.
+- Preferably some experience working with a web framework.
 
 ## Why Elixir and Elm?
 
