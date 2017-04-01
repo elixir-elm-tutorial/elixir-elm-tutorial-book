@@ -167,18 +167,20 @@ $ mix phx.server
 [info] Running Platform.Web.Endpoint with Cowboy using http://0.0.0.0:4000
 ```
 
-![Phoenix Default Start Page](images/diving_in/phoenix.png)
+![Phoenix Default Start Page](images/diving_in/phoenix_start.png)
 
 At this point, you might be thinking to yourself, "Whoa! That was quick and we
 already have a full back-end up and running!" Or you might be thinking, "Hmm.
-I'm not impressed yet." Either way, you're right. We're going to start adding
-features to our application, but it's worth taking a moment to appreciate just
-how much we already have going for us with just a few commands.
+I'm not impressed yet." We're going to start adding features to our
+application, but it's worth taking a moment to appreciate just how much we
+already have going for us with just a few commands.
 
-Feel free to take a look around at some of the great documentation available.
-Before we move on, let's stop the Phoenix web server. Go back to the Terminal
-where the server is running, and press Control + C on your keyboard twice to
-stop the server:
+Also, feel free to take a look at some of the great documentation listed on
+the default Phoenix start page. And before we move on, let's stop the Phoenix
+web server. Go back to the Terminal where the server is running, and press
+`Control + C` on your keyboard twice to stop the server. This is what the
+output will look like as you return from the running web server to a blank
+command-line:
 
 ```shell
 $ mix phx.server
