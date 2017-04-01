@@ -91,6 +91,7 @@ building scalable and maintainable applications.
   quickly. For web developers that have worked with Ruby on Rails, the concepts
   will be familiar and easy to pick up.
 - Elixir also inherits amazing features from other languages:
+
   - Ruby's readable syntax and philosophy of developer happiness.
   - Erlang's stability and scalability.
   - F#'s magical pipeline operator for data transformation.
