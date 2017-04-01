@@ -12,7 +12,7 @@ application up and running. If you haven't already set up your development
 environment with Elixir, Phoenix, and PostgreSQL, then check out the Appendix
 in the back of the book for more information.
 
-## Phoenix Version
+## Note on Phoenix Versions
 
 In this book, we're using the _latest_ version of Phoenix available. Make sure
 you're working with **Phoenix 1.3**, or the commands and files will all look
@@ -107,11 +107,10 @@ Before moving on, configure your database in config/dev.exs and run:
     $ mix ecto.create
 ```
 
-You'll notice that Phoenix displays a lot of helpful information here. First it
-shows all the files that were created (don't worry if it seems overwhelming at
-first; we're only going to need to start with a handful of these files). Then
-we see some information about how to configure our database and run the web
-server.
+Notice that Phoenix displays a lot of helpful information. First, the output
+shows all the files that were generated (don't worry if it seems overwhelming
+at first; we're only going to start with a handful of these files). Then we see
+some information about how to configure our database and run the web server.
 
 ## Configuring the Database
 
@@ -128,13 +127,14 @@ We can set up the database for our project by running the following command:
 $ mix ecto.create
 ```
 
-If we run into issues here, it means we'll have to configure our database in in
-the `config/dev.exs` file. Since this is the first time we're running a command
-with our new application, you'll see that it takes some time for the source
-code to compile. Elixir is based on the Erlang virtual machine, and needs to
-compile the source to bytecode before we can run our programs. Don't worry if
-this seems to take a while at first, you'll notice that subsequent commands
-will run much more quickly after this.
+If you run into any issues here, it likely means you'll have to configure the
+database in the `config/dev.exs` file.
+
+Since this is the first time we're running a command with our new application,
+we'll see that it takes time for the source code to compile. Elixir is based on
+the Erlang virtual machine, and needs to compile the source to bytecode before
+we can run our programs. Don't worry if this seems to take a while at first,
+because subsequent commands will run much more quickly after this.
 
 If the database creation was successful, we'll see the following message at the
 bottom:
