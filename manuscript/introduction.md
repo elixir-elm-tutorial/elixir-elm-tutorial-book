@@ -71,34 +71,30 @@ are some additional prerequisites to keep in mind:
 
 ### Elixir
 
-[**Elixir**](http://elixir-lang.org) is a dynamic, **functional** language
-designed for building scalable and maintainable applications.
+[Elixir](http://elixir-lang.org) is a dynamic, functional language designed for
+building scalable and maintainable applications.
 
-- Elixir is built on top of the Erlang virtual machine, the language inherits
-  _decades_ worth of **stability** and **scalability**.
-- **Concurrency** is at the heart of Elixir. Instead of getting faster
-  processors, computers these days are getting processors with more cores. What
-  does that mean? It means that we need to write our programs in such a way that
-  allows them to be distributed across multiple cores so that our programs can
-  outperform our competitors.
-
-  - For example, you can compare the latest
-    [13-inch Macbook Pro models](http://www.apple.com/shop/buy-mac/macbook-pro/13-inch)
-    with dual-core processors with
-    [15-inch Macbook Pro models](http://www.apple.com/shop/buy-mac/macbook-pro/15-inch)
-    with quad-core processors. Then, see how many cores you'll have access to
-    when you deploy your application to a
-    [multi-core web server](https://www.digitalocean.com/pricing/#droplet).
-
-- The **Phoenix web framework**. For web developers that have worked with Ruby
-  on Rails, the concepts will be very familiar and easy to pick up.
-
-- Elixir inherits **amazing features from other languages**.
-
-  - **Ruby**'s readable syntax and philosophy of developer 
-  - **Erlang**'s stability and scalability.
-  - **F#**'s magical pipeline operator for data transformation.
-  - **LISP**'s macros and metaprogramming.
+- Elixir is built on top of the Erlang virtual machine, and therefore inherits
+  _decades_ worth of stability and scalability.
+- Concurrency is at the heart of Elixir. Instead of getting faster processors,
+  computers these days are getting processors with more cores. That means that
+  we need to write our programs in such a way that allows them to be
+  distributed across multiple cores so that our programs can outperform our
+  competitors. As an example, you can compare the latest
+  [13-inch Macbook Pro models](http://www.apple.com/shop/buy-mac/macbook-pro/13-inch)
+  with dual-core processors with
+  [15-inch Macbook Pro models](http://www.apple.com/shop/buy-mac/macbook-pro/15-inch)
+  with quad-core processors. Then, see how many cores you'll have access to
+  when you deploy your application to a
+  [multi-core web server](https://www.digitalocean.com/pricing/#droplet).
+- The Phoenix web framework provides us with the ability to create new projects
+  quickly. For web developers that have worked with Ruby on Rails, the concepts
+  will be very familiar and easy to pick up.
+- Elixir also inherits amazing features from other languages:
+  - Ruby's readable syntax and philosophy of developer happiness.
+  - Erlang's stability and scalability.
+  - F#'s magical pipeline operator for data transformation.
+  - LISP's macros and metaprogramming.
 
 ### Elm
 
