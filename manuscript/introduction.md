@@ -89,7 +89,7 @@ building scalable and maintainable applications.
   [multi-core web server](https://www.digitalocean.com/pricing/#droplet).
 - The Phoenix web framework provides us with the ability to create new projects
   quickly. For web developers that have worked with Ruby on Rails, the concepts
-  will be very familiar and easy to pick up.
+  will be familiar and easy to pick up.
 - Elixir also inherits amazing features from other languages:
   - Ruby's readable syntax and philosophy of developer happiness.
   - Erlang's stability and scalability.
