@@ -200,35 +200,41 @@ $
 
 ## Our First Resource
 
-Since we want to build a video game platform, there are two main resources that
-we want to start out with:
+Since we are building a video game platform, there are two primary resources
+that we'll want to get started with:
 
 - Players
 - Games
 
-We're going to start out using something called a generator to keep moving
+We're going to start by using something called a generator to keep moving
 quickly. It's going to create a lot of the files we need to work with. Then,
-we'll talk more about how it all works later.
+we'll cover more about how it all works later.
 
 Let's generate the resource for our players with the following command:
 
 ```shell
-$ mix phx.gen.html Players Player players username:string score:integer
+$ mix phx.gen.html Accounts Player players username:string score:integer
 ```
 
-What we're doing here is creating players for our video game platform. We want
-to be able to use our browser to interact with the data, so we're starting out
-with an HTML resource. That means we wanted to use
-[phoenix.gen.html](https://hexdocs.pm/phoenix/Mix.Tasks.Phoenix.Gen.Html.html).
-Each player will have a **username**, and a **score**. We'll eventually extend
-the capabilities of our players with additional fields, but for now this will
-give us a good start to start creating a list of players.
+What we're doing here is creating players for our game platform. We want to be
+able to use our browser to interact with the data, so we're starting with
+`phx.gen.html` to generate an HTML resource.
+
+Because we're creating player accounts for our application, we use `Accounts`
+to provide a _context_ for our resource. Then we use `Player` for the module
+name, and `players` to indicate the pluralized form, which will also be used
+to create the database table.
+
+For the player fields, each player account will have a `username` (stored as a
+string), and a `score` (stored as an integer). We'll eventually extend the
+capabilities of our players with additional fields, but for now this will
+give us a good starting point to start creating a list of players.
 
 You'll see that the generator creates quite a few files for us, and once again
-gives us some helpful tips about what to do next:
+Phoenix gives us some helpful tips about what to do next:
 
 ```shell
-$ mix phx.gen.html Players Player players username:string score:integer
+$ platform mix phx.gen.html Accounts Player players username:string score:integer
 * creating lib/platform/web/controllers/player_controller.ex
 * creating lib/platform/web/templates/player/edit.html.eex
 * creating lib/platform/web/templates/player/form.html.eex
@@ -237,9 +243,10 @@ $ mix phx.gen.html Players Player players username:string score:integer
 * creating lib/platform/web/templates/player/show.html.eex
 * creating lib/platform/web/views/player_view.ex
 * creating test/web/controllers/player_controller_test.exs
-* creating test/players_test.exs
-* creating lib/platform/players/player.ex
-* creating priv/repo/migrations/20170304154047_create_players_player.exs
+* creating lib/platform/accounts/player.ex
+* creating priv/repo/migrations/20170401213307_create_accounts_player.exs
+* creating lib/platform/accounts/accounts.ex
+* creating test/accounts_test.exs
 
 Add the resource to your browser scope in lib/platform/web/router.ex:
 
