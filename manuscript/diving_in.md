@@ -1,36 +1,38 @@
 # Diving In
 
-Instead of simply _reading_ about Elixir and Elm, let's dive in and _experience_
-what these languages have to offer. In this chapter, we're going to avoid
-seeking an explanation behind the theory, and instead focus on running the
-commands and editing the files that will help us create our application. Then
-later we'll go back and find out what everything means. For now, just focus on
-following along and getting a glimpse of how to get an application up and
-running. If you haven't already set up your development environment with
-Elixir, Phoenix, and PostgreSQL, then check out the Appendix for more
-information.
+Instead of simply _reading_ about Elixir and Elm, let's dive in and
+_experience_ what these languages have to offer. In this chapter, we're going
+to avoid detailed explanations and theory in favor of quickly building the
+foundation for our project. We'll focus on running the right console commands
+and writing the code we'll need to start creating our application.
+
+Later in the book, we'll cover more about the fundamentals of Elixir, but for
+now let's focus on following along and getting a glimpse of how to get an
+application up and running. If you haven't already set up your development
+environment with Elixir, Phoenix, and PostgreSQL, then check out the Appendix
+in the back of the book for more information.
 
 ## Phoenix Version
 
 In this book, we're using the _latest_ version of Phoenix available. Make sure
-you're working with **Phoenix 1.3** or the commands and files will all look
+you're working with **Phoenix 1.3**, or the commands and files will all look
 different as you work through the instructions.
 
-To fetch the latest version of Phoenix, you can use the following command:
+To fetch the latest version of Phoenix, use the following command:
 
-```bash
+```shell
 $ mix archive.install https://github.com/phoenixframework/archives/raw/master/phx_new.ez
 ```
 
-If you run the `mix help` command you should be able to see some examples that
-say `mix phx...` instead of `mix phoenix...`.
+After installation, you should be able to run the `mix help` command and see
+examples that start with `mix phx` instead of `mix phoenix`.
 
 ## Creating the Platform
 
 The first step we need to take is to create the foundation for our application.
 To do that, let's open up our Terminal and run the following command:
 
-```bash
+```shell
 $ mix phx.new platform
 ```
 
@@ -40,7 +42,7 @@ It will ask the following question:
 
 Enter the letter `Y` and the following output will be displayed:
 
-```bash
+```shell
 $ mix phx.new platform
 * creating platform/config/config.exs
 * creating platform/config/dev.exs
@@ -115,13 +117,13 @@ server.
 Now that we've created the files for our Phoenix application, let's change into
 that directory:
 
-```bash
+```shell
 $ cd platform
 ```
 
 We can set up the database for our project by running the following command:
 
-```bash
+```shell
 $ mix ecto.create
 ```
 
@@ -136,7 +138,7 @@ will run much more quickly after this.
 If the database creation was successful, we'll see the following message at the
 bottom:
 
-```bash
+```shell
 $ mix ecto.create
 Compiling files (.ex) ...
 Generated platform app
@@ -151,7 +153,7 @@ it, and set up our database.
 Let's see what our new application looks like in the browser. To start the web
 server, we'll run the following command:
 
-```bash
+```shell
 $ mix phx.server
 ```
 
@@ -159,7 +161,7 @@ This will start a server and allow us to visit
 [`http://0.0.0.0:4000/`](http://0.0.0.0:4000/) to see our new
 application running live! Here is what the output will look like:
 
-```bash
+```shell
 $ mix phx.server
 [info] Running Platform.Web.Endpoint with Cowboy using http://0.0.0.0:4000
 ```
@@ -177,7 +179,7 @@ Before we move on, let's stop the Phoenix web server. Go back to the Terminal
 where the server is running, and press Control + C on your keyboard twice to
 stop the server:
 
-```bash
+```shell
 $ mix phx.server
 [info] Running Platform.Endpoint with Cowboy using http://0.0.0.0:4000
 [info] Compiled 6 files into 2 files, copied 3 in 2.1 sec
@@ -207,7 +209,7 @@ we'll talk more about how it all works later.
 
 Let's generate the resource for our players with the following command:
 
-```bash
+```shell
 $ mix phx.gen.html Players Player players username:string score:integer
 ```
 
@@ -222,7 +224,7 @@ give us a good start to start creating a list of players.
 You'll see that the generator creates quite a few files for us, and once again
 gives us some helpful tips about what to do next:
 
-```bash
+```shell
 $ mix phx.gen.html Players Player players username:string score:integer
 * creating lib/platform/web/controllers/player_controller.ex
 * creating lib/platform/web/templates/player/edit.html.eex
@@ -324,14 +326,14 @@ we made. The database will need to store our player data (with the
 **username** and **score** fields that we created), and to do that we'll need
 to run a migration. Go back to the Terminal, and run the following command:
 
-```bash
+```shell
 $ mix ecto.migrate
 ```
 
 This will create a new database table called "players_players", and if
 everything goes according to plan then we should see the following output:
 
-```bash
+```shell
 $ mix ecto.migrate
 17:23:02.349 [info]  == Running Platform.Repo.Migrations.CreatePlayer.change/0 forward
 17:23:02.349 [info]  create table players
@@ -342,7 +344,7 @@ $ mix ecto.migrate
 
 Let's start our server again and see our new player resource in action:
 
-```bash
+```shell
 mix phx.server
 ```
 
