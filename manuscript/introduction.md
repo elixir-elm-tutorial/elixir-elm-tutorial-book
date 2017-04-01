@@ -136,32 +136,30 @@ difficult on ourselves. Elixir and Elm are a chance at a fresh perspective.
 
 ## Technology Stack
 
-There are _many_ technologies involved in building and deploying a modern web
-application. We'll be using a straightforward stack of technologies that will
+There are _many_ technologies involved in building and deploying modern web
+applications. We'll be using a straightforward stack of technologies that will
 allow us the flexibility to scale our applications gracefully. Here's the short
 version of the technology stack:
 
 - Back-end: Elixir
 - Front-end: Elm
 
-These technologies are standing on the shoulders of giants, so here's a little
-more information about other technologies we'll also use while building our
+These technologies stand on the shoulders of giants, so here's a little more
+information about other technologies we'll also use while building our
 applications:
 
 - Back-end: Elixir and Phoenix
-- Front-end: Elm and the Elm Architecture and JavaScript
+- Front-end: Elm, the Elm Architecture, and JavaScript
 - Version Control: Git and GitHub
-- Data: PostgreSQL and JSON
+- Data: Ecto, PostgreSQL, and JSON
 - Deployment: Heroku
 
 ## Functional Programming
 
-If you're coming from a background in working with **Ruby on Rails** or
-**JavaScript** web frameworks, then you'll have a great head start in being
-able to grasp the content and move smoothly through the book. Something to keep
-in mind is that **Elixir** and **Elm** are _functional_ languages. If you're
-coming from an _object-oriented_ background, you may find some of the
-programmatic approaches to be unfamiliar at first, but that initial discomfort
-will pay off well in the long run as you learn to solve problems in an elegant
-and pleasing manner.
-
+If you're coming from a background in working with Ruby on Rails or JavaScript
+web frameworks, then you'll have a head start in being able to grasp the
+content and move smoothly through the book. Something to keep in mind is that
+Elixir and Elm are _functional_ languages. If you're coming from an
+_object-oriented_ background, you may find some of the programmatic approaches
+to be unfamiliar at first, but that initial discomfort will pay off well in the
+long run as you learn to solve problems in an elegant functional manner.
