@@ -21,11 +21,12 @@ different as you work through the instructions.
 To fetch the latest version of Phoenix, use the following command:
 
 ```shell
-$ mix archive.install https://github.com/phoenixframework/archives/raw/master/phx_new.ez
+$ mix archive.install \
+https://github.com/phoenixframework/archives/raw/master/phx_new.ez
 ```
 
-After installation, you should be able to run the `mix help` command and see
-examples that start with `mix phx` instead of `mix phoenix`.
+After installation, run the `mix help` command and verify that some examples
+start with `mix phx` instead of `mix phoenix`.
 
 ## Creating the Platform
 
