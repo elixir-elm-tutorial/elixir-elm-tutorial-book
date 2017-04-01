@@ -164,3 +164,11 @@ Elixir and Elm are _functional_ languages. If you're coming from an
 _object-oriented_ background, you may find some of the programmatic approaches
 to be unfamiliar at first, but the initial discomfort will pay off well in the
 long run as you learn to solve problems in an elegant functional manner.
+
+## Summary
+
+In this introduction, we touched briefly on the application we'll be building
+and some of the reasoning for choosing Elixir and Elm as languages. But the
+fun part is _creating_ with these technologies and _experiencing_ the benefits
+first-hand, so let's dive in and start building our application in the next
+chapter.
