@@ -98,41 +98,41 @@ building scalable and maintainable applications.
 
 ### Elm
 
-[**Elm**](http://elm-lang.org) is an exciting new **functional** language that
-is still evolving. It's the fastest, most reliable front-end web programming
-language currently available.
+[Elm](http://elm-lang.org) is an exciting new functional language that is still
+evolving. It's the fastest, most reliable front-end web programming language
+currently available.
 
-- [Presentation](https://prezi.com/wofdk8e6uuy3/getting-to-know-elm)
-- Elm is a **compiled, functional** language.
-- Elm is **blazingly fast**.
-- **No runtime errors**. What does that mean? It means the language was
-  designed in such a way that makes a certain class of errors impossible. In
-  languages like Ruby and JavaScript, it's common to program in a way that
-  incorporates many bugs into our programs.
-- The **Elm compiler** can help guide you to writing solid code. **Error
-  messages** are extremely helpful.
-- The **elm-format** tool can also help for those of us that are new to the
-  syntax.
-- **Confidence**. Given the benefits mentioned above, you'll have the
-  confidence that your code really works.
-- **Maintainability**. Refactoring is a dream in languages like Elm, and you'll
-  find yourself surprised at how easy a significant refactor can feel after
-  coming from other languages.
+- Elm is a compiled, functional language.
+- Elm is _blazingly_ fast.
+- Elm programs are free from runtime errors. That means the language was
+  designed in such a way that makes a certain class of errors impossible, which
+  provides us with an ability to make guarantees about how our programs work.
+- The Elm compiler can be a helpful guide towards writing high quality code,
+  and the error messages provided are extremely helpful.
+- The elm-format tool helps with writing consistent code that's easier to read,
+  write, and maintain. While optional, this tool is _highly_ recommended for
+  Elm beginners because you can configure it to automatically format code when
+  you save a file in your editor.
+- With all the features that Elm has to offer, the net result is confidence.
+  As developers, we can be more confident that our code is performing the way
+  we intended, and that our programs will function properly for our users.
+- Elm code is maintainable. Refactoring is a dream, and you'll find yourself
+  surprised at how easy a significant refactor can feel after coming from other
+  languages.
 
 ### Elixir and Elm?
 
-**Elixir and Elm are young, functional programming languages** that are
-optimized for **your happiness as a developer**. They offer a programming
-experience that will make it fun to develop applications, and down the line
-you'll be thankful because your **applications will be easy to extend and
-maintain**.
+**Elixir and Elm are young, functional programming languages that are optimized
+for your happiness as a developer. They offer a programming experience that
+will make it fun to develop applications, and over time those applications will
+be easy to extend and maintain.**
 
 The primary reason to pick up new languages like Elixir and Elm is that it will
-afford you with **an opportunity to acquire new ways of thinking**. Many great
+afford you with an opportunity to acquire new ways of thinking. Many great
 lessons have been learned in the field of programming over the past several
-decades, and unfortunately many of us are still working in the dark on a daily
-basis. **We ignore history at a great cost**, and all too often make things
-difficult on ourselves. **Elixir and Elm are a chance at a fresh perspective**.
+decades, and unfortunately many developers are still working in the dark on a
+daily basis. We ignore history at a great cost, and all too often make things
+difficult on ourselves. Elixir and Elm are a chance at a fresh perspective.
 
 ## Technology Stack
 
