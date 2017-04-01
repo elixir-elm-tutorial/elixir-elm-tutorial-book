@@ -259,13 +259,13 @@ Remember to update your repository by running migrations:
 
 ## Routing
 
-Don't worry too much about all those files just yet, but the information at the
+Don't worry too much about all those files yet, but the information at the
 bottom is important. In order to configure our application to work with our new
-players, we'll need to add them to the **router**, and then run a **migration**
-to update the database with our new data.
+player accounts, we'll need to add them to the router first, and then run a
+migration to update the database with a new `accounts_players` table.
 
 Phoenix makes things easy on us with the helpful Terminal notes. Let's go ahead
-and follow along. Let's open the `lib/platform/web/router.ex` file and see what
+and follow along. Open the `lib/platform/web/router.ex` file and see what
 it looks like:
 
 ```elixir
@@ -299,11 +299,11 @@ end
 
 The Phoenix router comes with two separate "pipelines" by default. One of them
 is for HTML (which we're going to use now), and the other one is for JSON
-(which we'll also use soon). And we can even see that the "scope" is already
+(which we'll also use later). And we can even see that the "scope" is already
 set up for us to access the HTML with our browser. That's how we were able to
-load up the `http://0.0.0.0:4000` URL and see the initial starter page.
-Don't worry if it seems confusing at first. All you need to know is that this
-block is where we'll focus for now:
+load the `http://0.0.0.0:4000` URL and see the initial starter page. Don't
+worry if it seems confusing at first. All you need to know is that this block
+of code is where we'll focus for now:
 
 ```elixir
 scope "/", Platform.Web do
