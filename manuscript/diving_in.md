@@ -330,24 +330,24 @@ soon be able to start creating the players for our video game platform.
 
 ## Running a Migration
 
-Our application has all the information it needs to render the player resource
+Our application has all the information it needs to render the players resource
 that we created, but we still need to tell the database about the changes that
-we made. The database will need to store our player data (with the
-**username** and **score** fields that we created), and to do that we'll need
-to run a migration. Go back to the Terminal, and run the following command:
+we made. The database will need to store our player data (with the `username`
+and `score` fields), and to do that we'll need to run a migration. Go back to
+the Terminal, and run the following command:
 
 ```shell
 $ mix ecto.migrate
 ```
 
-This will create a new database table called "players_players", and if
-everything goes according to plan then we should see the following output:
+This will create a new database table called "accounts_players". If everything
+goes according to plan, then we should see the following output:
 
 ```shell
 $ mix ecto.migrate
-17:23:02.349 [info]  == Running Platform.Repo.Migrations.CreatePlayer.change/0 forward
-17:23:02.349 [info]  create table players
-17:23:02.364 [info]  == Migrated in 0.0s
+17:44:53.658 [info]  == Running Platform.Repo.Migrations.CreatePlatform.Accounts.Player.change/0 forward
+17:44:53.658 [info]  create table accounts_players
+17:44:53.682 [info]  == Migrated in 0.0s
 ```
 
 ## Creating Players
@@ -365,13 +365,12 @@ see the following:
 ![Empty List of Players on Player Index Page](images/diving_in/players.png)
 
 This is excellent! We can now add players to our platform using a web browser.
-Click the **New Player** button and try creating a couple of new players on the
-new player page
-([http://0.0.0.0:4000/players/new](http://0.0.0.0:4000/players/new)).
+Click the **New Player** button and try creating a couple of players on the
+[http://0.0.0.0:4000/players/new](http://0.0.0.0:4000/players/new) page.
 
 ![New Player Page](images/diving_in/new_player.png)
 
-And now we have some data to work with on our players page:
+Now we have some data to work with on our players page:
 
 ![List of Players with Sample Data](images/diving_in/list_players.png)
 
