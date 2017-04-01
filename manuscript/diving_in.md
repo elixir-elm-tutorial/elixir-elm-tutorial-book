@@ -107,7 +107,7 @@ Before moving on, configure your database in config/dev.exs and run:
     $ mix ecto.create
 ```
 
-Notice that Phoenix displays a lot of helpful information. First, the output
+Notice that Phoenix displays _a lot_ of helpful information. First, the output
 shows all the files that were generated (don't worry if it seems overwhelming
 at first; we're only going to start with a handful of these files). Then we see
 some information about how to configure our database and run the web server.
@@ -152,14 +152,14 @@ it, and set up our database.
 ## Running the Server
 
 Let's see what our new application looks like in the browser. To start the web
-server, we'll run the following command:
+server, run the following command:
 
 ```shell
 $ mix phx.server
 ```
 
 This will start a server and allow us to visit
-[`http://0.0.0.0:4000/`](http://0.0.0.0:4000/) to see our new
+[`http://0.0.0.0:4000`](http://0.0.0.0:4000) in a browser to see our new
 application running live! Here is what the output will look like:
 
 ```shell
