@@ -444,36 +444,40 @@ look:
 
 This should look familiar in that it's mostly comprised of standard HTML code.
 It's the HTML that we're seeing when we load
-[`http://0.0.0.0:4000`](http://0.0.0.0:4000). In fact, let's delete all this
-code and create a simple link to our `/players` page. So we'll remove _all_ the
-existing code in the `lib/platform/web/templates/page/index.html.eex` file, and
+[`http://0.0.0.0:4000`](http://0.0.0.0:4000). Let's delete this code and create
+a couple of simple links to our player pages. First, remove _all_ the existing
+code in the `lib/platform/web/templates/page/index.html.eex` file, and then
 replace it with the following:
 
-```embedded_elixir
-<a href="/players">List of Players</a>
+```html
+<a class="btn btn-success" href="/players/new">Create Player Account</a>
+<a class="btn btn-info" href="/players">List All Players</a>
 ```
 
 Save the file and let's go back to the browser to see the changes (make sure
-the Phoenix web server is still running) at
+the Phoenix web server is still running or restart the server with
+`mix phx.server`) at
 [`http://0.0.0.0:4000`](http://0.0.0.0:4000):
 
 ![Home Page with List Players Link](images/diving_in/updated_home_page.png)
 
 Excellent! Phoenix comes with a **Live Reload** feature that automatically
 refreshes our application in the browser. If the Phoenix server was still
-running, then the home page was automatically regenerated and should now show
-the link to the list of players. Try out the link and it should work properly
-to send you to the `/players` page.
+running, then the home page was automatically regenerated and should now
+display the buttons that we created. Try them out and they should help with
+navigating to the player pages in our application.
 
 ## Writing Elixir Code
 
-Lastly, we might as well convert our link to use Elixir code instead of using
-the simple HTML version. It'll work the same way, but this will give us a chance
-to use a Phoenix feature instead of writing HTML.
+Lastly, let's get some experience with writing Elixir code in our templates
+by converting our buttons to use embedded Elixir code instead of simple HTML.
+The page will work the same way, but this will give us a chance to use a
+Phoenix feature instead of writing HTML.
 
 Phoenix gives us a
 [link](https://hexdocs.pm/phoenix_html/Phoenix.HTML.Link.html#link/2) function
-that we can use. You can see a handful of examples in the documentation.
+that we can use, and we can see a handful of examples provided in the
+documentation.
 
 Since we're working with a `.eex` file, that means we can embed Elixir code by
 surrounding it with tags like this: `<%= ... %>`. The Elixir code that we put
@@ -484,39 +488,42 @@ to display some results. In this example, we use the `IO` module with the
 `inspect` function, and we pass it the string `"Hello World!"`:
 
 ```embedded_elixir
-<a href="/players">List of Players</a>
-<%= IO.inspect "Hello" %>
+<a class="btn btn-success" href="/players/new">Create Player Account</a>
+<a class="btn btn-info" href="/players">List All Players</a>
+<%= IO.inspect "Hello World!" %>
 ```
 
-And we can see the results in our browser:
+Let's take a look at the results in our browser:
 
 ![Embedded Elixir](images/diving_in/embedded_elixir.png)
 
-We can do the same thing to embed a Phoenix link on our page. We won't need to
-explicitly mention the module (`Phoenix.HTML.Link`) because we already have some
-helpful Phoenix functions available to us here in this context. But we can
-recreate our HTML link with the following code by passing the link text, the
-location, and some extra classes for Bootstrap to make it look nice:
+We can do something similar to embed a Phoenix link on our page. We won't need
+to explicitly mention the module (`Phoenix.HTML.Link`), because we already have
+access to some helpful Phoenix functions in this context. We can recreate
+our HTML link with the following code by passing the link text, the location,
+and some extra classes for Bootstrap (which comes preloaded with Phoenix by
+default) to make it look nice:
 
 ```embedded_elixir
-<%= link("List of Players", to: "/players", class: "btn btn-primary") %>
+<%= link("Create Player Account", to: "/players/new", class: "btn btn-success") %>
+<%= link("List All Players", to: "/players", class: "btn btn-info") %>
 ```
 
-Our link should still work the same way (try it out!):
+We can verify that our links should still work the same way:
 
-![Link to Players Page Using Embedded Elixir](images/diving_in/elixir_link.png)
+![Link to Players Page Using Embedded Elixir](images/diving_in/updated_home_page.png)
 
 ## Summary
 
 In this chapter, we managed to cover _a lot_ of ground. We were able to create
 the entire foundation for our application with a Phoenix back-end. We leveraged
-the Phoenix generators to create our Players resource. We also started getting
+the Phoenix generators to create our players resource. We also started getting
 an idea of what the Phoenix folder structure looks like, and started editing a
 couple of files here and there. We learned a little about routing and worked
 with our database.
 
-It's great because we've gotten an introductory look at how to create an Elixir
-Phoenix application. And we even created a couple of records in our application
+We've gotten an introductory look at how to create a full Elixir and Phoenix
+web platform, and we even created a couple of player records in our application
 that we can use as we continue building.
 
 But we moved very quickly through these steps, and we don't have a solid
