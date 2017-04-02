@@ -362,34 +362,41 @@ Now we can access
 [http://0.0.0.0:4000/players](http://0.0.0.0:4000/players) and we should
 see the following:
 
-![Empty List of Players on Player Index Page](images/diving_in/players.png)
+![Empty List of Players on Player Index Page](images/diving_in/empty_players_list.png)
 
 This is excellent! We can now add players to our platform using a web browser.
-Click the **New Player** button and try creating a couple of players on the
-[http://0.0.0.0:4000/players/new](http://0.0.0.0:4000/players/new) page.
+Click the **New Player** link at the bottom and try creating a player on the
+[`http://0.0.0.0:4000/players/new`](http://0.0.0.0:4000/players/new) page.
 
 ![New Player Page](images/diving_in/new_player.png)
 
-Now we have some data to work with on our players page:
+When we successfully create a new player account, we'll see the "show" page
+with the individual player's data (notice the player `id` number is displayed
+in the URL too):
 
-![List of Players with Sample Data](images/diving_in/list_players.png)
+![Player Show Page](images/diving_in/new_player_created.png)
+
+Feel free to create some more player accounts so we have some data to work with
+on our players page:
+
+![Players Index with Sample Data](images/diving_in/list_players.png)
 
 ## Updating our Home Page
 
-We have a working players resource with pages to list all players (index), see
-a single player (show), update a player (edit), and delete
+We have a working players resource with an index of all the players, a show
+page to view a single player, an edit page to update a single player, and the
+ability to delete players. But when we go back to our home page at
+[`http://0.0.0.0:4000`](http://0.0.0.0:4000), these pages aren't accessible.
+Our users wouldn't know that they need to visit the `/players/new` page to
+create their account. And at some point we will only want our users to be able
+to create their accounts without being able to edit or delete others. To get
+started, let's figure out where the HTML code is coming from for our home page.
 
-. But when we go back to
-[`http://0.0.0.0:4000`](http://0.0.0.0:4000), we see that it's not
-listed anywhere as a link. Our users wouldn't know that they need to visit the
-`/players/new` page  Let's figure out where the HTML code is coming from
-for our home page.
-
-Inside the `lib/platform/web` folder, there's a `templates` folder. This is
-where we put the HTML code that we want to render in the browser. And instead of
- standard `.html` files, we'll see that the files end in the `.html.eex`
-extension. That means we can enter standard HTML code in there, but we can also
-embed Elixir code too.
+Inside the `lib/platform/web` folder, there is a `templates` folder. This is
+where we put the HTML code that we want to render in the browser. And instead
+of standard `.html` files, we'll see that the files have a `.html.eex`
+extension. That means we can write standard HTML code, but we can also embed
+Elixir code too.
 
 Let's open the `lib/platform/web/templates/page/index.html.eex` file and take a
 look:
