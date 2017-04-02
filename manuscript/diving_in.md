@@ -376,9 +376,13 @@ Now we have some data to work with on our players page:
 
 ## Updating our Home Page
 
-We have a working `/players` page. But when we go back to
+We have a working players resource with pages to list all players (index), see
+a single player (show), update a player (edit), and delete
+
+. But when we go back to
 [`http://0.0.0.0:4000`](http://0.0.0.0:4000), we see that it's not
-listed anywhere as a link. Let's figure out where the HTML code is coming from
+listed anywhere as a link. Our users wouldn't know that they need to visit the
+`/players/new` page  Let's figure out where the HTML code is coming from
 for our home page.
 
 Inside the `lib/platform/web` folder, there's a `templates` folder. This is
