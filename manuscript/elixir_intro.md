@@ -217,7 +217,7 @@ mix test
 
 Since we no longer have our `hello` function, it's not surprising that our
 test failed, but the reason the test failed is actually because of the example
-in our documentation!
+in our documentation (which is called a doctest).
 
 ```shell
 $ mix test
