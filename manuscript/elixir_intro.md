@@ -67,11 +67,12 @@ might potentially have a lot of experience with writing tests, or perhaps even
 none.
 
 If you haven't written tests before, the basic idea is that tests give us a way
-to feel some confidence that our code is actually working as expected. We write
-our expectations (or "assertions"), and it gives us a quick way to check that
-the code we're writing works (and doesn't break other code too). We'll delve
-deeper into testing with our Phoenix app, but for now let's just try it out. Run
-the `mix test` command inside the `temporary` folder:
+to feel confidence that our code is actually working as expected. We write our
+expectations (or "assertions"), and they give us a quick way to check that the
+code we're writing works (and doesn't break other code too). We'll delve deeper
+into testing with our Phoenix app, but for now let's just try it out.
+
+Run the `mix test` command inside the `temporary` folder:
 
 ```shell
 $ mix test
@@ -94,8 +95,8 @@ Randomized with seed 795854
 ## Elixir Compilation
 
 Here's where we'll start to see some key features of Elixir. First, we can see
-that Elixir is a *compiled* language. The first time we run our code after we've
-made changes, Elixir needs to compile it to Erlang bytecode. This can be really
+that Elixir is a _compiled_ language. The first time we run our code after
+making changes, Elixir needs to compile it to Erlang bytecode. This can be really
 helpful because it means we'll catch errors early instead of having to debug our
 app while we're using it.
 
@@ -151,7 +152,8 @@ defmodule Temporary do
 end
 ```
 
-If we ignore the documentation for now, we'll see that we have one **function**:
+If we ignore the documentation for now, we'll see that we have one
+**function**:
 
 ```elixir
 def hello do
@@ -159,7 +161,7 @@ def hello do
 end
 ```
 
-And _inside_ that function, we have our **return value**:
+And inside that function, we have our **return value**:
 
 ```elixir
 :world
