@@ -53,10 +53,7 @@ look at the `http://0.0.0.0:4000/` URL, you can think of that trailing slash as
 the default `/` route.
 
 Our test is expecting that the text "Welcome to Phoenix!" appears somewhere on
-the page, but remember that we replaced the default Phoenix page. And all that
-default page contains right now is a link to the `/players` page:
-
-![Home Page](images/diving_in/elixir_link.png)
+the page, but remember that we replaced the default Phoenix page.
 
 Keep in mind that we don't have to have a full understanding of everything going
 on in the tests yet, we just want to get back to where everything is passing. In
