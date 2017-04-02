@@ -146,8 +146,8 @@ Generated platform app
 The database for Platform.Repo has been created
 ```
 
-Nice! That means we have successfully created our Phoenix application, compiled
-it, and set up our database.
+We have successfully created our Phoenix application, compiled it, and set up
+our database.
 
 ## Running the Server
 
@@ -160,7 +160,7 @@ $ mix phx.server
 
 This will start a server and allow us to visit
 [`http://0.0.0.0:4000`](http://0.0.0.0:4000) in a browser to see our new
-application running live! Here is what the output will look like:
+application running live. Here is what the output will look like:
 
 ```shell
 $ mix phx.server
@@ -364,7 +364,7 @@ see the following:
 
 ![Empty List of Players on Player Index Page](images/diving_in/empty_players_list.png)
 
-This is excellent! We can now add players to our platform using a web browser.
+This is excellent. We can now add players to our platform using a web browser.
 Click the **New Player** link at the bottom and try creating a player on the
 [`http://0.0.0.0:4000/players/new`](http://0.0.0.0:4000/players/new) page.
 
@@ -461,11 +461,11 @@ the Phoenix web server is still running or restart the server with
 
 ![Home Page with List Players Link](images/diving_in/updated_home_page.png)
 
-Excellent! Phoenix comes with a **Live Reload** feature that automatically
-refreshes our application in the browser. If the Phoenix server was still
-running, then the home page was automatically regenerated and should now
-display the buttons that we created. Try them out and they should help with
-navigating to the player pages in our application.
+Phoenix comes with a **Live Reload** feature that automatically refreshes our
+application in the browser. If the Phoenix server was still running, then the
+home page was automatically regenerated and should now display the buttons that
+we created. Try them out and they should help with navigating to the player
+pages in our application.
 
 ## Writing Elixir Code
 
