@@ -345,9 +345,7 @@ call the `add` function from the `Temporary` module and see the result:
 
 ```elixir
 $ iex -S mix
-Erlang/OTP 19 [erts-8.2] [source] [64-bit] [smp:4:4] [async-threads:10] [hipe] [kernel-poll:false]
-
-Interactive Elixir (1.4.1) - press Ctrl+C to exit (type h() ENTER for help)
+Interactive Elixir - press Ctrl+C to exit (type h() ENTER for help)
 iex(1)> Temporary.add(1, 1)
 2
 ```
@@ -359,15 +357,15 @@ iex(2)> Temporary.add(1.5, 1.5)
 3.0
 ```
 
-Success! Everything works as expected in the tests, and we have an interactive
-way of checking our code too.
+Everything works as expected in the tests, and now we have an interactive way
+of checking our code too.
 
 ## The Pipe Operator
 
 Our third `test` case uses a common pattern seen in programming. We break up our
 code into small chunks, and we assign the values to variables. This has a great
-benefit of being able to name things in an obvious ways, but Elixir has an
-alternative method that really helps rethink how we write our code!
+benefit of being able to name things in obvious ways, but Elixir has an
+alternative method that really helps rethink the way we write our code.
 
 The idea behind the "pipe operator" (`|>`) is that it enables us to think about
 our functions in terms of data transformation. So instead of using variables,
@@ -384,8 +382,8 @@ end
 ```
 
 This example was intentionally written with extraneous variables that aren't
-particularly necessary. Let's use the pipe operator syntax, keeping in mind that
-the code is still accomplishing the same thing:
+particularly necessary. Let's use the pipe operator syntax, keeping in mind
+that the code is still accomplishing the same thing:
 
 ```elixir
 test "the add functions returns a number" do
@@ -395,8 +393,8 @@ test "the add functions returns a number" do
 end
 ```
 
-Whoa. So what's happening here? Instead of using variables, we're evaluating
-a result and then using the `|>` to pass it along as the argument to the next
+Whoa. What's happening here? Instead of using variables, we're evaluating a
+result and then using the `|>` to pass it along as the argument to the next
 function.
 
 It also enables us to take the data and "pipe it through" other functions. For
@@ -462,12 +460,12 @@ end
 
 ## Function Arity
 
-So far in this book we've just referred to functions like the `add` function as
+In this book, we've referred to functions like the `add` function as simply
 `add`. But functions in Elixir are often referred to in terms of their "arity".
 
-The arity of a function is simply the number of arguments it takes. In our
-examples above, the `add` function takes two arguments, so it would be referred
-to as `add/2`. The `is_number` function only takes a single argument, so we
+The arity of a function is the number of arguments it takes. In our examples
+above, the `add` function takes two arguments, so it would be referred to as
+`add/2`. The `is_number` function only takes a single argument, so we
 would refer to it as `is_number/1`. For the rest of the book, we'll try to be
 consistent about referring to functions with their arity included, because the
 arity is of particular importance in the Elixir language.
@@ -487,16 +485,15 @@ def function_name(arguments) do
 end
 ```
 
-When we're dealing with super simple functions like `add/2`, we can make our
-code really concise and readable by using the shorthand function syntax:
+When we're dealing with small, simple functions like `add/2`, we can make our
+code more concise and readable by using the shorthand function syntax:
 
 ```elixir
 def function_name(arguments), do: ...
 ```
 
-Note that there are extra `,` and `:` characters, but this has enabled us to
-remove the `end` keyword, and move our entire function definition to a single
-line.
+Note that there are extra `,` and `:` characters, but this enables us to remove
+the `end` keyword and move our entire function definition to a single line.
 
 Here's our `add/2` function as a single line (you can run `mix test` again to
 verify that it still works):
@@ -507,7 +504,7 @@ def add(x, y), do: x + y
 
 ## Pattern Matching
 
-The reason for introducing shorthand function syntax here, is that it gives us
+The reason for introducing shorthand function syntax here is that it gives us
 a really obvious way to see one of Elixir's most powerful features in action:
 pattern matching.
 
