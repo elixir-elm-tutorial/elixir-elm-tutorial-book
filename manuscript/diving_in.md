@@ -524,10 +524,8 @@ with our database.
 
 We've gotten an introductory look at how to create a full Elixir and Phoenix
 web platform, and we even created a couple of player records in our application
-that we can use as we continue building.
-
-But we moved very quickly through these steps, and we don't have a solid
-understanding of how all these pieces fit together yet. In the next chapter,
-we'll delve into some Elixir basics. And instead of using generators like we
-did in this chapter, we'll manually create some features in our application so
-we can continue increasing our experience.
+that we can use as we continue building. But we moved quickly through these
+steps, and we don't have a solid understanding of how all these pieces fit
+together yet. In the next chapter, we'll delve into some Elixir basics. And
+instead of using generators like we did in this chapter, we'll manually create
+some features in our application so we can continue increasing our experience.
