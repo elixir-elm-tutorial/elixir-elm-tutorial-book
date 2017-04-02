@@ -1,16 +1,16 @@
 # Elixir Intro
 
-In the last chapter, we created a full Phoenix application. By default, Phoenix
-applications contain a lot of Elixir code. But if we're just getting started
-with Elixir, we should probably take a look at some simple examples and get a
-better idea of how to work with the tools.
+In the last chapter, we created a full Phoenix back-end platform. By default,
+Phoenix applications contain a lot of Elixir code. But if we're just getting
+started with the Elixir language, we should probably take a look at some simple
+Elixir examples and get a better idea of how to work with the tools.
 
 ## Creating an Elixir Project
 
-Let's create a temporary Elixir project. We'll use the same `mix` tool that we
+Let's create a small temporary project. We'll use the same `mix` tool that we
 used in the last chapter when we created our Phoenix application, but this time
-we're just creating a small Elixir project called `temporary`. Run the following
-command in the terminal:
+we're just creating a small Elixir project called `temporary`. Run the
+following command in the terminal:
 
 ```shell
 $ mix new temporary
@@ -55,10 +55,10 @@ essentially the same:
 ![Elixir Folder Structure](images/elixir_intro/elixir_folder_structure.png)
 
 The `temporary` project is a lot simpler, but shares a lot in common with how
-Phoenix applications work. The `config` folder contains (wait for it...)
-configuration settings, the `lib` folder is where we'll write most of our Elixir
-code, and the `test` folder contains the tests that will let us know our
-application is working as intended.
+Phoenix applications work. The `config` folder contains configuration settings,
+the `lib` folder is where we'll write most of our Elixir code, and the `test`
+folder contains the tests that will let us know our application is working as
+intended.
 
 ## Elixir Testing
 
