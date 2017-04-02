@@ -510,25 +510,25 @@ pattern matching.
 
 Pattern matching can be really difficult to comprehend at first, so be gentle
 on yourself if it takes some time to understand. It's one of those things that
-needs to be seen and experienced a handful of times before it starts to sink in.
+needs to be seen and experienced a couple of times before it starts to sink in.
 
 Elixir allows us to create multiple "clauses" of our functions. That means we
 can create a new clause of our `add/2` function, and Elixir will use pattern
 matching to determine which clause actually gets used when the function is
-called. I know it sounds confusing, so let's see an example.
+called. It sounds confusing, so let's see an example.
 
-When we add `0` to a number, we know that the result is actually just the
-number. So `0 + 1` should return a result of `1`. When we use the `add/2`
-function, that would look like this:
+When we add `0` to a number, the result is actually just the number itself. So
+`0 + 1` should return a result of `1`. When we use the `add/2` function, that
+would look like this:
 
 ```elixir
 iex> Temporary.add(0, 1)
 1
 ```
 
-But that basically means that whenever we pass `0` as an argument to our
-function, we really don't need to perform any addition. That means we can add
-a new clause of our function that handles cases where the first argument is `0`:
+But that means whenever we pass `0` as an argument to our function, we don't
+really need to perform any addition. That means we can add a new clause of our
+function that handles cases where the first argument is `0`:
 
 ```elixir
 def add(0, y), do: y
@@ -543,8 +543,7 @@ def add(x, 0), do: x
 def add(x, y), do: x + y
 ```
 
-And for that matter, we can add another clause that "matches" for when both
-arguments are `0`s:
+We can even add another clause that "matches" for when both arguments are `0`s:
 
 ```elixir
 def add(0, 0), do: 0
@@ -605,14 +604,14 @@ def add(x, y) when is_number(x) and is_number(y), do: x + y
 ```
 
 Functions like `is_number/1` can be really helpful to check the types of values
-we're working with. One helpful tip is to see which ones are available using
-`iex`. Inside `iex`, type `is_` and then hit the TAB key on your keyboard and
-it should display the different checks that are available:
+we're working with. One helpful tip is to find similar functions available to
+us using `iex`. Inside `iex`, type `is_` and then hit the TAB key on your
+keyboard and it will display the different checks that are available:
 
 ```elixir
 $ iex
 iex(1)> is_
-# Press TAB key
+# Press TAB key after is_
 is_atom/1         is_binary/1       is_bitstring/1    is_boolean/1
 is_float/1        is_function/1     is_function/2     is_integer/1
 is_list/1         is_map/1          is_nil/1          is_number/1
@@ -627,14 +626,14 @@ see that Phoenix code is really just Elixir code. Without some background in
 Elixir, it can occasionally be difficult to understand what's going on.
 
 This was not meant as exhaustive introduction to Elixir. There are many more
-concepts, and there are several books available that give a more full
-introduction to the language. But we're going to keep moving in this book,
-because our goal is to build a practical real-world application, and we'll learn
-what we need along the way But be sure to check out these free resources if you
-want to get a little more Elixir experience before continuing:
+concepts, and there are several books available that give a full introduction
+to the language. But we're going to keep moving in this book, because our goal
+is to build a practical real-world application, and we'll learn what we need
+along the way. But check out these free resources if you want to get a little
+more Elixir experience before continuing:
 
 - [Elixir Getting Started Guide](http://elixir-lang.org/getting-started/introduction.html)
 - [Try Elixir Course](https://www.codeschool.com/courses/try-elixir)
 
-Feel free to delete the `temporary` project (or you can keep it around for
-reference). Let's keep moving and building our application!
+Feel free to delete the `temporary` project, and in the next chapter we'll
+continue working towards building our platform application.
