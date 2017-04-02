@@ -310,17 +310,18 @@ defmodule TemporaryTest do
 end
 ```
 
-Notice that the code still takes the same general format, where we have a module
-defined at the top that encapsulates our test code. We also see that we're using
-the default [`ExUnit`](https://hexdocs.pm/ex_unit/ExUnit.html) library to write
-our tests. And we also see the `doctest Temporary` line, which is how the tests
-knew to pick up the examples we were writing in our documentation.
+Note that the test code still takes the same general format, where we have a
+module defined at the top that encapsulates our test code. We also see that
+we're using the default [`ExUnit`](https://hexdocs.pm/ex_unit/ExUnit.html)
+library to write our tests. And then there is the `doctest Temporary` line,
+which is how the tests knew to run the examples we were writing in our
+documentation.
 
-The three `test` cases are basically just showing examples of how we can call
-our function with some example numbers and make sure that the result is correct.
-So passing `1` and `1` as arguments to our `add` function should clearly return
-a result of `2`. There are other [assertions](https://hexdocs.pm/ex_unit/ExUnit.Assertions.html) that `ExUnit`
-provides for us, but we'll stick with `assert` for now to ensure that we're
+The three `test` cases show basic examples of how we can call our function with
+some example numbers and make sure that the result is correct. So passing `1`
+and `1` as arguments to our `add` function should return a result of `2`. There
+are other [assertions](https://hexdocs.pm/ex_unit/ExUnit.Assertions.html) that
+`ExUnit` provides, but we'll stick with `assert` for now to ensure that we're
 getting a `true` value from our tests.
 
 ## IEx
