@@ -433,8 +433,8 @@ argument. But what if we want to pipe to a function that takes multiple
 arguments? When we use the pipe operator in Elixir, it pipes the value as the
 _first_ argument in the next function.
 
-In other words, that means we could actually refactor our test case to pass the
-very first value like this:
+In other words, we could actually refactor our test case to pass the first
+value like this:
 
 ```elixir
 test "the add functions returns a number" do
@@ -628,7 +628,7 @@ will be invaluable as we start building our Phoenix applications, because we'll
 see that Phoenix code is really just Elixir code. Without some background in
 Elixir, it can occasionally be difficult to understand what's going on.
 
-This was by no means an exhaustive introduction to Elixir. There are many more
+This was not meant as exhaustive introduction to Elixir. There are many more
 concepts, and there are several books available that give a more full
 introduction to the language. But we're going to keep moving in this book,
 because our goal is to build a practical real-world application, and we'll learn
