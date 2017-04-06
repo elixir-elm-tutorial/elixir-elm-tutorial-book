@@ -47,7 +47,7 @@ languages themselves:
 
 - [Programming Elixir](https://pragprog.com/book/elixir/programming-elixir)
   by Dave Thomas
-- [An Introduction to Elm](https://guide.elm-lang.org/) by Evan Czaplicki
+- [An Introduction to Elm](https://guide.elm-lang.org) by Evan Czaplicki
 
 The material in this book is intended to be crafted in such a way that you can
 follow along simply by typing in the relevant code examples. So beginners can

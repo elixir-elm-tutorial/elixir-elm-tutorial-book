@@ -1,13 +1,22 @@
 # Phoenix Tooling
 
 Now that we have some familiarity with Elixir, let's get back to our Phoenix
-application.
+application. In this chapter, we're going to be working with Phoenix tests,
+GitHub version control, Heroku deployments, and TravisCI for continous
+integration and delivery.
+
+If you're already familiar with these concepts and only want to work locally
+for this project, feel free to skim through the content. Even if you decide to
+skip the Heroku deployments, the concepts here are important. Keeping our tests
+passing and consistently checking in our code contributes to a sane development
+workflow.
 
 ## Running Phoenix Tests
 
 In the last chapter, we learned that we could use the `mix test` command to run
 the tests for our simple Elixir project. We can do the same thing for our
-Phoenix project, so let's go to our `platform` folder and run `mix test`:
+Phoenix project, so let's go to our `platform` folder and run `mix test` (the
+results below have been cleaned up for readability):
 
 ```shell
 $ mix test
@@ -17,12 +26,10 @@ $ mix test
      test/web/controllers/page_controller_test.exs:4
      Assertion with =~ failed
      code:  html_response(conn, 200) =~ "Welcome to Phoenix!"
-     left:  "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"utf-8\">\n    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n    <meta name=\"description\" content=\"\">\n    <meta name=\"author\" content=\"\">\n\n    <title>Hello Platform!</title>\n    <link rel=\"stylesheet\" href=\"/css/app.css\">\n  </head>\n\n  <body>\n    <div class=\"container\">\n      <header class=\"header\">\n        <nav role=\"navigation\">\n          <ul class=\"nav nav-pills pull-right\">\n            <li><a href=\"http://www.phoenixframework.org/docs\">Get Started</a></li>\n          </ul>\n        </nav>\n        <span class=\"logo\"></span>\n      </header>\n\n      <p class=\"alert alert-info\" role=\"alert\"></p>\n      <p class=\"alert alert-danger\" role=\"alert\"></p>\n\n      <main role=\"main\">\n<a class=\"btn btn-primary\" href=\"/players\">List of Players</a>      </main>\n\n    </div> <!-- /container -->\n    <script src=\"/js/app.js\"></script>\n  </body>\n</html>\n"
+     left:  "<!DOCTYPE html><html lang=\"en\"><head>...</head><body><div class=\"container\"><header class=\"header\">...</header><main><a class=\"btn btn-primary\" href=\"/players\">List of Players</a></main></div></body></html>"
      right: "Welcome to Phoenix!"
      stacktrace:
        test/web/controllers/page_controller_test.exs:6: (test)
-
-
 
 Finished in 0.4 seconds
 20 tests, 1 failure
@@ -30,9 +37,10 @@ Finished in 0.4 seconds
 Randomized with seed 905
 ```
 
-The good news is that it looks like we already have 20 tests. Some of those
-came with Phoenix by default when we ran `mix phx.new platform`. And other
-tests were created when we used the HTML generator for our `Players` resource.
+The good news is that it looks like we already have 20 tests. Some of them
+came with Phoenix by default when we ran `mix phx.new platform`. Other tests
+were created when we ran the `mix phx.gen.html` generator for our players
+resource.
 
 The bad news is that one of our tests is no longer passing. Let's take a look at
 the `test/web/controllers/page_controller_test.exs` file:
@@ -52,18 +60,18 @@ It looks like it's making an HTTP get request to the default route (`/`). If we
 look at the `http://0.0.0.0:4000/` URL, you can think of that trailing slash as
 the default `/` route.
 
-Our test is expecting that the text "Welcome to Phoenix!" appears somewhere on
+Our test is expecting the text "Welcome to Phoenix!" to appear somewhere on
 the page, but remember that we replaced the default Phoenix page.
 
-Keep in mind that we don't have to have a full understanding of everything going
-on in the tests yet, we just want to get back to where everything is passing. In
-this case, it seems like it's a pretty quick fix, and we can just assert that
-the home page contains the word "Players" somewhere instead of "Welcome to
+Keep in mind that we don't need a full understanding of everything going on in
+the tests yet, and for now we just want to get back to where everything is
+passing. In this case, it seems like it's a quick fix, and we can just assert
+that the home page contains the word "Players" somewhere instead of "Welcome to
 Phoenix!". This is admittedly a brittle test that is subject to break when we
-make changes to our home page, but since we're making a video game platform it's
-likely that our home page is going to say "Players" somewhere anyway, and this
+make changes to our home page, but since we're making a video game platform,
+it's likely that our home page is going to say "Players" somewhere, and this
 test still does a good job of making sure that our home page is at least
-loading.
+loading. Let's go ahead and update our test with the following:
 
 ```elixir
 defmodule Platform.Web.PageControllerTest do
@@ -90,14 +98,13 @@ Randomized with seed 187055
 
 ## Git and GitHub
 
-Now that all of our tests are passing and that our application is in a good
-working condition, let's go ahead and commit what we have so far and push it to
-GitHub.
+Now that all of our tests are passing and our application is in a good working
+condition, let's go ahead and commit what we have so far and push it to GitHub.
 
 We won't cover version control in detail in this book, and you're welcome to
-skip the parts with `git` commands if you'd like. But it's a good idea to keep a
-history of your project so you can always recover from mistakes. And we'd also
-like to deploy our application to Heroku.
+skip the parts with `git` commands if you'd like. But it's a good idea to keep
+a history of your project so you can always recover from mistakes. This will
+also help when it comes time to deploy our application to Heroku.
 
 From inside the `platform` folder, we can run the following commands to commit
 what we have so far to git:
@@ -109,10 +116,9 @@ git commit -m "Initial Phoenix platform application"
 ```
 
 If you have a GitHub account, you can create a new public repository at
-https://github.com/new. You can give it the name of `platform`, and then the
-following commands will allow you to push your existing application to
-GitHub (keeping in mind that you'll need to add your username in the first
-line):
+https://github.com/new. Give it the name of `platform`, and then the following
+commands will allow us to push our existing application to GitHub (keeping in
+mind that you'll need to add your username on the first line):
 
 ```shell
 git remote add origin https://github.com/YOURUSERNAME/platform.git
@@ -125,13 +131,13 @@ ahead as needed.
 
 ## Heroku
 
-For those that haven't used [Heroku](https://www.heroku.com/) before, it
+For those that haven't used [Heroku](https://www.heroku.com) before, it
 essentially gives us a free and easy way to deploy our application and see it
 running live in the real world.
 
-It's not always an ideal deployment environment for Elixir applications due to
-some limitations, but it's perfect for our purposes because we're just looking
-for the simplest way to get our application up and running.
+It's not always an ideal deployment environment for Elixir applications, but
+it's perfect for our purposes because we're just looking for the simplest way
+to get our application up and running.
 
 Sign up for a Heroku account if you haven't already, and then our deployments
 will be as simple as running `git push heroku master` when we're ready.
@@ -141,10 +147,10 @@ will be as simple as running `git push heroku master` when we're ready.
 After you've signed up for a Heroku account, create a free app using their web
 interface (the name `platform` will already be taken, so you'll have to come up
 with a name you'd like or allow Heroku to choose a random name for you). Then
-download the [Heroku toolbelt](https://toolbelt.heroku.com/) command-line tool.
+download the [Heroku toolbelt](https://toolbelt.heroku.com) command-line tool.
 
 Once you have that installed, you can run the `heroku login` command to sign in
-to your account. And since we have an existing Git repository, we can use the
+to your account. Since we have an existing Git repository, we can use the
 following command to add our application to Heroku:
 
 ```shell
@@ -163,7 +169,7 @@ heroku
 This means that when we push to `origin` we'll be pushing our project to GitHub,
 and when we push to `heroku` we''ll be pushing our project to Heroku.
 
-But before we can do that we'll have to set things up for Heroku to know what
+But before we can do that, we'll have to set things up for Heroku to know what
 kind of application we're building. We'll add a couple of "buildpacks" to set
 things up:
 
@@ -172,17 +178,17 @@ $ heroku buildpacks:add https://github.com/HashNuke/heroku-buildpack-elixir.git
 $ heroku buildpacks:add https://github.com/gjaldon/heroku-buildpack-phoenix-static.git
 ```
 
-Keep in mind that these changes won't make changes to our local files. If we run
-the `git status` command, we'll see that nothing has changed. But we should see
-the following output to let us know that our Heroku app is configured to work
-with the Elixir code that we're going to send:
+Keep in mind that these commands won't make changes to our local files. If we
+run the `git status` command, we'll see that nothing has changed. But we should
+see the following output to let us know that our Heroku app is configured to
+work with the Elixir code that we're going to send:
 
 ```shell
 $ heroku buildpacks:add https://github.com/HashNuke/heroku-buildpack-elixir.git
-Buildpack added. Next release on elixir-elm-tutorial will use https://github.com/HashNuke/heroku-buildpack-elixir.git.
+Buildpack added. Next release on platform will use https://github.com/HashNuke/heroku-buildpack-elixir.git.
 Run git push heroku master to create a new release using this buildpack.
 $ heroku buildpacks:add https://github.com/gjaldon/heroku-buildpack-phoenix-static.git
-Buildpack added. Next release on elixir-elm-tutorial will use:
+Buildpack added. Next release on platform will use:
   1. https://github.com/HashNuke/heroku-buildpack-elixir.git
   2. https://github.com/gjaldon/heroku-buildpack-phoenix-static.git
 Run git push heroku master to create a new release using these buildpacks.
@@ -193,7 +199,7 @@ called `elixir_buildpack.config` in the `platform` folder.
 
 ```config
 erlang_version=19.0
-elixir_version=1.4.1
+elixir_version=1.4.2
 ```
 
 Since we're using the latest versions of Erlang, Elixir, and Phoenix, these
@@ -213,7 +219,7 @@ release: MIX_ENV=prod mix ecto.migrate
 web: MIX_ENV=prod mix phx.server
 ```
 
-We'll also need to set some environment variables on Heroku. These are basically
+Now we'll need to set some environment variables on Heroku. These are
 configuration settings we'll need to get our app running. If we run the
 `heroku config` command right now, we'll see that we don't currently have any
 variables set up:
@@ -252,20 +258,20 @@ DATABASE_URL: postgres://...
 ```
 
 We'll also need to set a `SECRET_KEY_BASE` environment variable for production.
-Phoenix can generate a secret key for us with the following command (the key
-is shown with just X characters here):
+Phoenix can generate a secret key for us with the following command (note that
+your key will be different from the example shown below):
 
 ```shell
 $ mix phx.gen.secret
-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+ChVyb+s5O6qVKZabMCWwDPYHJbYqMpWppTZFZmsnULd+PDyXqQU36H8Rs6HXU0nl
 ```
 
 Then we can take that key and set it as the Heroku environment variable with
-the following command (replace the X characters with the one you generated
-above):
+the following command (don't forget to replace the example key shown here with
+the one you generated above):
 
 ```shell
-$ heroku config:set SECRET_KEY_BASE="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+$ heroku config:set SECRET_KEY_BASE="ChVyb+s5O6qVKZabMCWwDPYHJbYqMpWppTZFZmsnULd+PDyXqQU36H8Rs6HXU0nl"
 ```
 
 Now when we run the `heroku config` command we should be able to see the
@@ -352,14 +358,16 @@ $ git push heroku master
 ```
 
 We'll see _a lot_ of output when we deploy. Thankfully, if something goes wrong
-with the deployment it will let us know. And don't worry too much if there is an
-issue or two, because this process is admittedly tedious. Use StackOverflow as
-needed if you run into any errors.
+with the deployment, it will let us know. And don't worry too much if there is
+an issue or two, because this process is admittedly tedious. Use StackOverflow
+as needed if you run into any errors.
 
-But it'll all be well worth the trouble once you see that our app is up and
-running live in production!
+It's worth the trouble once we get to see our app up and running live in
+production!
 
 ## Production Database
+
+NOTE: May not need this section after adding `release` to `Procfile`?
 
 Our app is finally up and running on Heroku! The only thing left is to run the
 migrations so that our production database works. Run the following command:
@@ -374,8 +382,8 @@ created:
 ```shell
 $ heroku run "mix ecto.migrate"
 Running mix ecto.migrate on ⬢ platform... up, run.4619 (Free)
-04:49:15.381 [info]  == Running Platform.Repo.Migrations.CreatePlatform.Players.Player.change/0 forward
-04:49:15.381 [info]  create table players_players
+04:49:15.381 [info]  == Running Platform.Repo.Migrations.CreatePlatform.Accounts.Player.change/0 forward
+04:49:15.381 [info]  create table accounts_players
 04:49:15.390 [info]  == Migrated in 0.0s
 ```
 
@@ -391,7 +399,7 @@ with confidence that it's actually working properly.
 
 ## TravisCI
 
-In this example, we're going to use [TravisCI](https://travis-ci.org/), which is
+In this example, we're going to use [TravisCI](https://travis-ci.org), which is
 free like Heroku. You can use your existing GitHub account to sign up, and that
 will make things easy to configure with the repository we have hosted on GitHub.
 
@@ -408,14 +416,14 @@ folder and add the following:
 ```yml
 language: elixir
 elixir:
-  - 1.4.1
+  - 1.4.2
 otp_release:
   - 19.0
 ```
 
 This is just a simple configuration file that tells TravisCI we want to run our
 build for an Elixir project. Thankfully, it already knows how to [work with
-Elixir projects](https://docs.travis-ci.com/user/languages/elixir/), so this is
+Elixir projects](https://docs.travis-ci.com/user/languages/elixir), so this is
 all the setup we need. When we commit this file and push to GitHub, TravisCI
 should automatically pick up the changes and run a build for us.
 
