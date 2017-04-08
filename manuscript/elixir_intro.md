@@ -526,8 +526,8 @@ iex> Temporary.add(0, 1)
 1
 ```
 
-But that means whenever we pass `0` as an argument to our function, we don't
-really need to perform any addition. That means we can add a new clause of our
+That means whenever we pass `0` as an argument to our function, we don't really
+need to perform any addition. That means we can add a new clause of our
 function that handles cases where the first argument is `0`:
 
 ```elixir

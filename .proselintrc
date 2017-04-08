@@ -1,5 +1,5 @@
 {
   "checks": {
-    "typography.symbols.ellipsis": false
+    "typography.symbols": false
   }
 }

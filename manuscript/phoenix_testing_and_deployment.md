@@ -132,7 +132,7 @@ ahead as needed.
 ## Heroku
 
 For those that haven't used [Heroku](https://www.heroku.com) before, it
-essentially gives us a free and easy way to deploy our application and see it
+essentially gives us an easy and free way to deploy our application and see it
 running live in the real world.
 
 It's not always an ideal deployment environment for Elixir applications, but
@@ -166,10 +166,10 @@ origin
 heroku
 ```
 
-This means that when we push to `origin` we'll be pushing our project to GitHub,
-and when we push to `heroku` we''ll be pushing our project to Heroku.
+When we push to `origin`, we'll be pushing our project to GitHub. When we push
+to `heroku`, we''ll be pushing our project to Heroku.
 
-But before we can do that, we'll have to set things up for Heroku to know what
+Before we can do that, we'll have to set things up for Heroku to know what
 kind of application we're building. We'll add a couple of "buildpacks" to set
 things up:
 
@@ -357,10 +357,10 @@ And now (the moment we've all been waiting for), we can push to Heroku:
 $ git push heroku master
 ```
 
-We'll see _a lot_ of output when we deploy. Thankfully, if something goes wrong
-with the deployment, it will let us know. And don't worry too much if there is
-an issue or two, because this process is admittedly tedious. Use StackOverflow
-as needed if you run into any errors.
+We'll see _a lot_ of output when we deploy. If something goes wrong with the
+deployment, it will let us know. And don't worry too much if there is an issue
+or two, because this process is admittedly tedious. Use StackOverflow as needed
+if you run into any errors.
 
 It's worth the trouble once we get to see our app up and running live in
 production!
@@ -423,10 +423,10 @@ otp_release:
 ```
 
 This is just a simple configuration file that tells TravisCI we want to run our
-build for an Elixir project. Thankfully, it already knows how to [work with
-Elixir projects](https://docs.travis-ci.com/user/languages/elixir), so this is
-all the setup we need. When we commit this file and push to GitHub, TravisCI
-should automatically pick up the changes and run a build for us.
+build for an Elixir project. It already knows how to
+[work with Elixir projects](https://docs.travis-ci.com/user/languages/elixir),
+so this is all the setup we need. When we commit this file and push to GitHub,
+TravisCI should automatically pick up the changes and run a build for us.
 
 We can add additional settings later if we need to, but for now this should work
 to ensure that every time we push our changes to GitHub, it's going to run a
@@ -484,9 +484,9 @@ This has a been a long chapter, and you might think to yourself, "Why go
 through all this when I just want to build my application with Elixir and Elm?"
 You're right to be wary, and we're going to try keeping things as simple as
 possible in this book. The reason we wanted to cover these topics is that they
-ultimately speed up development in the long run. And since the goal of this
-book is to teach how to build a real-world project, the topics of continous
-integration and continuous delivery are necessary evils.
+ultimately speed up development over time. And since the goal of this book is
+to teach how to build a real-world project, the topics of continous integration
+and continuous delivery are necessary evils.
 
 We're off to a solid start for our platform application. We have our back-end
 up and running, we picked up some knowledge about Phoenix and Elixir, we have
