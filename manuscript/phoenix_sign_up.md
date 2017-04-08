@@ -9,19 +9,19 @@ features that we started earlier.
 
 ## Extending Players
 
-Let's take a look at the players we created previously. First, check out the
-`lib/players/players.ex` file:
+Let's take a look at the player accounts we created previously. First, check
+out the `lib/platform/accounts/accounts.ex` file:
 
 ```elixir
-defmodule Platform.Players do
+defmodule Platform.Accounts do
   @moduledoc """
-  The boundary for the Players system.
+  The boundary for the Accounts system.
   """
 
   import Ecto.{Query, Changeset}, warn: false
   alias Platform.Repo
 
-  alias Platform.Players.Player
+  alias Platform.Accounts.Player
 
   @doc """
   Returns the list of players.
@@ -36,14 +36,18 @@ defmodule Platform.Players do
     Repo.all(Player)
   end
 
-  ...
+  # ...
+
+end
 ```
 
-Inside the `Platform.Players` module, it looks like there's a handy
+Inside the `Platform.Accounts` module, it looks like there's a handy
 `list_players/0` function available for us that will grab all the `Player`
-records from the database (`Repo`).
+records from the database. We can think of `Repo` as an abstraction for our
+database, so `Repo.all(Player)` means that we'll query for all the players we
+have stored.
 
-We can use this function along with `iex` to interactively query for our
+We can test out this function using `iex` to interactively query for our
 existing player records:
 
 ```shell
