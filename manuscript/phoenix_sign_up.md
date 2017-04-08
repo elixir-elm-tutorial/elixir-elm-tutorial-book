@@ -1,11 +1,11 @@
 # Phoenix Sign Up
 
 There are many different ways to handle authentication in our applications. In
-our case, we're eager to start using Elm to build out the front-end for our
-application. So a quick way to handle authentication will be to use Phoenix to
-extend the Players resource. We'll use Phoenix to allow users to sign up and
-sign in. And once they're authenticated, they'll move "into" the main Elm
-application we're going to build.
+our case, we're eager to start using Elm to build the front-end, but we're
+going to start by allowing users to sign up and sign in with Phoenix. Later,
+we'll refactor as we build our Elm single page application. For now, let's
+add a quick way for players sign up and sign in by extending the player
+features that we started earlier.
 
 ## Extending Players
 
