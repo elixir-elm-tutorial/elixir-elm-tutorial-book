@@ -48,34 +48,36 @@ database, so `Repo.all(Player)` means that we'll query for all the players we
 have stored.
 
 We can test out this function using `iex` to interactively query for our
-existing player records:
+existing player records. First, we'll start the interactive Elixir prompt:
 
 ```shell
 $ iex -S mix phx.server
 ```
 
+Now we can query for our players with the following:
+
 ```elixir
-iex> Platform.Players.list_players
-[debug] QUERY OK source="players_players" db=13.5ms decode=0.1ms queue=0.2ms
-SELECT p0."id", p0."username", p0."score", p0."inserted_at", p0."updated_at" FROM "players_players" AS p0 []
-[%Platform.Players.Player{__meta__: #Ecto.Schema.Metadata<:loaded, "players_players">,
-  id: 1, inserted_at: ~N[2017-03-04 15:49:04.509015], score: 1000,
-  updated_at: ~N[2017-03-04 15:49:04.526918], username: "josevalim"},
- %Platform.Players.Player{__meta__: #Ecto.Schema.Metadata<:loaded, "players_players">,
-  id: 2, inserted_at: ~N[2017-03-04 15:49:40.504744], score: 1500,
-  updated_at: ~N[2017-03-04 15:49:40.504775], username: "evancz"}]
+iex> Platform.Accounts.list_players
+[debug] QUERY OK source="accounts_players" db=3.0ms decode=3.7ms
+SELECT a0."id", a0."score", a0."username", a0."inserted_at", a0."updated_at" FROM "accounts_players" AS a0 []
+[%Platform.Accounts.Player{__meta__: #Ecto.Schema.Metadata<:loaded, "accounts_players">,
+  id: 1, inserted_at: ~N[2017-04-08 14:55:28.674971], score: 1000,
+  updated_at: ~N[2017-04-08 14:55:28.681607], username: "josevalim"},
+ %Platform.Accounts.Player{__meta__: #Ecto.Schema.Metadata<:loaded, "accounts_players">,
+  id: 2, inserted_at: ~N[2017-04-08 14:55:34.139085], score: 2000,
+  updated_at: ~N[2017-04-08 14:55:34.139091], username: "evancz"}]
 ```
 
 We can also look up a single player using the `get/2` function and the player's
 `id` value:
 
 ```elixir
-iex> Platform.Repo.get(Platform.Players.Player, 1)
-[debug] QUERY OK source="players_players" db=8.9ms queue=0.1ms
-SELECT p0."id", p0."username", p0."score", p0."inserted_at", p0."updated_at" FROM "players_players" AS p0 WHERE (p0."id" = $1) [1]
-%Platform.Players.Player{__meta__: #Ecto.Schema.Metadata<:loaded, "players_players">,
- id: 1, inserted_at: ~N[2017-03-04 15:49:04.509015], score: 1000,
- updated_at: ~N[2017-03-04 15:49:04.526918], username: "josevalim"}
+iex> Platform.Repo.get(Platform.Accounts.Player, 1)
+[debug] QUERY OK source="accounts_players" db=2.2ms
+SELECT a0."id", a0."score", a0."username", a0."inserted_at", a0."updated_at" FROM "accounts_players" AS a0 WHERE (a0."id" = $1) [1]
+%Platform.Accounts.Player{__meta__: #Ecto.Schema.Metadata<:loaded, "accounts_players">,
+ id: 1, inserted_at: ~N[2017-04-08 14:55:28.674971], score: 1000,
+ updated_at: ~N[2017-04-08 14:55:28.681607], username: "josevalim"}
 ```
 
 ## Player Fields
