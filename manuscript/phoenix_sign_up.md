@@ -454,9 +454,9 @@ Open the `priv/repo/seeds.exs` file:
 # and so on) as they will fail if something goes wrong.
 ```
 
-We can see that this file only contains comments initially. But thankfully these
-comments are a helpful indication of what we can do to add seeds for our data.
-We just want to add a couple of basic seeds for our application:
+We can see that this file only contains comments initially. But these comments
+are a helpful indication of what we can do to add seeds for our data. Let's add
+a couple of sample records with the following:
 
 ```elixir
 # Script for populating the database. You can run it as:
@@ -470,22 +470,17 @@ We just want to add a couple of basic seeds for our application:
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
-Platform.Repo.insert!(%Platform.Players.Player{display_name: "José Valim", username: "josevalim", score: 1000})
-Platform.Repo.insert!(%Platform.Players.Player{display_name: "Evan Czaplicki", username: "evancz", score: 1500})
+Platform.Repo.insert!(%Platform.Accounts.Player{display_name: "José Valim", username: "josevalim", score: 1000})
+Platform.Repo.insert!(%Platform.Accounts.Player{display_name: "Evan Czaplicki", username: "evancz", score: 2000})
 ```
 
-And we can see at the top that we can run the following `mix` command to
-populate the database with these seeds:
-
-```shell
-mix run priv/repo/seeds.exs
-```
-
-Keep in mind that we may have already created these records, and we did add a
-constraint to our database to make sure that usernames are unique. But the good
-news is that we can always adjust this file with some sample data to work with.
-And by doing that, we don't have to worry about manually creating records in our
-development environment just to test things out.
+At the top of the file, it shows that we can run the
+`mix run priv/repo/seeds.exs` command to populate the database with the seeds.
+But keep in mind that we may have already created these records manually, and
+we did add a constraint to our database to make sure that the `username` fields
+are unique. The good news is that we can always adjust this file with some
+sample data to work with. And by doing that, we don't have to worry about
+manually creating records in our development environment to test things out.
 
 In fact, there's a command we can use often if we end up creating extraneous
 data in our development environment and want to start fresh. If you have records
@@ -501,30 +496,49 @@ $ mix ecto.reset
 The database for Platform.Repo has been dropped
 The database for Platform.Repo has been created
 
-10:31:54.538 [info]  == Running Platform.Repo.Migrations.CreatePlatform.Players.Player.change/0 forward
-10:31:54.539 [info]  create table players_players
-10:31:54.575 [info]  == Migrated in 0.0s
-10:31:54.654 [info]  == Running Platform.Repo.Migrations.AddFieldsToPlayers.change/0 forward
-10:31:54.654 [info]  alter table players_players
-10:31:54.659 [info]  create index players_players_username_index
-10:31:54.662 [info]  == Migrated in 0.0s
+12:27:16.348 [info]  == Running Platform.Repo.Migrations.CreatePlatform.Accounts.Player.change/0 forward
+12:27:16.348 [info]  create table accounts_players
+12:27:16.354 [info]  == Migrated in 0.0s
+12:27:16.394 [info]  == Running Platform.Repo.Migrations.AddFieldsToPlayerAccounts.change/0 forward
+12:27:16.394 [info]  alter table accounts_players
+12:27:16.396 [info]  create index accounts_players_username_index
+
+12:27:16.398 [info]  == Migrated in 0.0s
+[debug] QUERY OK db=4.0ms queue=2.8ms
+INSERT INTO "accounts_players" ("display_name","score","username","inserted_at","updated_at") VALUES ($1,$2,$3,$4,$5) RETURNING "id" ["José Valim", 1000, "josevalim", {{2017, 4, 8}, {16, 27, 16, 501546}}, {{2017, 4, 8}, {16, 27, 16, 501552}}]
 [debug] QUERY OK db=2.1ms
-INSERT INTO "players_players" ("display_name","score","username","inserted_at","updated_at") VALUES ($1,$2,$3,$4,$5) RETURNING "id" ["José Valim", 1000, "josevalim", {
-{2017, 3, 5}, {15, 31, 54, 889083}}, {{2017, 3, 5}, {15, 31, 54, 889092}}]
-[debug] QUERY OK db=2.1ms
-INSERT INTO "players_players" ("display_name","score","username","inserted_at","updated_at") VALUES ($1,$2,$3,$4,$5) RETURNING "id" ["Evan Czaplicki", 1500, "evancz",
-{{2017, 3, 5}, {15, 31, 54, 922251}}, {{2017, 3, 5}, {15, 31, 54, 922256}}]
+INSERT INTO "accounts_players" ("display_name","score","username","inserted_at","updated_at") VALUES ($1,$2,$3,$4,$5) RETURNING "id" ["Evan Czaplicki", 2000, "evancz", {{2017, 4, 8}, {16, 27, 16, 519697}}, {{2017, 4, 8}, {16, 27, 16, 519703}}]
 ```
 
 ## Saving Our Progress
 
 Since we've made quite a few changes, now would be a good time to run our tests
-locally with `mix test`. If everything is passing, let's go ahead and commit our
+locally with `mix test`:
+
+```shell
+$ mix test
+Compiling 2 files (.ex)
+....................
+
+Finished in 0.2 seconds
+20 tests, 0 failures
+```
+
+If everything is passing, let's go ahead and commit our changes:
 
 ```shell
 $ git add .
 $ git commit -m "Update player fields and adjust templates"
 ```
 
-We don't want to push this to production yet, because we want to handle
-authentication first. That will be the topic of our next chapter...
+We can hold off on pushing this to production because we want to tackle
+authentication first, and that will be the topic of our next chapter.
+
+## Summary
+
+We managed to accomplish a lot in this chapter. We learned how to add fields
+to our players and update the database accordingly. We also got our first
+taste of working with templates and designing how we want our users to interact
+with our application. The first step towards adding authentication features
+is taken care of, because we added fields for player passwords. But we haven't
+implemented those yet, so we'll take a look at that in the next chapter.
