@@ -196,7 +196,7 @@ the `lib/platform/web/templates/player/new.html.eex` file:
 ```
 
 From the looks of the code here, the page is rendering a `"form.html"` file,
-which is shared between our **New Player** form and our **Edit Player** form.
+which is shared between our **New Player** page and our **Edit Player** page.
 But we want slightly different behavior for our application. We want users to
 be able to sign up with minimal effort by entering only a `username` and
 `password`. And then once they're signed up, they can enter additional
@@ -204,23 +204,24 @@ information like their `display_name`.
 
 ## Working with Forms
 
-Here's what our original New Player form looks like:
+Here's what our original **New Player** page looks like:
 
 ![Original New Player Page](images/phoenix_sign_up/phoenix_original_sign_up.png)
 
-We don't actually want our players to be able to manually enter their scores.
-We just want players to create a `username` and `password` to sign up (we're
-also going to work on authentication in the next sections, so we won't be
-storing passwords as plain text).
+We don't actually want our players to be able to manually enter their scores,
+because the games should track player scores and update their accounts in
+real-time. For now, we just want players to create a `username` and `password`
+to sign up (we're also going to work on authentication in the next sections, so
+we won't be storing passwords as plain text).
 
-We're basically going to move part of the "form.html" file over to the
-`new.html.eex` file. We'll also create a form in the `edit.html.eex` file, and
-ultimately we'll be able to delete the shared `form.html.eex` file as a result.
+We're going to move part of the `form.html.eex` file over to the `new.html.eex`
+file. We'll also create a form in the `edit.html.eex` file, and ultimately we'll
+be able to delete the shared `form.html.eex` file as a result.
 
 Let's start by updating our `new.html.eex` file:
 
 ```embedded_elixir
-<h2>Quick Player Sign Up</h2>
+<h2>Player Sign Up Page</h2>
 
 <%= form_for @changeset, player_path(@conn, :create), fn f -> %>
   <%= if @changeset.action do %>
@@ -236,23 +237,22 @@ Let's start by updating our `new.html.eex` file:
   </div>
 
   <div class="form-group">
-    <%= label f, :password, "Password", class: "control-label" %>
+    <%= label f, :password, "Player Password", class: "control-label" %>
     <%= password_input f, :password, placeholder: "Enter password...", class: "form-control" %>
     <%= error_tag f, :password %>
   </div>
 
   <div class="form-group">
     <%= submit "Submit", class: "btn btn-primary" %>
+    <span><%= link "Back", to: player_path(@conn, :index), class: "btn btn-default" %></span>
   </div>
 <% end %>
-
-<span><%= link "Back", to: player_path(@conn, :index) %></span>
 ```
 
-The form looks great, but try to create a new player and we'll run into an
-issue.
+![Updated New Player Page](images/phoenix_sign_up/phoenix_updated_sign_up.png)
 
-![Updated New Player Page](images/phoenix_sign_up/updated_new_player_page.png)
+The form looks great, but if we try to create a new player we'll run into an
+issue. We'll tackle this next.
 
 ## Validations
 
