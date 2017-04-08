@@ -381,7 +381,7 @@ This will ensure that the database table for our players resource was created:
 $ heroku run "mix ecto.migrate"
 Running mix ecto.migrate on ⬢ platform... up, run.4619 (Free)
 04:49:15.381 [info]  == Running Platform.Repo.Migrations.CreatePlatform.Accounts.Player.change/0 forward
-04:49:15.381 [info]  create table players
+04:49:15.381 [info]  create table accounts_players
 04:49:15.390 [info]  == Migrated in 0.0s
 ```
 
