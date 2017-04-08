@@ -256,13 +256,14 @@ issue. We'll tackle this next.
 
 ## Validations
 
-When we generated our players resource, it automatically created some default
-validations for the fields we specified. That means our Phoenix application
-considers `username` and `score` to be required fields to create an account.
-Let's take a look at the bottom of the `lib/platform/players/players.ex` file:
+When we generated our players resource, it automatically created a couple of
+default validations for the fields we specified. That means our Phoenix
+application considers `username` and `score` to be _required_ fields to create
+an account. Let's take a look at the bottom of the
+`lib/platform/accounts/accounts.ex` file:
 
 ```elixir
-defmodule Platform.Players do
+defmodule Platform.Accounts do
   # ...
 
   @doc """
@@ -290,10 +291,10 @@ This is our first look at a Phoenix "changeset". When we change a record (or
 create a new one like we're doing now), it'll run through some validations.
 We'll deal with our passwords in the next few sections, but for now let's remove
 the requirement for the `score` field. Now that we removed that field from the
-sign up form, users can't fill it in anyway (and we should probably set it to
-a default value of `0` when users sign up).
+sign up form, users can't fill it in.
 
-Update the `player_changeset/2` function with the following:
+Update the `player_changeset/2` function with the following to remove the
+`score` field requirement:
 
 ```elixir
 defp player_changeset(%Player{} = player, attrs) do
@@ -303,42 +304,40 @@ defp player_changeset(%Player{} = player, attrs) do
 end
 ```
 
-We now have the ability to create new players! Lastly, let's update the test
-that ensures our New Player page is working since we updated the title. We'll
-have to update these two test cases to check for "Quick Player Sign Up" instead
-of "New Player":
+We now have the ability to create new players! Lastly, let's update the tests
+that ensure our **Player Sign Up Page** is working since we updated the title.
+We'll have to update these two test cases in the
+`test/web/controllers/player_controller_test.exs` file to check for "Player
+Sign Up Page" instead of "New Player":
 
 ```elixir
 test "renders form for new players", %{conn: conn} do
   conn = get conn, player_path(conn, :new)
-  assert html_response(conn, 200) =~ "Quick Player Sign Up"
+  assert html_response(conn, 200) =~ "Player Sign Up Page"
 end
 
 test "does not create player and renders errors when data is invalid", %{conn: conn} do
   conn = post conn, player_path(conn, :create), player: @invalid_attrs
-  assert html_response(conn, 200) =~ "Quick Player Sign Up"
+  assert html_response(conn, 200) =~ "Player Sign Up Page"
 end
 ```
 
-## Show Page
+## Show Player Page
 
 After a new user is created, the application currently redirects them to the
-player "show" page. When we have the full platform application built out later,
+**Show Player** page. When we have the full platform application built out later,
 we'll probably want to redirect them to a list of games to play. But for now
-we'll update the show page to display all the relevant fields for the player's
-account.
-
-Which fields do we want to display on this page?
+we'll update this page to display all the relevant fields for the player's
+account:
 
 - `id`
 - `display_name`
 - `username`
 - `score`
 
-We can work towards making this page look nicer with styles and better logic
-later, but for now we just want to make sure we can display all the fields we
-want. Update the `lib/platform/web/templates/show.html.eex` file with the
-following:
+We can work towards making this page look nicer with styles later, but for now
+let's update the `lib/platform/web/templates/player/show.html.eex` file with
+the following:
 
 ```embedded_elixir
 <h2>Show Player</h2>
@@ -350,20 +349,22 @@ following:
   <li><strong>Score: </strong><%= @player.score %></li>
 </ul>
 
-<span><%= link "Edit", to: player_path(@conn, :edit, @player) %></span>
-<span><%= link "Back", to: player_path(@conn, :index) %></span>
+<span><%= link "Edit", to: player_path(@conn, :edit, @player), class: "btn btn-default" %></span>
+<span><%= link "Back", to: player_path(@conn, :index), class: "btn btn-default" %></span>
 ```
 
-## Edit Page
+![Show Player Page](images/phoenix_sign_up/phoenix_show_player_page.png)
 
-For the edit page, we're going to do much of the same that we did for the new
-player page. We want users to be able to adjust their `username` and
-`display_name` fields for example, but they shouldn't be able to manually alter
-their `score` field since that should be coming from the games they play on the
-platform.
+## Edit Player Page
 
-Update the `lib/platform/web/templates/edit.html.eex` file to contain the
-following:
+For the **Edit Player** page, we're going to do much of the same that we did
+for the **Player Sign Up** page. We want users to be able to adjust their
+`username` and `display_name` fields for example, but they shouldn't be able to
+manually alter their `score` field since that data should be coming from the
+games they play on the platform.
+
+Update the `lib/platform/web/templates/players/edit.html.eex` file to contain
+the following:
 
 ```embedded_elixir
 <h2>Edit Player</h2>
@@ -388,21 +389,42 @@ following:
   </div>
 
   <div class="form-group">
-    <%= label f, :password, "Password", class: "control-label" %>
-    <%= password_input f, :password, placeholder: "Enter password...", class: "form-control" %>
-    <%= error_tag f, :password %>
-  </div>
-
-  <div class="form-group">
     <%= submit "Submit", class: "btn btn-primary" %>
+    <span><%= link "Back", to: player_path(@conn, :index), class: "btn btn-default" %></span>
   </div>
 <% end %>
 ```
 
+This will allow users to change their `username` and `display_name` fields
+after they sign up. But we'll have to make a quick adjustment to our
+`lib/platform/accounts/accounts.ex` file to get this working. We removed the
+requirement for the `score` field from the `player_changeset/2` function, but
+we'll need to allow for changes to the `display_name` field now. Update the
+function with the following:
+
+```elixir
+defp player_changeset(%Player{} = player, attrs) do
+  player
+  |> cast(attrs, [:display_name, :username, :score])
+  |> validate_required([:username])
+end
+```
+
+After saving that file, we can go back to the **Edit Player** page and change
+the `display_name` field for one of our players:
+
+![Editing the Display Name Field](images/phoenix_sign_up/phoenix_edit_player_page.png)
+
+On submission, we'll be redirected to the **Player Show** page and see that the
+field was successfully changed:
+
+![Successful Player Update](images/phoenix_sign_up/phoenix_show_updated_player_page.png)
+
 ## Shared Form
 
-Now that we've adjusted our New Player form and our Edit Player form, we can go
-ahead and delete the `form.html.eex` file that was shared between them.
+Now that we've adjusted our **Player Sign Up** page and our **Edit Player**
+page, we're able to delete the `form.html.eex` file that was shared between
+them since it's no longer used anywhere.
 
 ## Database Seeds
 
