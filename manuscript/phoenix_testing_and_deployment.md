@@ -408,6 +408,8 @@ build. Flip the switch for the `platform` repository from your GitHub account.
 If you don't see it available, you may need to enable access for TravisCI, and
 help should be available on the TravisCI website with the links above.
 
+![TravisCI Switches](images/phoenix_testing_and_deployment/travisci_switches.png)
+
 To get the TravisCI build working, we'll need to create a `.travis.yml` file
 at the root of our project. Go ahead and create the file in the `platform`
 folder and add the following:
@@ -443,6 +445,8 @@ and it should generate an example like this:
 ```Markdown
 [![Build Status](https://travis-ci.org/elixir-elm-tutorial/platform.svg?branch=master)](https://travis-ci.org/elixir-elm-tutorial/platform)
 ```
+
+![TravisCI Badge](images/phoenix_testing_and_deployment/travisci_badge.png)
 
 ## Continuous Delivery
 
