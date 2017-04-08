@@ -473,6 +473,23 @@ add the right information to our `.travis.yml` file:
 $ travis setup heroku
 ```
 
+The `travis` tool makes things easy on us, but if we run into any issues here,
+we can always consult the
+[Heroku Deployment Documentation](https://docs.travis-ci.com/user/deployment/heroku)
+for TravisCI and it will help us get everything set up the right way.
+
 ## Summary
 
-...
+This has a been a long chapter, and you might think to yourself, "Why go
+through all this when I just want to build my application with Elixir and Elm?"
+You're right to be wary, and we're going to try keeping things as simple as
+possible in this book. The reason we wanted to cover these topics is that they
+ultimately speed up development in the long run. And since the goal of this
+book is to teach how to build a real-world project, the topics of continous
+integration and continuous delivery are necessary evils.
+
+We're off to a solid start for our platform application. We have our back-end
+up and running, we picked up some knowledge about Phoenix and Elixir, we have
+our tests passing, and our application is getting deployed successfully when
+we push to GitHub. In the next chapter, we'll learn more about Phoenix as we
+extend our player features and allow players to sign up.
