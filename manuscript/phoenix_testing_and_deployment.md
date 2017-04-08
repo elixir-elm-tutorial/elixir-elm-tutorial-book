@@ -1,4 +1,4 @@
-# Phoenix Tooling
+# Phoenix Testing and Deployment
 
 Now that we have some familiarity with Elixir, let's get back to our Phoenix
 application. In this chapter, we're going to be working with Phoenix tests,
@@ -367,23 +367,21 @@ production!
 
 ## Production Database
 
-NOTE: May not need this section after adding `release` to `Procfile`?
-
-Our app is finally up and running on Heroku! The only thing left is to run the
-migrations so that our production database works. Run the following command:
+Our app is finally up and running on Heroku! The `Procfile` we created should
+automatically handle production database migrations for future deploys, but
+let's try running them manually with the following command:
 
 ```shell
 $ heroku run "mix ecto.migrate"
 ```
 
-And it should generate the successful output that the database table was
-created:
+This will ensure that the database table for our players resource was created:
 
 ```shell
 $ heroku run "mix ecto.migrate"
 Running mix ecto.migrate on ⬢ platform... up, run.4619 (Free)
 04:49:15.381 [info]  == Running Platform.Repo.Migrations.CreatePlatform.Accounts.Player.change/0 forward
-04:49:15.381 [info]  create table accounts_players
+04:49:15.381 [info]  create table players
 04:49:15.390 [info]  == Migrated in 0.0s
 ```
 
@@ -400,8 +398,9 @@ with confidence that it's actually working properly.
 ## TravisCI
 
 In this example, we're going to use [TravisCI](https://travis-ci.org), which is
-free like Heroku. You can use your existing GitHub account to sign up, and that
-will make things easy to configure with the repository we have hosted on GitHub.
+also free like Heroku. You can use your existing GitHub account to sign up, and
+that will make things easy to configure with the repository we have hosted on
+GitHub.
 
 Follow the setup process on TravisCI for creating your account, and visit the
 [getting started page](https://travis-ci.org/getting_started) to create our new

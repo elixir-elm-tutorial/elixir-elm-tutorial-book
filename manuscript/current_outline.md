@@ -20,7 +20,7 @@ progress.
   - Brief background on mix, folder structure, modules, functions,
     documentation, tests, and interactive environment.
   - Introduction to concepts on piping, arity, pattern matching, and guards.
-- Phoenix Tooling
+- Phoenix Testing and Deployment
   - Running Phoenix tests.
   - Working with Git and GitHub.
   - Configuring the application and deploying to Heroku.

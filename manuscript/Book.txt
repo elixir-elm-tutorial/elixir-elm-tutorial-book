@@ -1,7 +1,7 @@
 introduction.md
 diving_in.md
 elixir_intro.md
-phoenix_tooling.md
+phoenix_testing_and_deployment.md
 phoenix_sign_up.md
 phoenix_authentication.md
 phoenix_api.md
