@@ -82,7 +82,7 @@ SELECT a0."id", a0."score", a0."username", a0."inserted_at", a0."updated_at" FRO
 
 ## Player Fields
 
-When we created our Players resource, we ran the generator to create two fields:
+When we created our players resource, we ran the generator to create two fields:
 
 - `username`
 - `score`
@@ -105,13 +105,13 @@ For our players to be able to sign in, we'll need to add a couple more fields:
 - `password`
 - `password_hash`
 
-Let's update the `lib/platform/players/player.ex` file to look like this:
+Let's update the `lib/platform/accounts/player.ex` file to look like this:
 
 ```elixir
-defmodule Platform.Players.Player do
+defmodule Platform.Accounts.Player do
   use Ecto.Schema
-  
-  schema "players_players" do
+
+  schema "accounts_players" do
     field :display_name, :string
     field :username, :string
     field :score, :integer
@@ -125,56 +125,56 @@ end
 
 ## Generating a Migration
 
-Now we'll need to update the database to know about the new fields we want to
-use for our players. Let's run the following command to generate a migration
-file:
+Now we'll need to update the database so that it knows about the new fields we
+we're adding to our players. Let's run the following command to generate a
+migration file:
 
 ```shell
-$ mix ecto.gen.migration add_fields_to_players
+$ mix ecto.gen.migration add_fields_to_player_accounts
 ```
 
-And we should see the output that it successfully generated the migration file,
-which we'll fill out next:
+And we should see output showing that it successfully generated the migration
+file, which we'll update next:
 
 ```shell
-$ mix ecto.gen.migration add_fields_to_players
-Compiling 3 files (.ex)
+$ mix ecto.gen.migration add_fields_to_player_accounts
 * creating priv/repo/migrations
-* creating priv/repo/migrations/20170305140256_add_fields_to_players.exs
+* creating priv/repo/migrations/20170408150719_add_fields_to_player_accounts.exs
 ```
 
 Let's fill out the migration file that we created. We'll `alter` the existing
-database table for our players, and add the fields we need. And we'll also add
-a `unique_index` at the bottom to ensure we have unique users:
+`accounts_players` database table, and add the fields we need. We'll also add
+a `unique_index` at the bottom to ensure that each player has a unique
+`username` field:
 
 ```elixir
-defmodule Platform.Repo.Migrations.AddFieldsToPlayers do
+defmodule Platform.Repo.Migrations.AddFieldsToPlayerAccounts do
   use Ecto.Migration
 
   def change do
-    alter table(:players_players) do
+    alter table(:accounts_players) do
       add :display_name, :string
       add :password, :string
       add :password_hash, :string
     end
 
-    create unique_index(:players_players, [:username])
+    create unique_index(:accounts_players, [:username])
   end
 end
 ```
 
 ## Running the Migration
 
-Now we can run the migration to update our database. Run the following command
+Now we can run the migration to update our database. Run the following command,
 and you should see similar output:
 
 ```shell
 $ mix ecto.migrate
 
-09:10:21.240 [info]  == Running Platform.Repo.Migrations.AddFieldsToPlayers.change/0 forward
-09:10:21.240 [info]  alter table players_players
-09:10:21.268 [info]  create index players_players_username_index
-09:10:21.278 [info]  == Migrated in 0.0s
+11:11:29.028 [info]  == Running Platform.Repo.Migrations.AddFieldsToPlayerAccounts.change/0 forward
+11:11:29.028 [info]  alter table accounts_players
+11:11:29.046 [info]  create index accounts_players_username_index
+11:11:29.051 [info]  == Migrated in 0.0s
 ```
 
 ## Updating Our Application
@@ -195,12 +195,12 @@ the `lib/platform/web/templates/player/new.html.eex` file:
 <span><%= link "Back", to: player_path(@conn, :index) %></span>
 ```
 
-Hmm. It looks like this is pulling in "form.html", which is shared between our
-new user form and our edit user form. We actually want slightly different
-behavior for our application. We want users to be able to sign up with minimal
-effort by entering only a `username` and `password`. And then once they're
-signed up, they can enter additional information like their `display_name` or
-perhaps later enter an email or gravatar.
+From the looks of the code here, the page is rendering a `"form.html"` file,
+which is shared between our **New Player** form and our **Edit Player** form.
+But we want slightly different behavior for our application. We want users to
+be able to sign up with minimal effort by entering only a `username` and
+`password`. And then once they're signed up, they can enter additional
+information like their `display_name`.
 
 ## Working with Forms
 
