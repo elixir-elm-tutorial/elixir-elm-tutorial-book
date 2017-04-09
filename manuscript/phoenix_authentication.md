@@ -232,9 +232,10 @@ which we'll later turn into our Elm single page application.
 Currently, users are able to navigate to all the pages within our application.
 We want to ensure that players are logged in before they access our Elm
 application and start playing games.
-At the bottom of our `PlayerController`, let's add an `authenticate/1`
-function. Open up the `lib/platform/web/controllers/player_controller.ex` file
-and add the following at the bottom (beneath the `delete/2` function):
+
+At the bottom of our `PageController`, let's add an `authenticate/2`
+function. Open up the `lib/platform/web/controllers/page_controller.ex` file
+and add the following at the bottom (beneath the `index/2` function):
 
 ```elixir
 defp authenticate(conn, _opts) do
@@ -253,11 +254,12 @@ Since we assigned the current player's session to be the `current_user` inside
 our `PlayerAuthController`, we can use that to determine whether a visitor to
 our site is signed in. If they are, we'll just return the connection and allow
 them to continue, otherwise if they're attempting to access a restricted
-resource, we'll display a message and redirect them back to the home page
-(we'll redirect users to the login page after we create one).
+resource, we'll display a message and redirect them back to the
+**New Player Page**.
 
-In the same file, we'll use the `authenticate/1` function that we just used to
-determine whether or not players should be able to render the player index page.
+In the same file, we'll use the `authenticate/2` function that we just created
+to determine whether or not players should be able to render the
+`PageController` index page.
 
 Above the `index/2` function, add the following line of code:
 
