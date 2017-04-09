@@ -9,16 +9,13 @@ Our goal is to allow users to sign up and log in quickly, easily, and securely.
 
 ## Fetching Dependencies
 
-In order to get started with Phoenix authentication, we'll need to pull in a
+In order to get started with Phoenix authentication, we'll need to add a
 dependency. In the root of our platform project, take a look at the `mix.exs`
 file and find the `deps/0` function. This function is where we specify which
 dependencies our application requires, and we can see that there are already a
 handful that Phoenix uses by default.
 
 ```elixir
-# Specifies your project dependencies.
-#
-# Type `mix help deps` for examples and options.
 defp deps do
   [{:phoenix, "~> 1.3.0-rc"},
    {:phoenix_pubsub, "~> 1.0"},
@@ -32,8 +29,8 @@ end
 ```
 
 The one we want to use to secure our passwords is called
-[comeonin](https://hex.pm/packages/comeonin). The syntax for adding a new
-dependency is a tuple like this:
+[comeonin](https://hex.pm/packages/comeonin). This is what the syntax looks
+like for adding a new dependency:
 
 ```elixir
 {:comeonin, "~> 3.0"}
@@ -45,9 +42,6 @@ keys and values like we need here. The first element of the tuple is an atom
 update our `deps/0` function to look like this:
 
 ```elixir
-# Specifies your project dependencies.
-#
-# Type `mix help deps` for examples and options.
 defp deps do
   [{:phoenix, "~> 1.3.0-rc"},
    {:phoenix_pubsub, "~> 1.0"},
@@ -74,10 +68,10 @@ We'll see the following results:
 $ mix deps.get
 Running dependency resolution...
 Dependency resolution completed:
-  comeonin 3.0.1
+  comeonin 3.0.2
   elixir_make 0.4.0
 * Getting comeonin (Hex package)
-  Checking package (https://repo.hex.pm/tarballs/comeonin-3.0.1.tar)
+  Checking package (https://repo.hex.pm/tarballs/comeonin-3.0.2.tar)
   Fetched package
 * Getting elixir_make (Hex package)
   Checking package (https://repo.hex.pm/tarballs/elixir_make-0.4.0.tar)
@@ -87,18 +81,18 @@ Dependency resolution completed:
 ## Player Changesets
 
 Let's update our existing `player_changeset/2` function inside the
-`lib/platform/players/players.ex` file. We're going to add some validations and
-a new function that will allow us to encrypt passwords so they're not stored in
-plain text.
+`lib/platform/accounts/accounts.ex` file. We're going to add some validations
+and a new function that will allow us to encrypt passwords so they're not
+stored in plain text.
 
 Below the `change_player/1` function, write the following code:
 
 ```elixir
 defp player_changeset(%Player{} = player, attrs) do
   player
-  |> cast(attrs, [:username, :password, :display_name, :score])
+  |> cast(attrs, [:display_name, :password, :score, :username])
   |> validate_required([:username])
-  |> validate_length(:username, min: 2, max: 30)
+  |> validate_length(:username, min: 2, max: 100)
   |> validate_length(:password, min: 6, max: 100)
   |> put_pass_hash()
 end
@@ -114,11 +108,10 @@ defp put_pass_hash(changeset) do
 end
 ```
 
-This means we're able to make changes to all our player field data, but we're
-adding some validations to ensure that our `username` and `password` fields are
-required and structured properly. More importantly, we're piping into our new
-`put_pass_hash/1` function, which will encrypt passwords using the `comeonin`
-dependency that we added earlier.
+This means we're able to make changes to all our player field data, and we're
+adding a couple of quick validations to ensure data is structured properly.
+More importantly, we're piping into our new `put_pass_hash/1` function, which
+will encrypt passwords using the `comeonin` dependency that we added.
 
 ## Authentication Plug
 
