@@ -121,7 +121,7 @@ can log in and log out.
 
 ![Player Sign Up Page](images/phoenix_sign_up/phoenix_updated_sign_up.png)
 
-Let's create a new controller called `PlayerAuthController`. Create a
+Let's make a new controller called `PlayerAuthController`. Create a
 `lib/platform/web/controllers/player_auth_controller.ex` file, and add the
 following content:
 
@@ -135,7 +135,7 @@ defmodule Platform.Web.PlayerAuthController do
 
   def call(conn, repo) do
     player_id = get_session(conn, :player_id)
-    player = player_id && repo.get(Platform.Players.Player, player_id)
+    player = player_id && repo.get(Platform.Accounts.Player, player_id)
     assign(conn, :current_user, player)
   end
 end
