@@ -332,14 +332,14 @@ def login(conn, player) do
 end
 ```
 
-Right after a new user player creates an account, we automatically want to log
-them into the system. So let's update the `create/2` function in our
+Right after a new player creates an account, we automatically want to log them
+into the system. So let's update the `create/2` function in our
 `PlayerController`. We'll use the pipe operator to log the player in before we
 display the flash message and redirect them:
 
 ```elixir
 def create(conn, %{"player" => player_params}) do
-  case Players.create_player(player_params) do
+  case Accounts.create_player(player_params) do
     {:ok, player} ->
       conn
       |> Platform.Web.PlayerAuthController.login(player)
@@ -357,12 +357,12 @@ new user:
 ![Creating a New User](images/phoenix_authentication/new_user_to_login.png)
 
 So far so good. The new user we just created should be logged in. Let's try to
-access the players index page to verify. Go to the `http://0.0.0.0:4000/players`
-page in your browser:
+access the `PageController` index page to verify. Go to the
+`http://0.0.0.0:4000/elm` page in your browser:
 
-![Logged In Access to Players Index](images/phoenix_authentication/access_to_players_index.png)
+![Logged In Access to Players Index](images/phoenix_authentication/new_elm_route.png)
 
-Success! We're able to access this page because we create a new account and
+Success! We're able to access this page because we created a new account and
 authenticated the new player at the same time.
 
 ## Sessions
