@@ -117,10 +117,9 @@ will encrypt passwords using the `comeonin` dependency that we added.
 
 Players are currently able to create new accounts at
 `http://0.0.0.0:4000/players/new`. But we'll want to add features so that users
-can log in and log out, and something to show that they're currently signed in
-after they first create an account.
+can log in and log out.
 
-![Sign Up Page](images/phoenix_authentication/sign_up_page.png)
+![Player Sign Up Page](images/phoenix_sign_up/phoenix_updated_sign_up.png)
 
 Let's create a new controller called `PlayerAuthController`. Create a
 `lib/platform/web/controllers/player_auth_controller.ex` file, and add the
