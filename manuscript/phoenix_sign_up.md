@@ -1,10 +1,13 @@
 # Phoenix Sign Up
 
-There are many different ways to handle authentication in our applications. In
-our case, we're eager to start using Elm to build the front-end, but we're
-going to start by allowing users to sign up and sign in with Phoenix. Later,
-we'll refactor as we build our Elm single page application. For now, let's
-add a quick way for players sign up and sign in by extending the player
+We have multiple options in terms of how we want to handle the user sign up and
+sign in features for our applicaiton. In our case, we're eager to start using
+Elm to build the front-end, so we're going to take a simple approach.
+
+We'll use Phoenix to handle authentication initially. Once users are logged in,
+they'll be directed to the Elm single page application that we'll be building.
+We'll need to refactor some of these features later, but this approach will
+provide a quick way for players to sign up and sign as we extend the player
 features that we started earlier.
 
 ## Extending Players
@@ -196,9 +199,9 @@ the `lib/platform/web/templates/player/new.html.eex` file:
 ```
 
 From the looks of the code here, the page is rendering a `"form.html"` file,
-which is shared between our **New Player** page and our **Edit Player** page.
-But we want slightly different behavior for our application. We want users to
-be able to sign up with minimal effort by entering only a `username` and
+which is shared between our **New Player** page and **Edit Player** page. But
+we want slightly different behavior for our application. We want users to be
+able to sign up with minimal effort by entering only a `username` and
 `password`. And then once they're signed up, they can enter additional
 information like their `display_name`.
 
@@ -474,13 +477,14 @@ Platform.Repo.insert!(%Platform.Accounts.Player{display_name: "José Valim", use
 Platform.Repo.insert!(%Platform.Accounts.Player{display_name: "Evan Czaplicki", username: "evancz", score: 2000})
 ```
 
-At the top of the file, it shows that we can run the
-`mix run priv/repo/seeds.exs` command to populate the database with the seeds.
-But keep in mind that we may have already created these records manually, and
-we did add a constraint to our database to make sure that the `username` fields
-are unique. The good news is that we can always adjust this file with some
-sample data to work with. And by doing that, we don't have to worry about
-manually creating records in our development environment to test things out.
+At the top of the file, the comments show that we can run the
+`mix run priv/repo/seeds.exs` command to populate the database with the seeds
+we add to this file. But keep in mind that we may have already created these
+records manually, and we did add a constraint to our database to make sure that
+the `username` fields are unique. The good news is that we can always adjust
+this file with some sample data to work with. And by doing that, we don't have
+to worry about manually creating records in our development environment to test
+things out.
 
 In fact, there's a command we can use often if we end up creating extraneous
 data in our development environment and want to start fresh. If you have records
@@ -536,9 +540,11 @@ authentication first, and that will be the topic of our next chapter.
 
 ## Summary
 
-We managed to accomplish a lot in this chapter. We learned how to add fields
-to our players and update the database accordingly. We also got our first
-taste of working with templates and designing how we want our users to interact
-with our application. The first step towards adding authentication features
-is taken care of, because we added fields for player passwords. But we haven't
-implemented those yet, so we'll take a look at that in the next chapter.
+We managed to accomplish a lot in this chapter. First, we learned how to add
+fields to our players and update the database accordingly. We also got some
+experience working with templates and designing how we want our users to
+interact with our application.
+
+The first step towards adding authentication features is taken care of, and
+we'll work towards a full set of sign up and sign in features in the next
+chapter.
