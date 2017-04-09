@@ -129,13 +129,15 @@ following content:
 defmodule Platform.Web.PlayerAuthController do
   import Plug.Conn
 
+  alias Platform.Accounts
+
   def init(opts) do
     Keyword.fetch!(opts, :repo)
   end
 
   def call(conn, repo) do
     player_id = get_session(conn, :player_id)
-    player = player_id && repo.get(Platform.Accounts.Player, player_id)
+    player = player_id && repo.get(Accounts.Player, player_id)
     assign(conn, :current_user, player)
   end
 end
@@ -189,7 +191,7 @@ pipeline :browser do
   plug :fetch_flash
   plug :protect_from_forgery
   plug :put_secure_browser_headers
-  plug Platform.Web.PlayerAuthController, Platform.Repo
+  plug Platform.Web.PlayerAuthController, repo: Platform.Repo
 end
 ```
 
