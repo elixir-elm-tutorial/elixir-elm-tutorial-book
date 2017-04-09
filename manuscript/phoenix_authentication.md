@@ -141,15 +141,16 @@ defmodule Platform.Web.PlayerAuthController do
 end
 ```
 
-This will allow us to collect information about the player's session, and assign
-it to `:current_user` so we can refer to that when handling our authentication
-features.
+This will allow us to collect information about the player's session, and
+assign it to `:current_user` so we can refer to that when handling our
+authentication features.
 
 ## Router
 
-Remembering back to when we set up our `PlayerController` in the Phoenix router,
-we used the default browser pipeline. If we open the `lib/platform/web/router.ex`
-file, we'll see that there are quite a few `plug`s at the top:
+Remembering back to when we set up our `PlayerController` in the Phoenix
+router, we used the default browser pipeline. If we open the
+`lib/platform/web/router.ex` file, we'll see that there are quite a few
+`plug`s at the top:
 
 ```elixir
 defmodule Platform.Web.Router do
@@ -178,8 +179,8 @@ defmodule Platform.Web.Router do
 end
 ```
 
-At the bottom of the `pipeline :browser` block, let's add our new authentication
-plug:
+At the bottom of the `pipeline :browser` block, let's add our new
+authentication plug:
 
 ```elixir
 pipeline :browser do
@@ -194,9 +195,9 @@ end
 
 ## Authenticate Function
 
-At the bottom of our `PlayerController`, let's add an `authenticate/1` function.
-Open up the `lib/platform/web/controllers/player_controller.ex` file and add the
-following at the bottom (beneath the `delete/2` function):
+At the bottom of our `PlayerController`, let's add an `authenticate/1`
+function. Open up the `lib/platform/web/controllers/player_controller.ex` file
+and add the following at the bottom (beneath the `delete/2` function):
 
 ```elixir
 defp authenticate(conn, _opts) do
@@ -215,7 +216,7 @@ Since we assigned the current player's session to be the `current_user` inside
 our `PlayerAuthController`, we can use that to determine whether a visitor to
 our site is signed in. If they are, we'll just return the connection and allow
 them to continue, otherwise if they're attempting to access a restricted
-resource, we'll display a message and redirect them beck to the index.
+resource, we'll display a message and redirect them to the login page.
 
 In the same file, we'll use the `authenticate/1` function that we just used to
 determine whether or not players should be able to render the player index page.
