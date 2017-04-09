@@ -181,8 +181,8 @@ defmodule Platform.Web.Router do
 end
 ```
 
-At the bottom of the `pipeline :browser` block, let's add our new
-authentication plug:
+At the bottom of the `pipeline :browser` block, add our new authentication
+plug:
 
 ```elixir
 pipeline :browser do
@@ -195,8 +195,43 @@ pipeline :browser do
 end
 ```
 
+This plug is going to allow us to restrict access to certain pages. Originally,
+users were being taken to our index page from the `PageController` when they
+accessed the default route (`/`). But we're going to turn that page into our
+Elm single page application, and we'll require users to log in before they
+access it.
+
+For now, let's direct users to the **Player Sign Up Page** at `/players/new`
+when they access the default route, and we'll restrict access to the
+`PageController` index page, which we'll call `/elm` for now.
+
+Here are the updates we'll need to make to our browser scope:
+
+```elixir
+scope "/", Platform.Web do
+  pipe_through :browser
+
+  get "/", PlayerController, :new
+  get "/elm", PageController, :index
+  resources "/players", PlayerController
+end
+```
+
+When we access `http://0.0.0.0:4000` now, we'll see the
+**Player Sign Up Page**.
+
+![Player Sign Up Page at Default Route](images/phoenix_authentication/new_default_route.png)
+
+And we can access `http://0.0.0.0:4000/elm` to see our original home page,
+which we'll later turn into our Elm single page application.
+
+![Original Home Page at /elm Route](images/phoenix_authentication/new_elm_route.png)
+
 ## Authenticate Function
 
+Currently, users are able to navigate to all the pages within our application.
+We want to ensure that players are logged in before they access our Elm
+application and start playing games.
 At the bottom of our `PlayerController`, let's add an `authenticate/1`
 function. Open up the `lib/platform/web/controllers/player_controller.ex` file
 and add the following at the bottom (beneath the `delete/2` function):
@@ -208,7 +243,7 @@ defp authenticate(conn, _opts) do
   else
     conn
     |> put_flash(:error, "You must be logged in to access that page.")
-    |> redirect(to: page_path(conn, :index))
+    |> redirect(to: player_path(conn, :new))
     |> halt()
   end
 end
@@ -218,7 +253,8 @@ Since we assigned the current player's session to be the `current_user` inside
 our `PlayerAuthController`, we can use that to determine whether a visitor to
 our site is signed in. If they are, we'll just return the connection and allow
 them to continue, otherwise if they're attempting to access a restricted
-resource, we'll display a message and redirect them to the login page.
+resource, we'll display a message and redirect them back to the home page
+(we'll redirect users to the login page after we create one).
 
 In the same file, we'll use the `authenticate/1` function that we just used to
 determine whether or not players should be able to render the player index page.
