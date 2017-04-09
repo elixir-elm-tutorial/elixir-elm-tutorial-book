@@ -267,22 +267,56 @@ Above the `index/2` function, add the following line of code:
 plug :authenticate when action in [:index]
 ```
 
-## Testing
+## Manual Testing
 
 If you're wondering if the updates above broke our tests, you're right. We
 usually run our test suite with `mix test`, but this time let's fire up our
 Phoenix server and manually test things out in the browser.
 
-Start up the Phoenix server with `mix phx.server` and try going to the players
-index page at `http://0.0.0.0:4000/players`:
+Start up the Phoenix server with `mix phx.server` and try going to the
+`PageController` index page at `http://0.0.0.0:4000/elm`:
 
-![Players Index Page Restricted](images/phoenix_authentication/restricted_page.png)
+![Restricted Page Alert](images/phoenix_authentication/restricted_page.png)
 
-This is great, it redirects us back to the home page because we managed to
-restrict access to the players index page. And we see the flash message
-displayed:
+This is great, it redirects us back to the **Player Sign Up Page** because we
+managed to restrict access to the `/elm` page. And we see the flash alert that
+we wrote in the `authenticate/2` function at the bottom of the
+`PageController`:
 
 > You must be logged in to access that page.
+
+## Fixing the Build
+
+Let's push a quick and dirty fix for our tests. If we push our new features
+as-is, they'll break the CI build. We could take this as an opportunity to
+write more in-depth tests for our application, but for now we're still
+figuring out where we want to put everything. We won't go too deep into writing
+tests yet, but we still want to ensure that our application is always
+functioning, and keeping our CI build green is a great way to do that.
+
+Open the `test/web/controllers/page_controller_test.exs` file and replace it
+with the following code that tests our default route and the redirect that
+we created:
+
+```elixir
+defmodule Platform.Web.PageControllerTest do
+  use Platform.Web.ConnCase
+
+  test "GET /", %{conn: conn} do
+    conn = get conn, "/"
+    assert html_response(conn, 200) =~ "Player Sign Up"
+  end
+
+  test "redirects unauthenticated users for index page", %{conn: conn} do
+    conn = get conn, page_path(conn, :index)
+    assert html_response(conn, 302) =~ "redirect"
+  end
+end
+```
+
+Go ahead and run the `mix test` command again and we should be all set with
+passing tests that give us confidence to keep adding features and moving
+forward.
 
 ## Logging In
 
@@ -517,22 +551,6 @@ the `app.html.eex` file with the following:
   </ol>
   <span class="logo"></span>
 </div>
-```
-
-## Fixing the Build
-
-Let's push a quick and dirty fix for our build. If we push our new features
-as-is they'll break the CI build. We could update the player index test to
-ensure that users are logged in, but for now let's just assert that page is
-properly redirecting users that aren't logged in.
-
-Replace the "lists all entries on index" test case with the following:
-
-```elixir
-test "redirects unauthenticated users for index page", %{conn: conn} do
-  conn = get conn, player_path(conn, :index)
-  assert html_response(conn, 302) =~ "redirect"
-end
 ```
 
 ## Summary
