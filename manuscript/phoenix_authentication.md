@@ -354,7 +354,7 @@ end
 Let's try it out. Go to the `http://0.0.0.0:4000/players/new` page and create a
 new user with both the `username` and `password` fields set to `joearms`:
 
-![Creating a New User](images/phoenix_authentication/new_user_to_login.png)
+![Creating a New User](images/phoenix_authentication/new_user_to_sign_in.png)
 
 So far so good. The new user we just created should be logged in. Let's try to
 access the `PageController` index page to verify. Go to the
@@ -518,8 +518,8 @@ defmodule Platform.Web.PlayerAuthController do
 end
 ```
 
-What the `login_by_username_and_pass/4` function does is to grab the player from
-the database using their `username` field. If the player exists and has the
+What the `login_by_username_and_pass/4` function does is to grab the player
+from the database by their `username` field. If the player exists and has the
 correct password, they will be logged in. Otherwise, we'll return an error.
 
 ## Trying Things Out
@@ -530,16 +530,17 @@ you're using Google Chrome on OS X, you can create a new incognito window with
 `Command + Shift + N`. It's also a good idea to restart your Phoenix server
 with `mix phx.server` at this point to get things up and running.
 
-We can test out the login page with the same `joearms` account that we created
-in the previous sections. Try entering the credentials on the new session page
-at `http://0.0.0.0:4000/sessions/new`:
+We can test out the **Player Sign In Page** with the same account that we
+created in the previous sections. Go to the new session page at
+`http://0.0.0.0:4000/sessions/new` and try entering `joearms` for both the
+`username` and `password` fields.
 
-![Player Login Page](images/phoenix_authentication/player_login_page.png)
+![Player Sign In Page](images/phoenix_authentication/player_sign_in_page.png)
 
 Success! We get a welcome back message letting us know that we were able to
 log in successfully:
 
-![Successful Login](images/phoenix_authentication/successful_login_message.png)
+![Successful Login](images/phoenix_authentication/successful_sign_in_message.png)
 
 ## Displaying the Player Status
 
@@ -563,9 +564,7 @@ the `app.html.eex` file with the following:
 
 ## Summary
 
-**TODO: Add notes about session issue troubleshooting.**
-
 We've come a long way! We now have working features for players to create
-accounts and authenticate on our platform. Next comes the fun stuff! We'll be
+accounts and log in on our platform. Next comes the fun stuff! We'll be
 building out the games section for our platform, and getting our first taste of
 what it's like to work with Elm.
