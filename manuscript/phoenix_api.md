@@ -106,72 +106,84 @@ working when the tests are passing.
 
 ## Trying Out our JSON API
 
-Let's start up our Phoenix server (or restart if it was already running) with
-`mix phx.server`.
+Let's start up our Phoenix server with `mix phx.server`.
 
-For our player resources, we were using URLs like `http://0.0.0.0:4000/players`
+For our players resource, we were using URLs like `http://0.0.0.0:4000/players`
 to access the HTML pages. But now that we added a JSON resource, we'll need to
-use `/api`. Try to access `http://0.0.0.0:4000/api/games` in the browser. We
-shouldn't see an error, but we also don't have any game data to display yet
-(note that your browser might display JSON data slightly different):
+use `/api` in our URLs. Try to access `http://0.0.0.0:4000/api/games` in the
+browser. We shouldn't see an error, but we also don't have any game data to
+display yet (note that your browser might display JSON data differently):
 
 ![Games API with No Data](images/phoenix_api/games_api_with_no_data.png)
 
 ## Adding Data Seeds
 
 We can't interact with our game resources the same way we did with players,
-because we're only working with JSON and don't have any HTML pages to view. But
-let's create some sample data to work with in the `priv/repo/seeds.ex` file:
+because we're only working with JSON and don't have any HTML pages to view.
+
+Let's update our database for both our players and our games so we have some
+sample data to work with. Add the following to the bottom of the
+`priv/repo/seeds.ex` file:
 
 ```elixir
 # Players
 
-Platform.Repo.insert!(%Platform.Players.Player{display_name: "José Valim", username: "josevalim", password: "password", score: 1000})
-Platform.Repo.insert!(%Platform.Players.Player{display_name: "Evan Czaplicki", username: "evancz", password: "password", score: 1500})
+Platform.Repo.insert!(%Platform.Accounts.Player{display_name: "José Valim", username: "josevalim", password: "josevalim", score: 1000})
+Platform.Repo.insert!(%Platform.Accounts.Player{display_name: "Evan Czaplicki", username: "evancz", password: "evancz", score: 2000})
+Platform.Repo.insert!(%Platform.Accounts.Player{display_name: "Joe Armstrong", username: "joearms", password: "joearms", score: 3000})
 
 # Games
 
-Platform.Repo.insert!(%Platform.Games.Game{title: "Platform Game", description: "Platform game example.", author_id: 1})
-Platform.Repo.insert!(%Platform.Games.Game{title: "Adventure Game", description: "Adventure game example.", author_id: 2})
+Platform.Repo.insert!(%Platform.Products.Game{title: "Adventure Game", description: "Adventure game example.", author_id: 1})
+Platform.Repo.insert!(%Platform.Products.Game{title: "Driving Game", description: "Driving game example.", author_id: 2})
+Platform.Repo.insert!(%Platform.Products.Game{title: "Platform Game", description: "Platform game example.", author_id: 3})
 ```
 
-Assuming we don't have any local data that we want to keep, we can use this to
-reseed the database with `mix ecto.reset`. This task will drop the existing
-database, create a new one, run migrations, and then seed the database.
+Assuming we don't have any local data that we want to keep, we can use this
+file to reseed the database with `mix ecto.reset`. This task will drop the
+existing database, create a new one, run migrations, and then seed the
+database. This is what the full output should look like:
 
 ```shell
 $ mix ecto.reset
 The database for Platform.Repo has been dropped
 The database for Platform.Repo has been created
 
-11:41:44.167 [info]  == Running Platform.Repo.Migrations.CreatePlatform.Players.Player.change/0 forward
-11:41:44.168 [info]  create table players_players
-11:41:44.182 [info]  == Migrated in 0.0s
-11:41:44.255 [info]  == Running Platform.Repo.Migrations.AddFieldsToPlayers.change/0 forward
-11:41:44.255 [info]  alter table players_players
-11:41:44.262 [info]  create index players_players_username_index
-11:41:44.266 [info]  == Migrated in 0.0s
-11:41:44.292 [info]  == Running Platform.Repo.Migrations.CreatePlatform.Games.Game.change/0 forward
-11:41:44.292 [info]  create table games_games
-11:41:44.305 [info]  == Migrated in 0.0s
-
-[debug] QUERY OK db=4.0ms
-INSERT INTO "players_players" ("display_name","score","username","inserted_at","updated_at") VALUES ($1,$2,$3,$4,$5) RETURNING "id" ["José Valim", 1000, "josevalim", {{2017, 3, 12}, {15, 41, 44, 535203}}, {{2017, 3, 12}, {15, 41, 44, 535213}}]
-[debug] QUERY OK db=2.1ms queue=0.1ms
-INSERT INTO "players_players" ("display_name","score","username","inserted_at","updated_at") VALUES ($1,$2,$3,$4,$5) RETURNING "id" ["Evan Czaplicki", 1500, "evancz", {{2017, 3, 12}, {15, 41, 44, 562350}}, {{2017, 3, 12}, {15, 41, 44, 562356}}]
-[debug] QUERY OK db=2.1ms
-INSERT INTO "games_games" ("author_id","description","title","inserted_at","updated_at") VALUES ($1,$2,$3,$4,$5) RETURNING "id" [1, "Platform game example.", "Platform Game", {{2017, 3, 12}, {15, 41, 44, 564871}}, {{2017, 3, 12}, {15, 41, 44, 564879}}]
-[debug] QUERY OK db=2.2ms
-INSERT INTO "games_games" ("author_id","description","title","inserted_at","updated_at") VALUES ($1,$2,$3,$4,$5) RETURNING "id" [2, "Adventure game example.", "Adventure Game", {{2017, 3, 12}, {15, 41, 44, 567390}}, {{2017, 3, 12}, {15, 41, 44, 567396}}]
+23:00:56.808 [info]  == Running Platform.Repo.Migrations.CreatePlatform.Accounts.Player.change/0 forward
+23:00:56.808 [info]  create table accounts_players
+23:00:56.816 [info]  == Migrated in 0.0s
+23:00:56.847 [info]  == Running Platform.Repo.Migrations.AddFieldsToPlayerAccounts.change/0 forward
+23:00:56.847 [info]  alter table accounts_players
+23:00:56.849 [info]  create index accounts_players_username_index
+23:00:56.851 [info]  == Migrated in 0.0s
+23:00:56.866 [info]  == Running Platform.Repo.Migrations.CreatePlatform.Products.Game.change/0 forward
+23:00:56.866 [info]  create table products_games
+23:00:56.870 [info]  == Migrated in 0.0s
+[debug] QUERY OK db=3.4ms
+INSERT INTO "accounts_players" ("display_name","score","username","inserted_at","updated_at") VALUES ($1,$2,$3,$4,$5) RETURNING "id" ["José Valim", 1000, "josevalim", {{2017, 4, 10}, {3, 0, 56, 970688}}, {{2017, 4, 10}, {3, 0, 56, 970696}}]
+[debug] QUERY OK db=2.3ms
+INSERT INTO "accounts_players" ("display_name","score","username","inserted_at","updated_at") VALUES ($1,$2,$3,$4,$5) RETURNING "id" ["Evan Czaplicki", 2000, "evancz", {{2017, 4, 10}, {3, 0, 56, 987478}}, {{2017, 4, 10}, {3, 0, 56, 987484}}]
+[debug] QUERY OK db=2.7ms
+INSERT INTO "accounts_players" ("display_name","score","username","inserted_at","updated_at") VALUES ($1,$2,$3,$4,$5) RETURNING "id" ["Joe Armstrong", 3000, "joearms", {{2017, 4, 10}, {3, 0, 56, 990100}}, {{2017, 4, 10}, {3, 0, 56, 990105}}]
+[debug] QUERY OK db=2.5ms
+INSERT INTO "products_games" ("author_id","description","title","inserted_at","updated_at") VALUES ($1,$2,$3,$4,$5) RETURNING "id" [1, "Adventure game example.", "Adventure Game", {{2017, 4, 10}, {3, 0, 56, 993110}}, {{2017, 4, 10}, {3, 0, 56, 993117}}]
+[debug] QUERY OK db=2.0ms
+INSERT INTO "products_games" ("author_id","description","title","inserted_at","updated_at") VALUES ($1,$2,$3,$4,$5) RETURNING "id" [2, "Driving game example.", "Driving Game", {{2017, 4, 10}, {3, 0, 56, 995898}}, {{2017, 4, 10}, {3, 0, 56, 995903}}]
+[debug] QUERY OK db=2.9ms
+INSERT INTO "products_games" ("author_id","description","title","inserted_at","updated_at") VALUES ($1,$2,$3,$4,$5) RETURNING "id" [3, "Platform game example.", "Platform Game", {{2017, 4, 10}, {3, 0, 56, 998162}}, {{2017, 4, 10}, {3, 0, 56, 998167}}]
 ```
 
-And now that we have some data we should be able to reload the
+And now that we have some data, we should be able to reload the
 `http://0.0.0.0:4000/api/games` URL in our browser and see the results:
 
 ![Games API with Data](images/phoenix_api/games_api_with_data.png)
 
 ## Summary
 
-We'll need to extend the features for our games later, but for now this will
-work as an initial API. And it will be really helpful as we start to build our
-Elm application that consumes data from this Phoenix API.
+This was a relatively quick chapter, but we accomplished exactly what we needed
+to do. We'll be able to extend the features for our games later, but this
+initial work should be perfect for our initial JSON API.
+
+In the next chapter, we'll get an introduction to the Elm language. And we'll
+start working towards using the Phoenix JSON API that we build here to supply
+data for our Elm single page application.
