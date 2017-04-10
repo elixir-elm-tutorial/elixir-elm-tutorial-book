@@ -592,6 +592,7 @@ button, and it will redirect them back to the **Player Sign In Page**.
 ## Summary
 
 We've come a long way! We now have working features for players to create
-accounts and log in on our platform. Next comes the fun stuff! We'll be
-building out the games section for our platform, and getting our first taste of
-what it's like to work with Elm.
+accounts, sign in, and sign out of our platform. And we also have the ability
+to restrict access to certain pages to ensure that users are authorized to
+view the right data. Next, we'll be building out the games section for our
+platform, and getting our first taste of what it's like to work with Elm.
