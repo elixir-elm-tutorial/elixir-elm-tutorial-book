@@ -185,5 +185,5 @@ to do. We'll be able to extend the features for our games later, but this
 initial work should be perfect for our initial JSON API.
 
 In the next chapter, we'll get an introduction to the Elm language. And we'll
-start working towards using the Phoenix JSON API that we build here to supply
-data for our Elm single page application.
+start working towards using the Phoenix JSON API that we built here to supply
+data for our Elm application.
