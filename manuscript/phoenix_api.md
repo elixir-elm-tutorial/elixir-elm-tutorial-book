@@ -13,22 +13,34 @@ later, but this will be a good start.
 We'll run the Phoenix generator from the Terminal to get started:
 
 ```shell
-mix phx.gen.json Games Game games title:string description:string author_id:integer
+mix phx.gen.json Products Game games title:string description:string author_id:integer
 ```
 
-This is similar to the way we created our player resources, but this time we're
-using JSON instead of HTML. Here's the output of the command:
+This is similar to the way we created our players resource, but this time we're
+using `phx.gen.json` instead of `phx.gen.html`.
+
+Also note that we're keeping our contexts intentionally abstract in this book.
+Although we're building features that are very specific to our gaming domain
+(`players` and `games`), we want to be able to adapt this same material for
+other uses too. We're using the `Accounts` context for our `players` and the
+`Products` context for our `games`, and we could easily use these same concepts
+to the domain of a bookstore where our `Accounts` might be `readers` and our
+`Products` would be `books`.
+
+Here's what the output should look like when we run the generator for our new
+games resource:
 
 ```shell
-$ mix phx.gen.json Games Game games title:string description:string author_id:integer
+$ mix phx.gen.json Products Game games title:string description:string author_id:integer
 * creating lib/platform/web/controllers/game_controller.ex
 * creating lib/platform/web/views/game_view.ex
 * creating test/web/controllers/game_controller_test.exs
 * creating lib/platform/web/views/changeset_view.ex
 * creating lib/platform/web/controllers/fallback_controller.ex
-* creating test/games_test.exs
-* creating lib/platform/games/game.ex
-* creating priv/repo/migrations/20170312151419_create_games_game.exs
+* creating lib/platform/products/game.ex
+* creating priv/repo/migrations/20170410023755_create_products_game.exs
+* creating lib/platform/products/products.ex
+* creating test/products_test.exs
 
 Add the resource to your api scope in lib/platform/web/router.ex:
 
@@ -62,34 +74,34 @@ end
 
 Now that we have our resources generated and they're added to our router, we
 can run our migration to update the database with `mix ecto.migrate`. This
-creates the `games_games` table in the database:
+creates the `products_games` table in the database:
 
 ```shell
 $ mix ecto.migrate
 Compiling 16 files (.ex)
 Generated platform app
 
-11:18:44.120 [info]  == Running Platform.Repo.Migrations.CreatePlatform.Games.Game.change/0 forward
-11:18:44.121 [info]  create table games_games
-11:18:44.171 [info]  == Migrated in 0.0s
+22:45:17.194 [info]  == Running Platform.Repo.Migrations.CreatePlatform.Products.Game.change/0 forward
+22:45:17.194 [info]  create table products_games
+22:45:17.208 [info]  == Migrated in 0.0s
 ```
 
 Lastly, we'll run our tests to make sure everything is still working:
 
 ```shell
 $ mix test
-Compiling 16 files (.ex)
+Compiling 17 files (.ex)
 Generated platform app
-..................................
+...................................
 
-Finished in 0.6 seconds
-34 tests, 0 failures
+Finished in 0.2 seconds
+35 tests, 0 failures
 
-Randomized with seed 657441
+Randomized with seed 532429
 ```
 
-We're up to a total of 34 tests! Granted these were created by the Phoenix
-generators, but it gives us some level of confidence that our application is
+We're up to a total of 35 tests! Granted, these were created by the Phoenix
+generators; but it gives us some level of confidence that our application is
 working when the tests are passing.
 
 ## Trying Out our JSON API
