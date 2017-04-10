@@ -5,7 +5,8 @@ look at the Elm language. So now let's figure out how we can write Elm code for
 the front-end of our Phoenix application.
 
 We already installed Elm globally in the last chapter using npm, but in this
-chapter let's take a look at configuring Elm with Phoenix using Brunch.
+chapter let's take a look at configuring Elm with Phoenix using a tool called
+Brunch.
 
 ## Configuring Elm within Phoenix
 
@@ -37,7 +38,7 @@ Open the existing `package.json` file that Phoenix gives us by default:
 ```
 
 We can use whatever front-end build tool we want here, but Phoenix comes with a
-minimalist build tool called [Brunch](http://brunch.io/) by default. You're
+minimalist build tool called [Brunch](http://brunch.io) by default. You're
 welcome to try other options, but Brunch tends to work well for our purposes.
 And generally this configuration part tends to take time only at first and then
 we're able to develop in Elixir and Elm without having to think about tooling
