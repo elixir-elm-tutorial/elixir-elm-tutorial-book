@@ -352,7 +352,7 @@ end
 ```
 
 Let's try it out. Go to the `http://0.0.0.0:4000/players/new` page and create a
-new user:
+new user with both the `username` and `password` fields set to `joearms`:
 
 ![Creating a New User](images/phoenix_authentication/new_user_to_login.png)
 
@@ -406,30 +406,32 @@ end
 ```
 
 This may seem like a lot at first, but we'll go through it quickly along with
-the updates we make to the `PlayerAuthController`. The `new/2` function will
-allow us to display a login page (as opposed to the sign up page that new
-players will use). When we create new sessions, we'll use a new function (which
-we'll create soon) called `login_by_username_and_pass/4`. Lastly, the `delete/2`
-function will allow us to log users out.
+the updates we make to the `PlayerAuthController`.
+
+The `new/2` function will allow us to display a login page (as opposed to the
+sign up page that new players will use). When we create new sessions, we'll use
+a new function (which we'll create soon) called `login_by_username_and_pass/4`.
+Lastly, the `delete/2` function will allow us to log users out by deleting
+their session.
 
 ## View and Template
 
 Let's create the view and the template for our login page. Add a new file called
-`session_view.ex` inside the `lib/platform/web/views` folder. And add the
+`player_session_view.ex` inside the `lib/platform/web/views` folder. And add the
 following to the file:
 
 ```elixir
-defmodule Platform.Web.SessionView do
+defmodule Platform.Web.PlayerSessionView do
   use Platform.Web, :view
 end
 ```
 
 And then we'll need to create the corresponding template. Create a
-`lib/platform/templates/session` folder, and then add a `new.html.eex` file
-inside with the following content:
+`lib/platform/web/templates/player_session` folder, and then add a
+`new.html.eex` file inside with the following content:
 
 ```elixir
-<h1>Player Login</h1>
+<h1>Player Sign In Page</h1>
 
 <%= form_for @conn, player_session_path(@conn, :create), [as: :session], fn f -> %>
   <div class="form-group">
@@ -438,7 +440,8 @@ inside with the following content:
   <div class="form-group">
     <%= password_input f, :password, placeholder: "Enter password...", class: "form-control" %>
   </div>
-  <%= submit "Log in", class: "btn btn-primary" %>
+  <%= submit "Sign In", class: "btn btn-primary" %>
+  <span><%= link "Create New Account", to: player_path(@conn, :new), class: "btn btn-success" %></span>
 <% end %>
 ```
 
@@ -446,15 +449,16 @@ inside with the following content:
 
 If you were still running a Phoenix server this whole time, you've probably
 noticed we've been creating errors in our application. But we're getting close
-to a working authentication system for our application. We'll need to update
-our router to reflect our session features. Open the `lib/platform/web/router.ex`
-file and add our session resource:
+to a working authentication system. We'll need to update our router to reflect
+our new session features. Open the `lib/platform/web/router.ex` file and add
+our session resource:
 
 ```elixir
 scope "/", Platform.Web do
-  pipe_through :browser # Use the default browser stack
+  pipe_through :browser
 
-  get "/", PageController, :index
+  get "/", PlayerController, :new
+  get "/elm", PageController, :index
   resources "/players", PlayerController
   resources "/sessions", PlayerSessionController, only: [:new, :create, :delete]
 end
@@ -468,7 +472,8 @@ their sessions to log in and out of the platform.
 Lastly, we'll create the function in our `PlayerAuthController` that ties
 everything together. Add the `login_by_username_and_pass/4` function at the
 bottom of the `lib/platform/controllers/player_auth_controller.ex` file, and
-don't forget to add the `import` for our encryption at the top:
+don't forget to add the `import` for our encryption at the top. Here's what
+the full code should look like for the file:
 
 ```elixir
 defmodule Platform.Web.PlayerAuthController do
@@ -481,7 +486,7 @@ defmodule Platform.Web.PlayerAuthController do
 
   def call(conn, repo) do
     player_id = get_session(conn, :player_id)
-    player = player_id && repo.get(Platform.Players.Player, player_id)
+    player = player_id && repo.get(Platform.Accounts.Player, player_id)
     assign(conn, :current_user, player)
   end
 
@@ -494,7 +499,7 @@ defmodule Platform.Web.PlayerAuthController do
 
   def login_by_username_and_pass(conn, username, given_pass, opts) do
     repo = Keyword.fetch!(opts, :repo)
-    player = repo.get_by(Platform.Players.Player, username: username)
+    player = repo.get_by(Platform.Accounts.Player, username: username)
 
     cond do
       player && checkpw(given_pass, player.password_hash) ->
@@ -520,9 +525,12 @@ correct password, they will be logged in. Otherwise, we'll return an error.
 ## Trying Things Out
 
 It's a good idea to try out these features using "incognito" browser windows.
-That will give us a way to open a new browser window in a clean state.
+That will give us a way to open a new browser window in a clean state. If
+you're using Google Chrome on OS X, you can create a new incognito window with
+`Command + Shift + N`. It's also a good idea to restart your Phoenix server
+with `mix phx.server` at this point to get things up and running.
 
-We can test out the login page with the same `newuser` account that we created
+We can test out the login page with the same `joearms` account that we created
 in the previous sections. Try entering the credentials on the new session page
 at `http://0.0.0.0:4000/sessions/new`:
 
