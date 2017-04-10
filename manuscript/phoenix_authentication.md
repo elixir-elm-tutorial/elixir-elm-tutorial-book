@@ -400,7 +400,7 @@ defmodule Platform.Web.PlayerSessionController do
   def delete(conn, _) do
     conn
     |> Platform.Web.PlayerAuthController.logout()
-    |> redirect(to: page_path(conn, :index))
+    |> redirect(to: player_session_path(conn, :new))
   end
 end
 ```
@@ -544,23 +544,50 @@ log in successfully:
 
 ## Displaying the Player Status
 
-In the `lib/platform/web/templates/layout` folder, update the header section in
-the `app.html.eex` file with the following:
+We've given users the ability to create new accounts at `/players/new`, and
+players can sign in to existing accounts from the `/sessions/new` page. As a
+last step for this chapter, let's find a place to let players know when they're
+logged in, and give them a way to log out.
+
+First, let's open the `lib/platform/web/templates/layout` folder, and remove
+the existing header that Phoenix came with by default (we're going to handle
+our own custom header with routing in our Elm single page application later).
+
+Update the `<body>` of the `app.html.eex` file with the following:
 
 ```embedded_elixir
-<div class="header">
-  <ol class="breadcrumb text-right">
-  <%= if @current_user do %>
-    <li>Logged in as <strong><%= @current_user.username %></strong></li>
-    <li><%= link "Log Out", to: player_session_path(@conn, :delete, @current_user), method: "delete" %></li>
-  <% else %>
-    <li><%= link "Sign Up", to: player_path(@conn, :new) %></li>
-    <li><%= link "Log In", to: player_session_path(@conn, :new) %></li>
-  <% end %>
-  </ol>
-  <span class="logo"></span>
-</div>
+<body>
+  <div class="container">
+    <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
+    <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
+
+    <main role="main">
+      <%= render @view_module, @view_template, assigns %>
+    </main>
+
+  </div> <!-- /container -->
+  <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
+</body>
 ```
+
+Now, let's update the template at `lib/platform/web/page/index.html.eex` with
+the following:
+
+```embedded_elixir
+<p class="well">Signed in as <strong><%= @current_user.username %></strong></p>
+<span><%= link "List All Players", to: player_path(@conn, :index), class: "btn btn-info" %></span>
+<span><%= link "Sign Out", to: player_session_path(@conn, :delete, @current_user), method: "delete", class: "btn btn-danger" %></span>
+```
+
+This is exactly what we were hoping for. Now we have content to display for
+signed in users on the `http://0.0.0.0:4000/elm` page. We know that a player
+must be authenticated to access this page, so we can use `@current_user` to
+display their `username` along with a **Sign Out** button.
+
+![Display Page for Signed In User](images/phoenix_authentication/display_signed_in_user.png)
+
+Users can successfully delete their session by clicking the red **Sign Out**
+button, and it will redirect them back to the **Player Sign In Page**.
 
 ## Summary
 
