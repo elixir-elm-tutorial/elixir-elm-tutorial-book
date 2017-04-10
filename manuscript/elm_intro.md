@@ -93,7 +93,7 @@ we run it, the Elm runtime is going to look for `main`. But Elm is _way_ more
 fun to play with than it is to read about, so let's finally run our example.
 
 Before we can run Elm code, we'll need to install Elm. There are different
-ways of doing it, but the easiest way is to use `npm` since most developers
+ways of doing it, but the easiest way is to use `npm` since most web developers
 have Node installed already.
 
 ```shell
@@ -183,13 +183,13 @@ elm-reactor 0.18.0
 Listening on http://localhost:8000
 ```
 
-Now you can visit `http://localhost:8000/` in your browser and see the files
+Now you can visit `http://localhost:8000` in your browser and see the files
 and dependencies for our project. We only have a single Elm file (`Hello.elm`),
 so let's click it to compile and see the results.
 
-![elm-reactor](images/elm_intro/elm-reactor.png)
+![elm-reactor](images/elm_intro/elm_reactor.png)
 
-![Elm Hello World Example](images/elm_intro/elm-hello-world.png)
+![Elm Hello World Example](images/elm_intro/elm_hello_world.png)
 
 ## elm-format
 
