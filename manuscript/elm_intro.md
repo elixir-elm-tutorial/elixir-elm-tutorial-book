@@ -193,7 +193,7 @@ so let's click it to compile and see the results.
 
 ## elm-format
 
-Okay, this is admittedly not the most exciting example. But the good news is
+"Hello World" is admittedly not the most exciting example. But the good news is
 that we have Elm installed and have a simple program up and running.
 
 Let's take a look a couple more simple things with this example that will
@@ -201,14 +201,14 @@ make our lives easier.
 
 Before we move any further, definitely take a look at
 [`elm-format`](https://github.com/avh4/elm-format). It's a plugin that you can
-use for your editor that makes working with Elm much easier. It's particularly
+use with your editor that makes working with Elm much easier. It's particularly
 great when you're getting started, because you can type a rough idea of what
 you want to do and then immediately know if it's valid code as long as
 `elm-format` reformats the code and doesn't mention errors or warnings.
 
-While `elm-format` is not strictly necessary, and you can write good Elm code
-without it; it's a very helpful tool that can help you focus on problem-solving
-instead of worrying about valid syntax.
+While `elm-format` is not strictly necessary, and it's possible to write solid
+Elm code without it, it's a very helpful tool that can help you focus on
+problem-solving instead of worrying about valid syntax.
 
 ## Comments and Type Signatures
 
@@ -260,7 +260,7 @@ value. Since this function doesn't have any arguments, we're just giving the
 return type here, which is `Html msg`. That just means we're returning some
 HTML code when we return a value from the `Html.text` function that we're using.
 
-The pipe operator we discovered in Elixir also works in Elm! In fact, we can
+The pipe operator we discovered in Elixir also works in Elm. In fact, we can
 rewrite our "Hello World" text in all uppercase letters with the following:
 
 ```elm
