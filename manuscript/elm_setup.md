@@ -143,9 +143,9 @@ Starting downloads...
 Packages configured successfully!
 ```
 
-Excellent! This means we have our `package.json` file in the `assets` folder to
-handle our JavaScript dependencies, and we also have our `elm-package.json` file
-in the `lib/platform/web/elm` folder to manage Elm packages.
+So we have our `package.json` file in the `assets` folder to handle our
+JavaScript dependencies, and we also have our `elm-package.json` file in the
+`lib/platform/web/elm` folder to manage Elm packages.
 
 ## Main.elm
 
