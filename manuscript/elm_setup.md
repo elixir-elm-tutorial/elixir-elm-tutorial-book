@@ -37,12 +37,11 @@ Open the existing `package.json` file that Phoenix gives us by default:
 }
 ```
 
-We can use whatever front-end build tool we want here, but Phoenix comes with a
+We can use any front-end build tool we want here, but Phoenix comes with a
 minimalist build tool called [Brunch](http://brunch.io) by default. You're
 welcome to try other options, but Brunch tends to work well for our purposes.
-And generally this configuration part tends to take time only at first and then
-we're able to develop in Elixir and Elm without having to think about tooling
-too much as we move forward.
+This configuration takes some time, but afterward we'll be able to develop in
+Elixir and Elm without having to think about tooling as much moving forward.
 
 Inside the `assets` folder, let's run the following command to ensure our
 project works with the `elm` language and the `elm-brunch` tool:
