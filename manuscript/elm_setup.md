@@ -179,23 +179,32 @@ Elm compile: Main.elm, in ../lib/platform/web/elm, to ../../../../assets/vendor/
 
 ## Displaying Our Elm Application
 
-The last step is to find a place to put our Elm application within Phoenix. For
-now, we can use the same `index.html.eex` file we worked with previously in the
-`/lib/platform/web/templates` folder. Below the link we added for the "List of
-Players", let's add a `<div>` element where we can put our Elm application:
+The last step is to find a place to put our Elm application within Phoenix. In
+a previous chapter, we already created a `/elm` route that we can use. That page
+currently contains a few simple buttons, and we'll add our Elm content below.
+We'll use the same `index.html.eex` file we worked with previously in the
+`/lib/platform/web/templates/page` folder.
+
+Below the existing code, let's add a `<div>` element where we can put our Elm
+application:
 
 ```embedded_elixir
-<%= link("List of Players", to: "/players", class: "btn btn-primary") %>
+<p class="well">Signed in as <strong><%= @current_user.username %></strong></p>
+<span><%= link "List All Players", to: player_path(@conn, :index), class: "btn btn-info" %></span>
+<span><%= link "Sign Out", to: player_session_path(@conn, :delete, @current_user), method: "delete", class: "btn btn-danger" %></span>
 
 <div class="elm-container"></div>
 ```
 
-We have a container to attach our Elm application. Let's open the
+We have a container to attach our Elm application. So let's open the
 `assets/js/app.js` file and add the following code at the very bottom:
 
 ```javascript
-const elmContainer = document.querySelector("#elm-container");
-const elmApplication = Elm.Main.embed(elmContainer);
+const elmContainer = document.querySelector(".elm-container");
+
+if (elmContainer) {
+  const elmApplication = Elm.Main.embed(elmContainer);
+}
 ```
 
 ## Working Elm application
@@ -203,17 +212,23 @@ const elmApplication = Elm.Main.embed(elmContainer);
 With our configuration finished, we now have the ability to write Elm code in
 our `lib/platform/web/elm` folder. That will automatically be compiled into
 JavaScript using our minimal Brunch configuration, and then the resulting Elm
-application will be inserted into our Phoenix application on the home page
+application will be inserted into our Phoenix application on our `/elm` page
 (`lib/platform/web/templates/page/index.html.eex`).
 
 Be sure to restart your Phoenix server if it was still running, and it should
 recompile all the code necessary to get our Elm application displayed on the
 screen.
 
+We should now be able to visit `http://0.0.0.0:4000/elm` and see the "Hello
+from Elm!" text coming from our `Main.elm` application in the
+`lib/platform/web/elm` folder.
+
 ![Working Elm Application Inside Phoenix](images/elm_setup/working_elm_application.png)
 
-One of the great features is that we can keep working with Elm, and our live
-reload features will allow us to see changes without needing to restart the
+## Live Reload
+
+One of the great features is that we can keep working with Elm, and the live
+reload feature will allow us to see changes without needing to restart the
 server or refresh the page in the browser. Try making a small change to the
 string in our `Main.elm` file:
 
@@ -228,6 +243,16 @@ main =
     text "Hello from Elm inside Phoenix!"
 ```
 
-And the content should be reloaded in the browser without needing a refresh!
+The content should be reloaded in the browser without needing a refresh.
 
 ![Working Live Reload for Elm](images/elm_setup/elm_live_reload.png)
+
+## Summary
+
+We've come a long way already in this book, and we now have the ability to
+write code in both Elixir and Elm to create our platform. In this chapter,
+we learned about configuring Elm to work inside Phoenix, and this will enable
+us to start building the front-end for our application.
+
+In the next chapter, we'll start putting together our Elm single page
+application so that we can start working with game data from our API.
