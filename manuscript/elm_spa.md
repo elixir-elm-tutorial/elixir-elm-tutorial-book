@@ -54,4 +54,329 @@ our Elm application:
 
 ## Main.elm
 
-...
+Let's take a look at our existing Elm application:
+
+```elm
+module Main exposing (..)
+
+import Html exposing (Html, text)
+
+
+main : Html msg
+main =
+    text "Hello from Elm inside Phoenix!"
+```
+
+Our goal for this chapter will be to show a list of games on the page, and
+later we'll take care of pulling in real data from our JSON API.
+
+What would our game list look like in standard HTML? We could create a `<div>`
+element, and then add an unordered list that displays our games. Perhaps we'd
+start with something like this:
+
+```html
+<div class="games-index">
+  <ul class="games-list">
+    <li>Adventure Game</li>
+    <li>Driving Game</li>
+    <li>Platform Game</li>
+  </ul>
+</div>
+```
+
+## Elm View
+
+Instead of displaying our `"Hello from Elm inside Phoenix!"` text, let's
+create our games list in the `main` function. We'll start with an empty `div`
+element:
+
+```elm
+module Main exposing (..)
+
+import Html exposing (Html, text, div)
+
+
+main : Html msg
+main =
+    div [] []
+```
+
+Note that the first step is to import the `div` function from Elm's `Html`
+module. Then we replaced our text with `div [] []`. Those empty square brackets
+indicate that we're passing two empty lists to the `div` function. The first
+one will be a list of attributes (like our class name), and the second one will
+be the contents of our `div` (our unordered list).
+
+In order to use the `class` attribute, we'll need to import that too:
+
+```elm
+module Main exposing (..)
+
+import Html exposing (Html, text, div)
+import Html.Attributes exposing (class)
+
+
+main : Html msg
+main =
+    div [ class "games-index" ] []
+```
+
+In other words, we can import HTML elements from the `Html` module, and we can
+import HTML attributes from the `Html.Attributes` module. In fact, we can
+import _everything_ from those modules using `..` and not have to worry about
+manually importing things one at a time. On the one hand, we're importing a lot
+of things we won't need, but it will save us time in development now and we can
+go back and refactor to import only what we need later. Let's update our import
+statements with the following:
+
+```elm
+module Main exposing (..)
+
+import Html exposing (..)
+import Html.Attributes exposing (..)
+
+
+main : Html msg
+main =
+    div [ class "games-index" ] []
+```
+
+Now we have access to any HTML element or attribute that we'll need. But we
+still only have an empty `div` on the page, so let's start adding our list.
+
+## Creating a List of Games
+
+Remember that we are passing two lists to our `div` function:
+
+```elm
+div [ class "games-index" ] []
+```
+
+The first list contains our attributes, and we'll add the contents of our `div`
+in the second list (we'll also move our second list to a new line for
+readability):
+
+```elm
+div [ class "games-index" ]
+    [ ul [] [] ]
+```
+
+The `ul` function works the same way as our `div`. We'll add our `class`
+attribute first:
+
+```elm
+div [ class "games-index" ]
+    [ ul [ class "games-list" ] [] ]
+```
+
+And now we can add the contents of our unordered list:
+
+```elm
+div [ class "games-index" ]
+    [ ul [ class "games-list" ] [ li [] [] ] ]
+```
+
+This is starting to look a little confusing because we have a list item nested
+inside an unordered list, which is nested inside our `div`. But let's finish
+adding our current example by adding our list items:
+
+```elm
+module Main exposing (..)
+
+import Html exposing (..)
+import Html.Attributes exposing (..)
+
+
+main : Html msg
+main =
+    div [ class "games-index" ]
+        [ ul [ class "games-list" ]
+            [ li [] [ text "Adventure Game" ]
+            , li [] [ text "Driving Game" ]
+            , li [] [ text "Platform Game" ]
+            ]
+        ]
+```
+
+This might seem like a lot of work to display a simple list on the page. But
+soon we'll see how everything we're working with here is a pure function, which
+makes it really simple to compose small, understandable pieces into a bigger
+picture. And the good news is that now we have our list displaying on the page:
+
+![Initial Games List](images/elm_spa/initial_games_list.png)
+
+## Breaking Up the View
+
+The nesting of elements inside elements is making things a little confusing in
+our code so far. Let's break things up into small functions. Instead of
+assigning everything directly to our `main` function, let's split things up
+into a games index container, a list, and individual list items.
+
+```elm
+module Main exposing (..)
+
+import Html exposing (..)
+import Html.Attributes exposing (..)
+
+
+main : Html msg
+main =
+    div [ class "games-index" ]
+        [ ul [ class "games-list" ]
+            [ li [] [ text "Adventure Game" ]
+            , li [] [ text "Driving Game" ]
+            , li [] [ text "Platform Game" ]
+            ]
+        ]
+
+
+gamesIndex =
+    div [] []
+
+
+gamesList =
+    ul [] []
+
+
+gamesListItem =
+    li [] []
+```
+
+Now we can start to break up our `main` function into smaller parts. Each of
+these functions will return simple HTML, so we can add our type annotations:
+
+```elm
+gamesIndex : Html msg
+gamesIndex =
+    div [] []
+
+
+gamesList : Html msg
+gamesList =
+    ul [] []
+
+
+gamesListItem : Html msg
+gamesListItem =
+    li [] []
+```
+
+And now we can fill out our functions with the existing example we created in
+our `main` function. Note that we're only going to add a single list item for
+now, and then we're going to extract our data into a separate list:
+
+```elm
+gamesIndex : Html msg
+gamesIndex =
+    div [ class "games-index" ] [ gamesList ]
+
+
+gamesList : Html msg
+gamesList =
+    ul [ class "games-list" ] [ gamesListItem ]
+
+
+gamesListItem : Html msg
+gamesListItem =
+    li [] [ text "Adventure Game" ]
+```
+
+Lastly, we can just assign our new `gamesIndex` function to `main` and it will
+render our new structure to the page with a single game:
+
+```elm
+module Main exposing (..)
+
+import Html exposing (..)
+import Html.Attributes exposing (..)
+
+
+main : Html msg
+main =
+    gamesIndex
+
+
+gamesIndex : Html msg
+gamesIndex =
+    div [ class "games-index" ] [ gamesList ]
+
+
+gamesList : Html msg
+gamesList =
+    ul [ class "games-list" ] [ gamesListItem ]
+
+
+gamesListItem : Html msg
+gamesListItem =
+    li [] [ text "Adventure Game" ]
+```
+
+![Refactored Games List](images/elm_spa/refactored_games_list.png)
+
+## Extracting Our Data
+
+Currently we have some hardcoded `view` code. But most Elm applications will
+separate the data into a Model. I find it helpful to add comments and
+placeholder functions to my code so I can start to scaffold out where I want
+things to go. In this example, we're going to start our `model` as an empty
+list:
+
+```elm
+module Main exposing (..)
+
+import Html exposing (..)
+import Html.Attributes exposing (..)
+
+
+-- MAIN
+
+
+main : Html msg
+main =
+    gamesIndex
+
+
+
+-- MODEL
+
+
+model =
+    []
+
+
+
+-- VIEW
+
+
+gamesIndex : Html msg
+gamesIndex =
+    div [ class "games-index" ] [ gamesList ]
+
+
+gamesList : Html msg
+gamesList =
+    ul [ class "games-list" ] [ gamesListItem ]
+
+
+gamesListItem : Html msg
+gamesListItem =
+    li [] [ text "Adventure Game" ]
+```
+
+In our initial example, we just want our data to be a list of game titles as
+strings. That means we can add our data and type annotation:
+
+```elm
+model : List String
+model =
+    [ "Adventure Game"
+    , "Driving Game"
+    , "Platform Game"
+    ]
+```
+
+Having the comma characters at the beginning of the line might seem foreign if
+you're coming from other languages, but it's easy to get used to. And if you're
+using elm-format then we're able to focus less on syntax and more on the
+overall concepts we're learning here.
+
