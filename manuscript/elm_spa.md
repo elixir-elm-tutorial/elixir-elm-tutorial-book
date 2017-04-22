@@ -380,3 +380,160 @@ you're coming from other languages, but it's easy to get used to. And if you're
 using elm-format then we're able to focus less on syntax and more on the
 overall concepts we're learning here.
 
+## Passing Data to the View
+
+We're going to work towards displaying our full list of games, but we'll start
+with trying to display a single game from our list because it introduces some
+really interesting concepts in Elm.
+
+What if we want to find the first game in our list, and then pass that to the
+`gamesListItem` function instead of using the hardcoded string we currently
+have there?
+
+Our first step would be to use the `model` list and find the first item. To do
+that, we'd head to the Elm documentation for the `List` module, and try to find
+a function that would give us the results we're looking for. Take a look at the
+[`List` module documentation](http://package.elm-lang.org/packages/elm-lang/core/5.1.1/List),
+and find the `head` function.
+
+The `List.head` function is exactly what we need to grab the first item from
+our `model`:
+
+```elm
+model : List String
+model =
+    [ "Adventure Game"
+    , "Driving Game"
+    , "Platform Game"
+    ]
+
+
+firstGame =
+    List.head model
+```
+
+You might think that `firstGame` would be set to `"Adventure Game"`, but in
+actuality we're working with something called a `Maybe` in Elm. The `List.head`
+function doesn't return the result itself, it returns a "Maybe". The reason for
+this is that our list of data _could_ be empty.
+
+To illustrate what's happening, here's a quick example in the `elm-repl`:
+
+```elm
+$ elm-repl
+> List.head [ "Adventure Game", "Driving Game", "Platform Game" ]
+Just "Adventure Game"
+> List.head []
+Nothing
+```
+
+## Elm Maybe
+
+This can be a really confusing concept, so don't worry if this looks strange at
+first. The idea is that we need to handle both possible cases. The first case
+is when our list contains the data we're looking for, and the second case is
+when our list is empty. The first step that will help clarify this is to rename
+the variable that we're working with and add a type annotation:
+
+```elm
+model : List String
+model =
+    [ "Adventure Game"
+    , "Driving Game"
+    , "Platform Game"
+    ]
+
+
+firstGameMaybe : Maybe String
+firstGameMaybe =
+    List.head model
+```
+
+Now we can use Elm's `case` syntax to get the data we're looking for. When our
+list has an actual game title string, we'll want to take that as a result.
+Otherwise, we'll just return an empty string.
+
+```elm
+model : List String
+model =
+    [ "Adventure Game"
+    , "Driving Game"
+    , "Platform Game"
+    ]
+
+
+firstGameMaybe : Maybe String
+firstGameMaybe =
+    List.head model
+
+
+firstGameTitle : String
+firstGameTitle =
+    case firstGameMaybe of
+        Just gameTitle ->
+            gameTitle
+
+        Nothing ->
+            ""
+```
+
+If this is overwhelming or confusing don't worry too much. Sometimes it just
+takes repeated exposure to these concepts before they become obvious. The
+naming in our example should help with our understanding.
+
+We're trying to get the first game title from our `model`. So we start by using
+`List.head`, which returns a "Maybe", and we assign that to `firstGameMaybe`.
+That could contain "Just" a game title or possibly contain "Nothing" in the
+event that the list was empty.
+
+We handle both of those cases in the `firstGameTitle` function. If the list
+contains strings like we're expecting, we return the first string with
+`gameTitle`. If the list was empty, we just return an empty string with `""`.
+
+The result is that we can add this to our view and our application should
+still work as intended by showing the `"Adventure Game"` as the only list item
+on the page:
+
+```elm
+gamesListItem : Html msg
+gamesListItem =
+    li [] [ text firstGameTitle ]
+```
+
+## Maybe.withDefault
+
+Since this is a common pattern in Elm, there is a function called `withDefault`
+in the [`Maybe` module](http://package.elm-lang.org/packages/elm-lang/core/5.1.1/Maybe)
+that can be really helpful to gather the results we're looking for. Let's
+refactor our `firstGameTitle` function with the following approach:
+
+```elm
+firstGameTitle : String
+firstGameTitle =
+    Maybe.withDefault "" firstGameMaybe
+```
+
+This basically just grabs the first game title as a string, and if it doesn't
+exist then we fall back to an empty string `""` as a default value. This allows
+us to accomplish the same thing with a lot less code.
+
+## Why Maybe?
+
+You might be asking yourself why we have to go through all this trouble to get
+a single value from our model. It seems like a lot of work at first, but this
+ultimately proves to be one of the most powerful concepts in Elm, because it
+insulates us from a massive class of errors.
+
+We never have to run into errors like "undefined is not a function" in Elm,
+because we always account for situations where something might not have a
+value. There is no usage of `null` or `undefined` in Elm. This is why Elm can
+make a claim of producing no runtime errors, because we're always able to
+account for possible values. It means the users of our applications won't run
+into errors, and enables us to make guarantees that many languages simply
+can't.
+
+If you're interested in these concepts, be sure to read more about the
+[`null` reference on Wikipedia](https://en.wikipedia.org/wiki/Tony_Hoare).
+
+This is one of the more difficult concepts to grasp at first when working with
+Elm, but it becomes our most treasured asset.
