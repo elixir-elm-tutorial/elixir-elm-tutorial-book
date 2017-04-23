@@ -477,14 +477,14 @@ firstGameTitle =
             ""
 ```
 
-If this is overwhelming or confusing don't worry too much. Sometimes it just
+If this is overwhelming or confusing, don't worry too much. Sometimes it just
 takes repeated exposure to these concepts before they become obvious. The
 naming in our example should help with our understanding.
 
 We're trying to get the first game title from our `model`. So we start by using
-`List.head`, which returns a "Maybe", and we assign that to `firstGameMaybe`.
-That could contain "Just" a game title or possibly contain "Nothing" in the
-event that the list was empty.
+`List.head`, which returns a `Maybe` type, and we assign that to
+`firstGameMaybe`. That could contain `Just` a game title or possibly contain
+`Nothing` in the event that the list was empty.
 
 We handle both of those cases in the `firstGameTitle` function. If the list
 contains strings like we're expecting, we return the first string with
@@ -537,3 +537,132 @@ If you're interested in these concepts, be sure to read more about the
 
 This is one of the more difficult concepts to grasp at first when working with
 Elm, but it becomes our most treasured asset.
+
+## Iterating Through the List
+
+We know how to display a single item from our `model` using `List.head`. But
+how do we iterate through all the game titles and display them on the page?
+We're going to use `List.map` to iterate through our values and pass them to
+our `gamesList` function.
+
+We can start by refactoring our view functions to accept arguments. This is
+going to be a little difficult at first since we have to make changes to
+`gamesIndex`, `gamesList`, and `gamesListItem` all at the same time, but at the
+end we'll have all the data from our Model being displayed in the View.
+
+First, let's update our `gamesIndex` function to take our `model` as an
+argument, and we'll call the argument `gameTitles`. This will involve updating
+our type annotation, adding the argument, and then passing it along to the next
+function too:
+
+```elm
+gamesIndex : List String -> Html msg
+gamesIndex gameTitles =
+    div [ class "games-index" ] [ gamesList gameTitles ]
+```
+
+Now we have to update our `gamesList` function to accept the argument that
+we're passing along from our `gamesIndex` function. We'll update the type
+annotation, add the `gameTitles` argument, and then we'll take a look at the
+`map` function from the
+[`List` module](http://package.elm-lang.org/packages/elm-lang/core/latest/List):
+
+```elm
+gamesList : List String -> Html msg
+gamesList gameTitles =
+    ul [ class "games-list" ] (List.map gamesListItem gameTitles)
+```
+
+There's a lot going on here. We're accepting a list of strings as the argument
+to our `gamesList` function. Then we're going to iterate through those game
+titles one at a time using `List.map`. Take a look at the `List.map` function
+in the link to the Elm documentation posted above, and we'll see that it takes
+two arguments: a function and a list.
+
+What's happening is that we're passing the list of all our game titles to the
+`List.map` function, and it's splitting them apart and sending the titles one
+at a time to the `gamesListItem` function. We need to wrap all this in
+parentheses because we're using it as the second argument to our `ul` function,
+but don't get too caught up in understanding everything at once. For now, we
+just want to get an overall understanding of how to render the list on our
+page, and we'll go back later to get a better explanation of how it all fits
+together.
+
+Finishing up with the `gamesListItem` function will help clarify what's
+happening above. Let's update the function to take a single string argument
+called `gameTitle`:
+
+```elm
+gamesListItem : String -> Html msg
+gamesListItem gameTitle =
+    li [] [ text gameTitle ]
+```
+
+Our `gamesListItem` function is using the individual strings that are getting
+passed from the `List.map` function in `gamesList`, and it's rendereing them
+inside a `li` element.
+
+## Tying It All Together
+
+Let's update our `main` function to accept the data from our `model`, and our
+application should be back to a fully functioning state. We'll post the full
+code example here and then follow the data to get a better understanding of
+how it flows through our functions and how it all fits together (also note that
+we removed our `firstGameMaybe` and `firstGameTitle` functions now that we're
+mapping through all the titles):
+
+```elm
+module Main exposing (..)
+
+import Html exposing (..)
+import Html.Attributes exposing (..)
+
+
+-- MAIN
+
+
+main : Html msg
+main =
+    gamesIndex model
+
+
+
+-- MODEL
+
+
+model : List String
+model =
+    [ "Adventure Game"
+    , "Driving Game"
+    , "Platform Game"
+    ]
+
+
+
+-- VIEW
+
+
+gamesIndex : List String -> Html msg
+gamesIndex gameTitles =
+    div [ class "games-index" ] [ gamesList gameTitles ]
+
+
+gamesList : List String -> Html msg
+gamesList gameTitles =
+    ul [ class "games-list" ] (List.map gamesListItem gameTitles)
+
+
+gamesListItem : String -> Html msg
+gamesListItem gameTitle =
+    li [] [ text gameTitle ]
+```
+
+[Full explanation goes here...]
+
+## Refactoring the View
+
+Let's complete one last step in preparation for the next chapter...
+
+## Summary
+
+...
