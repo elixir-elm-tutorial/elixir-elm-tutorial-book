@@ -1,4 +1,4 @@
-# Elixir Intro
+# Elixir Introduction
 
 In the last chapter, we created a full Phoenix back-end platform. By default,
 Phoenix applications contain a lot of Elixir code. But if we're just getting
@@ -52,7 +52,7 @@ The first thing you might notice is that our Elixir project and our Phoenix
 project look like they have a lot of similarities. The folder structure is
 essentially the same:
 
-![Elixir Folder Structure](images/elixir_intro/elixir_folder_structure.png)
+![Elixir Folder Structure](images/elixir_introduction/elixir_folder_structure.png)
 
 The `temporary` project is a lot simpler, but shares a lot in common with how
 Phoenix applications work. The `config` folder contains configuration settings,
