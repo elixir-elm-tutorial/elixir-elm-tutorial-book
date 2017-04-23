@@ -39,7 +39,7 @@ progress.
 - Phoenix API
   • Generating a JSON API for games.
 - Elm Introduction
-  • Brief intro to the Elm language and tooling.
+  • Brief introduction to the Elm language and tooling.
   • Covers modules, functions, types, formatting, and refactoring.
 - Elm Setup
   • Introduction to Brunch and Phoenix assets.
