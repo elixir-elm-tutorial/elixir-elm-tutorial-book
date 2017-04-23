@@ -433,7 +433,7 @@ This can be a really confusing concept, so don't worry if this looks strange at
 first. The idea is that we need to handle both possible cases. The first case
 is when our list contains the data we're looking for, and the second case is
 when our list is empty. The first step that will help clarify this is to rename
-the variable that we're working with and add a type annotation:
+the `firstGame` function to `firstGameMaybe` and add a type annotation:
 
 ```elm
 model : List String
