@@ -1,11 +1,11 @@
 introduction.md
 diving_in.md
-elixir_intro.md
+elixir_introduction.md
 phoenix_testing_and_deployment.md
 phoenix_sign_up.md
 phoenix_authentication.md
 phoenix_api.md
-elm_intro.md
+elm_introduction.md
 elm_setup.md
 elm_application.md
 games.md

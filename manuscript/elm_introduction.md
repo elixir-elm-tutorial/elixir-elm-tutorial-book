@@ -1,4 +1,4 @@
-# Elm Intro
+# Elm Introduction
 
 We're going to build the front-end of our application using the Elm language.
 That's going to involve using data from our back-end Phoenix application, and
@@ -7,7 +7,7 @@ start building minigames for our platform. But before we get into all that,
 let's take a quick look about what Elm is, how it works, and why we're so
 eager to use it.
 
-## Intro
+## Introduction
 
 Elm is likely to look and feel a little foreign at first. But don't let that
 scare you away, because it's a _very_ strong language that can be _very_ nice
@@ -187,9 +187,9 @@ Now you can visit `http://localhost:8000` in your browser and see the files
 and dependencies for our project. We only have a single Elm file (`Hello.elm`),
 so let's click it to compile and see the results.
 
-![elm-reactor](images/elm_intro/elm_reactor.png)
+![elm-reactor](images/elm_introduction/elm_reactor.png)
 
-![Elm Hello World Example](images/elm_intro/elm_hello_world.png)
+![Elm Hello World Example](images/elm_introduction/elm_hello_world.png)
 
 ## elm-format
 
