@@ -466,15 +466,17 @@ gamesList listOfGames =
 
 gamesListItem : Game -> Html msg
 gamesListItem game =
-    li [] [ text game.gameTitle ]
+    li []
+        [ strong [] [ text (game.gameTitle ++ ": ") ]
+        , span [] [ text game.gameDescription ]
+        ]
 ```
 
 We start by passing our full `model` to the `gamesIndex`, which passes the
 `gamesList` from the model along to the `gamesList` function. Then we pass
-those individual games to the `gamesListItem` function. The approach remains
-the same as what we originally did in the last chapter, and now we're just
-using real data from our model and we can see the changes reflected in the
-type annotations.
+those individual games to the `gamesListItem` function. For each `game`, we
+want to display both the `gameTitle` (in a `strong` element along with the `++`
+string concatenation operator) and the `gameDescription` in a `span` element.
 
 ![Displaying the List of Games](images/elm_architecture/rendering_the_games_list.png)
 
@@ -510,7 +512,7 @@ view model =
 The last step to getting our buttons working is to check for the value of the
 `displayGamesList` boolean before we render our list of games. When that field
 is set to `True`, then we'll pass the `model` to the `gamesIndex`, otherwise
-we'll just render an empty `div` element. Here's the full view section for our
+we'll just render an empty `div` element. Here's the full View section for our
 application:
 
 ```elm
@@ -541,7 +543,10 @@ gamesList listOfGames =
 
 gamesListItem : Game -> Html msg
 gamesListItem game =
-    li [] [ text game.gameTitle ]
+    li []
+        [ strong [] [ text (game.gameTitle ++ ": ") ]
+        , span [] [ text game.gameDescription ]
+        ]
 ```
 
 We should be able to click the buttons and see the list of games displayed or
