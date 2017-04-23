@@ -254,5 +254,5 @@ write code in both Elixir and Elm to create our platform. In this chapter,
 we learned about configuring Elm to work inside Phoenix, and this will enable
 us to start building the front-end for our application.
 
-In the next chapter, we'll start putting together our Elm single page
+In the next chapter, we'll start putting together our Elm front-end
 application so that we can start working with game data from our API.

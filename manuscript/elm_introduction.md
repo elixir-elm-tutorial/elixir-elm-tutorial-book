@@ -2,7 +2,7 @@
 
 We're going to build the front-end of our application using the Elm language.
 That's going to involve using data from our back-end Phoenix application, and
-decoding it into an Elm single page application. Then, we'll also use Elm to
+decoding it into an Elm front-end application. Then, we'll also use Elm to
 start building minigames for our platform. But before we get into all that,
 let's take a quick look about what Elm is, how it works, and why we're so
 eager to use it.

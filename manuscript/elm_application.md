@@ -1,4 +1,4 @@
-# Elm Single Page Application
+# Elm Application
 
 We have Elm up and running in our Phoenix application. We've also gotten a very
 brief introduction to Elm syntax, but we could use some practice writing Elm
