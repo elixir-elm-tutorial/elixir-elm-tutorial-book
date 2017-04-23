@@ -45,22 +45,24 @@ progress.
   • Introduction to Brunch and Phoenix assets.
   • Configuring Phoenix to work with Elm.
 - Elm Application
-  • Initial introduction to creating an Elm application.
+  • Initial Elm application for front-end code.
+  • Importing and using Elm packages.
+  • Working with familiar HTML as a bridge to learning Elm.
   • Breaking up code into small, pure functions.
 - Elm Maybe
   • Introduction to the concept of Maybe in Elm.
-- Elm and JSON APIs
+- Elm and JSON APIs (Coming Soon)
   • Reading JSON API data from Phoenix.
   • Decoding JSON and working with game data in Elm.
-- Styles
+- Styles (Coming Soon)
   • Attempt at making the application look nicer and easier to work with.
   • If running short on space, potentially link to CSS code on GitHub.
-- Games
+- Games (Coming Soon)
   • Initial discussion of games and incremental approach.
   • Getting started with game implementation.
-- Chat Feature
+- Chat Feature (Coming Soon)
   • Using Phoenix channels to communicate with Elm over WebSockets.
-- Score Data
+- Score Data (Coming Soon)
   • Possibly using GenServer to extract this into a small service?
 - Appendix
   • Brief installation instructions.

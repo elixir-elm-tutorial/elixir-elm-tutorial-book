@@ -5,7 +5,7 @@ sign in features for our applicaiton. In our case, we're eager to start using
 Elm to build the front-end, so we're going to take a simple approach.
 
 We'll use Phoenix to handle authentication initially. Once users are logged in,
-they'll be directed to the Elm single page application that we'll be building.
+they'll be directed to the Elm front-end application that we'll be building.
 We'll need to refactor some of these features later, but this approach will
 provide a quick way for players to sign up and sign as we extend the player
 features that we started earlier.

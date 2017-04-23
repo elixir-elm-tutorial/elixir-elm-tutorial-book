@@ -242,6 +242,11 @@ gamesListItem =
     li [] []
 ```
 
+Having the comma characters at the beginning of the line might seem foreign if
+you're coming from other languages, but it's easy to get used to. And if you're
+using elm-format then we're able to focus less on syntax and more on the
+overall concepts we're learning here.
+
 Now we can start to break up our `main` function into smaller parts. Each of
 these functions will return simple HTML, so we can add our type annotations:
 
