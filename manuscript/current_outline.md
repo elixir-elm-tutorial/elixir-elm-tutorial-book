@@ -59,10 +59,14 @@ progress.
   - Working with familiar HTML as a bridge to learning Elm.
   - Breaking up code into small, pure functions.
   - Working with the concept of Maybe in Elm.
+  - Iterating through lists of data.
 
 - Elm Architecture
   - Structure of the Elm Architecture.
   - Working with the Record data type in Elm.
+  - Adding the Model, Update, Subscriptions, and View.
+  - Pulling the application together with the Main function.
+  - Adding initial interactivity with Html.Events.
 
 - Elm and JSON APIs (Coming Soon)
   - Reading JSON API data from Phoenix.
