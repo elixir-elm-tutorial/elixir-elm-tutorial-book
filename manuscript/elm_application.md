@@ -657,12 +657,50 @@ gamesListItem gameTitle =
     li [] [ text gameTitle ]
 ```
 
-[Full explanation goes here...]
+With functional programming, one of the best strategies for improving our
+understanding is to think in terms of data transformation. We'll start with
+the data from our model, and we'll follow it through our application as we
+render it onto the page.
 
-## Refactoring the View
+Our `model` function returns a list of strings. Each of these strings contains
+a game title that we'll use when we display our list of games.
 
-Let's complete one last step in preparation for the next chapter...
+In our `main` function, we pass the data from our Model to our View by passing
+`model` to `gamesIndex`. This function gives us a `div` element as a container
+for our list of games, but it's essentially just passing the data through to
+our `gamesList` function without performing any alteration to the data. This
+might seem unnecessary, but we'll see the value of this approach later as we
+start building other views for our player index. And it currently enables us to
+keep our functions small and easy to understand.
+
+The `gamesList` function is where most of the work is getting done. We're using
+`List.map` to iterate through our list of strings. We take in the full list of
+`gameTitles`, and we pass them one at a time to the `gamesListItem` function.
+This function allows us to render our unordered list, and then pipe the data
+through to our individual list items.
+
+Lastly, the individual strings with game titles are passed to our
+`gamesListItem` function. This is where we see how our approach is so much
+better than our original hard-coded attempt, because our list of games can grow
+without us having to do any extra work. The number of `li` elements rendered
+will just match the number of game title strings that are stored in our
+`model`.
 
 ## Summary
 
-...
+In this chapter, we managed to start what will ultimately become the whole
+front-end for our platform. We learned how to separate the data model and view
+for our Elm application, and made things easier to understand as we broke our
+code up into small functions.
+
+We also got a quick introduction to the important concept of `Maybe` in Elm,
+and learned how to iterate through data with the `List` module.
+
+Since Elm applications tend to share a standard structure and follow similar
+patterns, the Elm community has adopted the Elm Architecture. We've already
+seen some of the concepts at play when we separated our code into separate
+sections for the Model and the View, and then pulled them together with the
+`main` function.
+
+In the next chapter, we'll take a deeper look at the Elm Architecture as we
+work towards displaying real game data from our Phoenix JSON API.

@@ -61,7 +61,8 @@ progress.
   - Working with the concept of Maybe in Elm.
 
 - Elm Architecture
-  - ...
+  - Structure of the Elm Architecture.
+  - Working with the Record data type in Elm.
 
 - Elm and JSON APIs (Coming Soon)
   - Reading JSON API data from Phoenix.
