@@ -50,7 +50,7 @@ above with the following:
 At this point, we're displaying only a single line of text that's coming from
 our Elm application:
 
-![Minimal Elm Application](images/elm_spa/elm_application.png)
+![Minimal Elm Application](images/elm_application/elm_application.png)
 
 ## Main.elm
 
@@ -203,7 +203,7 @@ soon we'll see how everything we're working with here is a pure function, which
 makes it really simple to compose small, understandable pieces into a bigger
 picture. And the good news is that now we have our list displaying on the page:
 
-![Initial Games List](images/elm_spa/initial_games_list.png)
+![Initial Games List](images/elm_application/initial_games_list.png)
 
 ## Breaking Up the View
 
@@ -316,7 +316,7 @@ gamesListItem =
     li [] [ text "Adventure Game" ]
 ```
 
-![Refactored Games List](images/elm_spa/refactored_games_list.png)
+![Refactored Games List](images/elm_application/refactored_games_list.png)
 
 ## Extracting Our Data
 
