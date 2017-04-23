@@ -198,7 +198,7 @@ end
 This plug is going to allow us to restrict access to certain pages. Originally,
 users were being taken to our index page from the `PageController` when they
 accessed the default route (`/`). But we're going to turn that page into our
-Elm single page application, and we'll require users to log in before they
+Elm front-end application, and we'll require users to log in before they
 access it.
 
 For now, let's direct users to the **Player Sign Up Page** at `/players/new`
@@ -223,7 +223,7 @@ When we access `http://0.0.0.0:4000` now, we'll see the
 ![Player Sign Up Page at Default Route](images/phoenix_authentication/new_default_route.png)
 
 And we can access `http://0.0.0.0:4000/elm` to see our original home page,
-which we'll later turn into our Elm single page application.
+which we'll later turn into our Elm front-end application.
 
 ![Original Home Page at /elm Route](images/phoenix_authentication/new_elm_route.png)
 
@@ -551,7 +551,7 @@ logged in, and give them a way to log out.
 
 First, let's open the `lib/platform/web/templates/layout` folder, and remove
 the existing header that Phoenix came with by default (we're going to handle
-our own custom header with routing in our Elm single page application later).
+our own custom header with routing in our Elm front-end application later).
 
 Update the `<body>` of the `app.html.eex` file with the following:
 

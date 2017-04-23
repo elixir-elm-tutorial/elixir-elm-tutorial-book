@@ -1,8 +1,8 @@
 # Phoenix API
 
 We now have players for our gaming platform, but we don't have any games yet.
-We're going to create an Elm single page application to handle our front-end
-code. But before we get to that, we'll need to create the back-end JSON API.
+We're going to create an Elm application for our front-end. But before we get
+to that, we'll need to create the back-end JSON API.
 
 ## Generating the JSON API
 
