@@ -312,7 +312,7 @@ the production environment. Below that, we also want to add a new block of code
 to configure our database:
 
 ```elixir
-config :platform, Platform.Web.Repo,
+config :platform, Platform.Repo,
   adapter: Ecto.Adapters.Postgres,
   url: System.get_env("DATABASE_URL"),
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
