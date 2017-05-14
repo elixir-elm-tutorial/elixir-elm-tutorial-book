@@ -1,15 +1,17 @@
 # Our First Game
 
 Let's start creating our first minigame with Elm. We want to begin with
-something really small and simple, but it should also have the characteristics
-we want for our games. It should be (very) small, self-contained, interactive,
-and fun. We also want to add a simple scoring mechanism so we can work towards
+something small and simple that still has the characteristics and features we
+want for our games.
+
+Our initial game should be (very) small, self-contained, interactive, and fun.
+And we'll also want to add a simple scoring mechanism so we can work towards
 tracking player scores and sending that data to our back-end platform.
 
 ## Creating an Initial Game File
 
 Inside the `lib/platform/web/elm` folder, let's create a new file named
-`Game.elm`. We can initialize it with the following code so we have
+`Game.elm`. We can initialize it with the following code so we'll have
 something to display on the page:
 
 ```elm
@@ -54,13 +56,13 @@ scope "/", Platform.Web do
 end
 ```
 
-Now when we visit `http://0.0.0.0:4000/elm/game` in our browser, we'll be able
-to see the Elm game that we're creating. But we still need to take a couple
+When we visit `http://0.0.0.0:4000/elm/game` in our browser, we'll be able to
+see the Elm game that we're creating. But we still need to take a couple
 more steps before this works properly.
 
-Let's update our `PageController` so it knows about our new Elm game. In the
-`lib/platform/web/controllers` folder, update the `page_controller.ex` file
-with the following:
+Let's update our `PageController` with a function that will render our new game
+page. In the `lib/platform/web/controllers` folder, update the
+`page_controller.ex` file with the following:
 
 ```elixir
 defmodule Platform.Web.PageController do
@@ -89,24 +91,15 @@ defmodule Platform.Web.PageController do
 end
 ```
 
-We just need to update our `app.js` file so that it knows to render
-our game inside the Phoenix application. At the bottom of our
-`assets/js/app.js` file, let's update our code to look like this:
+## Configuring our Game Page
 
-```javascript
-const elmContainer = document.querySelector(".elm-container");
-const elmGameContainer = document.querySelector(".elm-game-container");
+So we have our template, route, and controller configured properly, and we just
+have a couple more small steps to take before we can see it rendered in the
+browser.
 
-if (elmContainer) {
-  const elmApplication = Elm.Main.embed(elmContainer);
-}
-
-if (elmGameContainer) {
-  const elmGame = Elm.Game.embed(elmGameContainer);
-}
-```
-
-We also need to update our `brunch-config.js` file:
+First, we'll need to update our `brunch-config.js` file so that both `Main.elm`
+and `Game.elm` will both be compiled (note that the only change here is on the
+`elmBrunch` line).
 
 ```javascript
 exports.config = {
@@ -129,3 +122,40 @@ exports.config = {
 };
 ```
 
+Lastly, we can update our `app.js` file to render our game inside the Phoenix
+application. At the bottom of our `assets/js/app.js` file, let's update our
+code to look like this:
+
+```javascript
+const elmContainer = document.querySelector(".elm-container");
+const elmGameContainer = document.querySelector(".elm-game-container");
+
+if (elmContainer) {
+  const elmApplication = Elm.Main.embed(elmContainer);
+}
+
+if (elmGameContainer) {
+  const elmGame = Elm.Game.embed(elmGameContainer);
+}
+```
+
+At this point, we should finally be able to see our new Elm game rendered in
+the browser:
+
+![Elm Game Page](images/our_first_game/elm_game_page.png)
+
+You also might be thinking, "This is the worst game ever. It literally just
+says 'Elm Game' and that's it." You're right, and in the next sections we're
+going to set up our Elm application, add SVG for our game's background, add a
+little character to work with, and wire up the keyboard for interaction.
+
+## Base Application for Our Game
+
+We've already got some experience in the preceding chapters with the Elm
+Architecture, so we're not going to cover it in great detail here. Instead,
+we're going to start by pasting in the following code, which will give us some
+starter code to work with. Add the following to the `Game.elm` file:
+
+```elm
+
+```
