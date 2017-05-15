@@ -361,9 +361,75 @@ serve as our small game window. Note that we need to add the same `width` and
 `height` for both of these elements, or else we'd run the risk that the size
 of our rectangle might exceed the size of our surrounding `svg` element.
 
-Lastly, we add a `stroke` attribute to see a `"black"` line around our game window,
-and a `fill` attribute with an initial value of `"none"`.
+Lastly, we add a `stroke` attribute to see a `"black"` line around our game
+window, and a `fill` attribute with an initial value of `"none"`.
+
+![Empty Game Window](images/our_first_game/empty_game_window.png)
 
 ## Adding the Sky and the Ground
+
+Now that we have an empty canvas to work with, let's add a sky and a ground
+for our video game world. Just like we did for our game window rectangle, we'll
+use two more `rect` elements to represent a beautiful blue sky and some green
+grass for the ground.
+
+Add the following code to see our game world start taking shape:
+
+```elm
+viewGame : Svg Msg
+viewGame =
+    svg [ version "1.1", width "600", height "400" ]
+        [ viewGameWindow
+        , viewGameSky
+        , viewGameGround
+        ]
+
+
+viewGameWindow : Svg Msg
+viewGameWindow =
+    rect
+        [ width "600"
+        , height "400"
+        , fill "none"
+        , stroke "black"
+        ]
+        []
+
+
+viewGameSky : Svg Msg
+viewGameSky =
+    rect
+        [ x "0"
+        , y "0"
+        , width "600"
+        , height "300"
+        , fill "#4b7cfb"
+        ]
+        []
+
+
+viewGameGround : Svg Msg
+viewGameGround =
+    rect
+        [ x "0"
+        , y "300"
+        , width "600"
+        , height "100"
+        , fill "green"
+        ]
+        []
+```
+
+![Game Window with Sky and Ground](images/our_first_game/game_sky_and_ground.png)
+
+Note that the width for all of our rectangles is the same. But we adjust the
+height so that the ground takes up the bottom 25% of the window and the sky
+takes up the top 75% of the window. Then we use the `x` and `y` attributes to
+move our SVG shapes to the correct placement.
+
+We haven't added our character or interaction yet, but our tiny game world is
+starting to come to life!
+
+## Adding our Character
 
 ...
