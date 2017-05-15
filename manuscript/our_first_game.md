@@ -157,5 +157,213 @@ we're going to start by pasting in the following code, which will give us some
 starter code to work with. Add the following to the `Game.elm` file:
 
 ```elm
+module Game exposing (..)
 
+import Html exposing (Html, div, text)
+
+
+-- MAIN
+
+
+main : Program Never Model Msg
+main =
+    Html.program
+        { init = init
+        , view = view
+        , update = update
+        , subscriptions = subscriptions
+        }
+
+
+
+-- MODEL
+
+
+type alias Model =
+    {}
+
+
+initialModel : Model
+initialModel =
+    {}
+
+
+init : ( Model, Cmd Msg )
+init =
+    ( initialModel, Cmd.none )
+
+
+
+-- UPDATE
+
+
+type Msg
+    = NoOp
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+    case msg of
+        NoOp ->
+            ( model, Cmd.none )
+
+
+
+-- SUBSCRIPTIONS
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.none
+
+
+
+-- VIEW
+
+
+view : Model -> Html Msg
+view model =
+    div [] [ text "Elm Game Base" ]
 ```
+
+There are different conventions one can use to set up their Elm applications,
+but this is a minimal base application that I like to start with.
+
+We have all the things we need to get started:
+
+- minimal imports.
+- a `main` function to wire everything together.
+- an empty `Model` and `init` function.
+- a default `update` function with a "NoOp" placeholder case that allows us
+  to perform no operation. This may seem confusing at first, but it's helpful
+  to have a default message to work with before we start updating our model.
+- an intitial `subscriptions` function that starts with `Sub.none`.
+- a simple `view` that contains a container `div` with some text that we can
+  see to ensure that our application is working.
+
+## Creating a Game Canvas
+
+Before we can add our game character, we need to create a window where our hero
+(or heroine) can live. We may decide on an alternative approach later, but for
+now let's use SVG to create our game world.
+
+In order to work with Elm's SVG library, we'll need to install the package and
+import it into our project.
+
+From the command-line, let's switch to the `lib/platform/web/elm` folder and
+run the following command:
+
+```shell
+$ elm-package install elm-lang/svg
+```
+
+After agreeing to install the package by entering the `Y` key, here's the
+output we should see:
+
+```shell
+$ elm elm-package install elm-lang/svg
+To install elm-lang/svg I would like to add the following
+dependency to elm-package.json:
+
+    "elm-lang/svg": "2.0.0 <= v < 3.0.0"
+
+May I add that to elm-package.json for you? [Y/n] Y
+
+Some new packages are needed. Here is the upgrade plan.
+
+  Install:
+    elm-lang/svg 2.0.0
+
+Do you approve of this plan? [Y/n] Y
+Starting downloads...
+
+  ● elm-lang/svg 2.0.0
+
+Packages configured successfully!
+```
+
+Now that we have the package installed, let's import it at the top of our
+`Game.elm` file. We'll import all of the `Svg` functions along with all the
+`Svg.Attributes` functions since we'll be using quite a few of them. Update
+the top of your `Game.elm` file with the following code:
+
+```elm
+module Game exposing (..)
+
+import Html exposing (Html, div)
+import Svg exposing (..)
+import Svg.Attributes exposing (..)
+```
+
+## Setting Up a Game Window
+
+Now we can create a small window to use for our game. We're going to create
+a rectangle that has a 600px width and a 400px height. The rectangle will
+reside our SVG element, and that will reside inside our HTML code.
+
+You don't need to type this code in, but here's an HTML visualization that
+might help if you're familiar with HTML structure:
+
+```html
+<html>
+  <body>
+    <div>
+      <svg>
+        <rect> <!-- We'll create our game inside this rectangle. -->
+      </svg>
+    </div>
+  </body>
+</html>
+```
+
+Even though we're using SVG for our game, we still want to nest it inside an
+HTML document with a container `div` element. The reason for this is that we
+might want to add HTML elements outside the game, or we could even add multiple
+games to a single page if we wanted to.
+
+Also, don't worry too much if you're unfamiliar with SVG. If you have
+experience working with HTML elements and attributes and values then it's easy
+to pick up. There are some quirks to working with SVG, but we'll learn what we
+need to learn to start creating our Elm games so we can keep moving. But feel
+free to take a look online because there are some great SVG learning materials
+and courses available.
+
+Let's add our SVG code to our Elm view, and we'll walk through how it all fits
+together. At the bottom of the `Game.elm` file, add the following:
+
+```elm
+view : Model -> Html Msg
+view model =
+    div [] [ viewGame ]
+
+
+viewGame : Svg Msg
+viewGame =
+    svg [ version "1.1", width "600", height "400" ] [ viewGameWindow ]
+
+
+viewGameWindow : Svg Msg
+viewGameWindow =
+    rect
+        [ width "600"
+        , height "400"
+        , fill "none"
+        , stroke "black"
+        ]
+        []
+```
+
+We start with a `div` element at the top, which contains our `svg` element.
+There is some duplication when we add our `width` and `height` attributes in
+two separate places, but for now we'll just keep going so we can get something
+rendered on the page. The `svg` element contains the `rect` element that will
+serve as our small game window. Note that we need to add the same `width` and
+`height` for both of these elements, or else we'd run the risk that the size
+of our rectangle might exceed the size of our surrounding `svg` element.
+
+Lastly, we add a `stroke` attribute to see a `"black"` line around our game window,
+and a `fill` attribute with an initial value of `"none"`.
+
+## Adding the Sky and the Ground
+
+...
