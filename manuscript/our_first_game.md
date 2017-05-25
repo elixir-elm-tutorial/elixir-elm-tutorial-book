@@ -432,4 +432,29 @@ starting to come to life!
 
 ## Adding Our Character
 
+We have a few options for adding a small character to our game:
+
+- Create a small SVG rectangle. This option isn't very fun, but it's a quick
+  way to get something on the page and keep moving.
+- Use an existing character image from the web. Check out sites like
+  opengameart.org for free assets, or if you're not planning on releasing your
+  game publicly then you can search Google for character sprites from your
+  favorite games and use those.
+- Draw your own character with piskellapp.com. It's a lot of fun, but it's also
+  difficult and it may be more worthwhile to use something else for now while
+  we build our initial minigame.
+
+Keep in mind that we're using a static, motionless character for now. We don't
+need to add a running or jumping animation, and we just want a small character
+that we can move around on the screen.
+
+While writing this chapter, I ended up experimenting with creating a pixel art
+character using piskellapp.com. You're welcome to use this asset, which is
+[available in the GitHub repository](https://github.com/elixir-elm-tutorial/elixir-elm-tutorial-book/tree/master/manuscript/images/our_first_game/character.gif)
+for this book. Feel free to create your own asset, or choose another one from
+the web. Just make sure you download the image file you want to use, and we'll
+import it into our application next.
+
+![2D Pixel Art Character](images/our_first_game.png)
+
 ...
