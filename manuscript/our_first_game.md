@@ -430,6 +430,6 @@ move our SVG shapes to the correct placement.
 We haven't added our character or interaction yet, but our tiny game world is
 starting to come to life!
 
-## Adding our Character
+## Adding Our Character
 
 ...
