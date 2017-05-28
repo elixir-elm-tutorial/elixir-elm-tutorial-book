@@ -1,8 +1,8 @@
 # Our First Game
 
 Let's start creating our first minigame with Elm. We want to begin with
-something small and simple that still has the characteristics and features we
-want for our games.
+something small and simple that still has the characteristics we want for all
+of our games.
 
 Our initial game should be (very) small, self-contained, interactive, and fun.
 And we'll also want to add a simple scoring mechanism so we can work towards
@@ -42,7 +42,8 @@ Elm game. This is all we need to add for the `game.html.eex` file:
 
 Now let's update our `router.ex` file inside the `lib/platform/web` folder.
 For now, we can add a simple route so that users can access our game by going
-to `/elm/game` in the browser. Update the `router.ex` file with the following:
+to `/elm/game` in the browser. Update the browser scope inside the `router.ex`
+file with the following:
 
 ```elixir
 scope "/", Platform.Web do
@@ -56,9 +57,9 @@ scope "/", Platform.Web do
 end
 ```
 
-When we visit `http://0.0.0.0:4000/elm/game` in our browser, we'll be able to
-see the Elm game that we're creating. But we still need to take a couple
-more steps before this works properly.
+We'll be able to view the Elm game that we're creating when we visit
+`http://0.0.0.0:4000/elm/game` in our browser, but we still need to take a
+couple more steps before this will work.
 
 Let's update our `PageController` with a function that will render our new game
 page. In the `lib/platform/web/controllers` folder, update the
@@ -93,9 +94,8 @@ end
 
 ## Configuring our Game Page
 
-So we have our template, route, and controller configured properly, and we just
-have a couple more small steps to take before we can see it rendered in the
-browser.
+We have our template, route, and controller configured properly. We just have
+a couple more small steps to take before we can see it rendered in the browser.
 
 First, we'll need to update our `brunch-config.js` file so that both `Main.elm`
 and `Game.elm` will both be compiled (note that the only change here is on the
@@ -226,20 +226,20 @@ view model =
     div [] [ text "Elm Game Base" ]
 ```
 
-There are different conventions one can use to set up their Elm applications,
-but this is a minimal base application that I like to start with.
+There are different conventions for setting up Elm applications, but this is a
+minimal base application that I like to start with.
 
 We have all the things we need to get started:
 
 - minimal imports.
 - a `main` function to wire everything together.
-- an empty `Model` and `init` function.
+- an empty `Model` type and `init` function.
 - a default `update` function with a "NoOp" placeholder case that allows us
   to perform no operation. This may seem confusing at first, but it's helpful
   to have a default message to work with before we start updating our model.
 - an intitial `subscriptions` function that starts with `Sub.none`.
-- a simple `view` that contains a container `div` with some text that we can
-  see to ensure that our application is working.
+- a simple `view` with a container `div` and some text that we can see to
+  ensure that our application is working.
 
 ## Creating a Game Canvas
 
