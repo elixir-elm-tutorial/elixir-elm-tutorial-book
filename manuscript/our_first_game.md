@@ -284,8 +284,8 @@ Packages configured successfully!
 
 Now that we have the package installed, let's import it at the top of our
 `Game.elm` file. We'll import all of the `Svg` functions along with all the
-`Svg.Attributes` functions since we'll be using quite a few of them. Update
-the top of your `Game.elm` file with the following code:
+`Svg.Attributes` functions since we'll be using many of them. Update the top of
+your `Game.elm` file with the following code:
 
 ```elm
 module Game exposing (..)
@@ -299,10 +299,10 @@ import Svg.Attributes exposing (..)
 
 Now we can create a small window to use for our game. We're going to create
 a rectangle that has a 600px width and a 400px height. The rectangle will
-reside our SVG element, and that will reside inside our HTML code.
+reside inside our SVG element, and that will reside inside our HTML code.
 
 You don't need to type this code in, but here's an HTML visualization that
-might help if you're familiar with HTML structure:
+might help conceptualize how we'll lay out the elements on our page:
 
 ```html
 <html>
@@ -319,14 +319,14 @@ might help if you're familiar with HTML structure:
 Even though we're using SVG for our game, we still want to nest it inside an
 HTML document with a container `div` element. The reason for this is that we
 might want to add HTML elements outside the game, or we could even add multiple
-games to a single page if we wanted to.
+minigames to a single page if we wanted to.
 
 Also, don't worry too much if you're unfamiliar with SVG. If you have
-experience working with HTML elements and attributes and values then it's easy
+experience working with HTML elements and attributes and values, then it's easy
 to pick up. There are some quirks to working with SVG, but we'll learn what we
-need to learn to start creating our Elm games so we can keep moving. But feel
-free to take a look online because there are some great SVG learning materials
-and courses available.
+need to learn to start creating our Elm games so we can keep moving. Feel free
+to take a look online, though, because there are some great SVG learning
+materials and courses available.
 
 Let's add our SVG code to our Elm view, and we'll walk through how it all fits
 together. At the bottom of the `Game.elm` file, add the following:
