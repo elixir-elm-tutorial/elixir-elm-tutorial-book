@@ -511,4 +511,202 @@ right, and we can use the `y` attribute to move our character up and down.
 
 ## Changing the Character Position
 
-...
+Let's refactor our `viewCharacter` function to make it easier to work with the
+character position. The SVG attributes need to work with strings as values, but
+for our purposes it's more helpful to think of the character's position in
+number values. We can use Elm's `let` expressions to refactor.
+
+Instead of manually setting the `x` attribute to a value of `"1"`, let's hoist
+that value up to a `let` expression assignment:
+
+```elm
+viewCharacter : Svg Msg
+viewCharacter =
+    let
+        characterPositionX =
+            1
+    in
+        image
+            [ xlinkHref "/images/character.gif"
+            , x (toString characterPositionX)
+            , y "300"
+            , width "50"
+            , height "50"
+            ]
+            []
+```
+
+Our code works the same as it did before, but now we can start thinking about
+our `characterPositionX` value in numbers instead of strings. Let's go ahead
+and do the same for the `y` attribute:
+
+```elm
+viewCharacter : Svg Msg
+viewCharacter =
+    let
+        characterPositionX =
+            1
+
+        characterPositionY =
+            300
+    in
+        image
+            [ xlinkHref "/images/character.gif"
+            , x (toString characterPositionX)
+            , y (toString characterPositionY)
+            , width "50"
+            , height "50"
+            ]
+            []
+```
+
+Our code is still working the same, we're just moving things around a little to
+make things easier to work with and reason about. I've found this to be a
+common refactoring pattern in Elm. We can start with a function that works,
+then refactor to a `let` expression, and then refactor to new functions and
+arguments, which is exactly what we'll do now.
+
+## Refactoring the Character Position
+
+Let's take our refactoring one step further and move our character position
+into new functions with type annotations. We'll start with a
+`characterPosition` function where we can easily alter our character's position
+in a single location using a tuple:
+
+```elm
+characterPosition : ( Int, Int )
+characterPosition =
+    ( 1, 300 )
+```
+
+Then we can add some helpful functions to access the `x` and `y` values with
+the following:
+
+```elm
+characterPositionX : Int
+characterPositionX =
+    Tuple.first characterPosition
+
+
+characterPositionY : Int
+characterPositionY =
+    Tuple.second characterPosition
+```
+
+This means we get the benefits of type safety while working with our character
+position, and we no longer need the `let` expression we created previously for
+our `viewCharacter` function:
+
+```elm
+viewCharacter : Svg Msg
+viewCharacter =
+    image
+        [ xlinkHref "/images/character.gif"
+        , x (toString characterPositionX)
+        , y (toString characterPositionY)
+        , width "50"
+        , height "50"
+        ]
+        []
+```
+
+Let's move our character to the right on the screen by increasing the `x`
+position to a value of `50`. This is what all the functions should look like
+working together:
+
+```elm
+characterPosition : ( Int, Int )
+characterPosition =
+    ( 50, 300 )
+
+
+characterPositionX : Int
+characterPositionX =
+    Tuple.first characterPosition
+
+
+characterPositionY : Int
+characterPositionY =
+    Tuple.second characterPosition
+
+
+viewCharacter : Svg Msg
+viewCharacter =
+    image
+        [ xlinkHref "/images/character.gif"
+        , x (toString characterPositionX)
+        , y (toString characterPositionY)
+        , width "50"
+        , height "50"
+        ]
+        []
+```
+
+![Altering Character Position](images/our_first_game/altering_character_position.png)
+
+## Adding an Item
+
+Our character is looking pretty lonely in our minigame world. Let's add an item
+to our world, and then we'll work towards having our character be able to pick
+up the item in the next chapter.
+
+We're going to follow much of the same steps we did for our character image, so
+we'll move quickly in this section. First, let's add a `coin.svg` image to our
+project to use as our item.
+
+The `coin.svg` asset we'll be using here is
+[available in the GitHub repository](https://github.com/elixir-elm-tutorial/elixir-elm-tutorial-book/tree/master/manuscript/images/our_first_game/coin.svg)
+for this book.
+
+Let's move our `coin.svg` file inside the Phoenix `assets/static/images`
+folder just like we did for our character image, which will make it available
+at `/images/coin.svg`.
+
+Below the view and position functions we created for our character, we can do
+the same for our new coin item:
+
+```elm
+itemPosition : ( Int, Int )
+itemPosition =
+    ( 500, 300 )
+
+
+itemPositionX : Int
+itemPositionX =
+    Tuple.first itemPosition
+
+
+itemPositionY : Int
+itemPositionY =
+    Tuple.second itemPosition
+
+
+viewItem : Svg Msg
+viewItem =
+    image
+        [ xlinkHref "/images/coin.svg"
+        , x (toString itemPositionX)
+        , y (toString itemPositionY)
+        , width "25"
+        , height "25"
+        ]
+        []
+```
+
+We essentially took the same approach for our character and our new coin item.
+The only difference is that we moved the coin item to the right of the screen
+with a position of `(500, 300)` and altered the `width` and `height` attributes
+so that the item is smaller than our character.
+
+This is what our results look like so far:
+
+![Character and Item Rendered](images/our_first_game/character_and_item.png)
+
+## Summary
+
+We managed to accomplish _a lot_ in this chapter. We created a space for our
+first game, set up an initial SVG game world, added a character, and added an
+item. But keep in mind that we've been hard-coding a lot of values in our quest
+to get something up and running. In the next chapter, we'll be taking a look at
+Elm subscriptions as a way to handle keyboard input and add interaction to our
+game.
