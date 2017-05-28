@@ -68,13 +68,18 @@ progress.
   - Pulling the application together with the Main function.
   - Adding initial interactivity with Html.Events.
 
-- Elm and JSON APIs (Coming Soon)
+- Elm API Data (Coming Soon)
   - Reading JSON API data from Phoenix.
   - Decoding JSON and working with game data in Elm.
 
-- Styles (Coming Soon)
-  - Attempt at making the application look nicer and easier to work with.
-  - If running short on space, potentially link to CSS code on GitHub.
+- Our First Game
+  - Creating a space within Phoenix for an Elm game.
+  - Working with SVG to create a small game canvas.
+  - Adding a small game character and item.
+  - Refactoring Elm code with let expressions and small functions.
+
+- Adding Interaction (Coming Soon)
+  - Working with Elm subscriptions and keyboard input.
 
 - Games (Coming Soon)
   - Initial discussion of games and incremental approach.
