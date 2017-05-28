@@ -461,4 +461,8 @@ import it into our application next.
 
 ## Importing Our Character
 
-Now that we have our character asset, let's import it into our game.
+Now that we have our character asset, let's import it into our game. When using
+Phoenix, we can add images to the `assets/static/images` folder and they'll be
+available from anywhere in our application (this is how the `phoenix.png` image
+was displayed on the default start page when we first started our Phoenix
+server). Let's add our `character.gif` file inside that folder.
