@@ -353,11 +353,11 @@ viewGameWindow =
         []
 ```
 
-We start with a `div` element at the top, which contains our `svg` element.
+We start with a `div` element at the top, which will contain our `svg` element.
 There is some duplication when we add our `width` and `height` attributes in
 two separate places, but for now we'll just keep going so we can get something
-rendered on the page. The `svg` element contains the `rect` element that will
-serve as our small game window. Note that we need to add the same `width` and
+rendered on the page. The `svg` element will contain the `rect` element that
+serves as our small game window. Note that we need to add the same `width` and
 `height` for both of these elements, or else we'd run the risk that the size
 of our rectangle might exceed the size of our surrounding `svg` element.
 
@@ -441,23 +441,26 @@ We have a few options for adding a small character to our game:
   opengameart.org for free assets, or if you're not planning on releasing your
   game publicly then you can search Google for character sprites from your
   favorite games and use those. If you choose this option, be sure to look for
-  characters that have a transparent background.
-- Draw your own character with piskellapp.com. It's a lot of fun, but it's also
+  characters that have a transparent background. And you may need to resize the
+  images you find to fit properly within the games we'll be creating.
+- Draw your own character with piskelapp.com. It's a lot of fun, but it's also
   difficult and it may be more worthwhile to use something else for now while
   we build our initial minigame.
 
-Keep in mind that we're using a static, motionless character for now. We don't
-need to add a running or jumping animation, and we just want a small character
-that we can move around on the screen.
+Keep in mind that we're using a static, motionless character image for now, and
+we don't need to add running or jumping animations yet. In other words, we'll
+still want to add keyboard interaction soon so that we can move our character
+around the screen, but the character itself won't be animating while we move it
+around.
 
 While writing this chapter, I ended up experimenting with creating a pixel art
-character using piskellapp.com. You're welcome to use this asset, which is
+character using piskelapp.com. You're welcome to use this asset, which is
 [available in the GitHub repository](https://github.com/elixir-elm-tutorial/elixir-elm-tutorial-book/tree/master/manuscript/images/our_first_game/character.gif)
 for this book. Feel free to create your own asset, or choose another one from
 the web. Just make sure you download the image file you want to use, and we'll
 import it into our application next.
 
-![2D Pixel Art Character](images/our_first_game.png)
+![2D Pixel Art Character](images/our_first_game/character.gif)
 
 ## Importing Our Character
 
