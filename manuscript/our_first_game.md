@@ -468,4 +468,47 @@ Now that we have our character asset, let's import it into our game. When using
 Phoenix, we can add images to the `assets/static/images` folder and they'll be
 available from anywhere in our application (this is how the `phoenix.png` image
 was displayed on the default start page when we first started our Phoenix
-server). Let's add our `character.gif` file inside that folder.
+server). Let's move our `character.gif` file inside that folder. This will make
+our character image available at `/images/character.gif`.
+
+At the bottom of our `Game.elm` file, we can now add to the view to render our
+new game character:
+
+```elm
+viewCharacter : Svg Msg
+viewCharacter =
+    image
+        [ xlinkHref "/images/character.gif"
+        , x "1"
+        , y "300"
+        , width "50"
+        , height "50"
+        ]
+        []
+```
+
+And we'll need to update our `viewGame` function so that it invokes our new
+view function:
+
+```elm
+viewGame : Svg Msg
+viewGame =
+    svg [ version "1.1", width "600", height "400" ]
+        [ viewGameWindow
+        , viewGameSky
+        , viewGameGround
+        , viewCharacter
+        ]
+```
+
+With the `viewCharacter` function, we're creating an SVG `image` element with
+a `width` and `height` of `"50"` pixels. We're also hard-coding the `x` and
+`y` attributes to set the initial character position inside the grass area of
+our game window. We can use the `x` attribute to move our character left and
+right, and we can use the `y` attribute to move our character up and down.
+
+![Game Character Rendered](images/our_first_game/game_character.png)
+
+## Changing the Character Position
+
+...
