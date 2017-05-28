@@ -430,16 +430,18 @@ move our SVG shapes to the correct placement.
 We haven't added our character or interaction yet, but our tiny game world is
 starting to come to life!
 
-## Adding Our Character
+## Creating Our Character
 
 We have a few options for adding a small character to our game:
 
-- Create a small SVG rectangle. This option isn't very fun, but it's a quick
-  way to get something on the page and keep moving.
+- Create a small SVG rectangle shape that represents the character. This option
+  isn't very fun, but it's a quick way to get something on the page and keep
+  moving.
 - Use an existing character image from the web. Check out sites like
   opengameart.org for free assets, or if you're not planning on releasing your
   game publicly then you can search Google for character sprites from your
-  favorite games and use those.
+  favorite games and use those. If you choose this option, be sure to look for
+  characters that have a transparent background.
 - Draw your own character with piskellapp.com. It's a lot of fun, but it's also
   difficult and it may be more worthwhile to use something else for now while
   we build our initial minigame.
@@ -457,4 +459,6 @@ import it into our application next.
 
 ![2D Pixel Art Character](images/our_first_game.png)
 
-...
+## Importing Our Character
+
+Now that we have our character asset, let's import it into our game.
