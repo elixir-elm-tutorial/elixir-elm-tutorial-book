@@ -54,7 +54,7 @@ Packages configured successfully!
 ```
 
 Now that we have the package installed, let's import it at the top of our
-`Game.elm` file. We'll need to import `KeyCode`s along with the `presses`
+`Game.elm` file. We'll need to import `KeyCode`s along with the `downs`
 function. The way it works is that each key on your keyboard is represented by
 an integer. The Elm core library comes with functions called `fromCode` and
 `toCode` to convert back and forth between keyboard keys and their related
@@ -64,9 +64,9 @@ As an example, we're going to want our character to move right when we press
 the right arrow key on the keyboard. That key is represented by the integer
 `39` (you can use http://keycode.info to type on your keyboard and see the
 related integer value, but these values are easy to look up so we don't need
-to memorize them or anything). In our application, we'll be able to determine
-that users are pressing the right arrow key, and adjust our character's
-position accordingly.
+to memorize them). In our application, we'll be able to determine that users
+are pressing the right arrow key, and adjust our character's position
+accordingly.
 
 Let's update the top of our `Game.elm` file with the following:
 
@@ -74,7 +74,7 @@ Let's update the top of our `Game.elm` file with the following:
 module Game exposing (..)
 
 import Html exposing (Html, div)
-import Keyboard exposing (KeyCode, presses)
+import Keyboard exposing (KeyCode, downs)
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
 ```
@@ -92,30 +92,29 @@ subscribe to key presses with the following code:
 ```elm
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.batch
-        [ presses KeyPress ]
+    Sub.batch [ downs KeyDown ]
 ```
 
-One thing to keep in mind is that this code won't work until we add `KeyPress`
+One thing to keep in mind is that this code won't work until we add `KeyDown`
 to our `update` function. The `Sub.batch` function allows us to batch together
 different subscriptions, so we could also subscribe to mouse input if we needed
 to. For now, all we need to know is that we're using the Elm Architecture to
 subscribe to keyboard input via the `presses` function, and we're going to
-handle these presses with the `KeyPress` message in the `update` function.
+handle these presses with the `KeyDown` message in the `update` function.
 
 As an initial way to get keyboard input working, we're going to set things up
-so that any keypress will move the character slightly to the right on the
+so that any key press will move the character slightly to the right on the
 screen (towards the coin item). To accomplish this, we'll start by creating our
-new `KeyPress` update message, that takes a `KeyCode` as an argument:
+new `KeyDown` update message, that takes a `KeyCode` as an argument:
 
 ```elm
 type Msg
     = NoOp
-    | KeyPress KeyCode
+    | KeyDown KeyCode
 ```
 
 We have two update actions, the first is to perform no operation with `NoOp`,
-and the second will perform an update to the model based on `KeyPress` actions
+and the second will perform an update to the model based on `KeyDown` actions
 from the user.
 
 Let's finish getting things working again with a big change to our `update`
@@ -128,7 +127,7 @@ update msg model =
         NoOp ->
             ( model, Cmd.none )
 
-        KeyPress keyCode ->
+        KeyDown keyCode ->
             ( { model | characterPositionX = model.characterPositionX + 15 }, Cmd.none )
 ```
 
@@ -151,7 +150,7 @@ In the `initialModel`, we set our `characterPositionX` value to `50`. Now with
 every key press we're increasing that value by `15`. So if you press any key
 four times, the character will move to the right by 60 pixels.
 
-[NOTE: Review why some keys aren't working.]
+...
 
 ## Creating a Key Module
 
