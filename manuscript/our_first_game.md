@@ -560,86 +560,88 @@ viewCharacter =
             []
 ```
 
-Our code is still working the same, we're just moving things around a little to
-make things easier to work with and reason about. I've found this to be a
-common refactoring pattern in Elm. We can start with a function that works,
-then refactor to a `let` expression, and then refactor to new functions and
-arguments, which is exactly what we'll do now.
+Our code is still working the same way, we're just moving things around to
+make things easier to work with and reason about.
 
-## Refactoring the Character Position
+## Updating the Model
 
-Let's take our refactoring one step further and move our character position
-into new functions with type annotations. We'll start with a
-`characterPosition` function where we can easily alter our character's position
-in a single location using a tuple:
+Since our character position is something that will change, let's move it to
+our model instead of hard-coding it in our view functions.
+
+Let's update the type alias for our `Model` as well as the values in the
+`initialModel`:
 
 ```elm
-characterPosition : ( Int, Int )
-characterPosition =
-    ( 1, 300 )
+type alias Model =
+    { characterPositionX : Int
+    , characterPositionY : Int
+    }
+
+
+initialModel : Model
+initialModel =
+    { characterPositionX = 1
+    , characterPositionY = 300
+    }
 ```
 
-Then we can add some helpful functions to access the `x` and `y` values with
-the following:
+Now we'll have to pass our model through the view functions so we can access
+those values in the right places. Our `view` function already takes `model`
+as an argument, so we can pass that along to the `viewGame` function like this:
 
 ```elm
-characterPositionX : Int
-characterPositionX =
-    Tuple.first characterPosition
-
-
-characterPositionY : Int
-characterPositionY =
-    Tuple.second characterPosition
+view : Model -> Html Msg
+view model =
+    div [] [ viewGame model ]
 ```
 
-This means we get the benefits of type safety while working with our character
-position, and we no longer need the `let` expression we created previously for
-our `viewCharacter` function:
+Then, we'll update both the type annotation and function declaration for
+`viewGame` so it takes `model` as an argument and passes it along to the
+`viewCharacter` function at the bottom.
 
 ```elm
-viewCharacter : Svg Msg
-viewCharacter =
+viewGame : Model -> Svg Msg
+viewGame model =
+    svg [ version "1.1", width "600", height "400" ]
+        [ viewGameWindow
+        , viewGameSky
+        , viewGameGround
+        , viewCharacter model
+        ]
+```
+
+This works well for our needs, because it means we can pass the model data as
+it changes to the `viewCharacter` function, which allows us to keep changing
+the character's position.
+
+Let's go ahead and update the `viewCharacter` function. We'll accept `model` as
+an argument, and that means we'll be able to access any value directly from our
+model. That also simplifies our code, because we won't need the `let`
+expression anymore. Update the `viewCharacter` function with the following:
+
+```elm
+viewCharacter : Model -> Svg Msg
+viewCharacter model =
     image
         [ xlinkHref "/images/character.gif"
-        , x (toString characterPositionX)
-        , y (toString characterPositionY)
+        , x (toString model.characterPositionX)
+        , y (toString model.characterPositionY)
         , width "50"
         , height "50"
         ]
         []
 ```
 
-Let's move our character to the right on the screen by increasing the `x`
-position to a value of `50`. This is what all the functions should look like
-working together:
+At this point, we have working data from the model that's being rendered to the
+view. Let's move our character to the right on the screen by increasing the
+`characterPositionX` value to `50` in the `initialModel`:
 
 ```elm
-characterPosition : ( Int, Int )
-characterPosition =
-    ( 50, 300 )
-
-
-characterPositionX : Int
-characterPositionX =
-    Tuple.first characterPosition
-
-
-characterPositionY : Int
-characterPositionY =
-    Tuple.second characterPosition
-
-
-viewCharacter : Svg Msg
-viewCharacter =
-    image
-        [ xlinkHref "/images/character.gif"
-        , x (toString characterPositionX)
-        , y (toString characterPositionY)
-        , width "50"
-        , height "50"
-        ]
-        []
+initialModel : Model
+initialModel =
+    { characterPositionX = 50
+    , characterPositionY = 300
+    }
 ```
 
 ![Altering Character Position](images/our_first_game/altering_character_position.png)
@@ -650,7 +652,7 @@ Our character is looking pretty lonely in our minigame world. Let's add an item
 to our world, and then we'll work towards having our character be able to pick
 up the item in the next chapter.
 
-We're going to follow much of the same steps we did for our character image, so
+We're going to follow many of the same steps we did for our character image, so
 we'll move quickly in this section. First, let's add a `coin.svg` image to our
 project to use as our item.
 
@@ -658,47 +660,62 @@ The `coin.svg` asset we'll be using here is
 [available in the GitHub repository](https://github.com/elixir-elm-tutorial/elixir-elm-tutorial-book/tree/master/manuscript/images/our_first_game/coin.svg)
 for this book.
 
-Let's move our `coin.svg` file inside the Phoenix `assets/static/images`
-folder just like we did for our character image, which will make it available
-at `/images/coin.svg`.
+Let's move our `coin.svg` file inside the `assets/static/images` folder just
+like we did for our character image, which will make it available at
+`/images/coin.svg`.
 
-Below the view and position functions we created for our character, we can do
-the same for our new coin item:
+Now we can update our model to set a position for the new item:
 
 ```elm
-itemPosition : ( Int, Int )
-itemPosition =
-    ( 500, 300 )
+type alias Model =
+    { characterPositionX : Int
+    , characterPositionY : Int
+    , itemPositionX : Int
+    , itemPositionY : Int
+    }
 
 
-itemPositionX : Int
-itemPositionX =
-    Tuple.first itemPosition
+initialModel : Model
+initialModel =
+    { characterPositionX = 50
+    , characterPositionY = 300
+    , itemPositionX = 500
+    , itemPositionY = 300
+    }
+```
 
+Then, we can update our `view` function and create a new `viewItem` function
+that takes in a `model` argument and returns some SVG code to render:
 
-itemPositionY : Int
-itemPositionY =
-    Tuple.second itemPosition
+```elm
+viewGame : Model -> Svg Msg
+viewGame model =
+    svg [ version "1.1", width "600", height "400" ]
+        [ viewGameWindow
+        , viewGameSky
+        , viewGameGround
+        , viewCharacter model
+        , viewItem model
+        ]
 
-
-viewItem : Svg Msg
-viewItem =
+viewItem : Model -> Svg Msg
+viewItem model =
     image
         [ xlinkHref "/images/coin.svg"
-        , x (toString itemPositionX)
-        , y (toString itemPositionY)
-        , width "25"
-        , height "25"
+        , x (toString model.itemPositionX)
+        , y (toString model.itemPositionY)
+        , width "20"
+        , height "20"
         ]
         []
 ```
 
 We essentially took the same approach for our character and our new coin item.
 The only difference is that we moved the coin item to the right of the screen
-with a position of `(500, 300)` and altered the `width` and `height` attributes
-so that the item is smaller than our character.
+and altered the `width` and `height` attributes so that the item is smaller
+than our character.
 
-This is what our results look like so far:
+This is what our results should look like so far:
 
 ![Character and Item Rendered](images/our_first_game/character_and_item.png)
 
@@ -708,5 +725,5 @@ We managed to accomplish _a lot_ in this chapter. We created a space for our
 first game, set up an initial SVG game world, added a character, and added an
 item. But keep in mind that we've been hard-coding a lot of values in our quest
 to get something up and running. In the next chapter, we'll be taking a look at
-Elm subscriptions as a way to handle keyboard input and add interaction to our
-game.
+Elm subscriptions as a way to handle keyboard input and adding interaction to
+our game.
