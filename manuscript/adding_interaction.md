@@ -30,7 +30,7 @@ After agreeing to install the package by entering the `Y` key, here's the
 output we should see:
 
 ```shell
-$ elm elm-package install elm-lang/keyboard
+$ elm-package install elm-lang/keyboard
 To install elm-lang/keyboard I would like to add the following
 dependency to elm-package.json:
 
