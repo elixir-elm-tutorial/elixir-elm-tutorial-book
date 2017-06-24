@@ -334,53 +334,67 @@ gameplay until we can find a better approach.
 
 ## Spawning Items
 
-We now have mechanisms for moving our character around the screen, and also
-managed to add some initial code for the character to find items. The next
-step will be to spawn new items as the character discovers them.
+We now have mechanisms for moving our character around the screen, and we
+managed to add some initial code for the character to find items. But we don't
+just want to hide the item when the character finds it. We'd like to create
+new coins in new locations, and we'll learn a little about Elm's `Random`
+module while we do this.
 
-...
+We're currently setting the position of our coin item by using the initial
+`itemPositionX` value from the model, and we're passing that to our SVG `image`
+element to be rendered in the view. But what if we want to adjust this position
+randomly along the x-axis?
 
-## Creating a Key Module
-
-Because we'd want to use keyboard input in many games, we can create a new
-`Key` module that's reusable.
-
-In our `lib/web/elm` folder, let's create a new file called `Key.elm` that will
-contain our module.
+Let's get started by importing the `Random` library at the top of our file:
 
 ```elm
-module Key exposing (..)
+module Game exposing (..)
 
-
-type Key
-    = SpaceBar
-    | ArrowLeft
-    | ArrowUp
-    | ArrowRight
-    | ArrowDown
-    | Unknown
-
-
-fromCode : Int -> Key
-fromCode keyCode =
-    case keyCode of
-        32 ->
-            SpaceBar
-
-        37 ->
-            ArrowLeft
-
-        38 ->
-            ArrowUp
-
-        39 ->
-            ArrowRight
-
-        40 ->
-            ArrowDown
-
-        _ ->
-            Unknown
+import Html exposing (Html, div)
+import Keyboard exposing (KeyCode, downs)
+import Random
+import Svg exposing (..)
+import Svg.Attributes exposing (..)
 ```
 
-...
+Now we can start scaffolding out how we want to approach this by adding two
+new messages to our update section. We'll use `GenerateNewItemPosition` to get
+a random integer value, and then we'll use `SetNewItemPosition` to set the
+position of the item in a new location. Keep in mind that the following code
+has the structure that we're looking for, but it won't work until we fill out
+the new messages:
+
+```elm
+type Msg
+    = NoOp
+    | KeyDown KeyCode
+    | GenerateNewItemPosition
+    | SetNewItemPosition Int Int
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+    case msg of
+        NoOp ->
+            ( model, Cmd.none )
+
+        KeyDown keyCode ->
+            case keyCode of
+                37 ->
+                    ( { model | characterPositionX = model.characterPositionX - 15 }, Cmd.none )
+
+                39 ->
+                    ( { model | characterPositionX = model.characterPositionX + 15 }, Cmd.none )
+
+                _ ->
+                    ( model, Cmd.none )
+
+        GenerateNewItemPosition ->
+            ( model, Cmd.none )
+
+        SetNewItemPosition newPositionX newPositionY ->
+            ( model, Cmd.none )
+```
+
+For now we're just returning the existing `model` when either of these messages
+get triggered.
