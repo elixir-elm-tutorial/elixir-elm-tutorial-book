@@ -140,15 +140,203 @@ that position and see that value change through the model.
 
 The way this works is that we're using Elm's record update syntax, and we can
 just focus on this part of the code for now:
-`{ model | characterPositionX = model.characterPositionX + 15 }`. We set up our
-model as a record with several fields in it. With this syntax, we can change
-the value of the `characterPositionX` field in the model. It takes some getting
-used to, but for now all we need to know is that we're setting a new value to
-`characterPositionX` every time we press a key on the keyboard.
+
+```elm
+{ model | characterPositionX = model.characterPositionX + 15 }
+```
+
+We set up our model as a record with several fields in it. With this syntax, we
+can change the value of the `characterPositionX` field in the model. It takes
+some getting used to, but for now all we need to know is that we're setting a
+new value to `characterPositionX` every time we press a key on the keyboard.
 
 In the `initialModel`, we set our `characterPositionX` value to `50`. Now with
 every key press we're increasing that value by `15`. So if you press any key
-four times, the character will move to the right by 60 pixels.
+four times, the character will move to the right by a total of 60 pixels.
+
+## Setting the Correct Keys
+
+It's exciting to see our character moving around the screen, but we want to
+be able to change the direction based on the key we're pressing.
+
+In order to accomplish this, let's add a `case` expression inside our `update`
+function. We only want our character to move to the right when we press the
+right arrow key (which has the key code `39`) on our keyboard. We're already
+passing the `keyCode` to our `KeyDown` message, so we can use our `case`
+expression to check which key is being pressed and respond with the following:
+
+```elm
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+    case msg of
+        NoOp ->
+            ( model, Cmd.none )
+
+        KeyDown keyCode ->
+            case keyCode of
+                39 ->
+                    ( { model | characterPositionX = model.characterPositionX + 15 }, Cmd.none )
+
+                _ ->
+                    ( model, Cmd.none )
+```
+
+Our game is basically performing the same way it was before, where the
+character can move to the right. But now that action should only be triggered
+when we press down on the right arrow key.
+
+In other words, we're adding `15` to the `characterPositionX` value every time
+we press the right arrow key on the keyboard. And the `_` part of the `case`
+expression allows us to handle all other scenarios (any other key presses). And
+we'll make no change to the model when any other key than the right arrow is
+being pressed.
+
+One of the reasons that Elm is such a strong language and offers so many
+guarantees is that it forces us to account for all possibilities. So when we
+define the behavior we want for the right arrow key, it makes sure that we
+don't forget all the other keys and wants us to think about what other behavior
+we would want when other keys are pressed. In this case, it's fairly
+straightforward because we want the character to move right when the right
+arrow key is pressed and for no action to happen with any other keys.
+
+As an aside, it's normally considered good practice to explicitly account for
+possibilities. So if we were creating a `case` expression that only had a few
+possibilities, we'd try to add a separate conditions for each one to handle
+them thoughtfully. But in the case of a keyboard we're only hoping to use a
+couple of the keys for now, so we're going to default to no action when most of
+the keys are pressed.
+
+## Changing Direction
+
+Let's go ahead and add the ability for our character to move in the left
+direction as well. This will involve some familiar changes to our `KeyDown`
+message, where we're going to add a case for the left arrow key (`37`) and
+subtract from the character's horizontal position value:
+
+```elm
+KeyDown keyCode ->
+    case keyCode of
+        37 ->
+            ( { model | characterPositionX = model.characterPositionX - 15 }, Cmd.none )
+
+        39 ->
+            ( { model | characterPositionX = model.characterPositionX + 15 }, Cmd.none )
+
+        _ ->
+            ( model, Cmd.none )
+```
+
+So far so good. We now have the ability to move our character to the left and
+the right on the screen. It's great that we've already managed to add some
+interactivity to our game, but keep in mind that we're taking some shortcuts
+for now. As we continue, it will be nice to account for our character's
+acceleration instead of just manually pushing the position around using pixel
+values. We'll work towards adding more complex behaviors, but for now let's
+continue adding some basic game elements.
+
+## Collecting Items
+
+We now have the ability to move our character to the left and right, and we
+already added an item that our character should be able to pick up. Currently,
+our character can move over to the item, but nothing really happens when we get
+there.
+
+What we'd like to do at this point is to be able to move the character to the
+item, increment our score, and spawn a new item.
+
+One way that we can start thinking about this is to figure out what we want to
+do when the character reaches the item. Let's add a function that returns a
+boolean value about whether or not the character has discovered the item. We'll
+use the position of both the character and the item to see if they match, and
+then we'll return `True` if the character's position matches the item's
+position.
+
+```elm
+characterFoundItem : Model -> Bool
+characterFoundItem model =
+    model.characterPositionX == model.itemPositionX
+```
+
+This seems like a good idea initially, but it uncovers some limitations of our
+current approach. To see this in action, let's temporarily update the
+`viewItem` function to account for our new `characterFoundItem` function. If
+the character has found the item, we'll simply return an empty `svg` element to
+effectively hide the coin image. Otherwise, we'll continue showing the item if
+the character has not found the item.
+
+```elm
+viewItem : Model -> Svg Msg
+viewItem model =
+    case characterFoundItem model of
+        True ->
+            svg [] []
+
+        False ->
+            image
+                [ xlinkHref "/images/coin.svg"
+                , x (toString model.itemPositionX)
+                , y (toString model.itemPositionY)
+                , width "20"
+                , height "20"
+                ]
+                []
+```
+
+If you try this out in the browser, you'll see that it _roughly_ accomplishes
+our goal of having the character be able to "find" the item and have it
+disappear. But you'll notice there's a small problem where the character needs
+to arrive at a particular position to find the item.
+
+![Character Finding Item](images/adding_interaction/item_found.png)
+
+![Character Finding Item](images/adding_interaction/item_found_issue.png)
+
+We could probably look for an ideal fix for this issue, but for now let's keep
+in mind that our current goal is to just make the game playable and to track
+the player's score. So let's find a workable solution that will involve giving
+the item a _range_ instead of an exact position. And we'll use this opportunity
+to learn to use a few new functions from the `List` module.
+
+Instead of using the exact `model.itemPositionX` value like we did above, we
+want to add a lower and upper bound for where the character should be able to
+find the item. We'll use a `let` expression inside our `characterFoundItem`
+function to set values for the `approximateItemLowerBound` and
+`approximateItemUpperBound`. Then we'll use the `List.range` function to create
+a range of numbers where the character can discover the item.
+
+After we create a range of values where our character can find the item, we use
+the `List.member` function to determine whether or not the character position
+is currently somewhere inside the item's range. Let's update our
+`characterFoundItem` function to see how this works:
+
+```elm
+characterFoundItem : Model -> Bool
+characterFoundItem model =
+    let
+        approximateItemLowerBound =
+            model.itemPositionX - 35
+
+        approximateItemUpperBound =
+            model.itemPositionX
+
+        approximateItemRange =
+            List.range approximateItemLowerBound approximateItemUpperBound
+    in
+        List.member model.characterPositionX approximateItemRange
+```
+
+This is generally not great programming practice to use a "magic number" value
+like `35` here which is just a rough approximation of where the character
+position meets the item position. But tinkering with these values in the
+browser looks like it's just good enough to keep moving since the character
+is able to discover the item at the correct position, and should improve our
+gameplay until we can find a better approach.
+
+## Spawning Items
+
+We now have mechanisms for moving our character around the screen, and also
+managed to add some initial code for the character to find items. The next
+step will be to spawn new items as the character discovers them.
 
 ...
 
