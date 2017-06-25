@@ -245,11 +245,11 @@ What we'd like to do at this point is to be able to move the character to the
 item, increment our score, and spawn a new item.
 
 One way that we can start thinking about this is to figure out what we want to
-do when the character reaches the item. Let's add a function that returns a
-boolean value about whether or not the character has discovered the item. We'll
-use the position of both the character and the item to see if they match, and
-then we'll return `True` if the character's position matches the item's
-position.
+do when the character reaches the item. Let's add a `characterFoundItem`
+function below our `update` function that will return a boolean value about
+whether or not the character has discovered the item. We'll use the position of
+both the character and the item to see if they match, and then we'll return
+`True` if the character's position matches the item's position.
 
 ```elm
 characterFoundItem : Model -> Bool
@@ -507,68 +507,17 @@ update msg model =
             ( { model | itemPositionX = newPositionX }, Cmd.none )
 ```
 
-Alright, this isn't the most fun game ever, but we've come along way and we're
-now able to move our character around and "collect" coins as they randomly
-spawn in different locations. What's missing is the ability to track the number
-of coins we're collecting. Let's go ahead and take a look at how we'll track
-the player's score next.
+## Summary
 
-## Scoring with Item Collection
+These may not be the most fun game mechanics ever, but we've come a _long_ way
+towards building our first game. This is a good stopping point to reflect on
+what we've accomplished so far.
 
-Let's add a score indicator to the view for our game, and we'll start by adding
-a `playerScore` field to our model. We'll set it to an initial value of `0`.
+We learned about Elm subscriptions and handling keyboard input, allowing the
+player to adjust the position of the character on the screen. Then, we imported
+new libraries to allow our character to "collect" items and spawn new ones in
+different locations.
 
-```elm
-type alias Model =
-    { playerScore : Int
-    , characterPositionX : Int
-    , characterPositionY : Int
-    , itemPositionX : Int
-    , itemPositionY : Int
-    }
-
-
-initialModel : Model
-initialModel =
-    { playerScore = 0
-    , characterPositionX = 50
-    , characterPositionY = 300
-    , itemPositionX = 500
-    , itemPositionY = 300
-    }
-```
-
-We can start by adding a new function to our view, and then we'll add the
-functionality for tracking our player's score based on the number of coins they
-pick up. We'll use an SVG `text` element (which is called `Svg.text_` to
-differentiate between the actual text we're using with `Svg.text`) to display
-the score at the top left of the game window. So we can start by creating a new
-`viewGameScore` function beneath the `viewGameWindow` function:
-
-```elm
-viewGameScore : Model -> Svg Msg
-viewGameScore model =
-    Svg.text_
-        [ x "490"
-        , y "20"
-        , fontFamily "Impact"
-        , fontSize "16"
-        ]
-        [ Svg.text ("SCORE: " ++ model.playerScore) ]
-```
-
-And we'll need to add this to the bottom of our `viewGame` function so we can
-see it rendered:
-
-```elm
-viewGame : Model -> Svg Msg
-viewGame model =
-    svg [ version "1.1", width "600", height "400" ]
-        [ viewGameWindow
-        , viewGameSky
-        , viewGameGround
-        , viewCharacter model
-        , viewItem model
-        , viewGameScore model
-        ]
-```
+What's missing is the ability to track the number of items we're collecting.
+In the next chapter, we'll cover some basics for tracking game data and
+rendering it inside our game window.
