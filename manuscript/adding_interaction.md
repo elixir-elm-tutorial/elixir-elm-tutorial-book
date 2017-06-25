@@ -337,39 +337,48 @@ gameplay until we can find a better approach.
 We now have mechanisms for moving our character around the screen, and we
 managed to add some initial code for the character to find items. But we don't
 just want to hide the item when the character finds it. We'd like to create
-new coins in new locations, and we'll learn a little about Elm's `Random`
-module while we do this.
+new coins in new locations, and this is an opportunity to start making our game
+come to life.
 
-We're currently setting the position of our coin item by using the initial
-`itemPositionX` value from the model, and we're passing that to our SVG `image`
-element to be rendered in the view. But what if we want to adjust this position
-randomly along the x-axis?
-
-Let's get started by importing the `Random` library at the top of our file:
+Let's get started by importing a handful of new packages that we'll need for
+our game at the top of our file. We'll import `AnimationFrame`, `Random`, and
+`Time` (note that I tend to sort my imports in alphabetical order):
 
 ```elm
 module Game exposing (..)
 
+import AnimationFrame exposing (diffs)
 import Html exposing (Html, div)
 import Keyboard exposing (KeyCode, downs)
 import Random
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
+import Time exposing (Time)
 ```
 
-Now we can start scaffolding out how we want to approach this by adding two
-new messages to our update section. We'll use `GenerateNewItemPosition` to get
-a random integer value, and then we'll use `SetNewItemPosition` to set the
-position of the item in a new location. Keep in mind that the following code
-has the structure that we're looking for, but it won't work until we fill out
-the new messages:
+The `AnimationFrame` library will be helpful for our game, because it enables
+us to render smooth animations and subscribe to differences over time. We can
+start by updating our `subscriptions` function to use the `diffs` function from
+the `AnimationFrame` library, and we'll pass a new message that we'll create
+momentarily. Update `subscriptions` with the following:
+
+```elm
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.batch
+        [ downs KeyDown
+        , diffs TimeUpdate
+        ]
+```
+
+This means we'll need to add a new `TimeUpdate` message along with a change to
+our `update` function:
 
 ```elm
 type Msg
     = NoOp
     | KeyDown KeyCode
-    | GenerateNewItemPosition
-    | SetNewItemPosition Int Int
+    | TimeUpdate Time
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -389,12 +398,121 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
-        GenerateNewItemPosition ->
-            ( model, Cmd.none )
-
-        SetNewItemPosition newPositionX newPositionY ->
+        TimeUpdate time ->
             ( model, Cmd.none )
 ```
 
-For now we're just returning the existing `model` when either of these messages
-get triggered.
+This may not seem like a big deal, but it is. We now have the ability to change
+things over time in our game, so we could have items and enemies moving around
+as time moves forward. Let's update our `TimeUpdate` message to perform some
+action. We want to change the position of our item when our character finds it,
+so let's use our `characterFoundItem` function to make changes to the `model`:
+
+```elm
+TimeUpdate time ->
+    if characterFoundItem model then
+        ( { model | itemPositionX = model.itemPositionX - 100 }, Cmd.none )
+    else
+        ( model, Cmd.none )
+```
+
+And now that we're using our `characterFoundItem` condition in the `update`
+function, we can simplify the `viewItem` function we had temporarily changed
+before:
+
+```elm
+viewItem : Model -> Svg Msg
+viewItem model =
+    image
+        [ xlinkHref "/images/coin.svg"
+        , x (toString model.itemPositionX)
+        , y (toString model.itemPositionY)
+        , width "20"
+        , height "20"
+        ]
+        []
+```
+
+This basically allows the player to move the character to the item's location,
+and it will give the appearance that a new coin is being "spawned" in a new
+location 100 pixels to the left.
+
+## Working with Randomness
+
+Instead of manually moving the coin to the left, let's take a look at the
+`Random` library to move it to a random new location on the x-axis.
+
+To accomplish this, we'll start by changing our `TimeUpdate` message, and then
+we'll add a new `SetNewItemPositionX` message to change the position of the
+item in the model.
+
+First, let's change our `TimeUpdate` message to remove the manual shifting of
+the coin, and replace it with a new random number generator:
+
+```elm
+TimeUpdate time ->
+    if characterFoundItem model then
+        ( model, Random.generate SetNewItemPositionX (Random.int 50 500) )
+    else
+        ( model, Cmd.none )
+```
+
+We're using two different functions from the `Random` library here. We'll use
+`Random.int`, which takes two integer values and gives us a random number in
+between those values. Then we use the `Random.generate` function, which takes
+another message (which we'll use to update the model) along with the random
+integer we're creating. It's admittedly confusing, but keep in mind that
+generating a random number is actually an effect, because a function that
+returns different values depending on the inputs is by nature impure. Working
+with random numbers this way allows us to have _managed_ effects and make sure
+they don't wreak havoc on our application (we'll learn more about this
+elsewhere in the book so don't worry too much for now).
+
+Now that we have a new value, we can use it to update the model with the
+`SetNewItemPositionX` message. Here are the changes in context with the message
+types and full `update` function:
+
+```elm
+type Msg
+    = NoOp
+    | KeyDown KeyCode
+    | TimeUpdate Time
+    | SetNewItemPositionX Int
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+    case msg of
+        NoOp ->
+            ( model, Cmd.none )
+
+        KeyDown keyCode ->
+            case keyCode of
+                37 ->
+                    ( { model | characterPositionX = model.characterPositionX - 15 }, Cmd.none )
+
+                39 ->
+                    ( { model | characterPositionX = model.characterPositionX + 15 }, Cmd.none )
+
+                _ ->
+                    ( model, Cmd.none )
+
+        TimeUpdate time ->
+            if characterFoundItem model then
+                ( model, Random.generate SetNewItemPositionX (Random.int 50 500) )
+            else
+                ( model, Cmd.none )
+
+        SetNewItemPositionX newPositionX ->
+            ( { model | itemPositionX = newPositionX }, Cmd.none )
+```
+
+Alright, this isn't the most fun game ever, but we've come along way and we're
+now able to move our character around and "collect" coins as they randomly
+spawn in different locations. What's missing is the ability to track the number
+of coins we're collecting. Let's go ahead and take a look at how we'll track
+the player's score next.
+
+## Scoring with Item Collection
+
+...
