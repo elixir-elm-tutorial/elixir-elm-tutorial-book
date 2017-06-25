@@ -146,3 +146,68 @@ viewGame model =
 
 We'll take a similar approach to show the number of coins the character has
 collected.
+
+Similar to our `viewGameScore` function, we'll create a new
+`viewItemsCollected` function that takes in the `model` and returns the SVG
+element we're looking to render for the player.
+
+We start out with the `model.itemsCollected` value (initialized to `0`), and
+then we convert it to a string that we'll display in the upper center location
+of the game window. We use an SVG `image` element to display a small image of
+the item, and then we'll show the number of items in text alongside it. Here's
+the full `viewItemsCollected` function:
+
+```elm
+viewItemsCollected : Model -> Svg Msg
+viewItemsCollected model =
+    let
+        currentItemCount =
+            model.itemsCollected
+                |> toString
+                |> String.padLeft 3 '0'
+    in
+        Svg.svg []
+            [ image
+                [ xlinkHref "/images/coin.svg"
+                , x "275"
+                , y "18"
+                , width "15"
+                , height "15"
+                ]
+                []
+            , viewGameText 300 30 ("x " ++ currentItemCount)
+            ]
+```
+
+Now we can add this to our `viewGame` function to see it rendered to the game
+screen. I also tinkered with the positioning for this one in hopes of making it
+look nice for players to see.
+
+```elm
+viewGame : Model -> Svg Msg
+viewGame model =
+    svg [ version "1.1", width "600", height "400" ]
+        [ viewGameWindow
+        , viewGameSky
+        , viewGameGround
+        , viewCharacter model
+        , viewItem model
+        , viewGameScore model
+        , viewItemsCollected model
+        ]
+```
+
+![Displaying the Item Count](images/displaying_game_data/displaying_item_count.png)
+
+## Displaying Time
+
+...
+
+Keep in mind that we've managed to add text content to our game window that
+will allow players to see changes in game data. But these fields don't actually
+reflect the score and time and items collected yet. Let's take care of that
+next.
+
+## Updating the Player Score
+
+...
