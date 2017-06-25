@@ -201,11 +201,78 @@ viewGame model =
 
 ## Displaying Time
 
-...
+Let's take the same approach so we can add a timer to our game and give our
+players a sense of urgency. In the upper right corner of the game window, we'll
+display the time remaining.
+
+The first step will be to add a new field to our model like we did previously,
+and we'll call this one `timeRemaining`:
+
+```elm
+type alias Model =
+    { characterPositionX : Int
+    , characterPositionY : Int
+    , itemPositionX : Int
+    , itemPositionY : Int
+    , itemsCollected : Int
+    , playerScore : Int
+    , timeRemaining : Int
+    }
+
+
+initialModel : Model
+initialModel =
+    { characterPositionX = 50
+    , characterPositionY = 300
+    , itemPositionX = 500
+    , itemPositionY = 300
+    , itemsCollected = 0
+    , playerScore = 0
+    , timeRemaining = 0
+    }
+```
+
+Then we'll add another function to our view called `viewGameTime` that will
+convert the time in seconds to a string so we can render it.
+
+```elm
+viewGameTime : Model -> Svg Msg
+viewGameTime model =
+    let
+        currentTime =
+            model.timeRemaining
+                |> toString
+                |> String.padLeft 4 '0'
+    in
+        Svg.svg []
+            [ viewGameText 525 25 "TIME"
+            , viewGameText 525 40 currentTime
+            ]
+```
+
+Lastly, we can add it to the bottom of our `viewGame` function to see it
+rendered in the browser:
+
+```elm
+viewGame : Model -> Svg Msg
+viewGame model =
+    svg [ version "1.1", width "600", height "400" ]
+        [ viewGameWindow
+        , viewGameSky
+        , viewGameGround
+        , viewCharacter model
+        , viewItem model
+        , viewGameScore model
+        , viewItemsCollected model
+        , viewGameTime model
+        ]
+```
+
+![Displaying Time Remaining](images/displaying_game_data/displaying_time_remaining.png)
 
 Keep in mind that we've managed to add text content to our game window that
 will allow players to see changes in game data. But these fields don't actually
-reflect the score and time and items collected yet. Let's take care of that
+reflect the score, item collection count, and time yet. Let's take care of that
 next.
 
 ## Updating the Player Score
