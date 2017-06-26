@@ -264,4 +264,65 @@ KeyDown keyCode ->
 
 ## Success State
 
+If a player has managed to collect ten coins before the time has expired, then
+we can consider the level completed and display a success message.
+
+Let's create a new function called `viewSuccessScreenText` with the following
+content:
+
+```elm
+viewSuccessScreenText : Svg Msg
+viewSuccessScreenText =
+    Svg.svg []
+        [ viewGameText 120 180 "Success!"
+        ]
+```
+
+If we had time, it would be fun to add some SVG fireworks or animations here
+for the game's success state. But for now we'll just add some text like we did
+for the starting screen.
+
+Let's update the `viewGameState` function with the following:
+
+```elm
+viewGameState : Model -> List (Svg Msg)
+viewGameState model =
+    case model.gameState of
+        StartScreen ->
+            [ viewGameWindow
+            , viewGameSky
+            , viewGameGround
+            , viewCharacter model
+            , viewItem model
+            , viewStartScreenText
+            ]
+
+        Playing ->
+            [ viewGameWindow
+            , viewGameSky
+            , viewGameGround
+            , viewCharacter model
+            , viewItem model
+            , viewGameScore model
+            , viewItemsCollected model
+            , viewGameTime model
+            ]
+
+        Success ->
+            [ viewGameWindow
+            , viewGameSky
+            , viewGameGround
+            , viewCharacter model
+            , viewItem model
+            , viewSuccessScreenText
+            ]
+
+        GameOver ->
+            []
+```
+
+TODO: Add way to restart game?
+
+## Game Over State
+
 ...
