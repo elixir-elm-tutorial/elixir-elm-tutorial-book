@@ -277,4 +277,134 @@ next.
 
 ## Updating the Player Score
 
-...
+Thankfully our game mechanics are simple, and we've already laid the foundation
+for how we'll handle incrementing the player's item count and score. In the
+current version of our game, we're using the `characterFoundItem` function to
+determine when the character has stumbled upon a coin. And that gets triggered
+in our `TimeUpdate` message so we can spawn a new coin. We can use this
+existing feature to start updating our model.
+
+When the character arrives at a coin, we want to increment our
+`itemsCollected` field by a value of `1`, and we'll award `100` points to the
+`playerScore` field at the same time. The scoring is arbitrary, but in the
+future we could always add items with different scoring values.
+
+Let's adjust the code in our `TimeUpdate` message. The syntax here will look a
+little unfamiliar since it's broken up on different lines, but it's the same
+record update syntax we've been using to update fields in the model.
+
+```elm
+TimeUpdate time ->
+    if characterFoundItem model then
+        ( { model
+            | itemsCollected = model.itemsCollected + 1
+            , playerScore = model.playerScore + 100
+            }
+        , Random.generate SetNewItemPositionX (Random.int 50 500)
+        )
+    else
+        ( model, Cmd.none )
+```
+
+Now when the `characterFoundItem` function returns `True`, we're not only
+generating a random integer to spawn a new coin item, we're also incrementing
+the `itemsCollected` value and the `playerScore` value simultaneously. Check
+it out in the browser and it looks like it works!
+
+![Updating Player Score and Item Count](images/displaying_game_data/updating_player_score_and_item_count.png)
+
+## Implementing a Countdown Timer
+
+We have our player score and item counter working. Let's take a look at how we
+can add a countdown timer to our game. This part will involve updating several
+pieces of our application, but thankfully they're all simple changes.
+
+Below our `TimeUpdate` message, let's add a new one called `CountdownTimer`
+with the following:
+
+```elm
+type Msg
+    = NoOp
+    | KeyDown KeyCode
+    | TimeUpdate Time
+    | CountdownTimer Time
+    | SetNewItemPositionX Int
+```
+
+Then, in the `update` function, we'll set up a new case below the `TimeUpdate`
+with the following code (we're not changing the model yet, we're just setting
+up our message for now so we can use it momentarily).
+
+```elm
+CountdownTimer time ->
+    ( model, Cmd.none )
+```
+
+Now let's go ahead and import a few new functions from the `Time` library that
+we'll want to use so we can subscribe to time and track each passing second of
+time. Change the `Time` import at the top of the file to look like this:
+
+```elm
+import Time exposing (Time, every, second)
+```
+
+And now we can update our `subscriptions` function to trigger the
+`CountdownTimer` message that we created for every second that passes:
+
+```elm
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.batch
+        [ downs KeyDown
+        , diffs TimeUpdate
+        , every second CountdownTimer
+        ]
+```
+
+## Incorporating Time
+
+Now that we're subscribing to time with every passing second, we can think
+think about how we want to add this to our game. Let's try thinking of our game
+as small levels where players have to collect ten coins in ten seconds to
+advance. We'll explore this further in upcoming sections, but for now let's
+just focus on setting up the timer.
+
+We'll start by updating our `initialModel` so that the `timeRemaining` field
+starts with an initial value of `10`:
+
+```elm
+initialModel : Model
+initialModel =
+    { characterPositionX = 50
+    , characterPositionY = 300
+    , itemPositionX = 500
+    , itemPositionY = 300
+    , itemsCollected = 0
+    , playerScore = 0
+    , timeRemaining = 10
+    }
+```
+
+And now in the `update` function we can subtract one second from the timer for
+as long as the `timeRemaining` field has a value of more than zero:
+
+```elm
+CountdownTimer time ->
+    if model.timeRemaining > 0 then
+        ( { model | timeRemaining = model.timeRemaining - 1 }, Cmd.none )
+    else
+        ( model, Cmd.none )
+```
+
+Granted, nothing will happen when the timer counts down to zero, but it looks
+like it should be working at this point in terms of counting from `10` down to
+`0`.
+
+![Working Timer Display](images/displaying_game_data/working_timer_display.png)
+
+## Summary
+
+We managed to accomplish our goal of displaying game data in this chapter. Our
+game is inching its way closer to being fun to play, but we haven't really
+thought much about gameplay yet. We'll take a look at our game's design in the
+next chapter.
