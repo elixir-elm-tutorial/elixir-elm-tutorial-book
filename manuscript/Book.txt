@@ -13,6 +13,7 @@ elm_api_data.md
 our_first_game.md
 adding_interaction.md
 displaying_game_data.md
+concerning_gameplay.md
 games.md
 current_outline.md
 appendix.md
