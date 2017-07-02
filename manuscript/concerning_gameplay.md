@@ -156,9 +156,8 @@ function that will display some introductory text:
 viewStartScreenText : Svg Msg
 viewStartScreenText =
     Svg.svg []
-        [ viewGameText 120 160 "Collect ten coins in only ten seconds!"
-        , viewGameText 120 180 "Use arrow keys to move left and right."
-        , viewGameText 120 200 "Ready??? Press the SPACE BAR to start."
+        [ viewGameText 140 160 "Collect ten coins in ten seconds!"
+        , viewGameText 140 180 "Press the SPACE BAR key to start."
         ]
 ```
 
@@ -321,8 +320,62 @@ viewGameState model =
             []
 ```
 
-TODO: Add way to restart game?
+We also want our players to restart the game without having to refresh the page
+in the browser. Let's update the `viewSuccessScreenText` function we just
+created to include some more text about restarting the game:
+
+```elm
+viewSuccessScreenText : Svg Msg
+viewSuccessScreenText =
+    Svg.svg []
+        [ viewGameText 260 160 "Success!"
+        , viewGameText 140 180 "Press the SPACE BAR key to restart."
+        ]
+```
+
+And now we can update the space bar case in our `update` function` so that
+users can restart the game from the `Success` state.
+
+```elm
+KeyDown keyCode ->
+    case keyCode of
+        32 ->
+            case model.gameState of
+                StartScreen ->
+                    ( { model
+                        | gameState = Playing
+                        , playerScore = 0
+                        , itemsCollected = 0
+                        , timeRemaining = 10
+                        }
+                    , Cmd.none
+                    )
+
+                Success ->
+                    ( { model
+                        | gameState = Playing
+                        , playerScore = 0
+                        , itemsCollected = 0
+                        , timeRemaining = 10
+                        }
+                    , Cmd.none
+                    )
+
+                _ ->
+                    ( model, Cmd.none )
+```
+
+
 
 ## Game Over State
 
 ...
+
+## TODO
+
+- Character acceleration
+- Character direction
+- Character jumping ability
+- Switch from random locations to specific patterns
+- Add different levels
+- Add a door at the end
