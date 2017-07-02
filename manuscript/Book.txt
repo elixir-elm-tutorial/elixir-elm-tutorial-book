@@ -14,6 +14,8 @@ our_first_game.md
 adding_interaction.md
 displaying_game_data.md
 concerning_gameplay.md
+handling_game_states.md
+movement.md
 games.md
 current_outline.md
 appendix.md

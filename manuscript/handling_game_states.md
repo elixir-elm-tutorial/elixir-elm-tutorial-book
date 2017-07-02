@@ -1,4 +1,4 @@
-# Concerning Gameplay
+# Handling Game States
 
 Since this isn't book about game programming, we won't have time to delve too
 deeply into the topic of game design. But we still want our minigames to be
@@ -6,7 +6,7 @@ fun, and one way to do this is to be thoughtful about gameplay.
 
 ## Game State
 
-Let's start by thinking about how we want our game to start, and also how we
+Let's begin by thinking about how we want our game to start, and also how we
 want it to end. It looks like our game is going to be a simple race against the
 clock to collect items. We don't have some amazing plot to add yet, because we
 really want to focus on the core gameplay being fun first.
@@ -105,7 +105,9 @@ viewGameState model =
 ```
 
 We started with empty lists for each of these cases, but let's go ahead and
-fill in the `Playing` state since we already had the content for that one:
+fill in the `Playing` state since we already had the content for that one.
+While users are actively playing the game, we'll want them to be able to see
+all the relevant view functions we created for the game:
 
 ```elm
 viewGameState : Model -> List (Svg Msg)
@@ -197,11 +199,11 @@ viewGameState model =
 
 The structure should be getting a little clearer now. We're basically going to
 keep using the `viewGameState` function as our way to selectively show
-different components of our game. In this case, we wants players to start with
+different components of our game. In this case, we want players to start with
 some brief instructions, and they'll be able to see the character and the item
 they're going after.
 
-![Start Screen](images/concerning_gameplay/start_screen.png)
+![Start Screen](images/handling_game_states/start_screen.png)
 
 The instructions mention using the space bar key to start the game, so let's
 add that feature now. It will also be useful as a way to reset to default
@@ -320,9 +322,28 @@ viewGameState model =
             []
 ```
 
-We also want our players to restart the game without having to refresh the page
-in the browser. Let's update the `viewSuccessScreenText` function we just
-created to include some more text about restarting the game:
+In order to trigger the success screen, we'll need to create another condition
+in our `TimeUpdate` for when the user's score arrives at a value of `10`.
+Inside the `update` function, adapt the code with the following:
+
+```elm
+TimeUpdate time ->
+    if characterFoundItem model then
+        ( { model
+            | itemsCollected = model.itemsCollected + 1
+            , playerScore = model.playerScore + 100
+            }
+        , Random.generate SetNewItemPositionX (Random.int 50 500)
+        )
+    else if model.itemsCollected >= 10 then
+        ( { model | gameState = Success }, Cmd.none )
+    else
+        ( model, Cmd.none )
+```
+
+We also want our players to be able to restart the game without having to
+refresh the page in the browser. Let's update the `viewSuccessScreenText`
+function we just created to include some more text about restarting the game:
 
 ```elm
 viewSuccessScreenText : Svg Msg
@@ -365,17 +386,145 @@ KeyDown keyCode ->
                     ( model, Cmd.none )
 ```
 
+At this point, we should have working states for the start screen, the active
+playing state, and the success screen.
 
+![Success Screen](images/handling_game_states/success_screen.png)
 
 ## Game Over State
 
-...
+We still haven't figured out what to do when the timer reaches zero and the
+player hasn't collected enough coins. In this case, we'll take a similar
+approach to the one we used for the success state in that we want to show some
+game over text along with an option for the player to restart the game.
 
-## TODO
+We'll start with a simple `viewGameOverScreenText` function for the text we
+want to display:
 
-- Character acceleration
-- Character direction
-- Character jumping ability
-- Switch from random locations to specific patterns
-- Add different levels
-- Add a door at the end
+```elm
+viewGameOverScreenText : Svg Msg
+viewGameOverScreenText =
+    Svg.svg []
+        [ viewGameText 260 160 "Game Over"
+        , viewGameText 140 180 "Press the SPACE BAR key to restart."
+        ]
+```
+
+Now we can finish up our `viewGameState` function. We're only updating the
+`GameOver` case, but the full code is posted here for a review of what we're
+selectively displaying for each state.
+
+```elm
+viewGameState : Model -> List (Svg Msg)
+viewGameState model =
+    case model.gameState of
+        StartScreen ->
+            [ viewGameWindow
+            , viewGameSky
+            , viewGameGround
+            , viewCharacter model
+            , viewItem model
+            , viewStartScreenText
+            ]
+
+        Playing ->
+            [ viewGameWindow
+            , viewGameSky
+            , viewGameGround
+            , viewCharacter model
+            , viewItem model
+            , viewGameScore model
+            , viewItemsCollected model
+            , viewGameTime model
+            ]
+
+        Success ->
+            [ viewGameWindow
+            , viewGameSky
+            , viewGameGround
+            , viewCharacter model
+            , viewItem model
+            , viewSuccessScreenText
+            ]
+
+        GameOver ->
+            [ viewGameWindow
+            , viewGameSky
+            , viewGameGround
+            , viewCharacter model
+            , viewItem model
+            , viewGameOverScreenText
+            ]
+```
+
+We'll also need to add another condition for when the timer reaches `0` and the
+player has collected less than `10` coins. Let's update the `TimeUpdate`
+message to set the `gameState` to `GameOver` when those conditions arise during
+gameplay:
+
+```elm
+TimeUpdate time ->
+    if characterFoundItem model then
+        ( { model
+            | itemsCollected = model.itemsCollected + 1
+            , playerScore = model.playerScore + 100
+            }
+        , Random.generate SetNewItemPositionX (Random.int 50 500)
+        )
+    else if model.itemsCollected >= 10 then
+        ( { model | gameState = Success }, Cmd.none )
+    else if model.itemsCollected < 10 && model.timeRemaining == 0 then
+        ( { model | gameState = GameOver }, Cmd.none )
+    else
+        ( model, Cmd.none )
+```
+
+Lastly, we want users to be able to restart gameplay from the `GameOver` state.
+We can also go ahead and refactor our cases quite a bit here since a lot of
+them are intended to reset the game state. Update the `KeyDown` with the
+following:
+
+```elm
+KeyDown keyCode ->
+    let
+        resetGameState =
+            ( { model
+                | gameState = Playing
+                , playerScore = 0
+                , itemsCollected = 0
+                , timeRemaining = 10
+                }
+            , Cmd.none
+            )
+    in
+        case keyCode of
+            32 ->
+                case model.gameState of
+                    StartScreen ->
+                        resetGameState
+
+                    Success ->
+                        resetGameState
+
+                    Playing ->
+                        ( model, Cmd.none )
+
+                    GameOver ->
+                        resetGameState
+
+            37 ->
+                ( { model | characterPositionX = model.characterPositionX - 15 }, Cmd.none )
+
+            39 ->
+                ( { model | characterPositionX = model.characterPositionX + 15 }, Cmd.none )
+
+            _ ->
+                ( model, Cmd.none )
+```
+
+## Summary
+
+So far so good! We have working game states now so that players can see a start
+screen, play the game, view a success state, and also restart in the game over
+state. This is a great start, but let's keep working towards improving our
+gameplay and injecting some fun in the next chapter.
