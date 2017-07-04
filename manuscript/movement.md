@@ -80,10 +80,10 @@ right arrow keys (`37` and `39`) in our `KeyDown` message:
 
 ```elm
 37 ->
-    ( { model | characterVelocity = model.characterVelocity - 0.25 }, Cmd.none )
+    ( { model | characterVelocity = -0.25 }, Cmd.none )
 
 39 ->
-    ( { model | characterVelocity = model.characterVelocity + 0.25 }, Cmd.none )
+    ( { model | characterVelocity = 0.25 }, Cmd.none )
 ```
 
 Keep in mind that this will break our character's previous ability to move
@@ -136,7 +136,201 @@ character back and forth, and we can even vary the speed wildly by pressing the
 same arrow twice. But we also have to press the key in the opposite direction
 in order to stop movement.
 
-...
+## Stopping Movement
+
+After we set our character in motion by pressing an arrow key on the keyboard,
+we want the character to stop moving when we release the key. To accomplish
+this, we'll need to update the `Keyboard` import statement at the top of our
+file to use the `ups` function:
+
+```elm
+import Keyboard exposing (KeyCode, downs, ups)
+```
+
+And now we can add `ups` to our `subscriptions` function along with a new
+`KeyUp` message that we'll create next.
+
+```elm
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.batch
+        [ downs KeyDown
+        , ups KeyUp
+        , diffs TimeUpdate
+        , diffs MoveCharacter
+        , every second CountdownTimer
+        ]
+```
+
+In our update section, we can add adjust our `Msg` type with a new `KeyUp`
+message.
+
+```elm
+type Msg
+    = NoOp
+    | KeyDown KeyCode
+    | KeyUp KeyCode
+    | TimeUpdate Time
+    | CountdownTimer Time
+    | SetNewItemPositionX Int
+    | MoveCharacter Time
+```
+
+When we release the left and right arrow keys, we'll set the character's
+velocity to a value of `0`, which will stop movement altogether.
+
+```elm
+KeyUp keyCode ->
+    case keyCode of
+        37 ->
+            ( { model | characterVelocity = 0 }, Cmd.none )
+
+        39 ->
+            ( { model | characterVelocity = 0 }, Cmd.none )
+
+        _ ->
+            ( model, Cmd.none )
+```
+
+## Direction
+
+At this point, we've managed to replicate our previous functionality in the
+game, but now we have much more flexibility. Let's add a new field to indicate
+which direction the character is facing.
+
+We'll add a new union type since there are only two possible directions the
+character could be facing:
+
+```elm
+type Direction
+    = Left
+    | Right
+```
+
+With that, we can add a `characterDirection` field of type `Direction`, and
+we'll set the initial value to `Right`.
+
+```elm
+type alias Model =
+    { gameState : GameState
+    , characterPositionX : Float
+    , characterPositionY : Float
+    , characterVelocity : Float
+    , characterDirection : Direction
+    , itemPositionX : Int
+    , itemPositionY : Int
+    , itemsCollected : Int
+    , playerScore : Int
+    , timeRemaining : Int
+    }
+
+
+initialModel : Model
+initialModel =
+    { gameState = StartScreen
+    , characterPositionX = 50.0
+    , characterPositionY = 300.0
+    , characterVelocity = 0.0
+    , characterDirection = Right
+    , itemPositionX = 500
+    , itemPositionY = 300
+    , itemsCollected = 0
+    , playerScore = 0
+    , timeRemaining = 10
+    }
+```
+
+Now that we're going to have our character change direction, we'll also want
+to update the assets so that the character looks like he or she is facing in
+the correct direction too. Let's create two new copies of the `character.gif`
+file in the `/assets/static/images` folder. We'll create one called
+`character-right.gif` which will be exactly the same as `character.gif`. And
+we'll also create `character-left.gif`, which is the same image flipped along
+the horizontal axis. If you're using OS X, you can open the file in Preview and
+click the Tools > Flip Horizontal option.
+
+![character-right.gif](images/movement/character-right.gif)
+
+![character-left.gif](images/movement/character-left.gif)
+
+## Rendering the Direction
+
+Let's update our `viewCharacter` function with a `let` expression that will
+indicate which asset to render based on the direction the character is facing.
+
+```elm
+viewCharacter : Model -> Svg Msg
+viewCharacter model =
+    let
+        characterImage =
+            case model.characterDirection of
+                Right ->
+                    "/images/character-right.gif"
+
+                Left ->
+                    "/images/character-left.gif"
+    in
+        image
+            [ xlinkHref characterImage
+            , x (toString model.characterPositionX)
+            , y (toString model.characterPositionY)
+            , width "50"
+            , height "50"
+            ]
+            []
+```
+
+Now we just need to be able to update the value of the `characterDirection`
+field. We can start by adding a new `ChangeDirection` message at the bottom of
+our `Msg` type:
+
+```elm
+type Msg
+    = NoOp
+    | KeyDown KeyCode
+    | KeyUp KeyCode
+    | TimeUpdate Time
+    | CountdownTimer Time
+    | SetNewItemPositionX Int
+    | MoveCharacter Time
+    | ChangeDirection Time
+```
+
+When the character's velocity is greater than `0`, then we know the character
+should be moving to the right. If the character's velocity is negative, then
+we know the character should be facing to the left. Otherwise, we just want the
+character to continue facing the same way.
+
+```elm
+ChangeDirection time ->
+    if model.characterVelocity > 0 then
+        ( { model | characterDirection = Right }, Cmd.none )
+    else if model.characterVelocity < 0 then
+        ( { model | characterDirection = Left }, Cmd.none )
+    else
+        ( model, Cmd.none )
+```
+
+Lastly, we want to update our `subscriptions` function so that we render the
+directional changes over time.
+
+```elm
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.batch
+        [ downs KeyDown
+        , ups KeyUp
+        , diffs TimeUpdate
+        , diffs MoveCharacter
+        , diffs ChangeDirection
+        , every second CountdownTimer
+        ]
+```
+
+At this point we now have working `characterVelocity` and `characterDirection`
+fields for our game!
+
+![Working Directional Changes](images/movement/changing_directions.png)
 
 ## TODO
 
