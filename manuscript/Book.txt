@@ -16,6 +16,8 @@ displaying_game_data.md
 concerning_gameplay.md
 handling_game_states.md
 movement.md
+changing_levels.md
+syncing_score_data.md
 games.md
 current_outline.md
 appendix.md

@@ -334,8 +334,8 @@ fields for our game!
 
 ## TODO
 
-- Character velocity and direction
 - Character running and jumping ability
-- Switch from random locations to specific patterns
-- Player should learn new skill at each level
-- Add different levels and final success state
+
+## Summary
+
+...
