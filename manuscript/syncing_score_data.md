@@ -242,3 +242,19 @@ option to only view websocket communication. Here's a screenshot of what it
 would look like if you're interested in taking a look:
 
 ![Working WebSocket Connection](images/syncing_score_data/working_websocket_connection.png)
+
+For now, our `payload` is empty since we haven't explicitly sent any data yet,
+but we can tell that it's working with the `status = "ok"` indicator and see
+that it changes over time because it increments the `Just <number>` indicator.
+This is what the messages should look like in the DevTools Console:
+
+```shell
+Phoenix message: { event = "phx_reply", topic = "phoenix", payload = { status = "ok", response = {} }, ref = Just 0 }
+Phoenix message: { event = "phx_reply", topic = "phoenix", payload = { status = "ok", response = {} }, ref = Just 1 }
+Phoenix message: { event = "phx_reply", topic = "phoenix", payload = { status = "ok", response = {} }, ref = Just 2 }
+```
+
+## Sending Data Over the Socket
+
+...
+
