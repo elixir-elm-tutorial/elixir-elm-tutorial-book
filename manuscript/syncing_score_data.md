@@ -175,8 +175,8 @@ initPhxSocket =
 In our `initPhxSocket` function, we use the default websocket server for
 Phoenix, which is `"ws://localhost:4000/socket/websocket"`. And then we
 pipe the results to `Phoenix.Socket.withDebug` so we can take a look at the
-Phoenix server logs once we get things up and running and we'll be able to
-inspect the data being passed.
+DevTools Console once we get things up and running and we'll be able to
+inspect the data being passed around.
 
 Before we have a working socket connection, we'll need to add a new message
 to our update section. Still following along with the elm-phoenix-socket README
@@ -228,3 +228,17 @@ subscriptions model =
         ]
 ```
 
+At this point we should have a working socket connection when we visit the
+`http://localhost:4000/elm/game` route in our application. You may need to
+restart your local Phoenix server to get things up and running, but if you
+load the page and wait a few moment, you should be able to see a "heartbeat"
+of websocket messages in the DevTools Console.
+
+If you're not familiar with the Chrome DevTools, you should be able to press
+`Command + Option + J` on your keyboard to pull up the JavaScript Console that
+displays the messages we're looking for. Another good way to inspect these
+is to use the **Network** tab in the Chrome DevTools and click the **WS**
+option to only view websocket communication. Here's a screenshot of what it
+would look like if you're interested in taking a look:
+
+![Working WebSocket Connection](images/syncing_score_data/working_websocket_connection.png)
