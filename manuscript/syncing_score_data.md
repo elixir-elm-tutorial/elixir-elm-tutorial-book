@@ -70,9 +70,161 @@ Finished in 0.5 seconds
 38 tests, 0 failures
 ```
 
+## elm-phoenix-socket
+
+The channel features come bundled with the Phoenix framework, but we'll need to
+import a new library on the Elm side. To enable communication between the
+front-end and back-end, let's use
+[elm-phoenix-socket](https://github.com/fbonetti/elm-phoenix-socket).
+
+To get started let's move to the `lib/platform/web/elm` folder in our project
+and run the following command to install the package:
+
+```shell
+$ elm-package install fbonetti/elm-phoenix-socket
+```
+
+This will also import the `elm-lang/websocket` package, and we should see the
+following output:
+
+```shell
+$ elm-package install fbonetti/elm-phoenix-socket
+To install fbonetti/elm-phoenix-socket I would like to add the following
+dependency to elm-package.json:
+
+    "fbonetti/elm-phoenix-socket": "2.2.0 <= v < 3.0.0"
+
+May I add that to elm-package.json for you? [Y/n] Y
+
+  Install:
+    elm-lang/websocket 1.0.2
+    fbonetti/elm-phoenix-socket 2.2.0
+
+Do you approve of this plan? [Y/n] Y
+Starting downloads...
+
+  ● elm-lang/websocket 1.0.2
+  ● fbonetti/elm-phoenix-socket 2.2.0
+
+Packages configured successfully!
+```
+
+## Configuring elm-phoenix-socket
+
+Now, we can work through the
+[elm-phoenix-socket README](https://github.com/fbonetti/elm-phoenix-socket/blob/master/README.md)
+to configure everything on the Elm side of our application. We'll start by
+importing the necessary modules. Let's update the imports at the top of our
+`Game.elm` file to include three new `Phoenix` modules:
+
+```elm
+import AnimationFrame exposing (diffs)
+import Html exposing (Html, div)
+import Keyboard exposing (KeyCode, downs, ups)
+import Phoenix.Channel
+import Phoenix.Push
+import Phoenix.Socket
+import Random
+import Svg exposing (..)
+import Svg.Attributes exposing (..)
+import Time exposing (Time, every, second)
+```
+
+Next, we can add a `phxSocket` field to our model. We'll update our `Model`
+type first, and then provide an initial value in our `initialModel` that points
+to a new function we'll create called `initPhxSocket`.
+
+```elm
+type alias Model =
+    { gameState : GameState
+    , characterPositionX : Float
+    , characterPositionY : Float
+    , characterVelocity : Float
+    , characterDirection : Direction
+    , itemPositionX : Int
+    , itemPositionY : Int
+    , itemsCollected : Int
+    , phxSocket : Phoenix.Socket.Socket Msg
+    , playerScore : Int
+    , timeRemaining : Int
+    }
 
 
-## TODO
+initialModel : Model
+initialModel =
+    { gameState = StartScreen
+    , characterPositionX = 50.0
+    , characterPositionY = 300.0
+    , characterVelocity = 0.0
+    , characterDirection = Right
+    , itemPositionX = 500
+    , itemPositionY = 300
+    , itemsCollected = 0
+    , phxSocket = initPhxSocket
+    , playerScore = 0
+    , timeRemaining = 10
+    }
 
-- Create Phoenix channel
-- Import elm-phoenix-socket
+
+initPhxSocket : Phoenix.Socket.Socket Msg
+initPhxSocket =
+    Phoenix.Socket.init "ws://localhost:4000/socket/websocket"
+        |> Phoenix.Socket.withDebug
+```
+
+In our `initPhxSocket` function, we use the default websocket server for
+Phoenix, which is `"ws://localhost:4000/socket/websocket"`. And then we
+pipe the results to `Phoenix.Socket.withDebug` so we can take a look at the
+Phoenix server logs once we get things up and running and we'll be able to
+inspect the data being passed.
+
+Before we have a working socket connection, we'll need to add a new message
+to our update section. Still following along with the elm-phoenix-socket README
+file, we see that we can create a new message type at the bottom to handle
+Phoenix socket messages with `PhoenixMsg`.
+
+```elm
+type Msg
+    = NoOp
+    | KeyDown KeyCode
+    | KeyUp KeyCode
+    | TimeUpdate Time
+    | CountdownTimer Time
+    | SetNewItemPositionX Int
+    | MoveCharacter Time
+    | ChangeDirection Time
+    | PhoenixMsg (Phoenix.Socket.Msg Msg)
+```
+
+And we can add the following case at the bottom of our `update` function:
+
+```elm
+PhoenixMsg msg ->
+  let
+    ( phxSocket, phxCmd ) = Phoenix.Socket.update msg model.phxSocket
+  in
+    ( { model | phxSocket = phxSocket }
+    , Cmd.map PhoenixMsg phxCmd
+    )
+```
+
+This enables us to track changes in state using the `phxSocket` field in our
+model.
+
+Lastly, we can add to our `subscriptions` function to subscribe to changes over
+time.
+
+```elm
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.batch
+        [ downs KeyDown
+        , ups KeyUp
+        , diffs TimeUpdate
+        , diffs MoveCharacter
+        , diffs ChangeDirection
+        , every second CountdownTimer
+        , Phoenix.Socket.listen model.phxSocket PhoenixMsg
+        ]
+```
+
