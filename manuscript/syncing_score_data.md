@@ -26,7 +26,7 @@ player's `score` field in our Phoenix application.
 When we run the generator mentioned above, we should see the following output:
 
 ```shell
-$ mix phoenix.gen.channel Score
+$ mix phx.gen.channel Score
 * creating web/channels/score_channel.ex
 * creating test/channels/score_channel_test.exs
 
@@ -56,6 +56,21 @@ defmodule Platform.Web.UserSocket do
   def id(_socket), do: nil
 end
 ```
+
+We can also go ahead and run our Phoenix tests to make sure everything is still
+working as intended:
+
+```shell
+$ mix test
+Compiling 2 files (.ex)
+Generated platform app
+......................................
+
+Finished in 0.5 seconds
+38 tests, 0 failures
+```
+
+
 
 ## TODO
 
