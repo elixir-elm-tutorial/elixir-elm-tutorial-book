@@ -80,10 +80,10 @@ right arrow keys (`37` and `39`) in our `KeyDown` message:
 
 ```elm
 37 ->
-    ( { model | characterVelocity = -0.25 }, Cmd.none )
+    ( { model | characterVelocity = -0.3 }, Cmd.none )
 
 39 ->
-    ( { model | characterVelocity = 0.25 }, Cmd.none )
+    ( { model | characterVelocity = 0.3 }, Cmd.none )
 ```
 
 Keep in mind that this will break our character's previous ability to move
