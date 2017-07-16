@@ -32,7 +32,7 @@ $ mix phx.gen.channel Score
 
 Add the channel to your `web/channels/user_socket.ex` handler, for example:
 
-    channel "score:lobby", Platform.ScoreChannel
+    channel "score:*", Platform.Web.ScoreChannel
 ```
 
 Let's go ahead and follow the instructions and add our new channel to the
@@ -44,7 +44,7 @@ defmodule Platform.Web.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  channel "score:lobby", Platform.ScoreChannel
+  channel "score:*", Platform.Web.ScoreChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket
@@ -52,12 +52,46 @@ defmodule Platform.Web.UserSocket do
   def connect(_params, socket) do
     {:ok, socket}
   end
-1
+
   def id(_socket), do: nil
 end
 ```
 
-We can also go ahead and run our Phoenix tests to make sure everything is still
+We also want to update the `score_channel_test.exs` file that was generated in
+the `test/web/channels` folder to include `score:*`.
+
+```elixir
+defmodule Platform.Web.ScoreChannelTest do
+  use Platform.Web.ChannelCase
+
+  alias Platform.Web.ScoreChannel
+
+  setup do
+    {:ok, _, socket} =
+      socket("user_id", %{some: :assign})
+      |> subscribe_and_join(ScoreChannel, "score:*")
+
+    {:ok, socket: socket}
+  end
+
+  test "ping replies with status ok", %{socket: socket} do
+    ref = push socket, "ping", %{"hello" => "there"}
+    assert_reply ref, :ok, %{"hello" => "there"}
+  end
+
+  test "shout broadcasts to score:*", %{socket: socket} do
+    push socket, "shout", %{"hello" => "all"}
+    assert_broadcast "shout", %{"hello" => "all"}
+  end
+
+  test "broadcasts are pushed to the client", %{socket: socket} do
+    broadcast_from! socket, "broadcast", %{"some" => "data"}
+    assert_push "broadcast", %{"some" => "data"}
+  end
+end
+```
+
+Now, we can go ahead and run our Phoenix tests to make sure everything is still
 working as intended:
 
 ```shell
@@ -302,7 +336,7 @@ still using `(model, Cmd.none)` so far, so we're not actually pushing data
 over the socket yet.
 
 To continue, we'll use the `Phoenix.Push` module that we imported at the top of
-our file. We want to initialize using the `"score:lobby"` channel that we
+our file. We want to initialize using the `"score:*"` channel that we
 created on the Phoenix side, and we'll use the `payload` we constructed to send
 along the relevant data. We'll also use the pipe operator to pass data along
 and handle the success and failure cases.
@@ -314,7 +348,7 @@ SendScore ->
             Encode.object [ ( "score", Encode.int model.playerScore ) ]
 
         phxPush =
-            Phoenix.Push.init "report_score" "score:lobby"
+            Phoenix.Push.init "shout" "score:*"
                 |> Phoenix.Push.withPayload payload
                 |> Phoenix.Push.onOk ReceiveScore
                 |> Phoenix.Push.onError HandleSendError
@@ -368,7 +402,7 @@ SendScore ->
             Encode.object [ ( "score", Encode.int model.playerScore ) ]
 
         phxPush =
-            Phoenix.Push.init "report_score" "score:lobby"
+            Phoenix.Push.init "shout" "score:*"
                 |> Phoenix.Push.withPayload payload
                 |> Phoenix.Push.onOk ReceiveScore
                 |> Phoenix.Push.onError HandleSendError
@@ -382,22 +416,52 @@ SendScore ->
 ```
 
 Now we can go back up to the `initPhxSocket` function we created at the top,
-and pipe things along to the `"score:lobby"` channel with `ReceiveScore`.
+and pipe things along to the `"score:*"` channel with `ReceiveScore`.
 
 ```elm
 initPhxSocket : Phoenix.Socket.Socket Msg
 initPhxSocket =
     Phoenix.Socket.init "ws://localhost:4000/socket/websocket"
         |> Phoenix.Socket.withDebug
-        |> Phoenix.Socket.on "report_score" "score:lobby" ReceiveScore
+        |> Phoenix.Socket.on "shout" "score:*" ReceiveScore
 ```
 
+## Triggering SendScore
+
 Finally, we just need to trigger the `SendScore` message whenever we want to
-send our score over the socket.
+send our score over the socket. We'll find a good time to continuously update
+our score, but for now we want to set up a manual trigger so we can test things
+out. We'll set it up so that we can _click_ the score text with our mouse, and
+check the DevTools console to view the `payload` that's being sent over the
+socket.
 
-## TODO
+At the top of our file, let's import the `onClick` functionality from
+`Html.Events`.
 
-- Send score every second?
-- Update messages to `ping` or `shout` instead of `score`?
-- Change name from `"score:lobby"`?
-- Fix score_channel module name to include `Web`?
+```elm
+import Html.Events exposing (onClick)
+```
+
+Now we can update our `viewGameScore` function to trigger the `SendScore`
+message when we click that area in our SVG.
+
+```elm
+viewGameScore : Model -> Svg Msg
+viewGameScore model =
+    let
+        currentScore =
+            model.playerScore
+                |> toString
+                |> String.padLeft 5 '0'
+    in
+        Svg.svg [ onClick SendScore ]
+            [ viewGameText 25 25 "SCORE"
+            , viewGameText 25 40 currentScore
+            ]
+```
+
+It looks like clicking the score area successfully triggers `SendScore`, but
+we've got an issue with the way we set up the channel. Our topic is set to
+`score:*`, but we're getting an `"error"` status and it says the reason is an
+`"unmatched topic"`.
+
