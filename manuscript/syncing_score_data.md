@@ -256,5 +256,148 @@ Phoenix message: { event = "phx_reply", topic = "phoenix", payload = { status = 
 
 ## Sending Data Over the Socket
 
-...
+Now that we have everything set up, we can start sending data. We want to send
+the score that we already have available in the Elm model over the socket to
+the Phoenix back-end. We can start by adding a new message to our update
+section. Add `SendScore` at the bottom of our `Msg` type:
 
+```elm
+type Msg
+    = NoOp
+    | KeyDown KeyCode
+    | KeyUp KeyCode
+    | TimeUpdate Time
+    | CountdownTimer Time
+    | SetNewItemPositionX Int
+    | MoveCharacter Time
+    | ChangeDirection Time
+    | PhoenixMsg (Phoenix.Socket.Msg Msg)
+    | SendScore
+```
+
+Then, let's go ahead and add the following to the bottom of our `update`
+function:
+
+```elm
+SendScore ->
+    let
+        payload =
+            Encode.object [ ( "score", Encode.int model.playerScore ) ]
+    in
+        ( model, Cmd.none ))
+```
+
+We'll need to import Elm's JSON encoding package, so add this to the imports
+at the top of the file:
+
+```elm
+import Json.Encode as Encode
+```
+
+With `SendScore`, we're starting to construct a `payload` that we'll use to
+send our Elm data. We take the `playerScore` that's part of our Elm model and
+we encode is as a JSON integer with `Encode.int`. Then we wrap that up in a
+JSON object that we can use to send it to Phoenix. Keep in mind that we're
+still using `(model, Cmd.none)` so far, so we're not actually pushing data
+over the socket yet.
+
+To continue, we'll use the `Phoenix.Push` module that we imported at the top of
+our file. We want to initialize using the `"score:lobby"` channel that we
+created on the Phoenix side, and we'll use the `payload` we constructed to send
+along the relevant data. We'll also use the pipe operator to pass data along
+and handle the success and failure cases.
+
+```elm
+SendScore ->
+    let
+        payload =
+            Encode.object [ ( "score", Encode.int model.playerScore ) ]
+
+        phxPush =
+            Phoenix.Push.init "report_score" "score:lobby"
+                |> Phoenix.Push.withPayload payload
+                |> Phoenix.Push.onOk ReceiveScore
+                |> Phoenix.Push.onError HandleSendError
+    in
+        ( model, Cmd.none )
+```
+
+We'll need to scaffold out new messages for `ReceiveScore` and
+`HandleSendError` for the success and failure cases, respectively. We can add
+these to our `Msg` type first, and they'll both take an `Encode.Value` as an
+argument:
+
+```elm
+type Msg
+    = NoOp
+    | KeyDown KeyCode
+    | KeyUp KeyCode
+    | TimeUpdate Time
+    | CountdownTimer Time
+    | SetNewItemPositionX Int
+    | MoveCharacter Time
+    | ChangeDirection Time
+    | PhoenixMsg (Phoenix.Socket.Msg Msg)
+    | SendScore
+    | ReceiveScore Encode.Value
+    | HandleSendError Encode.Value
+```
+
+And we can add cases at the bottom of our `update` function to get our code
+back to a state with no errors, and we're one step closer to connecting our
+front-end with our back-end.
+
+```elm
+ReceiveScore _ ->
+    ( model, Cmd.none )
+
+HandleSendError _ ->
+    Debug.log "Error sending score over socket."
+        ( model, Cmd.none )
+```
+
+## Executing the Push
+
+In our `SendScore` case, now we're going to tie everything together by sending
+data over the `phxSocket`.
+
+```elm
+SendScore ->
+    let
+        payload =
+            Encode.object [ ( "score", Encode.int model.playerScore ) ]
+
+        phxPush =
+            Phoenix.Push.init "report_score" "score:lobby"
+                |> Phoenix.Push.withPayload payload
+                |> Phoenix.Push.onOk ReceiveScore
+                |> Phoenix.Push.onError HandleSendError
+
+        ( phxSocket, phxCmd ) =
+            Phoenix.Socket.push phxPush model.phxSocket
+    in
+        ( { model | phxSocket = phxSocket }
+        , Cmd.map PhoenixMsg phxCmd
+        )
+```
+
+Now we can go back up to the `initPhxSocket` function we created at the top,
+and pipe things along to the `"score:lobby"` channel with `ReceiveScore`.
+
+```elm
+initPhxSocket : Phoenix.Socket.Socket Msg
+initPhxSocket =
+    Phoenix.Socket.init "ws://localhost:4000/socket/websocket"
+        |> Phoenix.Socket.withDebug
+        |> Phoenix.Socket.on "report_score" "score:lobby" ReceiveScore
+```
+
+Finally, we just need to trigger the `SendScore` message whenever we want to
+send our score over the socket.
+
+## TODO
+
+- Send score every second?
+- Update messages to `ping` or `shout` instead of `score`?
+- Change name from `"score:lobby"`?
+- Fix score_channel module name to include `Web`?
