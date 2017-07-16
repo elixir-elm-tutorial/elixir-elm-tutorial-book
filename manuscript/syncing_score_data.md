@@ -465,3 +465,6 @@ we've got an issue with the way we set up the channel. Our topic is set to
 `score:*`, but we're getting an `"error"` status and it says the reason is an
 `"unmatched topic"`.
 
+## TODO
+
+- Fix up with `Phoenix.Channel.init` and `Phoenix.Socket.join`.
