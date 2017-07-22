@@ -110,8 +110,9 @@ progress.
   - Configuring elm-phoenix-socket.
 
 - Games (Coming Soon)
-  - Initial discussion of games and incremental approach.
-  - Getting started with game implementation.
+  - Switching away from hard-coded game approach.
+  - Allowing for more extensible game creation and access with API.
+  - Starting implementation for a second game example.
 
 - Chat Feature (Time Permitting)
   - This chapter may be added only if time allows.
