@@ -68,7 +68,7 @@ progress.
   - Pulling the application together with the Main function.
   - Adding initial interactivity with Html.Events.
 
-- Elm API Data (Coming Soon)
+- Elm API Data (Incomplete)
   - Reading JSON API data from Phoenix.
   - Decoding JSON and working with game data in Elm.
 
@@ -78,18 +78,48 @@ progress.
   - Adding a small game character and item.
   - Refactoring Elm code with let expressions and small functions.
 
-- Adding Interaction (Coming Soon)
+- Adding Interaction
   - Working with Elm subscriptions and keyboard input.
+  - Adjusting character position.
+  - Spawning and collecting items.
+  - Working with randomness.
+
+- Displaying Game Data
+  - Rendering text in the game window.
+  - Displaying the player score, items collected, and time remaining.
+  - Working with time.
+
+- Handling Game States
+  - Introducing union types for game states.
+  - Rendering different elements depending on current game states.
+  - Creating start, success, and game over states.
+
+- Movement (Incomplete)
+  - Implementing character velocity and updating keyboard interaction.
+  - Adjusting directional changes and assets.
+  - Adding character running and jumping abilities.
+
+- Changing Levels (Incomplete)
+  - Cursory introduction to game theory and design.
+  - Switching from randomness to pattern recognition.
+  - Adding gradual player skill progression.
+  - Implementing level advancement and final success state.
+
+- Syncing Score Data (Coming Soon)
+  - Getting started with Phoenix channels.
+  - Configuring elm-phoenix-socket.
 
 - Games (Coming Soon)
   - Initial discussion of games and incremental approach.
   - Getting started with game implementation.
 
-- Chat Feature (Coming Soon)
-  - Using Phoenix channels to communicate with Elm over WebSockets.
+- Chat Feature (Time Permitting)
+  - This chapter may be added only if time allows.
+  - Using Phoenix channels to add a chat lobby for players.
 
-- Score Data (Coming Soon)
-  - Possibly using GenServer to extract this into a small service?
+- Score Data (Time Permitting)
+  - This chapter may be added only if time allows.
+  - Using GenServer to extract score feature into small service.
 
 - Appendix
   - Brief installation instructions.

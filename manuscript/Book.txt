@@ -13,7 +13,6 @@ elm_api_data.md
 our_first_game.md
 adding_interaction.md
 displaying_game_data.md
-concerning_gameplay.md
 handling_game_states.md
 movement.md
 changing_levels.md
