@@ -1,16 +1,15 @@
 # Syncing Score Data
 
-We have our game platform up and running where users can log in and play a
+We have our game platform up and running, where users can log in and play a
 simple Elm game that tracks a score. Now let's work towards syncing the Elm
 front-end of our application with the Phoenix back-end. We'll learn about
 Phoenix channels with the goal of being able to communicate the score from
 games back to a player's account in real-time.
 
-
 ## Phoenix Channels
 
-Let's get started by using the Phoenix generator to create a new channel. Open
-up your Terminal so we can run the following shell command:
+Let's get started by using the Phoenix generator to create a new `Score`
+channel. Open up your Terminal so we can run the following shell command:
 
 ```shell
 mix phx.gen.channel Score
@@ -145,8 +144,8 @@ Packages configured successfully!
 
 ## Configuring elm-phoenix-socket
 
-Now, we can work through the
-[elm-phoenix-socket README](https://github.com/fbonetti/elm-phoenix-socket/blob/master/README.md)
+Now, we can work through the elm-phoenix-socket
+[README](https://github.com/fbonetti/elm-phoenix-socket/blob/master/README.md)
 to configure everything on the Elm side of our application. We'll start by
 importing the necessary modules. Let's update the imports at the top of our
 `Game.elm` file to include three new `Phoenix` modules:
@@ -290,7 +289,7 @@ Phoenix message: { event = "phx_reply", topic = "phoenix", payload = { status = 
 
 ## Sending Data Over the Socket
 
-Now that we have everything set up, we can start sending data. We want to send
+Now that we have an initial setup, we can start sending data. We want to send
 the score that we already have available in the Elm model over the socket to
 the Phoenix back-end. We can start by adding a new message to our update
 section. Add `SendScore` at the bottom of our `Msg` type:
@@ -415,16 +414,55 @@ SendScore ->
         )
 ```
 
-Now we can go back up to the `initPhxSocket` function we created at the top,
-and pipe things along to the `"score:*"` channel with `ReceiveScore`.
+## Joining the Channel
+
+Now we can go back up to the initialization functions we created at the top to
+join the `score:*` channel and broadcast the player's score. We're going to
+adjust the `initPhxSocket` function so that it returns a tuple. The first item
+in that tuple is what we'll use for the `phxSocket` field in our
+`initialModel`, and then second item in the tuple will be used as the initial
+command in our `init` function.
+
+Here is the full code for our `initialModel`, `initPhxSocket`, and `init`
+functions:
 
 ```elm
-initPhxSocket : Phoenix.Socket.Socket Msg
+initialModel : Model
+initialModel =
+    { gameState = StartScreen
+    , characterPositionX = 50.0
+    , characterPositionY = 300.0
+    , characterVelocity = 0.0
+    , characterDirection = Right
+    , itemPositionX = 500
+    , itemPositionY = 300
+    , itemsCollected = 0
+    , phxSocket = (Tuple.first initPhxSocket)
+    , playerScore = 0
+    , timeRemaining = 10
+    }
+
+
+initPhxSocket : ( Phoenix.Socket.Socket Msg, Cmd (Phoenix.Socket.Msg Msg) )
 initPhxSocket =
-    Phoenix.Socket.init "ws://localhost:4000/socket/websocket"
-        |> Phoenix.Socket.withDebug
-        |> Phoenix.Socket.on "shout" "score:*" ReceiveScore
+    let
+        channel =
+            Phoenix.Channel.init "score:*"
+    in
+        Phoenix.Socket.init "ws://localhost:4000/socket/websocket"
+            |> Phoenix.Socket.withDebug
+            |> Phoenix.Socket.on "shout" "score:*" ReceiveScore
+            |> Phoenix.Socket.join channel
+
+
+init : ( Model, Cmd Msg )
+init =
+    ( initialModel, Cmd.map PhoenixMsg (Tuple.second initPhxSocket) )
 ```
+
+This is a lot to process, but let's keep moving for now so we can get things
+working and we'll work towards a deeper understanding as we gain more
+familiarity with the code we're working with.
 
 ## Triggering SendScore
 
@@ -460,11 +498,31 @@ viewGameScore model =
             ]
 ```
 
-It looks like clicking the score area successfully triggers `SendScore`, but
-we've got an issue with the way we set up the channel. Our topic is set to
-`score:*`, but we're getting an `"error"` status and it says the reason is an
-`"unmatched topic"`.
+We've got everything configured, and we should be able to test out our working
+socket payload. Load the game in the browser, collect a few coins to increment
+the score, and then click the score text with the mouse.
+
+The DevTools console will show an initial message when the page loads, and this
+let's us know that our `"score:*"` topic was initialized with an `"ok"` status.
+
+```shell
+Phoenix message: { event = "phx_reply", topic = "score:*", payload = { status = "ok", response = {} }, ref = Just 0 }
+```
+
+We also see a message triggered in the DevTools console when we click the score
+text. It shows that we triggered a `"shout"` event, which means we can
+broadcast the data over the socket. This is the behavior we want, because we'll
+want all the player scores to be visible and update in real-time on the Phoenix
+page where we list out all the players. In this example, you can see that we
+collected three coins for a score of `300`, and that is reflected in the JSON
+payload with `{ score = 300 }`.
+
+```shell
+Phoenix message: { event = "shout", topic = "score:*", payload = { score = 300 }, ref = Nothing }
+```
+
+![Working Socket Payload](images/syncing_score_data/working_socket_payload.png)
 
 ## TODO
 
-- Fix up with `Phoenix.Channel.init` and `Phoenix.Socket.join`.
+...
