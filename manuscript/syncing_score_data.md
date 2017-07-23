@@ -523,6 +523,39 @@ Phoenix message: { event = "shout", topic = "score:*", payload = { score = 300 }
 
 ![Working Socket Payload](images/syncing_score_data/working_socket_payload.png)
 
-## TODO
+## Handling New Channel Messages
 
-...
+TODO: Elm side – Change "shout" to "sync_score".
+
+TODO: Elixir channel – Add aliases
+
+```elixir
+alias Platform.Repo
+alias Platform.Accounts.Player
+```
+
+TODO: Elixir channel – implementation
+
+```elixir
+  # Sync score.
+  def handle_in("sync_score", payload, socket) do
+    IO.puts "HIIIIII"
+
+    IO.puts "Payload Score"
+    IO.puts payload["score"]
+
+    player = Repo.get!(Player, 4)
+    IO.puts "Player Username"
+    IO.puts player.username
+
+    IO.puts "Player Score"
+    IO.puts player.score || "0"
+
+    player = %{player | score: payload["score"]}
+    IO.puts "New Score?"
+    IO.puts player.score || "0"
+
+    broadcast socket, "sync_score", %{score: payload["score"]}
+    {:noreply, socket}
+  end
+```
