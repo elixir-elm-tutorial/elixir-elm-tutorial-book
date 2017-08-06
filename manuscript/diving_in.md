@@ -9,8 +9,8 @@ and writing the code we'll need to start creating our application.
 Later in the book, we'll cover more about the fundamentals of Elixir, but for
 now let's focus on following along and getting a glimpse of how to get an
 application up and running. If you haven't already set up your development
-environment with Elixir, Phoenix, and PostgreSQL, then check out the Appendix
-in the back of the book for more information.
+environment with Elixir, Phoenix, and PostgreSQL, then check out the
+[Appendix](#appendix) in the back of the book for more information.
 
 ## Note on Phoenix Versions
 
@@ -21,8 +21,7 @@ different as you work through the instructions.
 To fetch the latest version of Phoenix, use the following command:
 
 ```shell
-$ mix archive.install \
-https://github.com/phoenixframework/archives/raw/master/phx_new.ez
+$ mix archive.install https://github.com/phoenixframework/archives/raw/master/phx_new.ez
 ```
 
 After installation, run the `mix help` command and verify that some examples
