@@ -61,6 +61,10 @@ command:
 $ mix archive.install https://github.com/phoenixframework/archives/raw/master/phx_new.ez
 ```
 
+You can verify that Phoenix has been installed properly by running the
+`mix help` command, and you should be able to see a `mix phx.new` task that will
+allow us to create new Phoenix applications.
+
 Any trouble with this step? Check out the
 [Phoenix installation docs](https://hexdocs.pm/phoenix/installation.html) or the
 [Phoenix section of Stack Overflow](https://stackoverflow.com/questions/tagged/phoenix-framework).

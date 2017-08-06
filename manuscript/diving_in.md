@@ -16,16 +16,12 @@ environment with Elixir, Phoenix, and PostgreSQL, then check out the
 
 In this book, we're using the _latest_ version of Phoenix available. Make sure
 you're working with **Phoenix 1.3**, or the commands and files will all look
-different as you work through the instructions.
-
-To fetch the latest version of Phoenix, use the following command:
+different as you work through the instructions. To fetch the latest version of
+Phoenix, run the following command:
 
 ```shell
 $ mix archive.install https://github.com/phoenixframework/archives/raw/master/phx_new.ez
 ```
-
-After installation, run the `mix help` command and verify that some examples
-start with `mix phx` instead of `mix phoenix`.
 
 ## Creating the Platform
 
