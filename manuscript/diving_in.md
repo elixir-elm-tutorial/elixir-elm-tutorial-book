@@ -46,32 +46,33 @@ $ mix phx.new platform
 * creating platform/config/prod.secret.exs
 * creating platform/config/test.exs
 * creating platform/lib/platform/application.ex
-* creating platform/lib/platform/web/channels/user_socket.ex
-* creating platform/lib/platform/web/views/error_helpers.ex
-* creating platform/lib/platform/web/views/error_view.ex
-* creating platform/lib/platform/web/endpoint.ex
-* creating platform/lib/platform/web/router.ex
-* creating platform/lib/platform/web/web.ex
+* creating platform/lib/platform.ex
+* creating platform/lib/platform_web/channels/user_socket.ex
+* creating platform/lib/platform_web/views/error_helpers.ex
+* creating platform/lib/platform_web/views/error_view.ex
+* creating platform/lib/platform_web/endpoint.ex
+* creating platform/lib/platform_web/router.ex
+* creating platform/lib/platform_web.ex
 * creating platform/mix.exs
 * creating platform/README.md
 * creating platform/test/support/channel_case.ex
 * creating platform/test/support/conn_case.ex
 * creating platform/test/test_helper.exs
-* creating platform/test/web/views/error_view_test.exs
-* creating platform/lib/platform/web/gettext.ex
+* creating platform/test/platform_web/views/error_view_test.exs
+* creating platform/lib/platform_web/gettext.ex
 * creating platform/priv/gettext/en/LC_MESSAGES/errors.po
 * creating platform/priv/gettext/errors.pot
 * creating platform/lib/platform/repo.ex
 * creating platform/priv/repo/seeds.exs
 * creating platform/test/support/data_case.ex
-* creating platform/lib/platform/web/controllers/page_controller.ex
-* creating platform/lib/platform/web/templates/layout/app.html.eex
-* creating platform/lib/platform/web/templates/page/index.html.eex
-* creating platform/lib/platform/web/views/layout_view.ex
-* creating platform/lib/platform/web/views/page_view.ex
-* creating platform/test/web/controllers/page_controller_test.exs
-* creating platform/test/web/views/layout_view_test.exs
-* creating platform/test/web/views/page_view_test.exs
+* creating platform/lib/platform_web/controllers/page_controller.ex
+* creating platform/lib/platform_web/templates/layout/app.html.eex
+* creating platform/lib/platform_web/templates/page/index.html.eex
+* creating platform/lib/platform_web/views/layout_view.ex
+* creating platform/lib/platform_web/views/page_view.ex
+* creating platform/test/platform_web/controllers/page_controller_test.exs
+* creating platform/test/platform_web/views/layout_view_test.exs
+* creating platform/test/platform_web/views/page_view_test.exs
 * creating platform/.gitignore
 * creating platform/assets/brunch-config.js
 * creating platform/assets/css/app.css
@@ -104,8 +105,8 @@ Before moving on, configure your database in config/dev.exs and run:
 
 Notice that Phoenix displays _a lot_ of helpful information. First, the output
 shows all the files that were generated (don't worry if it seems overwhelming
-at first; we're only going to start with a handful of these files). Then we see
-some information about how to configure our database and run the web server.
+at first; we're only going to start with a handful of these files). Then, we
+see some information about how to configure our database and start the server.
 
 ## Configuring the Database
 
