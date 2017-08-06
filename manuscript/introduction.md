@@ -3,20 +3,20 @@
 Welcome to the world of functional web programming! In this book, we'll **learn
 how to create fun, scalable, and maintainable web applications**. We'll be
 using a wide range of web technologies along with the latest ideas from
-emerging languages like Elixir and Elm to craft a fun web experience. Rather
-than focusing on theory, we'll take a practical approach and build a real-world
+emerging languages like Elixir and Elm to craft a fun experience. Rather than
+focusing on theory, we'll take a practical approach and build a real-world
 application.
 
 ## What We're Building
 
 **The application we'll be building is a small game platform for the web**.
 We'll use Elixir and the Phoenix web framework to power the back-end, where
-our users can log in and keep track of their scores. And then we'll use Elm on
-the front-end to create fun minigames. We'll tie everything together so we can
+our users can log in and keep track of their scores. Then, we'll use Elm on the
+front-end to create fun minigames. We'll tie everything together so we can
 pass data back and forth between the back-end and front-end. Users on our
 platform will be able to join a chat to discuss the available minigames, and
 the scores from those games will be updated on the platform in real-time. We'll
-focus on building things with a strong foundation, so we can use these same
+focus on building things with a strong foundation so we can use these same
 concepts to create different web applications as well.
 
 ## Acknowledgements
@@ -24,8 +24,8 @@ concepts to create different web applications as well.
 I would like to thank Envy Labs and Code School for fostering an environment
 where I've been able to work hard and learn and grow. I'd also like to thank
 José Valim and Evan Czaplicki for crafting such beautiful and fun languages.
-Lastly, thanks to Michael Hartl for setting the standard for technical writing
-with The Ruby on Rails Tutorial, and Bret Victor for inspiring all of us with
+Thanks to Michael Hartl for setting the standard for technical writing with
+The Ruby on Rails Tutorial, and Bret Victor for inspiring all of us with
 his visions of the future.
 
 ## Who Is This Book For?
@@ -42,15 +42,15 @@ effort to gain insight into shipping a real project**.
 
 We'll walk through initial explanations to give you just enough information
 about the fundamentals and concepts so you can be productive. But there are
-other books that will provide more depth when it comes to learning the
-languages themselves:
+other books that will provide more depth when it comes to learning more about
+the languages themselves:
 
 - [Programming Elixir](https://pragprog.com/book/elixir/programming-elixir)
   by Dave Thomas
 - [An Introduction to Elm](https://guide.elm-lang.org) by Evan Czaplicki
 
 The material in this book is intended to be crafted in such a way that you can
-follow along simply by typing in the relevant code examples. So beginners can
+follow along simply by typing in the relevant code examples. Beginners can
 still learn a lot simply by following along and building the application,
 because sometimes in programming you need to be exposed to certain concepts and
 ideas before they become easy to understand. The experience of building
@@ -162,8 +162,8 @@ web frameworks, then you'll have a head start in being able to grasp the
 content and move smoothly through the book. Something to keep in mind is that
 Elixir and Elm are _functional_ languages. If you're coming from an
 _object-oriented_ background, you may find some of the programmatic approaches
-to be unfamiliar at first, but the initial discomfort will pay off well in the
-long run as you learn to solve problems in an elegant functional manner.
+to be unfamiliar at first, but the initial discomfort will pay off in the long
+run as you learn to solve problems in an elegant functional manner.
 
 ## Summary
 
