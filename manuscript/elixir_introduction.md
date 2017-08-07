@@ -536,7 +536,7 @@ def add(x, y), do: x + y
 ## Pattern Matching
 
 The reason for introducing shorthand function syntax here is that it gives us
-a really obvious way to see one of Elixir's most powerful features in action:
+a more obvious way to see one of Elixir's most powerful features in action:
 pattern matching.
 
 Pattern matching can be difficult to comprehend at first, so be gentle with
@@ -637,7 +637,7 @@ def add(x, y) when is_number(x) and is_number(y), do: x + y
 Functions like `is_number/1` can be really helpful to check the types of values
 we're working with. One helpful tip is to find similar functions available to
 us using `iex`. Inside `iex`, type `is_` and then hit the TAB key on your
-keyboard and it will display the different checks that are available:
+keyboard, and it will display the different checks that are available:
 
 ```elixir
 $ iex
@@ -658,12 +658,13 @@ Elixir, it can occasionally be difficult to understand what's going on.
 
 This was not meant as exhaustive introduction to Elixir. There are many more
 concepts, and there are several books available that give a full introduction
-to the language. But we're going to keep moving in this book, because our goal
-is to build a practical real-world application, and we'll learn what we need
-along the way. But check out these free resources if you want to get a little
+to the language. In this book, we're going to keep moving because our goal is
+to build a practical real-world application, and we'll learn what we need along
+the way. But check out these free resources if you want to get a little
 more Elixir experience before continuing:
 
 - [Elixir Getting Started Guide](http://elixir-lang.org/getting-started/introduction.html)
+- [Elixir School](https://elixirschool.com/en/lessons/basics/basics)
 - [Try Elixir Course](https://www.codeschool.com/courses/try-elixir)
 
 Feel free to delete the `temporary` project, and in the next chapter we'll
