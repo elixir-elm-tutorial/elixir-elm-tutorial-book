@@ -104,7 +104,6 @@ Start your Phoenix app with:
 You can also run your app inside IEx (Interactive Elixir) as:
 
     $ iex -S mix phx.server
-
 ```
 
 Notice that Phoenix displays _a lot_ of helpful information. First, the output
@@ -128,10 +127,10 @@ $ mix ecto.create
 ```
 
 If you run into issues here, it likely means you'll have to configure your
-PostgreSQL installation or adjust the `username` and `password` fields at the
-bottom of the `config/dev.exs` file. You can also check out the
-[Appendix](#appendix) at the back of this book for more information on where to
-get help with PostgreSQL.
+PostgreSQL installation or adjust the database `username` and `password` fields
+at the bottom of the `config/dev.exs` file. You can also check out the
+[Appendix](#appendix) at the back of this book for more information on
+PostgreSQL.
 
 Since this is the first time we're running a command with our new application,
 we'll see that it takes time for the source code to compile. Elixir is based on
@@ -163,11 +162,11 @@ $ mix phx.server
 
 This will start a server and allow us to visit
 [`http://0.0.0.0:4000`](http://0.0.0.0:4000) in a browser to see our new
-application running live. Here is what the output will look like:
+application running. Here is what the output will look like:
 
 ```shell
 $ mix phx.server
-[info] Running Platform.Web.Endpoint with Cowboy using http://0.0.0.0:4000
+[info] Running PlatformWeb.Endpoint with Cowboy using http://0.0.0.0:4000
 ```
 
 ![Phoenix Default Start Page](images/diving_in/phoenix_start.png)
