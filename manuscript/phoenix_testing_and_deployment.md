@@ -147,7 +147,7 @@ will be as simple as running `git push heroku master` when we're ready.
 After you've signed up for a Heroku account, create a free app using their web
 interface (the name `platform` will already be taken, so you'll have to come up
 with a name you'd like or allow Heroku to choose a random name for you). Then
-download the [Heroku toolbelt](https://toolbelt.heroku.com) command-line tool.
+download the [Heroku toolbelt](https://toolbelt.heroku.com) command line tool.
 
 Once you have that installed, you can run the `heroku login` command to sign in
 to your account. Since we have an existing Git repository, we can use the
@@ -457,15 +457,15 @@ and automatically deploy to Heroku once the build passes.
 
 In order to set this up, we'll need to add to our `.travis.yml` file. But we
 don't want to commit our secret Heroku credentials to GitHub, so we'll use a
-TravisCI command-line tool to generate an encrypted key for us.
+TravisCI command line tool to generate an encrypted key for us.
 
-First, install the `travis` command-line tool by typing this in the Terminal:
+First, install the `travis` command line tool by typing this in the Terminal:
 
 ```shell
 $ gem install travis
 ```
 
-And now that we have both command-line tools for `heroku` and `travis`, we can
+And now that we have both command line tools for `heroku` and `travis`, we can
 run the following command from the `platform` folder, and it will automatically
 add the right information to our `.travis.yml` file:
 

@@ -101,7 +101,7 @@ npm install -g elm
 ```
 
 That should be all you need. It globally installs the `elm` command on your
-machine, so you can run it from the command-line. In fact, type `elm` now and
+machine, so you can run it from the command line. In fact, type `elm` now and
 take a look at the output:
 
 ```shell
@@ -175,7 +175,7 @@ main =
 
 All that's left is to run our program. Elm comes with a utility called
 `elm-reactor` that we can use to serve our program locally and then access
-it in our browser. Go ahead and run it from the command-line:
+it in our browser. Go ahead and run it from the command line:
 
 ```shell
 $ elm-reactor

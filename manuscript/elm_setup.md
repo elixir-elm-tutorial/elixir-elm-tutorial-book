@@ -11,7 +11,7 @@ Brunch.
 ## Configuring Elm within Phoenix
 
 Phoenix front-end assets are located in the `assets` folder. Let's go to the
-command-line and navigate to that directory.
+command line and navigate to that directory.
 
 Open the existing `package.json` file that Phoenix gives us by default:
 
@@ -114,7 +114,7 @@ project's root directory:
 /assets/vendor/main.js
 ```
 
-Now go to the `lib/platform/web/elm` folder from the command-line and run the
+Now go to the `lib/platform/web/elm` folder from the command line and run the
 following command:
 
 ```shell

@@ -45,31 +45,29 @@ Let's change into the new project's directory and take a look at the files that
 were generated for us:
 
 ```shell
-cd temporary
+$ cd temporary
 ```
 
 The first thing you might notice is that our Elixir project and our Phoenix
-project look like they have a lot of similarities. The folder structure is
-essentially the same:
+project share a lot in common. The folder structure is very similar:
 
 ![Elixir Folder Structure](images/elixir_introduction/elixir_folder_structure.png)
 
-The `temporary` project is a lot simpler, but shares a lot in common with how
+The `temporary` project is a lot simpler, but has a lot in common with how
 Phoenix applications work. The `config` folder contains configuration settings,
 the `lib` folder is where we'll write most of our Elixir code, and the `test`
-folder contains the tests that will let us know our application is working as
+folder contains the tests that let us know our application is working as
 intended.
 
 ## Elixir Testing
 
 Depending on which programming languages you've worked with in the past, you
-might potentially have a lot of experience with writing tests, or perhaps even
-none.
+might potentially have a lot of experience writing tests, or perhaps not.
 
 If you haven't written tests before, the basic idea is that tests give us a way
 to feel confidence that our code is actually working as expected. We write our
 expectations (or "assertions"), and they give us a quick way to check that the
-code we're writing works (and doesn't break other code too). We'll delve deeper
+code we're writing works (and doesn't break other code). We'll delve deeper
 into testing with our Phoenix app, but for now let's just try it out.
 
 Run the `mix test` command inside the `temporary` folder:
@@ -86,10 +84,10 @@ Compiling 1 file (.ex)
 Generated temporary app
 ..
 
-Finished in 0.05 seconds
+Finished in 0.03 seconds
 2 tests, 0 failures
 
-Randomized with seed 795854
+Randomized with seed 670956
 ```
 
 ## Elixir Compilation
@@ -107,10 +105,10 @@ need to recompile the code because we haven't made any changes:
 $ mix test
 ..
 
-Finished in 0.04 seconds
+Finished in 0.03 seconds
 2 tests, 0 failures
 
-Randomized with seed 807596
+Randomized with seed 114557
 ```
 
 ## Elixir Modules and Functions
@@ -148,7 +146,7 @@ We start out with a **module** that encapsulates our related code:
 
 ```elixir
 defmodule Temporary do
-  ...
+  # ...
 end
 ```
 
@@ -161,15 +159,15 @@ def hello do
 end
 ```
 
-And inside that function, we have our **return value**:
+Inside that function, we have our **return value**:
 
 ```elixir
 :world
 ```
 
 Let's change things up. Rename the `hello` function to `add`. We'll pass two
-parameters (`x` and `y`), and we'll return the addition using `x + y` inside
-the function:
+parameters (`x` and `y`), and we'll return the addition of these two values
+using `x + y` inside the function:
 
 ```elixir
 def add(x, y) do
@@ -180,7 +178,7 @@ end
 ## Functions, Tests, and Documentation
 
 The example above is admittedly simple, but it's good in the sense that we
-know how to create a function now. So how do we use it?
+know how to create a function now. But how do we use it?
 
 We generally use the `Module.function(arguments)` syntax to invoke the
 functions we've declared. If we look at the original documentation for our
@@ -212,17 +210,17 @@ return `:world`. This is where things get interesting, so let's run `mix test`
 again:
 
 ```shell
-mix test
+$ mix test
 ```
 
 Since we no longer have our `hello` function, it's not surprising that our
-test failed, but the reason the test failed is actually because of the example
-in our documentation (which is called a doctest).
+tests failed. But we actually have _two_ test failures. One of them is from the
+test file located in the `test` folder, but the first failure is actually
+coming from the example in our documentation (which is called a **doctest**).
 
 ```shell
 $ mix test
 Compiling 1 file (.ex)
-
 
   1) test doc at Temporary.add/2 (1) (TemporaryTest)
      test/temporary_test.exs:3
@@ -232,12 +230,18 @@ Compiling 1 file (.ex)
        (temporary) Temporary.hello()
        (for doctest at) lib/temporary.ex:11: (test)
 
-.
+  2) test greets the world (TemporaryTest)
+     test/temporary_test.exs:5
+     ** (UndefinedFunctionError) function Temporary.hello/0 is undefined or private
+     code: assert Temporary.hello() == :world
+     stacktrace:
+       (temporary) Temporary.hello()
+       test/temporary_test.exs:6: (test)
 
-Finished in 0.07 seconds
-2 tests, 1 failure
+Finished in 0.04 seconds
+2 tests, 2 failures
 
-Randomized with seed 253463
+Randomized with seed 520513
 ```
 
 Let's update the documentation so that it shows an example of how to use our
@@ -264,23 +268,33 @@ defmodule Temporary do
 end
 ```
 
-Now we can run our tests again and they should pass:
+We can run our tests again, and the doctest example in our `lib/temporary.ex`
+file should now be passing:
 
 ```shell
 $ mix test
+➜  temporary mix test
 Compiling 1 file (.ex)
-..
+.
 
-Finished in 0.08 seconds
-2 tests, 0 failures
+  1) test greets the world (TemporaryTest)
+     test/temporary_test.exs:5
+     ** (UndefinedFunctionError) function Temporary.hello/0 is undefined or private
+     code: assert Temporary.hello() == :world
+     stacktrace:
+       (temporary) Temporary.hello()
+       test/temporary_test.exs:6: (test)
 
-Randomized with seed 802915
+Finished in 0.03 seconds
+2 tests, 1 failure
+
+Randomized with seed 682227
 ```
 
-This is an _awesome_ feature of Elixir. It means we can write our functions
-_and_ document them _and_ test that they work all at once! It encourages us to
-write and maintain our documentation, and gives us confidence that our code is
-actually doing what we say it is.
+Doctests are an _awesome_ feature of Elixir. They allow us to write our
+functions _and_ document them _and_ test that they work all at once! It
+encourages us to write and maintain our documentation, and gives us confidence
+that our code is actually doing what we think it is.
 
 ## Writing Tests
 
@@ -302,7 +316,7 @@ defmodule TemporaryTest do
     assert result == 3.0
   end
 
-  test "the add functions returns a number" do
+  test "the add function returns a number" do
     result = Temporary.add(1.5, 1.5)
     result_is_a_number = is_number(result)
     assert result_is_a_number
@@ -310,19 +324,33 @@ defmodule TemporaryTest do
 end
 ```
 
-Note that the test code still takes the same general format, where we have a
-module defined at the top that encapsulates our test code. We also see that
-we're using the default [`ExUnit`](https://hexdocs.pm/ex_unit/ExUnit.html)
-library to write our tests. And then there is the `doctest Temporary` line,
-which is how the tests knew to run the examples we were writing in our
-documentation.
+We should be able to run our tests again and see that all three of these test
+cases are passing (and the doctest is still passing as well):
+
+```shell
+$ mix test
+....
+
+Finished in 0.03 seconds
+4 tests, 0 failures
+
+Randomized with seed 867380
+```
+
+Looking at the `test/temporary_test.exs` file, note that the test code still
+takes the same general format we used in `lib/temporary.ex`, where we have a
+module defined at the top that encapsulates the rest of our code. We also see
+that we're using the default [`ExUnit`](https://hexdocs.pm/ex_unit/ExUnit.html)
+library to write our tests. Then, there's the `doctest Temporary` line, which
+is how the tests knew to run the examples we were writing in our documentation.
 
 The three `test` cases show basic examples of how we can call our function with
-some example numbers and make sure that the result is correct. So passing `1`
-and `1` as arguments to our `add` function should return a result of `2`. There
-are other [assertions](https://hexdocs.pm/ex_unit/ExUnit.Assertions.html) that
-`ExUnit` provides, but we'll stick with `assert` for now to ensure that we're
-getting a `true` value from our tests.
+some example numbers and verify that the result is correct. For example,
+passing `1` and `1` as arguments to our `add` function should return a result
+of `2`. There are other
+[assertions](https://hexdocs.pm/ex_unit/ExUnit.Assertions.html) that `ExUnit`
+provides, but we'll stick with `assert` for now to ensure that we're getting a
+`true` value from our tests.
 
 ## IEx
 
@@ -332,11 +360,11 @@ expected? Let's run the following command from inside our `temporary` project
 folder:
 
 ```shell
-iex -S mix
+$ iex -S mix
 ```
 
 This allows us to run Elixir code in an interactive environment and see the
-results (you can also just use `iex` from the command-line to get started, but
+results (you can also just use `iex` from the command line to get started, but
 using `iex -S mix` is preferable because it means we don't have to manually
 import the modules we want to work with).
 
@@ -409,7 +437,7 @@ test "the add functions returns a number" do
 end
 ```
 
-We can run `mix test` from the command-line to see the results:
+We can run `mix test` from the command line to see the results:
 
 ```shell
 $ mix test

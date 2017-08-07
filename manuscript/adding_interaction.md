@@ -19,7 +19,7 @@ confusing, we'll take a look at how we can subscribe to keyboard input now.
 In order to work with keyboard input, we'll need to start by importing the Elm
 `Keyboard` package.
 
-From the command-line, let's switch to the `lib/platform/web/elm` folder and
+From the command line, let's switch to the `lib/platform/web/elm` folder and
 run the following command:
 
 ```shell

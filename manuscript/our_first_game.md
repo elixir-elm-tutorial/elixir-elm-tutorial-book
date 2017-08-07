@@ -250,7 +250,7 @@ now let's use SVG to create our game world.
 In order to work with Elm's SVG library, we'll need to install the package and
 import it into our project.
 
-From the command-line, let's switch to the `lib/platform/web/elm` folder and
+From the command line, let's switch to the `lib/platform/web/elm` folder and
 run the following command:
 
 ```shell

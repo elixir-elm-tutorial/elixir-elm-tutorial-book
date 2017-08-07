@@ -55,7 +55,7 @@ defp deps do
 end
 ```
 
-Save that file, and then from the command-line we'll run the `mix` command that
+Save that file, and then from the command line we'll run the `mix` command that
 fetches dependencies:
 
 ```shell

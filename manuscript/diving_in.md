@@ -182,7 +182,7 @@ default Phoenix start page. Before we move on, let's stop the Phoenix web
 server. Go back to the Terminal where the server is running, and press
 `Control + C` on your keyboard twice to stop the server. This is what the
 output will look like as you return from the running web server to a blank
-command-line:
+command line:
 
 ```shell
 $ mix phx.server
