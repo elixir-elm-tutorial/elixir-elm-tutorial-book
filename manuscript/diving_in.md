@@ -89,18 +89,22 @@ Fetch and install dependencies? [Yn] Y
 * running mix deps.compile
 * running cd assets && npm install && node node_modules/brunch/bin/brunch build
 
-We are all set! Run your Phoenix application:
+We are all set! Go into your application by running:
 
     $ cd platform
+
+Then configure your database in config/dev.exs and run:
+
+    $ mix ecto.create
+
+Start your Phoenix app with:
+
     $ mix phx.server
 
 You can also run your app inside IEx (Interactive Elixir) as:
 
     $ iex -S mix phx.server
 
-Before moving on, configure your database in config/dev.exs and run:
-
-    $ mix ecto.create
 ```
 
 Notice that Phoenix displays _a lot_ of helpful information. First, the output
@@ -110,7 +114,7 @@ see some information about how to configure our database and start the server.
 
 ## Configuring the Database
 
-Now that we've created the files for our Phoenix application, let's change into
+Now that we've created the files for our Phoenix application, let's change to
 that directory:
 
 ```shell
@@ -123,8 +127,11 @@ We can set up the database for our project by running the following command:
 $ mix ecto.create
 ```
 
-If you run into any issues here, it likely means you'll have to configure the
-database in the `config/dev.exs` file.
+If you run into issues here, it likely means you'll have to configure your
+PostgreSQL installation or adjust the `username` and `password` fields at the
+bottom of the `config/dev.exs` file. You can also check out the
+[Appendix](#appendix) at the back of this book for more information on where to
+get help with PostgreSQL.
 
 Since this is the first time we're running a command with our new application,
 we'll see that it takes time for the source code to compile. Elixir is based on
