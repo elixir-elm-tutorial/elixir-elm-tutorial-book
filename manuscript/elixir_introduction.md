@@ -49,7 +49,7 @@ $ cd temporary
 ```
 
 The first thing you might notice is that our Elixir project and our Phoenix
-project share a lot in common. The folder structure is very similar:
+project share a lot in common. The folder structure is similar:
 
 ![Elixir Folder Structure](images/elixir_introduction/elixir_folder_structure.png)
 
@@ -317,24 +317,11 @@ defmodule TemporaryTest do
   end
 
   test "the add function returns a number" do
-    result = Temporary.add(1.5, 1.5)
+    result = Temporary.add(1.5, 3.5)
     result_is_a_number = is_number(result)
     assert result_is_a_number
   end
 end
-```
-
-We should be able to run our tests again and see that all three of these test
-cases are passing (and the doctest is still passing as well):
-
-```shell
-$ mix test
-....
-
-Finished in 0.03 seconds
-4 tests, 0 failures
-
-Randomized with seed 867380
 ```
 
 Looking at the `test/temporary_test.exs` file, note that the test code still
@@ -351,6 +338,19 @@ of `2`. There are other
 [assertions](https://hexdocs.pm/ex_unit/ExUnit.Assertions.html) that `ExUnit`
 provides, but we'll stick with `assert` for now to ensure that we're getting a
 `true` value from our tests.
+
+We should be able to run our tests again and see that all three of these test
+cases are passing (and the doctest is still passing as well):
+
+```shell
+$ mix test
+....
+
+Finished in 0.03 seconds
+4 tests, 0 failures
+
+Randomized with seed 867380
+```
 
 ## IEx
 
@@ -378,7 +378,7 @@ iex(1)> Temporary.add(1, 1)
 2
 ```
 
-We can try our other example case too:
+We can try our second example case too:
 
 ```elixir
 iex(2)> Temporary.add(1.5, 1.5)
@@ -393,17 +393,16 @@ of checking our code too.
 Our third `test` case uses a common pattern seen in programming. We break up our
 code into small chunks, and we assign the values to variables. This has a great
 benefit of being able to name things in obvious ways, but Elixir has an
-alternative method that really helps rethink the way we write our code.
+alternative approach that helps us reconsider the way we write code.
 
 The idea behind the "pipe operator" (`|>`) is that it enables us to think about
-our functions in terms of data transformation. So instead of using variables,
-we tend to take an initial value, pipe it through a handful of functions, and
-then the result is returned at the end. Let's take another look at our third
-`test` case:
+our functions in terms of data transformation. Instead of using variables, we
+take an initial value, pipe it through a handful of functions, and return the
+result at the end. Let's take another look at our third `test` case:
 
 ```elixir
-test "the add functions returns a number" do
-  result = Temporary.add(1.5, 1.5)
+test "the add function returns a number" do
+  result = Temporary.add(1.5, 3.5)
   result_is_a_number = is_number(result)
   assert result_is_a_number
 end
@@ -411,11 +410,11 @@ end
 
 This example was intentionally written with extraneous variables that aren't
 particularly necessary. Let's use the pipe operator syntax, keeping in mind
-that the code is still accomplishing the same thing:
+that the code is still going to accomplish the same thing:
 
 ```elixir
-test "the add functions returns a number" do
-  Temporary.add(1.5, 1.5)
+test "the add function returns a number" do
+  Temporary.add(1.5, 3.5)
   |> is_number
   |> assert
 end
@@ -429,8 +428,8 @@ It also enables us to take the data and "pipe it through" other functions. For
 example, let's inspect what value is getting passed to `assert` at the end:
 
 ```elixir
-test "the add functions returns a number" do
-  Temporary.add(1.5, 1.5)
+test "the add function returns a number" do
+  Temporary.add(1.5, 3.5)
   |> is_number
   |> IO.inspect
   |> assert
@@ -444,7 +443,7 @@ $ mix test
 ...true
 .
 
-Finished in 0.06 seconds
+Finished in 0.03 seconds
 4 tests, 0 failures
 
 Randomized with seed 312071
@@ -464,9 +463,9 @@ In other words, we could actually refactor our test case to pass the first
 value like this:
 
 ```elixir
-test "the add functions returns a number" do
+test "the add function returns a number" do
   1.5
-  |> Temporary.add(1.5)
+  |> Temporary.add(3.5)
   |> is_number
   |> IO.inspect
   |> assert
@@ -474,13 +473,16 @@ end
 ```
 
 This demonstrates that we can pipe the value `1.5` to the `Temporary.add`
-function, and it will use the value as the first argument. We can go back to the
-original pipe operator example since it was clean code, but the examples above
-are an important demonstration of how we can use the pipe operator.
+function, and it will use the value as the _first_ argument. And `3.5` will be
+sent as the _second_ argument to the `Temporary.add` function.
+
+Before we move on, let's go back to the original pipe operator example since it
+was cleaner code. But the examples above are an important demonstration of how
+we can use the pipe operator.
 
 ```elixir
-test "the add functions returns a number" do
-  Temporary.add(1.5, 1.5)
+test "the add function returns a number" do
+  Temporary.add(1.5, 3.5)
   |> is_number
   |> assert
 end
@@ -501,7 +503,7 @@ arity is of particular importance in the Elixir language.
 ## Shorthand Function Syntax
 
 At this point, we're probably dying to get back to Phoenix and build our
-application. But there's just a couple more Elixir topics that will really help
+application. But there are just a couple more Elixir topics that will help
 us when we start looking at our Phoenix code. Without knowing the concepts
 behind Elixir, it can be tough to really understand what's going on in Phoenix.
 
@@ -509,7 +511,7 @@ The functions we've seen so far take the following format:
 
 ```elixir
 def function_name(arguments) do
-  ...
+  # ...
 end
 ```
 
@@ -523,8 +525,9 @@ def function_name(arguments), do: ...
 Note that there are extra `,` and `:` characters, but this enables us to remove
 the `end` keyword and move our entire function definition to a single line.
 
-Here's our `add/2` function as a single line (you can run `mix test` again to
-verify that it still works):
+Here's our `add/2` function as a single line. You can update our example in the
+`lib/temporary.ex` file and then run `mix test` again to verify that it still
+works.
 
 ```elixir
 def add(x, y), do: x + y
@@ -536,8 +539,8 @@ The reason for introducing shorthand function syntax here is that it gives us
 a really obvious way to see one of Elixir's most powerful features in action:
 pattern matching.
 
-Pattern matching can be really difficult to comprehend at first, so be gentle
-on yourself if it takes some time to understand. It's one of those things that
+Pattern matching can be difficult to comprehend at first, so be gentle with
+yourself if it takes some time to understand. It's one of those things that
 needs to be seen and experienced a couple of times before it starts to sink in.
 
 Elixir allows us to create multiple "clauses" of our functions. That means we
