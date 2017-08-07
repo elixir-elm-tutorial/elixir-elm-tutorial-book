@@ -2,8 +2,7 @@
 
 Now that we have some familiarity with Elixir, let's get back to our Phoenix
 application. In this chapter, we're going to be working with Phoenix tests,
-GitHub version control, Heroku deployments, and TravisCI for continous
-integration and delivery.
+GitHub version control, and Heroku deployment.
 
 If you're already familiar with these concepts and only want to work locally
 for this project, feel free to skim through the content. Even if you decide to
@@ -15,23 +14,23 @@ workflow.
 
 In the last chapter, we learned that we could use the `mix test` command to run
 the tests for our simple Elixir project. We can do the same thing for our
-Phoenix project, so let's go to our `platform` folder and run `mix test` (the
+Phoenix project. Let's go to our `platform` folder and run `mix test` (the
 results below have been cleaned up for readability):
 
 ```shell
 $ mix test
 ...................
 
-  1) test GET / (Platform.Web.PageControllerTest)
-     test/web/controllers/page_controller_test.exs:4
+  1) test GET / (PlatformWeb.PageControllerTest)
+     test/platform_web/controllers/page_controller_test.exs:4
      Assertion with =~ failed
-     code:  html_response(conn, 200) =~ "Welcome to Phoenix!"
-     left:  "<!DOCTYPE html><html lang=\"en\"><head>...</head><body><div class=\"container\"><header class=\"header\">...</header><main><a class=\"btn btn-primary\" href=\"/players\">List of Players</a></main></div></body></html>"
+     code:  assert html_response(conn, 200) =~ "Welcome to Phoenix!"
+     left:  "<!DOCTYPE html><html lang=\"en\"><head>...</head><body><div class=\"container\"><header class=\"header\">...</header><main role=\"main\">\n<a class=\"btn btn-success\" href=\"/players/new\">Create Player Account</a>\n<a class=\"btn btn-info\" href=\"/players\">List All Players</a></main></div></body></html>"
      right: "Welcome to Phoenix!"
      stacktrace:
-       test/web/controllers/page_controller_test.exs:6: (test)
+       test/platform_web/controllers/page_controller_test.exs:6: (test)
 
-Finished in 0.4 seconds
+Finished in 0.2 seconds
 20 tests, 1 failure
 
 Randomized with seed 905
@@ -43,11 +42,11 @@ were created when we ran the `mix phx.gen.html` generator for our players
 resource.
 
 The bad news is that one of our tests is no longer passing. Let's take a look at
-the `test/web/controllers/page_controller_test.exs` file:
+the `test/platform_web/controllers/page_controller_test.exs` file:
 
 ```elixir
-defmodule Platform.Web.PageControllerTest do
-  use Platform.Web.ConnCase
+defmodule PlatformWeb.PageControllerTest do
+  use PlatformWeb.ConnCase
 
   test "GET /", %{conn: conn} do
     conn = get conn, "/"
@@ -56,26 +55,26 @@ defmodule Platform.Web.PageControllerTest do
 end
 ```
 
-It looks like it's making an HTTP get request to the default route (`/`). If we
-look at the `http://0.0.0.0:4000/` URL, you can think of that trailing slash as
-the default `/` route.
+It looks like it's making an HTTP `get` request to the default route (`"/"`).
+If we look at the `http://0.0.0.0:4000/` URL, you can think of that trailing
+slash as the default `/` route.
 
-Our test is expecting the text "Welcome to Phoenix!" to appear somewhere on
+Our test is expecting the text `"Welcome to Phoenix!"` to appear somewhere on
 the page, but remember that we replaced the default Phoenix page.
 
 Keep in mind that we don't need a full understanding of everything going on in
 the tests yet, and for now we just want to get back to where everything is
 passing. In this case, it seems like it's a quick fix, and we can just assert
-that the home page contains the word "Players" somewhere instead of "Welcome to
+that the home page contains the word `"Players"` somewhere instead of "Welcome to
 Phoenix!". This is admittedly a brittle test that is subject to break when we
-make changes to our home page, but since we're making a video game platform,
-it's likely that our home page is going to say "Players" somewhere, and this
-test still does a good job of making sure that our home page is at least
-loading. Let's go ahead and update our test with the following:
+make changes to our home page, but since we're making a game platform, it's
+likely that our home page is going to say `"Players"` somewhere, and this
+test still does a good job of making sure that our home page loads properly.
+Let's go ahead and update our test with the following:
 
 ```elixir
-defmodule Platform.Web.PageControllerTest do
-  use Platform.Web.ConnCase
+defmodule PlatformWeb.PageControllerTest do
+  use PlatformWeb.ConnCase
 
   test "GET /", %{conn: conn} do
     conn = get conn, "/"
@@ -110,23 +109,23 @@ From inside the `platform` folder, we can run the following commands to commit
 what we have so far to git:
 
 ```shell
-git init
-git add .
-git commit -m "Initial Phoenix platform application"
+$ git init
+$ git add .
+$ git commit -m "Initial Phoenix platform application"
 ```
 
 If you have a GitHub account, you can create a new public repository at
 https://github.com/new. Give it the name of `platform`, and then the following
-commands will allow us to push our existing application to GitHub (keeping in
-mind that you'll need to add your username on the first line):
+commands will allow us to push our local application to GitHub (keeping in mind
+that you'll need to add your username on the first line):
 
 ```shell
-git remote add origin https://github.com/YOURUSERNAME/platform.git
-git push -u origin master
+$ git remote add origin https://github.com/YOURUSERNAME/platform.git
+$ git push -u origin master
 ```
 
 Keep in mind that the audience for this book is expected to have some experience
-with these topics already. Feel free to take your time, skim quickly, or skip
+with these topics already. Feel free to take your time or skim quickly or skip
 ahead as needed.
 
 ## Heroku
@@ -167,7 +166,7 @@ heroku
 ```
 
 When we push to `origin`, we'll be pushing our project to GitHub. When we push
-to `heroku`, we''ll be pushing our project to Heroku.
+to `heroku`, we'll be pushing our project to Heroku.
 
 Before we can do that, we'll have to set things up for Heroku to know what
 kind of application we're building. We'll add a couple of "buildpacks" to set
