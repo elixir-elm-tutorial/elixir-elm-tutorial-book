@@ -1,27 +1,27 @@
 # Phoenix Sign Up
 
-We have multiple options in terms of how we want to handle the user sign up and
-sign in features for our applicaiton. In our case, we're eager to start using
-Elm to build the front-end, so we're going to take a simple approach.
+There are multiple options available for handling the user sign up and login
+process for our applicaiton. In our case, we're eager to start using Elm to
+build the front-end, so we're going to take a simple approach.
 
 We'll use Phoenix to handle authentication initially. Once users are logged in,
 they'll be directed to the Elm front-end application that we'll be building.
 We'll need to refactor some of these features later, but this approach will
-provide a quick way for players to sign up and sign as we extend the player
-features that we started earlier.
+provide a quick way for players to sign up as we extend the player resource
+features we generated previously.
 
 ## Extending Players
 
-Let's take a look at the player accounts we created previously. First, check
-out the `lib/platform/accounts/accounts.ex` file:
+Let's take a look at the `Platform.Accounts` module we created earlier in the
+`lib/platform/accounts/accounts.ex` file:
 
 ```elixir
 defmodule Platform.Accounts do
   @moduledoc """
-  The boundary for the Accounts system.
+  The Accounts context.
   """
 
-  import Ecto.{Query, Changeset}, warn: false
+  import Ecto.Query, warn: false
   alias Platform.Repo
 
   alias Platform.Accounts.Player
@@ -44,11 +44,10 @@ defmodule Platform.Accounts do
 end
 ```
 
-Inside the `Platform.Accounts` module, it looks like there's a handy
-`list_players/0` function available for us that will grab all the `Player`
-records from the database. We can think of `Repo` as an abstraction for our
-database, so `Repo.all(Player)` means that we'll query for all the players we
-have stored.
+Inside this module, there's a `list_players/0` function that will fetch all the
+`Player` records from the database. We can think of `Repo` as an abstraction
+for our database, so `Repo.all(Player)` means we'll query for all the players
+we have stored.
 
 We can test out this function using `iex` to interactively query for our
 existing player records. First, we'll start the interactive Elixir prompt:
@@ -102,35 +101,53 @@ We have some existing fields for our players, but what if we want to add new
 fields? We'll not only have to update our application, but also update our
 database.
 
-For our players to be able to sign in, we'll need to add a couple more fields:
+For our players to be able to sign up, we'll add a couple more fields:
 
 - `display_name`
 - `password`
-- `password_hash`
+- `password_confirmation`
+- `password_digest`
 
-Let's update the `lib/platform/accounts/player.ex` file to look like this:
+We can use a `display_name` field so players can display something other than
+their `username` inside a game. We'll also create a couple of "virtual" fields
+called `password` and `password_confirmation` that users will enter on the sign
+up form. But we'll only use the `password_digest` field to store a secure hash
+for user passwords, so we're never storing the `password` field in plain text.
+
+Let's update the `lib/platform/accounts/player.ex` file with the following:
 
 ```elixir
 defmodule Platform.Accounts.Player do
   use Ecto.Schema
+  import Ecto.Changeset
+  alias Platform.Accounts.Player
 
-  schema "accounts_players" do
+
+  schema "players" do
     field :display_name, :string
-    field :username, :string
-    field :score, :integer
     field :password, :string, virtual: true
-    field :password_hash, :string
+    field :password_confirmation, :string, virtual: true
+    field :password_digest, :string
+    field :score, :integer
+    field :username, :string
 
     timestamps()
+  end
+
+  @doc false
+  def changeset(%Player{} = player, attrs) do
+    player
+    |> cast(attrs, [:display_name, :password, :password_confirmation, :score, :username])
+    |> validate_required([:display_name, :password, :password_confirmation, :score, :username])
   end
 end
 ```
 
 ## Generating a Migration
 
-Now we'll need to update the database so that it knows about the new fields we
-we're adding to our players. Let's run the following command to generate a
-migration file:
+Now we'll need to update the database so it knows about the new fields we we're
+adding to our players. Let's run the following command to generate a migration
+file:
 
 ```shell
 $ mix ecto.gen.migration add_fields_to_player_accounts
@@ -142,12 +159,13 @@ file, which we'll update next:
 ```shell
 $ mix ecto.gen.migration add_fields_to_player_accounts
 * creating priv/repo/migrations
-* creating priv/repo/migrations/20170408150719_add_fields_to_player_accounts.exs
+* creating priv/repo/migrations/20170812150719_add_fields_to_player_accounts.exs
 ```
 
-Let's fill out the migration file that we created. We'll `alter` the existing
-`accounts_players` database table, and add the fields we need. We'll also add
-a `unique_index` at the bottom to ensure that each player has a unique
+Let's update the migration file that we created in the `priv/repo/migrations`
+folder before we actually run the migration. We'll `alter` the existing
+`players` database table and add the fields we need. We'll also add a
+`unique_index` at the bottom to ensure that each player has a unique
 `username` field:
 
 ```elixir
@@ -155,45 +173,47 @@ defmodule Platform.Repo.Migrations.AddFieldsToPlayerAccounts do
   use Ecto.Migration
 
   def change do
-    alter table(:accounts_players) do
+    alter table(:players) do
       add :display_name, :string
-      add :password, :string
-      add :password_hash, :string
+      add :password_digest, :string
     end
 
-    create unique_index(:accounts_players, [:username])
+    create unique_index(:players, [:username])
   end
 end
 ```
 
 ## Running the Migration
 
-Now we can run the migration to update our database. Run the following command,
-and you should see similar output:
+Now we can run the migration to update our database. This is the command we
+use to run our database migrations:
 
 ```shell
 $ mix ecto.migrate
+```
 
+When the migrations are successful, we should see output like this:
+
+```shell
+$ mix ecto.migrate
 11:11:29.028 [info]  == Running Platform.Repo.Migrations.AddFieldsToPlayerAccounts.change/0 forward
-11:11:29.028 [info]  alter table accounts_players
-11:11:29.046 [info]  create index accounts_players_username_index
+11:11:29.028 [info]  alter table players
+11:11:29.046 [info]  create index players_username_index
 11:11:29.051 [info]  == Migrated in 0.0s
 ```
 
 ## Updating Our Application
 
-So far so good. We've managed to alter the database so it knows how to deal with
-our new data. But we'll also have to update our application to handle these new
-fields.
+We've managed to alter the database so it knows how to deal with our new data.
+But we'll also have to update our application to work with these new fields.
 
 Let's start with what we want our users to do when they first sign up. Open up
-the `lib/platform/web/templates/player/new.html.eex` file:
+the `lib/platform_web/templates/player/new.html.eex` file:
 
 ```embedded_elixir
 <h2>New Player</h2>
 
-<%= render "form.html", changeset: @changeset,
-                        action: player_path(@conn, :create) %>
+<%= render "form.html", Map.put(assigns, :action, player_path(@conn, :create)) %>
 
 <span><%= link "Back", to: player_path(@conn, :index) %></span>
 ```
@@ -201,9 +221,9 @@ the `lib/platform/web/templates/player/new.html.eex` file:
 From the looks of the code here, the page is rendering a `"form.html"` file,
 which is shared between our **New Player** page and **Edit Player** page. But
 we want slightly different behavior for our application. We want users to be
-able to sign up with minimal effort by entering only a `username` and
-`password`. And then once they're signed up, they can enter additional
-information like their `display_name`.
+able to sign up with minimal effort by entering only a `username`, `password`,
+and `password_confirmation`. Once they're signed up, they can enter additional
+fields like their `display_name`.
 
 ## Working with Forms
 
