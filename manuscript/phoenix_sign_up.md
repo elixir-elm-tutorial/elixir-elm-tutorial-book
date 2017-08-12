@@ -105,14 +105,13 @@ For our players to be able to sign up, we'll add a couple more fields:
 
 - `display_name`
 - `password`
-- `password_confirmation`
 - `password_digest`
 
 We can use a `display_name` field so players can display something other than
-their `username` inside a game. We'll also create a couple of "virtual" fields
-called `password` and `password_confirmation` that users will enter on the sign
-up form. But we'll only use the `password_digest` field to store a secure hash
-for user passwords, so we're never storing the `password` field in plain text.
+their `username` inside a game. We'll also create a "virtual" field called
+`password` that users will enter on the sign up form. But we'll only use the
+`password_digest` field to store a secure hash for user passwords, so we're
+never storing the `password` field in plain text.
 
 Let's update the `lib/platform/accounts/player.ex` file with the following:
 
@@ -126,7 +125,6 @@ defmodule Platform.Accounts.Player do
   schema "players" do
     field :display_name, :string
     field :password, :string, virtual: true
-    field :password_confirmation, :string, virtual: true
     field :password_digest, :string
     field :score, :integer
     field :username, :string
@@ -137,11 +135,17 @@ defmodule Platform.Accounts.Player do
   @doc false
   def changeset(%Player{} = player, attrs) do
     player
-    |> cast(attrs, [:display_name, :password, :password_confirmation, :score, :username])
-    |> validate_required([:display_name, :password, :password_confirmation, :score, :username])
+    |> cast(attrs, [:display_name, :password, :score, :username])
+    |> validate_required([:password, :username])
   end
 end
 ```
+
+We're adding our new fields to the `"players"` schema, and we're also updating
+our `changeset/2` function. We're only going to require the `username` and
+`password` fields when users sign up, so those get passed as a list to the
+`validate_required` function at the bottom. Other fields will still get passed
+to the `cast` function for handling.
 
 ## Generating a Migration
 
@@ -221,9 +225,9 @@ the `lib/platform_web/templates/player/new.html.eex` file:
 From the looks of the code here, the page is rendering a `"form.html"` file,
 which is shared between our **New Player** page and **Edit Player** page. But
 we want slightly different behavior for our application. We want users to be
-able to sign up with minimal effort by entering only a `username`, `password`,
-and `password_confirmation`. Once they're signed up, they can enter additional
-fields like their `display_name`.
+able to sign up with minimal effort by entering only a `username` and
+`password`. Once they're signed up, they can enter additional fields like their
+`display_name`.
 
 ## Working with Forms
 
@@ -234,8 +238,7 @@ Here's what our original **New Player** page looks like:
 We don't actually want our players to be able to manually enter their scores,
 because the games should track player scores and update their accounts in
 real-time. For now, we just want players to create a `username` and `password`
-to sign up (we're also going to work on authentication in the next sections, so
-we won't be storing passwords as plain text).
+to sign up.
 
 We're going to move part of the `form.html.eex` file over to the `new.html.eex`
 file. We'll also create a form in the `edit.html.eex` file, and ultimately we'll
@@ -266,8 +269,8 @@ Let's start by updating our `new.html.eex` file:
   </div>
 
   <div class="form-group">
-    <%= submit "Submit", class: "btn btn-primary" %>
-    <span><%= link "Back", to: player_path(@conn, :index), class: "btn btn-default" %></span>
+    <span><%= submit "Submit", class: "btn btn-primary" %></span>
+    <span><%= link "Back", to: page_path(@conn, :index), class: "btn btn-default" %></span>
   </div>
 <% end %>
 ```
