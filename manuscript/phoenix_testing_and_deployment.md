@@ -25,7 +25,7 @@ $ mix test
      test/platform_web/controllers/page_controller_test.exs:4
      Assertion with =~ failed
      code:  assert html_response(conn, 200) =~ "Welcome to Phoenix!"
-     left:  "<!DOCTYPE html><html lang=\"en\"><head>...</head><body><div class=\"container\"><header class=\"header\">...</header><main role=\"main\">\n<a class=\"btn btn-success\" href=\"/players/new\">Create Player Account</a>\n<a class=\"btn btn-info\" href=\"/players\">List All Players</a></main></div></body></html>"
+     left:  "<!DOCTYPE html><html lang=\"en\"><body><div class=\"container\"><main role=\"main\">\n<a class=\"btn btn-success\" href=\"/players/new\">Create Player Account</a>\n<a class=\"btn btn-info\" href=\"/players\">List All Players</a></main></div></body></html>"
      right: "Welcome to Phoenix!"
      stacktrace:
        test/platform_web/controllers/page_controller_test.exs:6: (test)
@@ -36,10 +36,9 @@ Finished in 0.2 seconds
 Randomized with seed 905
 ```
 
-The good news is that it looks like we already have 20 tests. Some of them
-came with Phoenix by default when we ran `mix phx.new platform`. Other tests
-were created when we ran the `mix phx.gen.html` generator for our players
-resource.
+The good news is it looks like we already have 20 tests. Some of them came with
+Phoenix by default when we ran `mix phx.new platform`. Other tests were created
+when we ran the `mix phx.gen.html` generator for our players resource.
 
 The bad news is that one of our tests is no longer passing. Let's take a look at
 the `test/platform_web/controllers/page_controller_test.exs` file:
