@@ -40,8 +40,8 @@ The good news is it looks like we already have 20 tests. Some of them came with
 Phoenix by default when we ran `mix phx.new platform`. Other tests were created
 when we ran the `mix phx.gen.html` generator for our players resource.
 
-The bad news is that one of our tests is no longer passing. Let's take a look at
-the `test/platform_web/controllers/page_controller_test.exs` file:
+The bad news is one of our tests is no longer passing. Let's take a look at the
+`test/platform_web/controllers/page_controller_test.exs` file:
 
 ```elixir
 defmodule PlatformWeb.PageControllerTest do
@@ -54,22 +54,22 @@ defmodule PlatformWeb.PageControllerTest do
 end
 ```
 
-It looks like it's making an HTTP `get` request to the default route (`"/"`).
-If we look at the `http://0.0.0.0:4000/` URL, you can think of that trailing
-slash as the default `/` route.
+It looks like this test is making an HTTP `get` request to the default route
+(`"/"`). If we look at the `http://0.0.0.0:4000/` URL, you can think of that
+trailing slash as the default `/` route.
 
 Our test is expecting the text `"Welcome to Phoenix!"` to appear somewhere on
 the page, but remember that we replaced the default Phoenix page.
 
 Keep in mind that we don't need a full understanding of everything going on in
-the tests yet, and for now we just want to get back to where everything is
-passing. In this case, it seems like it's a quick fix, and we can just assert
-that the home page contains the word `"Players"` somewhere instead of "Welcome to
-Phoenix!". This is admittedly a brittle test that is subject to break when we
-make changes to our home page, but since we're making a game platform, it's
-likely that our home page is going to say `"Players"` somewhere, and this
-test still does a good job of making sure that our home page loads properly.
-Let's go ahead and update our test with the following:
+the tests yet. For now, we just want to get back to where all the tests are
+passing. In this case, a quick fix is to assert that the home page contains the
+word `"Players"` instead of `"Welcome to Phoenix!"`. This is admittedly a
+brittle test that's subject to break when we make changes to our home page, but
+since we're making a game platform, it's likely that our home page is going to
+say `"Players"` somewhere, and this test still allows us to ensure that our
+home page is loading properly. Let's go ahead and update our test with the
+following:
 
 ```elixir
 defmodule PlatformWeb.PageControllerTest do
