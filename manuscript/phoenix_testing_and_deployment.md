@@ -96,7 +96,7 @@ Randomized with seed 187055
 
 ## Git and GitHub
 
-Now that all of our tests are passing and our application is in a good working
+Now that all our tests are passing, and our application is in a good working
 condition, let's go ahead and commit what we have so far and push it to GitHub.
 
 We won't cover version control in detail in this book, and you're welcome to
@@ -104,8 +104,8 @@ skip the parts with `git` commands if you'd like. But it's a good idea to keep
 a history of your project so you can always recover from mistakes. This will
 also help when it comes time to deploy our application to Heroku.
 
-From inside the `platform` folder, we can run the following commands to commit
-what we have so far to git:
+If you have [Git](https://git-scm.com/) installed, run the following commands
+inside the `platform` folder to commit what we have so far:
 
 ```shell
 $ git init
@@ -114,9 +114,9 @@ $ git commit -m "Initial Phoenix platform application"
 ```
 
 If you have a GitHub account, you can create a new public repository at
-https://github.com/new. Give it the name of `platform`, and then the following
-commands will allow us to push our local application to GitHub (keeping in mind
-that you'll need to add your username on the first line):
+https://github.com/new. Give it the name `platform`, and then the following
+commands will allow us to push our local application to GitHub (you'll need to
+add your username on the first line):
 
 ```shell
 $ git remote add origin https://github.com/YOURUSERNAME/platform.git
@@ -124,7 +124,7 @@ $ git push -u origin master
 ```
 
 Keep in mind that the audience for this book is expected to have some experience
-with these topics already. Feel free to take your time or skim quickly or skip
+with these topics already. Feel free to take your time, skim quickly, or skip
 ahead as needed.
 
 ## Heroku
@@ -152,7 +152,7 @@ to your account. Since we have an existing Git repository, we can use the
 following command to add our application to Heroku:
 
 ```shell
-$ heroku git:remote -a platform
+$ heroku git:remote -a YOURAPPNAME
 ```
 
 Now inside our `platform` folder, we can run the `git remote` command and see
@@ -160,8 +160,8 @@ that we now have two remotes for our project:
 
 ```shell
 $ git remote
-origin
 heroku
+origin
 ```
 
 When we push to `origin`, we'll be pushing our project to GitHub. When we push
@@ -196,8 +196,8 @@ To set up the correct versions we need for our application, create a file
 called `elixir_buildpack.config` in the `platform` folder.
 
 ```config
-erlang_version=19.0
-elixir_version=1.4.2
+erlang_version=20.0
+elixir_version=1.5.0
 ```
 
 Since we're using the latest versions of Erlang, Elixir, and Phoenix, these
@@ -246,7 +246,7 @@ Created ... as DATABASE_URL
 Use heroku addons:docs heroku-postgresql to view documentation
 ```
 
-And if we run `heroku config` again, we'll see that we now have a `DATABASE_URL`
+If we run `heroku config` again, we'll see that we now have a `DATABASE_URL`
 variable configured (the actual URL has been removed in this example):
 
 ```shell
@@ -285,11 +285,12 @@ SECRET_KEY_BASE: ...
 ## Production Deploy
 
 Lastly, we need to make a few changes to the `prod.exs` file in the `config`
-folder. Open that file and you'll see the following code:
+folder. Open that file and you'll see the following code along with a lot of
+explanatory comments:
 
 ```elixir
-config :platform, Platform.Web.Endpoint,
-  on_init: {Demo.Web.Endpoint, :load_from_system_env, []},
+config :platform, PlatformWeb.Endpoint,
+  load_from_system_env: true,
   url: [host: "example.com", port: 80],
   cache_static_manifest: "priv/static/cache_manifest.json"
 ```
@@ -298,8 +299,8 @@ Let's make a couple of quick changes so it looks like this (replace the
 YOURAPPNAME with the app name you created on Heroku):
 
 ```elixir
-config :platform, Platform.Web.Endpoint,
-  on_init: {Platform.Web.Endpoint, :load_from_system_env, []},
+config :platform, PlatformWeb.Endpoint,
+  load_from_system_env: true,
   url: [host: "YOURAPPNAME.herokuapp.com", port: 80],
   cache_static_manifest: "priv/static/cache_manifest.json",
   secret_key_base: System.get_env("SECRET_KEY_BASE")
@@ -317,15 +318,19 @@ config :platform, Platform.Repo,
   ssl: true
 ```
 
-And if you scroll down to the very bottom of the `prod.exs` file, you'll see a
-line to import a production configuration file. But we just want to comment that
-line out altogether since we're using environment variables:
+If you scroll down to the very bottom of the `prod.exs` file, you'll see a line
+to import a secret configuration file. Since we're using environment variables
+for Heroku, we won't need this. Let's comment that line out by placing a `#`
+character at the beginning of the line:
 
 ```elixir
 # Finally import the config/prod.secret.exs
 # which should be versioned separately.
 # import_config "prod.secret.exs"
 ```
+
+You can also delete the `prod.secret.exs` file if you'd like since we won't
+need it anymore.
 
 ## Deployment
 
@@ -335,8 +340,7 @@ Let's run our tests one more time to make sure we didn't break anything:
 $ mix test
 ```
 
-If everything is still passing, then let's go ahead and commit our latest
-changes:
+If everything is still passing, let's commit our latest changes:
 
 ```shell
 $ git add .
@@ -356,138 +360,37 @@ $ git push heroku master
 ```
 
 We'll see _a lot_ of output when we deploy. If something goes wrong with the
-deployment, it will let us know. And don't worry too much if there is an issue
-or two, because this process is admittedly tedious. Use StackOverflow as needed
-if you run into any errors.
+deployment, it will let us know. Don't worry too much if you run into an issue
+or two, because this process is admittedly tedious. There are Stack Overflow
+sections for both [Heroku](https://stackoverflow.com/questions/tagged/heroku)
+and [Phoenix](https://stackoverflow.com/questions/tagged/phoenix-framework)
+that can be really useful if you run into any errors.
 
 It's worth the trouble once we get to see our app up and running live in
 production!
 
-## Production Database
+## Up and Running
 
-Our app is finally up and running on Heroku! The `Procfile` we created should
-automatically handle production database migrations for future deploys, but
-let's try running them manually with the following command:
-
-```shell
-$ heroku run "mix ecto.migrate"
-```
-
-This will ensure that the database table for our players resource was created:
+Our app is finally up and running on Heroku! The `Procfile` we created
+automatically handles production database migrations. Inside the `platform`
+folder, let's run the following from the command line to see our application
+running on Heroku:
 
 ```shell
-$ heroku run "mix ecto.migrate"
-Running mix ecto.migrate on ⬢ platform... up, run.4619 (Free)
-04:49:15.381 [info]  == Running Platform.Repo.Migrations.CreatePlatform.Accounts.Player.change/0 forward
-04:49:15.381 [info]  create table accounts_players
-04:49:15.390 [info]  == Migrated in 0.0s
+$ heroku open
 ```
 
-And our application should finally be working in production!
+![Working Heroku Deploy](images/phoenix_testing_and_deployment/working_heroku_deploy.png)
 
-## Continuous Integration
-
-The whole point to this long chapter was to build up to the topic of continuous
-integration. We have all our Phoenix tests passing, and we have our application
-deployed to Heroku. The next big step that really makes this a real-world
-project is automation. We want to be able to build and deploy our application
-with confidence that it's actually working properly.
-
-## TravisCI
-
-In this example, we're going to use [TravisCI](https://travis-ci.org), which is
-also free like Heroku. You can use your existing GitHub account to sign up, and
-that will make things easy to configure with the repository we have hosted on
-GitHub.
-
-Follow the setup process on TravisCI for creating your account, and visit the
-[getting started page](https://travis-ci.org/getting_started) to create our new
-build. Flip the switch for the `platform` repository from your GitHub account.
-If you don't see it available, you may need to enable access for TravisCI, and
-help should be available on the TravisCI website with the links above.
-
-![TravisCI Switches](images/phoenix_testing_and_deployment/travisci_switches.png)
-
-To get the TravisCI build working, we'll need to create a `.travis.yml` file
-at the root of our project. Go ahead and create the file in the `platform`
-folder and add the following:
-
-```yml
-language: elixir
-elixir:
-  - 1.4.2
-otp_release:
-  - 19.0
-```
-
-This is just a simple configuration file that tells TravisCI we want to run our
-build for an Elixir project. It already knows how to
-[work with Elixir projects](https://docs.travis-ci.com/user/languages/elixir),
-so this is all the setup we need. When we commit this file and push to GitHub,
-TravisCI should automatically pick up the changes and run a build for us.
-
-We can add additional settings later if we need to, but for now this should work
-to ensure that every time we push our changes to GitHub, it's going to run a
-build for our `platform` project and give us some assurance that our code is
-working when all our tests are passing and the build is green.
-
-## TravisCI Badge
-
-We can also add a badge to our `README.md` file that shows the status of our
-latest build, which should always be passing and green.
-
-Click the badge in the TravisCI interface, and it'll pop up a modal where we
-can select our branch (`master`) and the type of badge we want (`Markdown`),
-and it should generate an example like this:
-
-```Markdown
-[![Build Status](https://travis-ci.org/elixir-elm-tutorial/platform.svg?branch=master)](https://travis-ci.org/elixir-elm-tutorial/platform)
-```
-
-![TravisCI Badge](images/phoenix_testing_and_deployment/travisci_badge.png)
-
-## Continuous Delivery
-
-This is where all of our hard work pays off. We can automatically deploy to
-Heroku when our TravisCI build passes. That means we can just focus on
-developing new features, and we'll automatically test everything using TravisCI
-and automatically deploy to Heroku once the build passes.
-
-In order to set this up, we'll need to add to our `.travis.yml` file. But we
-don't want to commit our secret Heroku credentials to GitHub, so we'll use a
-TravisCI command line tool to generate an encrypted key for us.
-
-First, install the `travis` command line tool by typing this in the Terminal:
-
-```shell
-$ gem install travis
-```
-
-And now that we have both command line tools for `heroku` and `travis`, we can
-run the following command from the `platform` folder, and it will automatically
-add the right information to our `.travis.yml` file:
-
-```shell
-$ travis setup heroku
-```
-
-The `travis` tool makes things easy on us, but if we run into any issues here,
-we can always consult the
-[Heroku Deployment Documentation](https://docs.travis-ci.com/user/deployment/heroku)
-for TravisCI and it will help us get everything set up the right way.
+Our application is working in production!
 
 ## Summary
 
-This has a been a long chapter, and you might think to yourself, "Why go
-through all this when I just want to build my application with Elixir and Elm?"
-You're right to be wary, and we're going to try keeping things as simple as
-possible in this book. The reason we wanted to cover these topics is that they
-ultimately speed up development over time. And since the goal of this book is
-to teach how to build a real-world project, the topics of continous integration
-and continuous delivery are necessary evils.
+This has a been a long chapter, but we were able to get all our Phoenix tests
+passing, push our code to GitHub, and deploy our application successfully to
+Heroku!
 
-We're off to a solid start for our platform application. We have our back-end
-up and running, we picked up some knowledge about Phoenix and Elixir, we have
-our tests passing, and our application is getting deployed successfully when
-we push to GitHub. In the next chapter, we'll learn more about Phoenix as we
-extend our player features and allow players to sign up.
+We're off to a solid start for our platform. Our back-end is up and running,
+and we've picked up some introductory knowledge about Phoenix and Elixir. In
+the next chapter, we'll learn more about Phoenix as we extend our player
+features and allow new users to sign up.
