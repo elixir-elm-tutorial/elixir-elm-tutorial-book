@@ -7,11 +7,11 @@ asking them for their email or building out a full featured authentication
 system.
 
 We're also eager to start using Elm to build the front-end, so we're going to
-take a simple approach. We'll use Phoenix to handle authentication initially.
-Once users are logged in, they'll be directed to the Elm front-end application
-that we'll be building. We'll need to refactor some of these features later,
-but this approach will provide a quick way for players to sign up as we extend
-the player resource features we generated previously.
+take a simple approach. We'll use Phoenix to handle authentication initially,
+and once users are logged in, they'll be redirected to the Elm front-end
+application we'll be building. We'll need to refactor some of these features
+later, but this approach will provide a quick way for players to sign up as we
+extend the player resource features we generated previously.
 
 ## Extending Player Account Features
 
