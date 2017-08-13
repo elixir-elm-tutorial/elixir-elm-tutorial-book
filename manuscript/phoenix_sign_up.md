@@ -1,19 +1,23 @@
 # Phoenix Sign Up
 
-There are multiple options available for handling the user sign up and login
-process for our applicaiton. In our case, we're eager to start using Elm to
-build the front-end, so we're going to take a simple approach.
+There are multiple options available for handling player sign up and login
+features. In our case, we want to keep things straightforward so that players
+can sign up easily and play games on our platform, which means we'll forego
+asking them for their email or building out a full featured authentication
+system.
 
-We'll use Phoenix to handle authentication initially. Once users are logged in,
-they'll be directed to the Elm front-end application that we'll be building.
-We'll need to refactor some of these features later, but this approach will
-provide a quick way for players to sign up as we extend the player resource
-features we generated previously.
+We're also eager to start using Elm to build the front-end, so we're going to
+take a simple approach. We'll use Phoenix to handle authentication initially.
+Once users are logged in, they'll be directed to the Elm front-end application
+that we'll be building. We'll need to refactor some of these features later,
+but this approach will provide a quick way for players to sign up as we extend
+the player resource features we generated previously.
 
-## Extending Players
+## Extending Player Account Features
 
-Let's take a look at the `Platform.Accounts` module we created earlier in the
-`lib/platform/accounts/accounts.ex` file:
+First, let's take a look at the existing features provided in the
+`Platform.Accounts` module we created earlier. Check out the functions
+available in the `lib/platform/accounts/accounts.ex` file:
 
 ```elixir
 defmodule Platform.Accounts do
@@ -60,27 +64,28 @@ Now we can query for our players with the following:
 
 ```elixir
 iex> Platform.Accounts.list_players
-[debug] QUERY OK source="accounts_players" db=3.0ms decode=3.7ms
-SELECT a0."id", a0."score", a0."username", a0."inserted_at", a0."updated_at" FROM "accounts_players" AS a0 []
-[%Platform.Accounts.Player{__meta__: #Ecto.Schema.Metadata<:loaded, "accounts_players">,
+[debug] QUERY OK source="players" db=3.0ms decode=3.7ms
+SELECT a0."id", a0."score", a0."username", a0."inserted_at", a0."updated_at" FROM "players" AS a0 []
+[%Platform.Accounts.Player{__meta__: #Ecto.Schema.Metadata<:loaded, "players">,
   id: 1, inserted_at: ~N[2017-04-08 14:55:28.674971], score: 1000,
   updated_at: ~N[2017-04-08 14:55:28.681607], username: "josevalim"},
- %Platform.Accounts.Player{__meta__: #Ecto.Schema.Metadata<:loaded, "accounts_players">,
+ %Platform.Accounts.Player{__meta__: #Ecto.Schema.Metadata<:loaded, "players">,
   id: 2, inserted_at: ~N[2017-04-08 14:55:34.139085], score: 2000,
   updated_at: ~N[2017-04-08 14:55:34.139091], username: "evancz"}]
 ```
 
-We can also look up a single player using the `get/2` function and the player's
-`id` value:
+This function provides a good demonstration of how Phoenix uses well-named
+functions to abstract away implementation details and make things easy to use.
+It means we can use the `list_players/0` function to fetch all the players from
+the database for our **List Players** page.
 
-```elixir
-iex> Platform.Repo.get(Platform.Accounts.Player, 1)
-[debug] QUERY OK source="accounts_players" db=2.2ms
-SELECT a0."id", a0."score", a0."username", a0."inserted_at", a0."updated_at" FROM "accounts_players" AS a0 WHERE (a0."id" = $1) [1]
-%Platform.Accounts.Player{__meta__: #Ecto.Schema.Metadata<:loaded, "accounts_players">,
- id: 1, inserted_at: ~N[2017-04-08 14:55:28.674971], score: 1000,
- updated_at: ~N[2017-04-08 14:55:28.681607], username: "josevalim"}
-```
+![List Players Page](images/diving_in/list_players.png)
+
+Similarly, the `Platform.Accounts` module contains a `get_player!/1` function
+that's useful for our **Show Player** page, a `create_player/1` function that's
+useful for our **New Player** page, an `update_player/2` function that's useful
+for our **Edit Player** page, and a `delete_player/1` function that we can use
+to remove player accounts.
 
 ## Player Fields
 
@@ -101,17 +106,19 @@ We have some existing fields for our players, but what if we want to add new
 fields? We'll not only have to update our application, but also update our
 database.
 
-For our players to be able to sign up, we'll add a couple more fields:
+Let's add a couple of new fields for our player accounts:
 
 - `display_name`
 - `password`
 - `password_digest`
 
-We can use a `display_name` field so players can display something other than
+We'll use a `display_name` field so players can display something other than
 their `username` inside a game. We'll also create a "virtual" field called
 `password` that users will enter on the sign up form. But we'll only use the
 `password_digest` field to store a secure hash for user passwords, so we're
 never storing the `password` field in plain text.
+
+## Updating the Player Schema
 
 Let's update the `lib/platform/accounts/player.ex` file with the following:
 
@@ -136,16 +143,29 @@ defmodule Platform.Accounts.Player do
   def changeset(%Player{} = player, attrs) do
     player
     |> cast(attrs, [:display_name, :password, :score, :username])
-    |> validate_required([:password, :username])
+    |> validate_required([:username])
   end
 end
 ```
 
-We're adding our new fields to the `"players"` schema, and we're also updating
-our `changeset/2` function. We're only going to require the `username` and
-`password` fields when users sign up, so those get passed as a list to the
-`validate_required` function at the bottom. Other fields will still get passed
-to the `cast` function for handling.
+We're adding our new fields to the `"players"` schema. Each of our new fields
+is a `:string` type, and also note that the `password` field is marked with
+`virtual: true`.
+
+## Player Changeset
+
+In the code example above, note that we didn't just change the player schema.
+We also updated the `changeset/2` function. The
+[`Ecto.Changeset`](https://hexdocs.pm/ecto/Ecto.Changeset.html) module allows
+us to filter, cast, and validate our data. In our case, we only want to use the
+`validate_required/1` function to verify that a new player enters a `username`
+so they can sign up for an account easily. We'll also require the `password`
+field later, but we'll need to implement additional functionality before we can
+get that working properly.
+
+Although the `display_name` field isn't required when users sign up for an
+account, we want them to be able to change this field on the **Edit Player**
+page, so we add it to the `cast/2` function along with the other fields.
 
 ## Generating a Migration
 
@@ -168,9 +188,9 @@ $ mix ecto.gen.migration add_fields_to_player_accounts
 
 Let's update the migration file that we created in the `priv/repo/migrations`
 folder before we actually run the migration. We'll `alter` the existing
-`players` database table and add the fields we need. We'll also add a
-`unique_index` at the bottom to ensure that each player has a unique
-`username` field:
+`players` database table and add the new fields. We'll also add a
+`unique_index` at the bottom to ensure that each player has a unique `username`
+field:
 
 ```elixir
 defmodule Platform.Repo.Migrations.AddFieldsToPlayerAccounts do
@@ -208,10 +228,9 @@ $ mix ecto.migrate
 
 ## Updating Our Application
 
-We've managed to alter the database so it knows how to deal with our new data.
-But we'll also have to update our application to work with these new fields.
+Let's update our application to work with our new player account fields.
 
-Let's start with what we want our users to do when they first sign up. Open up
+We'll start with what we want our users to do when they first sign up. Open up
 the `lib/platform_web/templates/player/new.html.eex` file:
 
 ```embedded_elixir
@@ -247,7 +266,7 @@ be able to delete the shared `form.html.eex` file as a result.
 Let's start by updating our `new.html.eex` file:
 
 ```embedded_elixir
-<h2>Player Sign Up Page</h2>
+<h2>New Player</h2>
 
 <%= form_for @changeset, player_path(@conn, :create), fn f -> %>
   <%= if @changeset.action do %>
@@ -269,84 +288,19 @@ Let's start by updating our `new.html.eex` file:
   </div>
 
   <div class="form-group">
-    <span><%= submit "Submit", class: "btn btn-primary" %></span>
+    <%= submit "Submit", class: "btn btn-primary" %>
     <span><%= link "Back", to: page_path(@conn, :index), class: "btn btn-default" %></span>
   </div>
 <% end %>
 ```
 
+We're basically moving some of the content from the `form.html.eex` file into
+our `new.html.eex` file along with some minor changes. On a successful
+submission, we're using the `create` action from our player controller. We also
+have a **Back** button at the bottom that allows users to navigate back to the
+default home page. This is what it should look like in the browser:
+
 ![Updated New Player Page](images/phoenix_sign_up/phoenix_updated_sign_up.png)
-
-The form looks great, but if we try to create a new player we'll run into an
-issue. We'll tackle this next.
-
-## Validations
-
-When we generated our players resource, it automatically created a couple of
-default validations for the fields we specified. That means our Phoenix
-application considers `username` and `score` to be _required_ fields to create
-an account. Let's take a look at the bottom of the
-`lib/platform/accounts/accounts.ex` file:
-
-```elixir
-defmodule Platform.Accounts do
-  # ...
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking player changes.
-
-  ## Examples
-
-      iex> change_player(player)
-      %Ecto.Changeset{source: %Player{}}
-
-  """
-  def change_player(%Player{} = player) do
-    player_changeset(player, %{})
-  end
-
-  defp player_changeset(%Player{} = player, attrs) do
-    player
-    |> cast(attrs, [:username, :score])
-    |> validate_required([:username])
-  end
-end
-```
-
-This is our first look at a Phoenix "changeset". When we change a record (or
-create a new one like we're doing now), it'll run through some validations.
-We'll deal with our passwords in the next few sections, but for now let's remove
-the requirement for the `score` field. Now that we removed that field from the
-sign up form, users can't fill it in.
-
-Update the `player_changeset/2` function with the following to remove the
-`score` field requirement:
-
-```elixir
-defp player_changeset(%Player{} = player, attrs) do
-  player
-  |> cast(attrs, [:username, :score])
-  |> validate_required([:username])
-end
-```
-
-We now have the ability to create new players! Lastly, let's update the tests
-that ensure our **Player Sign Up Page** is working since we updated the title.
-We'll have to update these two test cases in the
-`test/web/controllers/player_controller_test.exs` file to check for "Player
-Sign Up Page" instead of "New Player":
-
-```elixir
-test "renders form for new players", %{conn: conn} do
-  conn = get conn, player_path(conn, :new)
-  assert html_response(conn, 200) =~ "Player Sign Up Page"
-end
-
-test "does not create player and renders errors when data is invalid", %{conn: conn} do
-  conn = post conn, player_path(conn, :create), player: @invalid_attrs
-  assert html_response(conn, 200) =~ "Player Sign Up Page"
-end
-```
 
 ## Show Player Page
 
@@ -362,7 +316,7 @@ account:
 - `score`
 
 We can work towards making this page look nicer with styles later, but for now
-let's update the `lib/platform/web/templates/player/show.html.eex` file with
+let's update the `lib/platform_web/templates/player/show.html.eex` file with
 the following:
 
 ```embedded_elixir
@@ -376,20 +330,25 @@ the following:
 </ul>
 
 <span><%= link "Edit", to: player_path(@conn, :edit, @player), class: "btn btn-default" %></span>
-<span><%= link "Back", to: player_path(@conn, :index), class: "btn btn-default" %></span>
+<span><%= link "Back", to: page_path(@conn, :index), class: "btn btn-default" %></span>
 ```
+
+We display all the relevant data on the page, and added a few classes to the
+buttons at the bottom to make things look nicer. Users can choose to **Edit**
+their accounts from here, and if they click the **Back** button they can
+navigate back to the home page.
 
 ![Show Player Page](images/phoenix_sign_up/phoenix_show_player_page.png)
 
 ## Edit Player Page
 
 For the **Edit Player** page, we're going to do much of the same that we did
-for the **Player Sign Up** page. We want users to be able to adjust their
+for the **New Player** page. We want users to be able to adjust their
 `username` and `display_name` fields for example, but they shouldn't be able to
 manually alter their `score` field since that data should be coming from the
 games they play on the platform.
 
-Update the `lib/platform/web/templates/players/edit.html.eex` file to contain
+Update the `lib/platform_web/templates/player/edit.html.eex` file to contain
 the following:
 
 ```embedded_elixir
@@ -416,24 +375,9 @@ the following:
 
   <div class="form-group">
     <%= submit "Submit", class: "btn btn-primary" %>
-    <span><%= link "Back", to: player_path(@conn, :index), class: "btn btn-default" %></span>
+    <span><%= link "Back", to: page_path(@conn, :index), class: "btn btn-default" %></span>
   </div>
 <% end %>
-```
-
-This will allow users to change their `username` and `display_name` fields
-after they sign up. But we'll have to make a quick adjustment to our
-`lib/platform/accounts/accounts.ex` file to get this working. We removed the
-requirement for the `score` field from the `player_changeset/2` function, but
-we'll need to allow for changes to the `display_name` field now. Update the
-function with the following:
-
-```elixir
-defp player_changeset(%Player{} = player, attrs) do
-  player
-  |> cast(attrs, [:display_name, :username, :score])
-  |> validate_required([:username])
-end
 ```
 
 After saving that file, we can go back to the **Edit Player** page and change
@@ -441,28 +385,27 @@ the `display_name` field for one of our players:
 
 ![Editing the Display Name Field](images/phoenix_sign_up/phoenix_edit_player_page.png)
 
-On submission, we'll be redirected to the **Player Show** page and see that the
+On submission, we'll be redirected to the **Show Player** page and see that the
 field was successfully changed:
 
 ![Successful Player Update](images/phoenix_sign_up/phoenix_show_updated_player_page.png)
 
 ## Shared Form
 
-Now that we've adjusted our **Player Sign Up** page and our **Edit Player**
+Now that we've adjusted our **New Player** page and our **Edit Player**
 page, we're able to delete the `form.html.eex` file that was shared between
 them since it's no longer used anywhere.
 
 ## Database Seeds
 
 Now that we have all the fields we want to work with, it can be helpful to add
-some default data seeds with our application. Instead of manually creating new
+some default data seeds for our application. Instead of manually creating new
 database records while we're working in the development environment, this gives
 us a quick way to seed the database.
 
-The other benefit of this approach is that when other developers clone our
-repository, they'll be able to run the `mix ecto.setup` command and it will
-create the database, run migrations, and seed the application with some sample
-data.
+The other benefit of this approach is that other developers can clone our
+repository and run the `mix ecto.setup` command to create the database, run
+migrations, and seed the application with some sample data.
 
 Open the `priv/repo/seeds.exs` file:
 
@@ -501,12 +444,12 @@ Platform.Repo.insert!(%Platform.Accounts.Player{display_name: "Evan Czaplicki", 
 ```
 
 At the top of the file, the comments show that we can run the
-`mix run priv/repo/seeds.exs` command to populate the database with the seeds
-we add to this file. But keep in mind that we may have already created these
-records manually, and we did add a constraint to our database to make sure that
-the `username` fields are unique. The good news is that we can always adjust
-this file with some sample data to work with. And by doing that, we don't have
-to worry about manually creating records in our development environment to test
+`mix run priv/repo/seeds.exs` command to populate the database with any seed
+data we add to this file. But keep in mind that we may have already created
+these records manually, and we did add a constraint to our database to make
+sure that the `username` fields are unique. The good news is we can always
+adjust this file with sample data to work with. By doing that, we don't have to
+worry about manually creating records in our development environment to test
 things out.
 
 In fact, there's a command we can use often if we end up creating extraneous
@@ -523,18 +466,18 @@ $ mix ecto.reset
 The database for Platform.Repo has been dropped
 The database for Platform.Repo has been created
 
-12:27:16.348 [info]  == Running Platform.Repo.Migrations.CreatePlatform.Accounts.Player.change/0 forward
-12:27:16.348 [info]  create table accounts_players
+12:27:16.348 [info]  == Running Platform.Repo.Migrations.CreatePlayers.change/0 forward
+12:27:16.348 [info]  create table players
 12:27:16.354 [info]  == Migrated in 0.0s
 12:27:16.394 [info]  == Running Platform.Repo.Migrations.AddFieldsToPlayerAccounts.change/0 forward
-12:27:16.394 [info]  alter table accounts_players
-12:27:16.396 [info]  create index accounts_players_username_index
-
+12:27:16.394 [info]  alter table players
+12:27:16.396 [info]  create index players_username_index
 12:27:16.398 [info]  == Migrated in 0.0s
+
 [debug] QUERY OK db=4.0ms queue=2.8ms
-INSERT INTO "accounts_players" ("display_name","score","username","inserted_at","updated_at") VALUES ($1,$2,$3,$4,$5) RETURNING "id" ["José Valim", 1000, "josevalim", {{2017, 4, 8}, {16, 27, 16, 501546}}, {{2017, 4, 8}, {16, 27, 16, 501552}}]
+INSERT INTO "players" ("display_name","score","username","inserted_at","updated_at") VALUES ($1,$2,$3,$4,$5) RETURNING "id" ["José Valim", 1000, "josevalim", {{2017, 4, 8}, {16, 27, 16, 501546}}, {{2017, 4, 8}, {16, 27, 16, 501552}}]
 [debug] QUERY OK db=2.1ms
-INSERT INTO "accounts_players" ("display_name","score","username","inserted_at","updated_at") VALUES ($1,$2,$3,$4,$5) RETURNING "id" ["Evan Czaplicki", 2000, "evancz", {{2017, 4, 8}, {16, 27, 16, 519697}}, {{2017, 4, 8}, {16, 27, 16, 519703}}]
+INSERT INTO "players" ("display_name","score","username","inserted_at","updated_at") VALUES ($1,$2,$3,$4,$5) RETURNING "id" ["Evan Czaplicki", 2000, "evancz", {{2017, 4, 8}, {16, 27, 16, 519697}}, {{2017, 4, 8}, {16, 27, 16, 519703}}]
 ```
 
 ## Saving Our Progress
@@ -566,8 +509,9 @@ authentication first, and that will be the topic of our next chapter.
 We managed to accomplish a lot in this chapter. First, we learned how to add
 fields to our players and update the database accordingly. We also got some
 experience working with templates and designing how we want our users to
-interact with our application.
+interact with our application. We're going to be working with Elm for the
+front-end of our application in this book, but this chapter gave a good
+introduction into what it feels like to add features to a Phoenix application.
 
 The first step towards adding authentication features is taken care of, and
-we'll work towards a full set of sign up and sign in features in the next
-chapter.
+we'll work towards working sign up and login features in the next chapter.
