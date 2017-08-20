@@ -95,17 +95,41 @@ Dependency resolution completed:
 
 ## Player Changesets
 
-Now that we've included our new dependencies, let's update our existing
-`changeset/2` function inside the `lib/platform/accounts/player.ex` file. We're
-going to add some validations and a new function that will allow us to encrypt
-passwords so they're not stored in plain text.
-
-Update the `changeset/2` function with the following code:
+Now that we've included our new dependencies, let's take a look at the existing
+`changeset/2` function inside the `lib/platform/accounts/player.ex` file.
 
 ```elixir
 def changeset(%Player{} = player, attrs) do
   player
   |> cast(attrs, [:display_name, :password, :score, :username])
+  |> validate_required([:username])
+end
+```
+
+This is where we can add additional validations for our data and ensure that it
+conforms to our expectations. This function will remain our default player
+changeset, but we'll also add a separate one called `registration_changeset/2`
+for when players create a new account.
+
+Let's add some validations and a new function that will allow us to encrypt
+passwords so they're not stored in plain text. Update the `changeset/2` function
+and add the following code:
+
+```elixir
+@doc false
+def changeset(%Player{} = player, attrs) do
+  player
+  |> cast(attrs, [:display_name, :password, :username])
+  |> validate_required([:username])
+  |> validate_length(:username, min: 2, max: 100)
+  |> validate_length(:password, min: 6, max: 100)
+  |> put_pass_digest()
+end
+
+@doc false
+def registration_changeset(%Player{} = player, attrs) do
+  player
+  |> cast(attrs, [:password, :username])
   |> validate_required([:password, :username])
   |> validate_length(:username, min: 2, max: 100)
   |> validate_length(:password, min: 6, max: 100)
@@ -143,6 +167,22 @@ In the event that the `changeset` was not valid, we just return it at the
 bottom of our `put_pass_digest/1` function without any changes. This is a
 common pattern we can use for `case` statements where `_` is a useful default
 case if none of the branches above applied.
+
+Lastly, to get this working we'll need to adjust the `create_player/1` function
+in the `lib/platform/accounts/accounts.ex` file. In the other functions, we'll
+continue using the `changeset/2` function, but in this one we want to use the
+`registration_changeset/2` function so that both the `username` and `password`
+fields are required to create an account.
+
+Update the `create_player/1` function with the following:
+
+```elixir
+def create_player(attrs \\ %{}) do
+  %Player{}
+  |> Player.registration_changeset(attrs)
+  |> Repo.insert()
+end
+```
 
 ## Accounts Tests and Module Attributes
 
