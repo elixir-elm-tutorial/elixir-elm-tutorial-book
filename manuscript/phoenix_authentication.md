@@ -119,7 +119,7 @@ and add the following code:
 @doc false
 def changeset(%Player{} = player, attrs) do
   player
-  |> cast(attrs, [:display_name, :password, :username])
+  |> cast(attrs, [:display_name, :password, :score, :username])
   |> validate_required([:username])
   |> validate_length(:username, min: 2, max: 100)
   |> validate_length(:password, min: 6, max: 100)
