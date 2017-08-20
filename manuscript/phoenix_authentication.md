@@ -393,19 +393,19 @@ the amount of time our tests took to run (from 4.4 seconds to 0.2 seconds).
 
 Players are currently able to create new accounts at
 `http://0.0.0.0:4000/players/new`. But we'll want to add features so that users
-can log in and log out.
+can sign in and sign out.
 
 ![Player Sign Up Page](images/phoenix_sign_up/phoenix_updated_sign_up.png)
 
 Let's make a new controller called `PlayerAuthController`. Create a
-`lib/platform/web/controllers/player_auth_controller.ex` file, and add the
+`lib/platform_web/controllers/player_auth_controller.ex` file, and add the
 following content:
 
 ```elixir
-defmodule Platform.Web.PlayerAuthController do
+defmodule PlatformWeb.PlayerAuthController do
   import Plug.Conn
 
-  alias Platform.Accounts
+  alias Platform.Accounts.Player
 
   def init(opts) do
     Keyword.fetch!(opts, :repo)
@@ -413,26 +413,26 @@ defmodule Platform.Web.PlayerAuthController do
 
   def call(conn, repo) do
     player_id = get_session(conn, :player_id)
-    player = player_id && repo.get(Accounts.Player, player_id)
+    player = player_id && repo.get(Player, player_id)
     assign(conn, :current_user, player)
   end
 end
 ```
 
-This will allow us to collect information about the player's session, and
-assign it to `:current_user` so we can refer to that when handling our
+This will allow us to collect information about the current player's session
+and assign it to `:current_user` so we can refer to that when handling our
 authentication features.
 
 ## Router
 
 Remembering back to when we set up our `PlayerController` in the Phoenix
 router, we used the default browser pipeline. If we open the
-`lib/platform/web/router.ex` file, we'll see that there are quite a few
+`lib/platform_web/router.ex` file, we'll see that there are quite a few
 `plug`s at the top:
 
 ```elixir
-defmodule Platform.Web.Router do
-  use Platform.Web, :router
+defmodule PlatformWeb.Router do
+  use PlatformWeb, :router
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -446,19 +446,12 @@ defmodule Platform.Web.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", Platform.Web do
-    pipe_through :browser # Use the default browser stack
-
-    get "/", PageController, :index
-    resources "/players", PlayerController
-  end
-
   # ...
 end
 ```
 
-At the bottom of the `pipeline :browser` block, add our new authentication
-plug:
+At the bottom of the `pipeline :browser` block, let's add our new
+authentication plug:
 
 ```elixir
 pipeline :browser do
@@ -467,51 +460,32 @@ pipeline :browser do
   plug :fetch_flash
   plug :protect_from_forgery
   plug :put_secure_browser_headers
-  plug Platform.Web.PlayerAuthController, repo: Platform.Repo
+  plug PlatformWeb.PlayerAuthController, repo: Platform.Repo
 end
 ```
 
-This plug is going to allow us to restrict access to certain pages. Originally,
-users were being taken to our index page from the `PageController` when they
-accessed the default route (`/`). But we're going to turn that page into our
-Elm front-end application, and we'll require users to log in before they
-access it.
+This plug is going to allow us to restrict access to certain pages. Let's
+update our application so users will be redirected to the **New Player** page
+at `http://0.0.0.0:4000/players/new` if they haven't already signed in.
 
-For now, let's direct users to the **Player Sign Up Page** at `/players/new`
-when they access the default route, and we'll restrict access to the
-`PageController` index page, which we'll call `/elm` for now.
+Currently, when we access `http://0.0.0.0:4000` in the browser, we see the
+index page from our `PageController`. In the upcoming chapters, we'll be
+turning this into our Elm front-end application.
 
-Here are the updates we'll need to make to our browser scope:
+![Home Page](images/diving_in/updated_home_page.png)
 
-```elixir
-scope "/", Platform.Web do
-  pipe_through :browser
-
-  get "/", PlayerController, :new
-  get "/elm", PageController, :index
-  resources "/players", PlayerController
-end
-```
-
-When we access `http://0.0.0.0:4000` now, we'll see the
-**Player Sign Up Page**.
-
-![Player Sign Up Page at Default Route](images/phoenix_authentication/new_default_route.png)
-
-And we can access `http://0.0.0.0:4000/elm` to see our original home page,
-which we'll later turn into our Elm front-end application.
-
-![Original Home Page at /elm Route](images/phoenix_authentication/new_elm_route.png)
+We're going to use our new `PlayerAuthController` to redirect users to the
+**New Player** page before they can view our home page.
 
 ## Authenticate Function
 
 Currently, users are able to navigate to all the pages within our application.
-We want to ensure that players are logged in before they access our Elm
+We want to ensure that players are signed in before they access our Elm
 application and start playing games.
 
 At the bottom of our `PageController`, let's add an `authenticate/2`
-function. Open up the `lib/platform/web/controllers/page_controller.ex` file
-and add the following at the bottom (beneath the `index/2` function):
+function. Open up the `lib/platform_web/controllers/page_controller.ex` file
+and add the following beneath the `index/2` function:
 
 ```elixir
 defp authenticate(conn, _opts) do
@@ -519,7 +493,7 @@ defp authenticate(conn, _opts) do
     conn
   else
     conn
-    |> put_flash(:error, "You must be logged in to access that page.")
+    |> put_flash(:error, "You must be signed in to access that page.")
     |> redirect(to: player_path(conn, :new))
     |> halt()
   end
@@ -530,8 +504,8 @@ Since we assigned the current player's session to be the `current_user` inside
 our `PlayerAuthController`, we can use that to determine whether a visitor to
 our site is signed in. If they are, we'll just return the connection and allow
 them to continue, otherwise if they're attempting to access a restricted
-resource, we'll display a message and redirect them back to the
-**New Player Page**.
+resource, we'll display a message and redirect them back to the **New Player**
+page.
 
 In the same file, we'll use the `authenticate/2` function that we just created
 to determine whether or not players should be able to render the
@@ -546,61 +520,44 @@ plug :authenticate when action in [:index]
 ## Manual Testing
 
 If you're wondering if the updates above broke our tests, you're right. We
-usually run our test suite with `mix test`, but this time let's fire up our
-Phoenix server and manually test things out in the browser.
-
-Start up the Phoenix server with `mix phx.server` and try going to the
-`PageController` index page at `http://0.0.0.0:4000/elm`:
+usually run our test suite with `mix test`, but this time let's manually test
+things out in the browser. Open up your browser and try visiting the
+`PageController` index page at `http://0.0.0.0:4000`:
 
 ![Restricted Page Alert](images/phoenix_authentication/restricted_page.png)
 
-This is great, it redirects us back to the **Player Sign Up Page** because we
-managed to restrict access to the `/elm` page. And we see the flash alert that
-we wrote in the `authenticate/2` function at the bottom of the
-`PageController`:
+It looks like our changes worked, because the application redirected us back to
+the **New Player** page. We managed to restrict access to index page, and we
+see the flash alert ("You must be signed in to access that page.") that we
+wrote in the `authenticate/2` function at the bottom of the `PageController`.
 
-> You must be logged in to access that page.
+## Fixing Our Tests
 
-## Fixing the Build
-
-Let's push a quick and dirty fix for our tests. If we push our new features
-as-is, they'll break the CI build. We could take this as an opportunity to
-write more in-depth tests for our application, but for now we're still
-figuring out where we want to put everything. We won't go too deep into writing
-tests yet, but we still want to ensure that our application is always
-functioning, and keeping our CI build green is a great way to do that.
-
-Open the `test/web/controllers/page_controller_test.exs` file and replace it
+Let's push a quick fix for our tests. Open the `test/platform_web/controllers/page_controller_test.exs` file and replace it
 with the following code that tests our default route and the redirect that
 we created:
 
 ```elixir
-defmodule Platform.Web.PageControllerTest do
-  use Platform.Web.ConnCase
+defmodule PlatformWeb.PageControllerTest do
+  use PlatformWeb.ConnCase
 
-  test "GET /", %{conn: conn} do
+  test "redirects unauthenticated users away from index page", %{conn: conn} do
     conn = get conn, "/"
-    assert html_response(conn, 200) =~ "Player Sign Up"
-  end
-
-  test "redirects unauthenticated users for index page", %{conn: conn} do
-    conn = get conn, page_path(conn, :index)
     assert html_response(conn, 302) =~ "redirect"
   end
 end
 ```
 
-Go ahead and run the `mix test` command again and we should be all set with
-passing tests that give us confidence to keep adding features and moving
-forward.
+Go ahead and run the `mix test` command again, and we should be all set with
+passing tests that give us confidence to keep adding features.
 
-## Logging In
+## Signing In
 
-So how can we allow users to log in to their newly created accounts? Let's
-define a `login/2` function in our `PlayerAuthController`:
+How do we allow users to sign in to their newly created accounts? Let's define
+a `signin/2` function in our `PlayerAuthController`:
 
 ```elixir
-def login(conn, player) do
+def sign_in(conn, player) do
   conn
   |> assign(:current_user, player)
   |> put_session(:player_id, player.id)
@@ -608,17 +565,18 @@ def login(conn, player) do
 end
 ```
 
-Right after a new player creates an account, we automatically want to log them
-into the system. So let's update the `create/2` function in our
-`PlayerController`. We'll use the pipe operator to log the player in before we
-display the flash message and redirect them:
+Right after a new player creates an account, we automatically want to use the
+`sign_in/2` function to authenticate them on our platform. To accomplish this,
+we'll need to update the `create/2` function in our `PlayerController`. We'll
+use the pipe operator to sign the player in before we display the flash message
+and redirect them:
 
 ```elixir
 def create(conn, %{"player" => player_params}) do
   case Accounts.create_player(player_params) do
     {:ok, player} ->
       conn
-      |> Platform.Web.PlayerAuthController.login(player)
+      |> PlatformWeb.PlayerAuthController.sign_in(player)
       |> put_flash(:info, "Player created successfully.")
       |> redirect(to: player_path(conn, :show, player))
     {:error, %Ecto.Changeset{} = changeset} ->
@@ -627,16 +585,21 @@ def create(conn, %{"player" => player_params}) do
 end
 ```
 
-Let's try it out. Go to the `http://0.0.0.0:4000/players/new` page and create a
-new user with both the `username` and `password` fields set to `joearms`:
+Let's try it out. Go to the **New Player** page at
+`http://0.0.0.0:4000/players/new` and create a new user with both the
+`username` and `password` fields set to `chrismccord`:
 
 ![Creating a New User](images/phoenix_authentication/new_user_to_sign_in.png)
 
-So far so good. The new user we just created should be logged in. Let's try to
-access the `PageController` index page to verify. Go to the
-`http://0.0.0.0:4000/elm` page in your browser:
+The new user we just created should now be signed in, and we'll be directed to
+the **Show Player** page for the new user.
 
-![Logged In Access to Players Index](images/phoenix_authentication/new_elm_route.png)
+![Show Player Page](images/phoenix_authentication/show_player_page_after_sign_in.png)
+
+Now, let's try to access the `PageController` index page to verify that the
+user is authenticated. Go to the `http://0.0.0.0:4000` page in your browser:
+
+![Signed In Access to Index Page](images/diving_in/updated_home_page.png)
 
 Success! We're able to access this page because we created a new account and
 authenticated the new player at the same time.
