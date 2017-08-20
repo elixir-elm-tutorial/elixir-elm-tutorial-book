@@ -81,27 +81,27 @@ Dependency resolution completed:
 
 ## Player Changesets
 
-Let's update our existing `player_changeset/2` function inside the
-`lib/platform/accounts/accounts.ex` file. We're going to add some validations
+Let's update our existing `changeset/2` function inside the
+`lib/platform/accounts/player.ex` file. We're going to add some validations
 and a new function that will allow us to encrypt passwords so they're not
 stored in plain text.
 
-Below the `change_player/1` function, write the following code:
+Update the `changeset/2` function with the following code:
 
 ```elixir
-defp player_changeset(%Player{} = player, attrs) do
+def changeset(%Player{} = player, attrs) do
   player
   |> cast(attrs, [:display_name, :password, :score, :username])
-  |> validate_required([:username])
+  |> validate_required([:password, :username])
   |> validate_length(:username, min: 2, max: 100)
   |> validate_length(:password, min: 6, max: 100)
-  |> put_pass_hash()
+  |> put_pass_digest()
 end
 
-defp put_pass_hash(changeset) do
+defp put_pass_digest(changeset) do
   case changeset do
     %Ecto.Changeset{valid?: true, changes: %{password: pass}} ->
-      put_change(changeset, :password_hash, Comeonin.Bcrypt.hashpwsalt(pass))
+      put_change(changeset, :password_digest, Comeonin.Bcrypt.hashpwsalt(pass))
 
     _ ->
       changeset
@@ -109,10 +109,25 @@ defp put_pass_hash(changeset) do
 end
 ```
 
-This means we're able to make changes to all our player field data, and we're
-adding a couple of quick validations to ensure data is structured properly.
-More importantly, we're piping into our new `put_pass_hash/1` function, which
-will encrypt passwords using the `comeonin` dependency that we added.
+Keep in mind that this change will cause many of our tests to break because
+we're adjusting the required fields without changing the valid attributes in
+our tests. But we'll continue to work on these features throughout this chapter
+and fix the tests soon.
+
+We were able to add a couple of quick validations to ensure data is structured
+properly. More importantly, we're piping into our new `put_pass_digest/1`
+function, which will encrypt passwords using the `comeonin` dependency.
+
+Our new `put_pass_digest/1` function takes in the player `changeset`, and then
+we add a `case` statement to determine whether or not it is valid. If the
+`changeset` is valid, we're using our new dependency to hash the `password`
+field with `Comeonin.Bcrypt.hashpwsalt(pass)`, and then store the hash in the
+`password_digest` field using the `put_change/3` function. This is the reason
+we set the `password` field to `virtual: true` in the player schema, because
+we're only going to store the hash in the `player_digest` field.
+
+In the event that the `changeset` was not valid, we just return it at the
+bottom of our `put_pass_digest/1` function without any changes.
 
 ## Authentication Plug
 
