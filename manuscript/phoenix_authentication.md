@@ -1,11 +1,11 @@
 # Phoenix Authentication
 
-In the last chapter, we managed to update our players with all the fields we'll
-need. Now we can start implementing our authentication features. We're going to
-begin with the bare minimum so users can sign up and sign in to our platform,
-but we're not going to worry about more advanced authentication features like
-email verification or forgotten password mailers. Our goal is to allow users to
-sign up and sign in quickly, easily, and securely.
+In the last chapter, we managed to update our players with the fields we'll
+need to continue. Now, we can start implementing our authentication features.
+We're going to begin with the bare minimum so users can sign up and sign in to
+our platform, but we're not going to worry about more advanced authentication
+features like email verification or forgotten password mailers. Our goal is to
+allow users to sign up and sign in quickly, easily, and securely.
 
 ## Fetching Dependencies
 
@@ -13,7 +13,7 @@ To get started with Phoenix authentication, we'll need to add a couple of new
 dependencies. At the root of our project, take a look at the `mix.exs` file and
 find the `deps/0` function. This function is where we specify which
 dependencies our application requires, and we can see there are already a
-handful that Phoenix uses by default.
+handful that Phoenix includes by default.
 
 ```elixir
 defp deps do
@@ -30,17 +30,18 @@ defp deps do
 end
 ```
 
-What we want to use for securing our passwords is called (somewhat ironically)
-[comeonin](https://hex.pm/packages/comeonin). This is what the syntax looks
-like for adding a new dependency:
+The dependency we'll use for securing our passwords is called (somewhat
+ironically) [comeonin](https://hex.pm/packages/comeonin). This is what the
+syntax looks like for adding a new dependency:
 
 ```elixir
 {:comeonin, "~> 4.0"}
 ```
 
-In Elixir, this syntax is called a tuple. It's commonly used as a way to store
-keys and values. The first element of the tuple is an atom (`:comeonin`), and
-the second element indicates the version number.
+In Elixir, this syntax is called a **tuple**. It's commonly used as a way to
+reference keys and values. In this example, the first element of the tuple is
+an atom (`:comeonin`), and the second element is a string that indicates the
+version number (`"~> 4.0"`).
 
 Comeonin allows us to choose from different password hashing algorithms, so
 we'll also need to import another dependency called
@@ -122,32 +123,33 @@ defp put_pass_digest(changeset) do
 end
 ```
 
-Keep in mind that this change will cause many of our tests to break because
-we're adjusting the required fields without changing the valid attributes in
-our tests. But we'll continue to work on these features throughout this chapter
-and fix the tests soon.
-
-We were able to add a couple of quick validations to ensure data is structured
-properly. More importantly, we're piping into our new `put_pass_digest/1`
+With this code, we're able to add a couple of quick validations to ensure data
+is structured properly. We're making sure that users enter both a `username`
+and `password` when they create a new account, and that those fields are of a
+certain length. More importantly, we're piping into our new `put_pass_digest/1`
 function, which will encrypt passwords using the `comeonin` dependency.
 
 Our new `put_pass_digest/1` function takes in the player `changeset`, and then
 we add a `case` statement to determine whether or not it is valid. If the
 `changeset` is valid, we're using our new dependency to hash the `password`
 field with `Comeonin.Bcrypt.hashpwsalt(pass)`, and then store the hash in the
-`password_digest` field using the `put_change/3` function. This is the reason
-we set the `password` field to `virtual: true` in the player schema, because
-we're only going to store the hash in the `player_digest` field.
+`password_digest` field using the
+[`put_change/3`](https://hexdocs.pm/ecto/Ecto.Changeset.html#put_change/3)
+function. This is the reason we set the `password` field to `virtual: true` in
+the player schema, because we're only going to store the hash in the
+`player_digest` field.
 
 In the event that the `changeset` was not valid, we just return it at the
-bottom of our `put_pass_digest/1` function without any changes.
+bottom of our `put_pass_digest/1` function without any changes. This is a
+common pattern we can use for `case` statements where `_` is a useful default
+case if none of the branches above applied.
 
-## Updating Player Fixtures
+## Accounts Tests and Module Attributes
 
 When we run our tests, we use different sets of attributes to simulate valid
 and invalid data. When we ran the generator command to create our players
-resource, Phoenix created some initial values for us. But we've since updated
-the fields that we're working with, so we'll need to make some changes to our
+resource, Phoenix created some initial values for us. We've since updated the
+fields that we're working with, so we'll need to make some changes to our
 tests as well.
 
 Let's open the `test/platform/accounts/accounts_test.exs` file and take a look
@@ -165,10 +167,10 @@ describe "players" do
 end
 ```
 
-In Elixir, we refer to this syntax as
+In Elixir, these are called
 [module attributes](https://elixir-lang.org/getting-started/module-attributes.html).
-These are useful for creating constants that we can use throughout our tests.
-For example, we assign a map of valid player fields to the `@valid_attrs` module
+They're useful for creating constants that we can use throughout our tests. For
+example, we assign a map of valid player fields to the `@valid_attrs` module
 attribute, and then we can use those fields in the tests below.
 
 Let's make some changes to our attribute data to account for the changes we've
@@ -186,8 +188,9 @@ our other fields work by including them in `@update_attrs`. Lastly, we ensure
 that `nil` values won't work to create new accounts by including them in
 `@invalid_attrs`.
 
-We'll also need to update our `create_player/1` test case with the following to
-get it passing:
+Let's also go ahead and update our `create_player/1` test case with the
+following to since we want users to create accounts with valid `username` and
+`password` fields.
 
 ```elixir
 test "create_player/1 with valid data creates a player" do
@@ -196,6 +199,155 @@ test "create_player/1 with valid data creates a player" do
   assert player.username == "some username"
 end
 ```
+
+## Fixtures, Maps, and Structs
+
+In the same `test/platform/accounts/accounts_test.exs` file, we have a
+`player_fixture/1` function that returns a player "struct" we use as a sample
+player throughout the test cases. We still want to use this function to create
+a sample player, but we also want to ignore the `password` field in our test
+environment. We can use this as an opportunity to learn a little bit about
+Elixir structs and maps.
+
+We saw some examples of
+[Elixir Maps](https://elixir-lang.org/getting-started/keywords-and-maps.html#maps)
+in the previous section about attributes. They are useful as key-value stores,
+and they're considered an essential data structure. Here's a simple example with
+two keys and two values:
+
+```elixir
+%{password: "some password", username: "some username"}
+```
+
+[Elixir Structs](https://elixir-lang.org/getting-started/structs.html) are
+similar to maps, but have additional structure for defining keys and values.
+Here's an example of what a simple player struct might look like:
+
+```elixir
+%Platform.Accounts.Player{password: "some password", username: "some username"}
+```
+
+Our actual player struct is more complicated, because it needs to account for
+all the other fields including things like `id`, `updated_at`, and other
+metadata.
+
+Let's take a look at our existing `player_fixture/1` function:
+
+```elixir
+def player_fixture(attrs \\ %{}) do
+  {:ok, player} =
+    attrs
+    |> Enum.into(@valid_attrs)
+    |> Accounts.create_player()
+
+  player
+end
+```
+
+This function takes our map of valid player attributes (`@valid_attrs`) and
+uses the `Accounts.create_player()` function to create a new player account.
+Then, we pattern match the result to get the `player` struct and return the
+`player` at the bottom.
+
+We're going to make a slight change to remove the `password` field. We'll need
+to convert the struct into a map to delete the field, and then we'll merge the
+fields back together to return the player struct.
+
+```elixir
+def player_fixture(attrs \\ %{}) do
+  {:ok, player} =
+    attrs
+    |> Enum.into(@valid_attrs)
+    |> Accounts.create_player()
+
+  player_attrs_map =
+    player
+    |> Map.from_struct()
+    |> Map.delete(:password)
+
+  %Platform.Accounts.Player{}
+  |> Map.merge(player_attrs_map)
+end
+```
+
+Rather than just returning the `player` struct at the bottom of the function,
+we're converting the struct to a map using `Map.from_struct()` and then
+deleting the `password` field with `Map.delete(:password)`. This gives us a map
+of all the player attributes except the `password` field.
+
+At the bottom of the function, we create a player struct with
+`%Platform.Accounts.Player{}` and then merge all of the fields in our map
+together using `Map.merge(player_attrs_map)`.
+
+Keep in mind that this is a lot to take in as we're dealing with new data
+structures and a lot of new functions, so don't worry if this seems slightly
+overwhelming at first. Working with maps and structs is so common in Elixir and
+Phoenix applications that we'll pick it up easily as we gain experience. In the
+meantime, this provided a good starting point while we work towards our goal of
+fixing our test suite.
+
+## Player Controller Tests
+
+We've updated our player `changeset/1` function and fixed the tests for our
+player accounts, but we still have a few failing tests. Let's switch to the
+`test/platform_web/controllers/player_controller_test.exs` file and make some
+changes.
+
+Similar to the way we updated our module attributes in the previous sections,
+let's change `@create_attrs`, `@update_attrs`, and `@invalid_attrs` with the
+following:
+
+```elixir
+@create_attrs %{password: "some password", username: "some username"}
+@update_attrs %{display_name: "some updated display name", password: "some updated password", score: 43, username: "some updated username"}
+@invalid_attrs %{password: nil, username: nil}
+```
+
+Now that we've made changes to our player schema and adjusted our attributes,
+we should be able to run our tests again and see them all passing:
+
+```shell
+$ mix test
+....................
+
+Finished in 4.4 seconds
+20 tests, 0 failures
+
+Randomized with seed 77808
+```
+
+## Speeding Up Tests
+
+This part is optional, but it provides a good example of how we can configure
+our test environment and speed things up. You may have noticed that our tests
+are running more slowly than they were before. The password hashing algorithm
+takes a while, and we don't necessarily need this in our test environment.
+
+Let's add a configuration setting at the bottom of our `config/test.exs` file:
+
+```elixir
+# Reduce bcrypt rounds to speed up tests
+config :bcrypt_elixir, :log_rounds, 4
+```
+
+Save the file, and then let's try running our tests again to see if there's a
+difference:
+
+```shell
+$ mix test
+Compiling 20 files (.ex)
+Generated platform app
+....................
+
+Finished in 0.2 seconds
+20 tests, 0 failures
+
+Randomized with seed 749042
+```
+
+We reduced the number of encryption rounds our hashing algorithm is running
+(only in our test environment), and this resulted in a noticeable difference in
+the amount of time our tests took to run (from 4.4 seconds to 0.2 seconds).
 
 ## Authentication Plug
 
