@@ -1,11 +1,11 @@
 # Phoenix Authentication
 
 In the last chapter, we managed to update our players with all the fields we'll
-need. Now we can go ahead and implement our authentication features. We're
-going to try to implement the bare minimum so that users can sign up and log in
-to our platform, but we're not going to worry too much about more advanced
-authentication features (forgotten password mailers, email verification, etc.).
-Our goal is to allow users to sign up and log in quickly, easily, and securely.
+need. Now we can implement our authentication features. We're going to start
+with the bare minimum so users can sign up and sign in to our platform, but
+we're not going to worry about more advanced authentication features like email
+verification or forgotten password mailers. Our goal is to allow users to sign
+up and sign in quickly, easily, and securely.
 
 ## Fetching Dependencies
 

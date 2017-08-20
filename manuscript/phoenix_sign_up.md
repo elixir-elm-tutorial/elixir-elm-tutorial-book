@@ -1,6 +1,6 @@
 # Phoenix Sign Up
 
-There are multiple options available for handling player sign up and login
+There are multiple options available for handling player sign up and sign in
 features. In our case, we want to keep things straightforward so that players
 can sign up easily and play games on our platform, which means we'll forego
 asking them for their email or building out a full featured authentication
@@ -8,7 +8,7 @@ system.
 
 We're also eager to start using Elm to build the front-end, so we're going to
 take a simple approach. We'll use Phoenix to handle authentication initially,
-and once users are logged in, they'll be redirected to the Elm front-end
+and once users are signed in, they'll be redirected to the Elm front-end
 application we'll be building. We'll need to refactor some of these features
 later, but this approach will provide a quick way for players to sign up as we
 extend the player resource features we generated previously.
@@ -514,4 +514,4 @@ front-end of our application in this book, but this chapter gave a good
 introduction into what it feels like to add features to a Phoenix application.
 
 The first step towards adding authentication features is taken care of, and
-we'll work towards working sign up and login features in the next chapter.
+we'll work towards working sign up and sign in features in the next chapter.
