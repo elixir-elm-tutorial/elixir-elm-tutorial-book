@@ -346,7 +346,9 @@ For the **Edit Player** page, we're going to do much of the same that we did
 for the **New Player** page. We want users to be able to adjust their
 `username` and `display_name` fields for example, but they shouldn't be able to
 manually alter their `score` field since that data should be coming from the
-games they play on the platform.
+games they play on the platform. Since we won't have a full authentication
+system with a reset password feature, we'll also allow users to change their
+`password` as needed on this page.
 
 Update the `lib/platform_web/templates/player/edit.html.eex` file to contain
 the following:
@@ -362,15 +364,21 @@ the following:
   <% end %>
 
   <div class="form-group">
-    <%= label f, :display_name, "Player Display Name", class: "control-label" %>
+    <%= label f, :display_name, "Change Display Name", class: "control-label" %>
     <%= text_input f, :display_name, placeholder: "Enter display name...", class: "form-control" %>
     <%= error_tag f, :display_name %>
   </div>
 
   <div class="form-group">
-    <%= label f, :username, "Player Username", class: "control-label" %>
+    <%= label f, :username, "Change Username", class: "control-label" %>
     <%= text_input f, :username, placeholder: "Enter username...", class: "form-control" %>
     <%= error_tag f, :username %>
+  </div>
+
+  <div class="form-group">
+    <%= label f, :password, "Change Password", class: "control-label" %>
+    <%= text_input f, :password, placeholder: "Enter password...", class: "form-control" %>
+    <%= error_tag f, :password %>
   </div>
 
   <div class="form-group">
