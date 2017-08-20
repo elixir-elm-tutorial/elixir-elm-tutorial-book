@@ -9,49 +9,53 @@ up and sign in quickly, easily, and securely.
 
 ## Fetching Dependencies
 
-In order to get started with Phoenix authentication, we'll need to add a
-dependency. In the root of our platform project, take a look at the `mix.exs`
-file and find the `deps/0` function. This function is where we specify which
-dependencies our application requires, and we can see that there are already a
-handful that Phoenix uses by default.
+To get started with Phoenix authentication, we'll need to add a dependency. At
+the root of our project, take a look at the `mix.exs` file and find the
+`deps/0` function. This function is where we specify which dependencies our
+application requires, and we can see there are already a handful that Phoenix
+uses by default.
 
 ```elixir
 defp deps do
-  [{:phoenix, "~> 1.3.0-rc"},
-   {:phoenix_pubsub, "~> 1.0"},
-   {:phoenix_ecto, "~> 3.2"},
-   {:postgrex, ">= 0.0.0"},
-   {:phoenix_html, "~> 2.6"},
-   {:phoenix_live_reload, "~> 1.0", only: :dev},
-   {:gettext, "~> 0.11"},
-   {:cowboy, "~> 1.0"}]
+  [
+    {:phoenix, "~> 1.3.0"},
+    {:phoenix_pubsub, "~> 1.0"},
+    {:phoenix_ecto, "~> 3.2"},
+    {:postgrex, ">= 0.0.0"},
+    {:phoenix_html, "~> 2.10"},
+    {:phoenix_live_reload, "~> 1.0", only: :dev},
+    {:gettext, "~> 0.11"},
+    {:cowboy, "~> 1.0"}
+  ]
 end
 ```
 
-The one we want to use to secure our passwords is called
+What we want to use for securing our passwords is called (somewhat ironically)
 [comeonin](https://hex.pm/packages/comeonin). This is what the syntax looks
 like for adding a new dependency:
 
 ```elixir
-{:comeonin, "~> 3.0"}
+{:comeonin, "~> 4.0"}
 ```
 
 In Elixir, this syntax is called a tuple. It's used commonly as a way to store
-keys and values like we need here. The first element of the tuple is an atom
-(`:comeonin`), and the second element indicates the version number. So let's
-update our `deps/0` function to look like this:
+keys and values. The first element of the tuple is an atom (`:comeonin`), and
+the second element indicates the version number. Let's update our `deps/0`
+function with the following:
 
 ```elixir
 defp deps do
-  [{:phoenix, "~> 1.3.0-rc"},
-   {:phoenix_pubsub, "~> 1.0"},
-   {:phoenix_ecto, "~> 3.2"},
-   {:postgrex, ">= 0.0.0"},
-   {:phoenix_html, "~> 2.6"},
-   {:phoenix_live_reload, "~> 1.0", only: :dev},
-   {:gettext, "~> 0.11"},
-   {:cowboy, "~> 1.0"},
-   {:comeonin, "~> 3.0"}]
+  [
+    {:phoenix, "~> 1.3.0"},
+    {:phoenix_pubsub, "~> 1.0"},
+    {:phoenix_ecto, "~> 3.2"},
+    {:postgrex, ">= 0.0.0"},
+    {:phoenix_html, "~> 2.10"},
+    {:phoenix_live_reload, "~> 1.0", only: :dev},
+    {:gettext, "~> 0.11"},
+    {:cowboy, "~> 1.0"},
+    {:comeonin, "~> 4.0"}
+  ]
 end
 ```
 
@@ -68,13 +72,10 @@ We'll see the following results:
 $ mix deps.get
 Running dependency resolution...
 Dependency resolution completed:
-  comeonin 3.0.2
-  elixir_make 0.4.0
+  comeonin 4.0.0
+  ...
 * Getting comeonin (Hex package)
-  Checking package (https://repo.hex.pm/tarballs/comeonin-3.0.2.tar)
-  Fetched package
-* Getting elixir_make (Hex package)
-  Checking package (https://repo.hex.pm/tarballs/elixir_make-0.4.0.tar)
+  Checking package (https://repo.hex.pm/tarballs/comeonin-4.0.0.tar)
   Fetched package
 ```
 
