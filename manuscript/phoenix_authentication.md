@@ -607,24 +607,24 @@ authenticated the new player at the same time.
 ## Sessions
 
 To complete our authentication features, we'll need to handle user sessions. We
-were able to handle logins in the previous section because we took care of it
-while creating an account, but now we'll also want to allow users to log out and
-log back in whenever they'd like.
+were able to handle sign ins in the previous section because we took care of it
+while creating an account, but now we'll also want to allow users to sign out
+and sign back in whenever they'd like.
 
 Let's start by creating a `PlayerSessionController`. Create a new file called
-`platform/lib/web/controllers/player_session_controller.ex`, and add the
+`lib/platform_web/controllers/player_session_controller.ex`, and add the
 following code:
 
 ```elixir
-defmodule Platform.Web.PlayerSessionController do
-  use Platform.Web, :controller
+defmodule PlatformWeb.PlayerSessionController do
+  use PlatformWeb, :controller
 
   def new(conn, _) do
     render conn, "new.html"
   end
 
   def create(conn, %{"session" => %{"username" => user, "password" => pass}}) do
-    case Platform.Web.PlayerAuthController.login_by_username_and_pass(conn, user, pass, repo: Platform.Repo) do
+    case PlatformWeb.PlayerAuthController.sign_in_with_username_and_password(conn, user, pass, repo: Platform.Repo) do
       {:ok, conn} ->
         conn
         |> put_flash(:info, "Welcome back!")
@@ -638,7 +638,7 @@ defmodule Platform.Web.PlayerSessionController do
 
   def delete(conn, _) do
     conn
-    |> Platform.Web.PlayerAuthController.logout()
+    |> PlatformWeb.PlayerAuthController.sign_out()
     |> redirect(to: player_session_path(conn, :new))
   end
 end
@@ -647,30 +647,30 @@ end
 This may seem like a lot at first, but we'll go through it quickly along with
 the updates we make to the `PlayerAuthController`.
 
-The `new/2` function will allow us to display a login page (as opposed to the
-sign up page that new players will use). When we create new sessions, we'll use
-a new function (which we'll create soon) called `login_by_username_and_pass/4`.
-Lastly, the `delete/2` function will allow us to log users out by deleting
-their session.
+The `new/2` function will allow us to display a **Player Sign In** page (as
+opposed to the **New Player** page that new players will use). When we create
+new sessions, we'll use a new function (which we'll create soon) called
+`sign_in_with_username_and_password/4`. Lastly, the `delete/2` function will
+allow users to sign out by deleting their session.
 
-## View and Template
+## Player Sign In View and Template
 
-Let's create the view and the template for our login page. Add a new file called
-`player_session_view.ex` inside the `lib/platform/web/views` folder. And add the
-following to the file:
+Let's create the view and the template for our player **Player Sign In** page.
+Add a new file called `player_session_view.ex` inside the
+`lib/platform_web/views` folder. Then, add the following to the file:
 
 ```elixir
-defmodule Platform.Web.PlayerSessionView do
-  use Platform.Web, :view
+defmodule PlatformWeb.PlayerSessionView do
+  use PlatformWeb, :view
 end
 ```
 
-And then we'll need to create the corresponding template. Create a
-`lib/platform/web/templates/player_session` folder, and then add a
+We'll also need to create the corresponding template. Create a
+`lib/platform_web/templates/player_session` folder, and then add a
 `new.html.eex` file inside with the following content:
 
-```elixir
-<h1>Player Sign In Page</h1>
+```embedded_elixir
+<h2>Player Sign In</h2>
 
 <%= form_for @conn, player_session_path(@conn, :create), [as: :session], fn f -> %>
   <div class="form-group">
@@ -684,82 +684,79 @@ And then we'll need to create the corresponding template. Create a
 <% end %>
 ```
 
-## Login Routing
+This gives us a **Player Sign In** page with a form for existing users to enter
+their `username` and `password`. And if they don't already have an account, we
+display a button at the bottom that links to the **New Player** page.
+
+Let's also update our **New Player** page with a link to the **Player Sign In**
+page for users that already have an account. Open the
+`lib/platform_web/templates/player/new.html.eex` file, and we'll add another
+button at the bottom.
+
+```embedded_elixir
+<div class="form-group">
+  <%= submit "Submit", class: "btn btn-primary" %>
+  <span><%= link "Sign In", to: player_session_path(@conn, :new), class: "btn btn-success" %></span>
+  <span><%= link "Back", to: page_path(@conn, :index), class: "btn btn-default" %></span>
+</div>
+```
+
+## Session Routing
 
 If you were still running a Phoenix server this whole time, you've probably
 noticed we've been creating errors in our application. But we're getting close
 to a working authentication system. We'll need to update our router to reflect
-our new session features. Open the `lib/platform/web/router.ex` file and add
+our new session features. Open the `lib/platform_web/router.ex` file and add
 our session resource:
 
 ```elixir
-scope "/", Platform.Web do
+scope "/", PlatformWeb do
   pipe_through :browser
 
   get "/", PlayerController, :new
-  get "/elm", PageController, :index
   resources "/players", PlayerController
   resources "/sessions", PlayerSessionController, only: [:new, :create, :delete]
 end
 ```
 
-This will add only the necessary routes so our players can create and delete
-their sessions to log in and out of the platform.
+This will add the necessary routes so our players can create and delete their
+sessions to sign in and out of the platform.
 
-## Logging In and Out
+## Signing In and Out
 
-Lastly, we'll create the function in our `PlayerAuthController` that ties
-everything together. Add the `login_by_username_and_pass/4` function at the
-bottom of the `lib/platform/controllers/player_auth_controller.ex` file, and
-don't forget to add the `import` for our encryption at the top. Here's what
-the full code should look like for the file:
+Lastly, we'll create the functions in our `PlayerAuthController` that tie
+everything together. Add the `sign_in_with_username_and_password/4` function and
+the `sign_out/1` functions below the `sign_in/2` function at the bottom of the
+`lib/platform_web/controllers/player_auth_controller.ex` file.
 
 ```elixir
-defmodule Platform.Web.PlayerAuthController do
-  import Plug.Conn
-  import Comeonin.Bcrypt, only: [checkpw: 2, dummy_checkpw: 0]
+def sign_in_with_username_and_password(conn, username, given_pass, opts) do
+  repo = Keyword.fetch!(opts, :repo)
+  player = repo.get_by(Player, username: username)
 
-  def init(opts) do
-    Keyword.fetch!(opts, :repo)
+  cond do
+    player && Comeonin.Bcrypt.checkpw(given_pass, player.password_digest) ->
+      {:ok, sign_in(conn, player)}
+    player ->
+      {:error, :unauthorized, conn}
+    true ->
+      Comeonin.Bcrypt.dummy_checkpw()
+      {:error, :not_found, conn}
   end
+end
 
-  def call(conn, repo) do
-    player_id = get_session(conn, :player_id)
-    player = player_id && repo.get(Platform.Accounts.Player, player_id)
-    assign(conn, :current_user, player)
-  end
-
-  def login(conn, player) do
-    conn
-    |> assign(:current_user, player)
-    |> put_session(:player_id, player.id)
-    |> configure_session(renew: true)
-  end
-
-  def login_by_username_and_pass(conn, username, given_pass, opts) do
-    repo = Keyword.fetch!(opts, :repo)
-    player = repo.get_by(Platform.Accounts.Player, username: username)
-
-    cond do
-      player && checkpw(given_pass, player.password_hash) ->
-        {:ok, login(conn, player)}
-      player ->
-        {:error, :unauthorized, conn}
-      true ->
-        dummy_checkpw()
-        {:error, :not_found, conn}
-    end
-  end
-
-  def logout(conn) do
-    configure_session(conn, drop: true)
-  end
+def sign_out(conn) do
+  configure_session(conn, drop: true)
 end
 ```
 
-What the `login_by_username_and_pass/4` function does is to grab the player
-from the database by their `username` field. If the player exists and has the
-correct password, they will be logged in. Otherwise, we'll return an error.
+What the `sign_in_with_username_and_password/4` function does is to grab the
+player from the database by their `username` field. If the player exists and
+has the correct password, they will be signed in. Otherwise, we'll return an
+error.
+
+For the `sign_out/1` function, we're dropping the current user's session to
+sign them out of the platform.
 
 ## Trying Things Out
 
@@ -769,17 +766,17 @@ you're using Google Chrome on OS X, you can create a new incognito window with
 `Command + Shift + N`. It's also a good idea to restart your Phoenix server
 with `mix phx.server` at this point to get things up and running.
 
-We can test out the **Player Sign In Page** with the same account that we
-created in the previous sections. Go to the new session page at
-`http://0.0.0.0:4000/sessions/new` and try entering `joearms` for both the
+We can test out the sign in process with the same account that we created in
+the previous sections. Go to the **Player Sign In** page at
+`http://0.0.0.0:4000/sessions/new` and try entering `chrismccord` for both the
 `username` and `password` fields.
 
 ![Player Sign In Page](images/phoenix_authentication/player_sign_in_page.png)
 
-Success! We get a welcome back message letting us know that we were able to
-log in successfully:
+Success! We get a "Welcome back!" message letting us know that we were able to
+sign in successfully:
 
-![Successful Login](images/phoenix_authentication/successful_sign_in_message.png)
+![Successful Sign In](images/phoenix_authentication/successful_sign_in_message.png)
 
 ## Displaying the Player Status
 
