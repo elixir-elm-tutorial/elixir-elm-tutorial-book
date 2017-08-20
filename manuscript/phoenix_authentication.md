@@ -1,19 +1,19 @@
 # Phoenix Authentication
 
 In the last chapter, we managed to update our players with all the fields we'll
-need. Now we can implement our authentication features. We're going to start
-with the bare minimum so users can sign up and sign in to our platform, but
-we're not going to worry about more advanced authentication features like email
-verification or forgotten password mailers. Our goal is to allow users to sign
-up and sign in quickly, easily, and securely.
+need. Now we can start implementing our authentication features. We're going to
+begin with the bare minimum so users can sign up and sign in to our platform,
+but we're not going to worry about more advanced authentication features like
+email verification or forgotten password mailers. Our goal is to allow users to
+sign up and sign in quickly, easily, and securely.
 
 ## Fetching Dependencies
 
-To get started with Phoenix authentication, we'll need to add a dependency. At
-the root of our project, take a look at the `mix.exs` file and find the
-`deps/0` function. This function is where we specify which dependencies our
-application requires, and we can see there are already a handful that Phoenix
-uses by default.
+To get started with Phoenix authentication, we'll need to add a couple of new
+dependencies. At the root of our project, take a look at the `mix.exs` file and
+find the `deps/0` function. This function is where we specify which
+dependencies our application requires, and we can see there are already a
+handful that Phoenix uses by default.
 
 ```elixir
 defp deps do
@@ -38,10 +38,14 @@ like for adding a new dependency:
 {:comeonin, "~> 4.0"}
 ```
 
-In Elixir, this syntax is called a tuple. It's used commonly as a way to store
+In Elixir, this syntax is called a tuple. It's commonly used as a way to store
 keys and values. The first element of the tuple is an atom (`:comeonin`), and
-the second element indicates the version number. Let's update our `deps/0`
-function with the following:
+the second element indicates the version number.
+
+Comeonin allows us to choose from different password hashing algorithms, so
+we'll also need to import another dependency called
+[bcrypt_elixir](https://hex.pm/packages/bcrypt_elixir) to get everything
+working. Let's update our `deps/0` function with the following:
 
 ```elixir
 defp deps do
@@ -54,7 +58,8 @@ defp deps do
     {:phoenix_live_reload, "~> 1.0", only: :dev},
     {:gettext, "~> 0.11"},
     {:cowboy, "~> 1.0"},
-    {:comeonin, "~> 4.0"}
+    {:comeonin, "~> 4.0"},
+    {:bcrypt_elixir, "~> 0.12"}
   ]
 end
 ```
@@ -73,18 +78,26 @@ $ mix deps.get
 Running dependency resolution...
 Dependency resolution completed:
   comeonin 4.0.0
+  bcrypt_elixir 0.12.1
+  elixir_make 0.4.0
   ...
 * Getting comeonin (Hex package)
   Checking package (https://repo.hex.pm/tarballs/comeonin-4.0.0.tar)
+  Fetched package
+* Getting bcrypt_elixir (Hex package)
+  Checking package (https://repo.hex.pm/tarballs/bcrypt_elixir-0.12.1.tar)
+  Fetched package
+* Getting elixir_make (Hex package)
+  Checking package (https://repo.hex.pm/tarballs/elixir_make-0.4.0.tar)
   Fetched package
 ```
 
 ## Player Changesets
 
-Let's update our existing `changeset/2` function inside the
-`lib/platform/accounts/player.ex` file. We're going to add some validations
-and a new function that will allow us to encrypt passwords so they're not
-stored in plain text.
+Now that we've included our new dependencies, let's update our existing
+`changeset/2` function inside the `lib/platform/accounts/player.ex` file. We're
+going to add some validations and a new function that will allow us to encrypt
+passwords so they're not stored in plain text.
 
 Update the `changeset/2` function with the following code:
 
@@ -128,6 +141,61 @@ we're only going to store the hash in the `player_digest` field.
 
 In the event that the `changeset` was not valid, we just return it at the
 bottom of our `put_pass_digest/1` function without any changes.
+
+## Updating Player Fixtures
+
+When we run our tests, we use different sets of attributes to simulate valid
+and invalid data. When we ran the generator command to create our players
+resource, Phoenix created some initial values for us. But we've since updated
+the fields that we're working with, so we'll need to make some changes to our
+tests as well.
+
+Let's open the `test/platform/accounts/accounts_test.exs` file and take a look
+at the attributes:
+
+```elixir
+describe "players" do
+  alias Platform.Accounts.Player
+
+  @valid_attrs %{score: 42, username: "some username"}
+  @update_attrs %{score: 43, username: "some updated username"}
+  @invalid_attrs %{score: nil, username: nil}
+
+  # ...
+end
+```
+
+In Elixir, we refer to this syntax as
+[module attributes](https://elixir-lang.org/getting-started/module-attributes.html).
+These are useful for creating constants that we can use throughout our tests.
+For example, we assign a map of valid player fields to the `@valid_attrs` module
+attribute, and then we can use those fields in the tests below.
+
+Let's make some changes to our attribute data to account for the changes we've
+made to our player schema:
+
+```elixir
+@valid_attrs %{password: "some password", username: "some username"}
+@update_attrs %{display_name: "some updated display name", password: "some updated password", score: 43, username: "some updated username"}
+@invalid_attrs %{password: nil, username: nil}
+```
+
+We want to ensure that our players can sign up with just a `username` and
+`password`, so we include those in our `@valid_attrs`. Then we can ensure that
+our other fields work by including them in `@update_attrs`. Lastly, we ensure
+that `nil` values won't work to create new accounts by including them in
+`@invalid_attrs`.
+
+We'll also need to update our `create_player/1` test case with the following to
+get it passing:
+
+```elixir
+test "create_player/1 with valid data creates a player" do
+  assert {:ok, %Player{} = player} = Accounts.create_player(@valid_attrs)
+  assert player.password == "some password"
+  assert player.username == "some username"
+end
+```
 
 ## Authentication Plug
 
