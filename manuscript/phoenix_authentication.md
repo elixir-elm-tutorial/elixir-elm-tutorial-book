@@ -781,54 +781,66 @@ sign in successfully:
 ## Displaying the Player Status
 
 We've given users the ability to create new accounts at `/players/new`, and
-players can sign in to existing accounts from the `/sessions/new` page. As a
-last step for this chapter, let's find a place to let players know when they're
-logged in, and give them a way to log out.
+players can sign in with existing accounts at `/sessions/new`. As a last step
+for this chapter, let's find a place to let players know when they're signed
+in, and give them a way to sign out.
 
-First, let's open the `lib/platform/web/templates/layout` folder, and remove
-the existing header that Phoenix came with by default (we're going to handle
-our own custom header with routing in our Elm front-end application later).
+First, let's open the `lib/platform_web/templates/layout/app.html.eex` file and
+remove the default Phoenix header.
 
-Update the `<body>` of the `app.html.eex` file with the following:
-
-```embedded_elixir
-<body>
-  <div class="container">
-    <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
-    <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
-
-    <main role="main">
-      <%= render @view_module, @view_template, assigns %>
-    </main>
-
-  </div> <!-- /container -->
-  <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
-</body>
-```
-
-Now, let's update the template at `lib/platform/web/page/index.html.eex` with
-the following:
+Update the contents of the `<header>` tag with the following:
 
 ```embedded_elixir
-<p class="well">Signed in as <strong><%= @current_user.username %></strong></p>
-<span><%= link "List All Players", to: player_path(@conn, :index), class: "btn btn-info" %></span>
-<span><%= link "Sign Out", to: player_session_path(@conn, :delete, @current_user), method: "delete", class: "btn btn-danger" %></span>
+<header class="header">
+  <nav role="navigation">
+    <ul class="nav nav-pills pull-right">
+      <%= link "Sign Up", to: player_path(@conn, :new), class: "btn btn-sm btn-success" %>
+      <%= link "Sign In", to: player_session_path(@conn, :new), class: "btn btn-sm btn-primary" %>
+    </ul>
+  </nav>
+  <span class="logo"></span>
+</header>
 ```
 
-This is exactly what we were hoping for. Now we have content to display for
-signed in users on the `http://0.0.0.0:4000/elm` page. We know that a player
-must be authenticated to access this page, so we can use `@current_user` to
-display their `username` along with a **Sign Out** button.
+This places buttons in the header for users to either sign up or sign in.
 
-![Display Page for Signed In User](images/phoenix_authentication/display_signed_in_user.png)
+![Header Sign Up and Sign In Buttons](images/phoenix_authentication/authentication_buttons.png)
 
-Users can successfully delete their session by clicking the red **Sign Out**
-button, and it will redirect them back to the **Player Sign In Page**.
+Depending on whether players are signed in or not, we want to show something
+different in the header. Before a player has authenticated, we want to display
+the buttons that we see above. If a player has signed in, we want to show them
+their `username` in the header along with a sign out button.
+
+Let's update our `<header>` tag again with the following:
+
+```embedded_elixir
+<header class="header">
+  <nav role="navigation">
+    <ul class="nav nav-pills pull-right">
+      <%= if @current_user do %>
+        <p class="small">Signed in as <strong><%= @current_user.username %></strong></p>
+        <%= link "Sign Out", to: player_session_path(@conn, :delete, @current_user), method: "delete", class: "btn btn-sm btn-danger" %>
+      <% else %>
+        <%= link "Sign Up", to: player_path(@conn, :new), class: "btn btn-sm btn-success" %>
+        <%= link "Sign In", to: player_session_path(@conn, :new), class: "btn btn-sm btn-primary" %>
+      <% end %>
+    </ul>
+  </nav>
+  <span class="logo"></span>
+</header>
+```
+
+In the code above, we're creating a conditional to determine whether or not a
+`@current_user` is present. When there is a user signed in, we display their
+`username` with small text along with a sign out button.
+
+![Header Signed In Display](images/phoenix_authentication/signed_in_header.png)
 
 ## Summary
 
-We've come a long way! We now have working features for players to create
-accounts, sign in, and sign out of our platform. And we also have the ability
-to restrict access to certain pages to ensure that users are authorized to
-view the right data. Next, we'll be building out the games section for our
-platform, and getting our first taste of what it's like to work with Elm.
+We managed to accomplish what we set out to do in this chapter. We've given our
+users a simple way to sign up, sign in, and sign out of our application. We
+also have the ability to restrict access to certain pages to ensure that users
+are authorized to access the correct data. Next, we'll be building out the
+games section for our platform, and getting our first taste of what it's like
+to work with Elm.
