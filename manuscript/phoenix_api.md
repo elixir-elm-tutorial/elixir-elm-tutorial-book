@@ -1,13 +1,14 @@
 # Phoenix API
 
 We now have players for our gaming platform, but we don't have any games yet.
-We're going to create an Elm application for our front-end. But before we get
-to that, we'll need to create the back-end JSON API.
+We're going to create an Elm application for our front-end that will display
+our list of games. But before we get to that, we'll need to create the back-end
+JSON API.
 
 ## Generating the JSON API
 
-Let's create an endpoint for our games. We want them to have fields for the
-game's `title`, `description`, and `author_id`. We can also add other fields
+Let's create an endpoint for our games. We want each game to have fields for
+`title`, `description`, and `author_id`. We can also add other fields
 later, but this will be a good start.
 
 We'll run the Phoenix generator from the Terminal to get started:
@@ -20,7 +21,7 @@ This is similar to the way we created our players resource, but this time we're
 using `phx.gen.json` instead of `phx.gen.html`.
 
 Also note that we're keeping our contexts intentionally abstract in this book.
-Although we're building features that are very specific to our gaming domain
+Although we're building features that are specific to our gaming domain
 (`players` and `games`), we want to be able to adapt this same material for
 other uses too. We're using the `Accounts` context for our `players` and the
 `Products` context for our `games`, and we could easily use these same concepts
