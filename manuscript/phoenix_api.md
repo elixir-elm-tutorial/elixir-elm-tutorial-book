@@ -336,6 +336,108 @@ the `http://0.0.0.0:4000/api/games` URL in our browser to see the results:
 
 ![Games API with Data](images/phoenix_api/games_api_with_data.png)
 
+## Player API
+
+We had previously been using the browser to work with our player accounts. But
+since we're transitioning to an API for our games, we'll also want to make our
+players resource accessible as JSON too.
+
+Let's create a new controller in the `lib/platform_web/controllers` folder.
+We'll call the file `player_api_controller.ex` and then add the following
+contents:
+
+```elixir
+defmodule PlatformWeb.PlayerApiController do
+  use PlatformWeb, :controller
+
+  alias Platform.Accounts
+  alias Platform.Accounts.Player
+
+  action_fallback PlatformWeb.FallbackController
+
+  def index(conn, _params) do
+    players = Accounts.list_players()
+    render(conn, "index.json", players: players)
+  end
+
+  def create(conn, %{"player" => player_params}) do
+    with {:ok, %Player{} = player} <- Accounts.create_player(player_params) do
+      conn
+      |> put_status(:created)
+      |> put_resp_header("location", player_path(conn, :show, player))
+      |> render("show.json", player: player)
+    end
+  end
+
+  def show(conn, %{"id" => id}) do
+    player = Accounts.get_player!(id)
+    render(conn, "show.json", player: player)
+  end
+
+  def update(conn, %{"id" => id, "player" => player_params}) do
+    player = Accounts.get_player!(id)
+
+    with {:ok, %Player{} = player} <- Accounts.update_player(player, player_params) do
+      render(conn, "show.json", player: player)
+    end
+  end
+
+  def delete(conn, %{"id" => id}) do
+    player = Accounts.get_player!(id)
+    with {:ok, %Player{}} <- Accounts.delete_player(player) do
+      send_resp(conn, :no_content, "")
+    end
+  end
+end
+```
+
+This may look like a lot of code, but we're essentially copying the same thing
+that the Phoenix generators gave us for our games API and making small
+adjustments so that we can work with accounts and players instead of products
+and games.
+
+We'll also want to update our `lib/platform_web/router.ex` file with the new
+resource:
+
+```elixir
+scope "/api", PlatformWeb do
+  pipe_through :api
+
+  resources "/players", PlayerApiController, except: [:new, :edit]
+  resources "/games", GameController, except: [:new, :edit]
+end
+```
+
+Add the view:
+
+```elixir
+defmodule PlatformWeb.PlayerApiView do
+  use PlatformWeb, :view
+  alias PlatformWeb.PlayerApiView
+
+  def render("index.json", %{players: players}) do
+    %{data: render_many(players, PlayerApiView, "player.json")}
+  end
+
+  def render("show.json", %{player: player}) do
+    %{data: render_one(player, PlayerApiView, "player.json")}
+  end
+
+  def render("player.json", %{player: player}) do
+    %{id: player.id,
+    username: player.username,
+    score: player.score}
+  end
+end
+```
+
+This is great news because it means we can still use the
+`http://0.0.0.0:4000/players` URL to access our list of players in the browser,
+and we can use `http://0.0.0.0:4000/api/players` to see our player data as
+JSON.
+
+![Image](image.png)
+
 ## Summary
 
 We managed to accomplish our goal for this chapter of creating a JSON API for
