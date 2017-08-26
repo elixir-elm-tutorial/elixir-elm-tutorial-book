@@ -5,6 +5,7 @@ phoenix_testing_and_deployment.md
 phoenix_sign_up.md
 phoenix_authentication.md
 phoenix_api.md
+phoenix_relationships.md
 elm_introduction.md
 elm_setup.md
 elm_application.md

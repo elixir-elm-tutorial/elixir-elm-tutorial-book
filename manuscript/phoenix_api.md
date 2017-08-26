@@ -1,24 +1,31 @@
-# Phoenix API
+# Phoenix API and Ecto Relationships
 
 We now have players for our gaming platform, but we don't have any games yet.
 We're going to create an Elm application for our front-end that will display
-our list of games. But before we get to that, we'll need to create the back-end
-JSON API.
+our lists of players and games, but first let's create the back-end JSON API.
+And we'll find a way to establish relationships between our players and games
+so that we can model our data properly.
 
 ## Generating the JSON API
 
-Let's create an endpoint for our games. We want each game to have fields for
-`title`, `description`, and `author_id`. We can also add other fields
-later, but this will be a good start.
+Let's begin by creating an endpoint for our games. We want each game to have
+fields for `title`, `description`, `thumbnail`, and `featured`. These fields
+will allow us to display a list of games for players to choose from, and the
+`featured` field will be a simple boolean value we can use to feature
+particular games in a special section. We can also add other fields later, but
+this will be a good start.
 
-We'll run the Phoenix generator from the Terminal to get started:
+We'll run the Phoenix generator from the command line to get started:
 
 ```shell
-mix phx.gen.json Products Game games title:string description:string author_id:integer
+mix phx.gen.json Products Game games title:string:unique description:string thumbnail:string featured:boolean
 ```
 
 This is similar to the way we created our players resource, but this time we're
-using `phx.gen.json` instead of `phx.gen.html`.
+using
+[`phx.gen.json`](https://hexdocs.pm/phoenix/Mix.Tasks.Phx.Gen.Json.html)
+instead of
+[`phx.gen.html`](https://hexdocs.pm/phoenix/Mix.Tasks.Phx.Gen.Html.html).
 
 Also note that we're keeping our contexts intentionally abstract in this book.
 Although we're building features that are specific to our gaming domain
@@ -26,24 +33,27 @@ Although we're building features that are specific to our gaming domain
 other uses too. We're using the `Accounts` context for our `players` and the
 `Products` context for our `games`, and we could easily use these same concepts
 to the domain of a bookstore where our `Accounts` might be `readers` and our
-`Products` would be `books`.
+`Products` could be `books`.
 
 Here's what the output should look like when we run the generator for our new
 games resource:
 
 ```shell
-$ mix phx.gen.json Products Game games title:string description:string author_id:integer
-* creating lib/platform/web/controllers/game_controller.ex
-* creating lib/platform/web/views/game_view.ex
-* creating test/web/controllers/game_controller_test.exs
-* creating lib/platform/web/views/changeset_view.ex
-* creating lib/platform/web/controllers/fallback_controller.ex
+$ mix phx.gen.json Products Game games title:string description:string thumbnail
+:string featured:boolean
+* creating lib/platform_web/controllers/game_controller.ex
+* creating lib/platform_web/views/game_view.ex
+* creating test/platform_web/controllers/game_controller_test.exs
+* creating lib/platform_web/views/changeset_view.ex
+* creating lib/platform_web/controllers/fallback_controller.ex
 * creating lib/platform/products/game.ex
-* creating priv/repo/migrations/20170410023755_create_products_game.exs
+* creating priv/repo/migrations/20170826154100_create_games.exs
 * creating lib/platform/products/products.ex
-* creating test/products_test.exs
+* injecting lib/platform/products/products.ex
+* creating test/platform/products/products_test.exs
+* injecting test/platform/products/products_test.exs
 
-Add the resource to your api scope in lib/platform/web/router.ex:
+Add the resource to your :api scope in lib/platform_web/router.ex:
 
     resources "/games", GameController, except: [:new, :edit]
 
@@ -52,13 +62,18 @@ Remember to update your repository by running migrations:
     $ mix ecto.migrate
 ```
 
+Let's hold off on running the Ecto migration, because we'll want to make a few
+changes in the next sections first.
+
+## API Routing
+
 We'll need to follow the instructions that Phoenix provides for us. Open up the
-`lib/platform/web/router.ex` file. Instead of adding to the browser scope like
+`lib/platform_web/router.ex` file. Instead of adding to the browser scope like
 we did previously, we're going to add this resource to the `/api` scope. This
 means our two scopes will look like this:
 
 ```elixir
-scope "/", Platform.Web do
+scope "/", PlatformWeb do
   pipe_through :browser
 
   get "/", PageController, :index
@@ -66,25 +81,181 @@ scope "/", Platform.Web do
   resources "/sessions", PlayerSessionController, only: [:new, :create, :delete]
 end
 
-scope "/api", Platform.Web do
+scope "/api", PlatformWeb do
   pipe_through :api
 
   resources "/games", GameController, except: [:new, :edit]
 end
 ```
 
-Now that we have our resources generated and they're added to our router, we
-can run our migration to update the database with `mix ecto.migrate`. This
-creates the `products_games` table in the database:
+## Establishing Relationships
+
+We also want to establish a relationship from our `games` table to our
+`players` table. To accomplish this, we'll start with the migration that was
+created for us in the `priv/repo/migrations/20170826144626_create_games.exs`
+file (bearing in mind that your file will have a different name since the
+filenames have a datetime associated with them):
+
+```elixir
+defmodule Platform.Repo.Migrations.CreateGames do
+  use Ecto.Migration
+
+  def change do
+    create table(:games) do
+      add :title, :string
+      add :description, :string
+      add :thumbnail, :string
+      add :featured, :boolean, default: false, null: false
+
+      timestamps()
+    end
+
+  end
+end
+```
+
+We can see that we're creating a new table called `games` in our database
+with the `create table(:games)` syntax.
+
+We also want to form an association from our `players` table to our new `games`
+table. So we're going to create a new table called `gameplays` that will store
+a `game_id` as a reference to the `games` table, a `player_id` as a reference
+to the `players` table, and a `player_score` that will track a player's score
+for the current play through the game.
+
+Let's update the `change` function in our migration to include the following:
+
+```elixir
+defmodule Platform.Repo.Migrations.CreateGames do
+  use Ecto.Migration
+
+  def change do
+    create table(:games) do
+      add :title, :string
+      add :description, :string
+      add :thumbnail, :string
+      add :featured, :boolean, default: false, null: false
+
+      timestamps()
+    end
+
+    create table(:gameplays) do
+      add :game_id, references(:games, on_delete: :nothing), null: false
+      add :player_id, references(:players, on_delete: :nothing), null: false
+      add :player_score, :integer
+
+      timestamps()
+    end
+  end
+end
+```
+
+Before we run our migration, let's take a look at the schema files for players
+and games. And we'll manually create a new schema for our gameplays.
+
+## Updating the Schemas
+
+First, open the `lib/platform/accounts/player.ex` file, and let's update our
+schema with the following:
+
+```elixir
+schema "players" do
+  many_to_many :games, Game, join_through: Gameplay
+
+  field :display_name, :string
+  field :password, :string, virtual: true
+  field :password_digest, :string
+  field :score, :integer
+  field :username, :string
+
+  timestamps()
+end
+```
+
+We'll also need to add two `alias` lines above:
+
+```elixir
+alias Platform.Products.Game
+alias Platform.Products.Gameplay
+```
+
+This means that we're establishing a
+[`many_to_many`](https://hexdocs.pm/ecto/Ecto.Schema.html#many_to_many/3)
+relationship between our `players` and `games`, and that we're joining these
+through the `Gameplay` module that we'll be creating shortly.
+
+Next, we'll do something similar for the `lib/platform/products/game.ex` file.
+We'll add our two `alias` lines at the top:
+
+```elixir
+alias Platform.Products.Gameplay
+alias Platform.Accounts.Player
+```
+
+Then, we'll add our `many_to_many` relationship between our `games` and our
+`players` through the `Gameplay` module.
+
+```elixir
+schema "games" do
+  many_to_many :players, Player, join_through: Gameplay
+
+  field :description, :string
+  field :featured, :boolean, default: false
+  field :thumbnail, :string
+  field :title, :string
+
+  timestamps()
+end
+```
+
+## Creating a New Schema
+
+Finally, we'll create a schema file for our new table. Create a new file called
+`gameplay.ex` inside the `lib/platform/products` folder.
+
+```elixir
+defmodule Platform.Products.Gameplay do
+  use Ecto.Schema
+  import Ecto.Changeset
+  alias Platform.Products.Gameplay
+  alias Platform.Products.Game
+  alias Platform.Accounts.Player
+
+  schema "gameplays" do
+    has_one :game, Game
+    has_one :player, Player
+
+    field :player_score, :integer, default: 0
+  end
+
+  @doc false
+  def changeset(%Gameplay{} = gameplay, attrs) do
+    gameplay
+    |> cast(attrs, [:game, :player, :player_score])
+    |> validate_required([:game, :player, :player_score])
+  end
+end
+```
+
+Our new schema follows the same general structure as the other ones we were
+just working with, but has a couple of new items. We created our `alias` lines
+at the top just as we did previously. For our new `gameplays` schema, we're
+creating [`has_one`](https://hexdocs.pm/ecto/Ecto.Schema.html#has_one/3)
+relationships so that each gameplay will have just one `player` and one `game`.
+We also include a `default` value for our `player_score` field. In our
+`changeset/2` function, we also make sure to require all of these fields.
+
+## Running Our Migration
+
+We can now run our migration to update the database with `mix ecto.migrate`.
+This creates tables for both `games` and `gameplays`.
 
 ```shell
 $ mix ecto.migrate
-Compiling 16 files (.ex)
-Generated platform app
-
-22:45:17.194 [info]  == Running Platform.Repo.Migrations.CreatePlatform.Products.Game.change/0 forward
-22:45:17.194 [info]  create table products_games
-22:45:17.208 [info]  == Migrated in 0.0s
+17:17:22.048 [info]  == Running Platform.Repo.Migrations.CreateGames.change/0 forward
+17:17:22.048 [info]  create table games
+17:17:22.053 [info]  create table gameplays
+17:17:22.059 [info]  == Migrated in 0.0s
 ```
 
 Lastly, we'll run our tests to make sure everything is still working:
