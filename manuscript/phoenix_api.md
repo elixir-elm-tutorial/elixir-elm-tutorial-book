@@ -338,9 +338,9 @@ the `http://0.0.0.0:4000/api/games` URL in our browser to see the results:
 
 ## Summary
 
-This was a relatively quick chapter, but we accomplished exactly what we needed
-to do. We'll be able to extend the features for our games later, but this
-initial work should be perfect for our initial JSON API.
+We managed to accomplish our goal for this chapter of creating a JSON API for
+the games on our platform. And we also learned a lot about Ecto relationships
+as we connected our players, games, and gameplays together.
 
 In the next chapter, we'll get an introduction to the Elm language. And we'll
 start working towards using the Phoenix JSON API that we built here to supply
