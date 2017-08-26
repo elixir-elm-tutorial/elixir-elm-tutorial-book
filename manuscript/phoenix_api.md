@@ -262,19 +262,17 @@ Lastly, we'll run our tests to make sure everything is still working:
 
 ```shell
 $ mix test
-Compiling 17 files (.ex)
-Generated platform app
-...................................
+..................................
 
-Finished in 0.2 seconds
-35 tests, 0 failures
+Finished in 0.4 seconds
+34 tests, 0 failures
 
-Randomized with seed 532429
+Randomized with seed 724771
 ```
 
-We're up to a total of 35 tests! Granted, these were created by the Phoenix
-generators; but it gives us some level of confidence that our application is
-working when the tests are passing.
+It's great that we have 34 passing tests. Granted, these were created by the
+Phoenix generators, but it gives us some level of confidence that our
+application is working when the tests are passing.
 
 ## Trying Out our JSON API
 
@@ -300,53 +298,41 @@ sample data to work with. Add the following to the bottom of the
 ```elixir
 # Players
 
-Platform.Repo.insert!(%Platform.Accounts.Player{display_name: "José Valim", username: "josevalim", password: "josevalim", score: 1000})
-Platform.Repo.insert!(%Platform.Accounts.Player{display_name: "Evan Czaplicki", username: "evancz", password: "evancz", score: 2000})
-Platform.Repo.insert!(%Platform.Accounts.Player{display_name: "Joe Armstrong", username: "joearms", password: "joearms", score: 3000})
+Platform.Repo.insert!(%Platform.Accounts.Player{display_name: "José Valim", username: "josevalim", score: 1000})
+Platform.Repo.insert!(%Platform.Accounts.Player{display_name: "Evan Czaplicki", username: "evancz", score: 2000})
+Platform.Repo.insert!(%Platform.Accounts.Player{display_name: "Chris McCord", username: "chrismccord", score: 3000})
 
 # Games
 
-Platform.Repo.insert!(%Platform.Products.Game{title: "Adventure Game", description: "Adventure game example.", author_id: 1})
-Platform.Repo.insert!(%Platform.Products.Game{title: "Driving Game", description: "Driving game example.", author_id: 2})
-Platform.Repo.insert!(%Platform.Products.Game{title: "Platform Game", description: "Platform game example.", author_id: 3})
+Platform.Repo.insert!(%Platform.Products.Game{title: "Platformer", description: "Platform game example.", thumbnail: "http://via.placeholder.com/300x200", featured: true})
 ```
 
 Assuming we don't have any local data that we want to keep, we can use this
 file to reseed the database with `mix ecto.reset`. This task will drop the
 existing database, create a new one, run migrations, and then seed the
-database. This is what the full output should look like:
+database with our sample data. Our full output will look something like this:
 
 ```shell
 $ mix ecto.reset
 The database for Platform.Repo has been dropped
 The database for Platform.Repo has been created
 
-23:00:56.808 [info]  == Running Platform.Repo.Migrations.CreatePlatform.Accounts.Player.change/0 forward
-23:00:56.808 [info]  create table accounts_players
-23:00:56.816 [info]  == Migrated in 0.0s
-23:00:56.847 [info]  == Running Platform.Repo.Migrations.AddFieldsToPlayerAccounts.change/0 forward
-23:00:56.847 [info]  alter table accounts_players
-23:00:56.849 [info]  create index accounts_players_username_index
-23:00:56.851 [info]  == Migrated in 0.0s
-23:00:56.866 [info]  == Running Platform.Repo.Migrations.CreatePlatform.Products.Game.change/0 forward
-23:00:56.866 [info]  create table products_games
-23:00:56.870 [info]  == Migrated in 0.0s
-[debug] QUERY OK db=3.4ms
-INSERT INTO "accounts_players" ("display_name","score","username","inserted_at","updated_at") VALUES ($1,$2,$3,$4,$5) RETURNING "id" ["José Valim", 1000, "josevalim", {{2017, 4, 10}, {3, 0, 56, 970688}}, {{2017, 4, 10}, {3, 0, 56, 970696}}]
-[debug] QUERY OK db=2.3ms
-INSERT INTO "accounts_players" ("display_name","score","username","inserted_at","updated_at") VALUES ($1,$2,$3,$4,$5) RETURNING "id" ["Evan Czaplicki", 2000, "evancz", {{2017, 4, 10}, {3, 0, 56, 987478}}, {{2017, 4, 10}, {3, 0, 56, 987484}}]
-[debug] QUERY OK db=2.7ms
-INSERT INTO "accounts_players" ("display_name","score","username","inserted_at","updated_at") VALUES ($1,$2,$3,$4,$5) RETURNING "id" ["Joe Armstrong", 3000, "joearms", {{2017, 4, 10}, {3, 0, 56, 990100}}, {{2017, 4, 10}, {3, 0, 56, 990105}}]
-[debug] QUERY OK db=2.5ms
-INSERT INTO "products_games" ("author_id","description","title","inserted_at","updated_at") VALUES ($1,$2,$3,$4,$5) RETURNING "id" [1, "Adventure game example.", "Adventure Game", {{2017, 4, 10}, {3, 0, 56, 993110}}, {{2017, 4, 10}, {3, 0, 56, 993117}}]
-[debug] QUERY OK db=2.0ms
-INSERT INTO "products_games" ("author_id","description","title","inserted_at","updated_at") VALUES ($1,$2,$3,$4,$5) RETURNING "id" [2, "Driving game example.", "Driving Game", {{2017, 4, 10}, {3, 0, 56, 995898}}, {{2017, 4, 10}, {3, 0, 56, 995903}}]
-[debug] QUERY OK db=2.9ms
-INSERT INTO "products_games" ("author_id","description","title","inserted_at","updated_at") VALUES ($1,$2,$3,$4,$5) RETURNING "id" [3, "Platform game example.", "Platform Game", {{2017, 4, 10}, {3, 0, 56, 998162}}, {{2017, 4, 10}, {3, 0, 56, 998167}}]
+18:15:28.202 [info]  == Running Platform.Repo.Migrations.CreatePlayers.change/0 forward
+18:15:28.202 [info]  create table players
+18:15:28.211 [info]  == Migrated in 0.0s
+18:15:28.251 [info]  == Running Platform.Repo.Migrations.AddFieldsToPlayerAccounts.change/0 forward
+18:15:28.251 [info]  alter table players
+18:15:28.254 [info]  create index players_username_index
+18:15:28.256 [info]  == Migrated in 0.0s
+18:15:28.278 [info]  == Running Platform.Repo.Migrations.CreateGames.change/0 forward
+18:15:28.278 [info]  create table games
+18:15:28.283 [info]  create table gameplays
+18:15:28.290 [info]  == Migrated in 0.0s
+# ...
 ```
 
-And now that we have some data, we should be able to reload the
-`http://0.0.0.0:4000/api/games` URL in our browser and see the results:
+Now that we have some data, we should be able to restart the server and reload
+the `http://0.0.0.0:4000/api/games` URL in our browser to see the results:
 
 ![Games API with Data](images/phoenix_api/games_api_with_data.png)
 
