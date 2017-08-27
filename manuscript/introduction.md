@@ -11,7 +11,7 @@ application.
 
 **The application we'll be building is a small game platform for the web**.
 We'll use Elixir and the Phoenix web framework to power the back-end, where
-our users can log in and keep track of their scores. Then, we'll use Elm on the
+players can sign in and keep track of their scores. Then, we'll use Elm on the
 front-end to create fun minigames. We'll tie everything together so we can
 pass data back and forth between the back-end and front-end. Users on our
 platform will be able to join a chat to discuss the available minigames, and
@@ -30,10 +30,10 @@ his visions of the future.
 
 ## Who Is This Book For?
 
-This book is written for web developers who already have _some_ existing
-experience with web programming. The goal is for the book to be a practical
-introduction to building a project with functional web programming languages
-like Elixir and Elm.
+This book is written for developers who already have _some_ existing experience
+with web programming. The goal is for the book to be a practical introduction
+to building a project with functional web programming languages like Elixir and
+Elm.
 
 We won't assume any prior experience with Elixir and Elm, and consider it more
 likely that you've worked with languages like Ruby and JavaScript. But **keep

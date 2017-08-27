@@ -1,6 +1,6 @@
 # Syncing Score Data
 
-We have our game platform up and running, where users can log in and play a
+We have our game platform up and running, where users can sign in and play a
 simple Elm game that tracks a score. Now let's work towards syncing the Elm
 front-end of our application with the Phoenix back-end. We'll learn about
 Phoenix channels with the goal of being able to communicate the score from
