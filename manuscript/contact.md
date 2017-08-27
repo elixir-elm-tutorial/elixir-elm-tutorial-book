@@ -7,7 +7,7 @@ book. I'd _really_ love to hear from you!
 
 The current plan for the book is to be a fairly exhaustive resource on how to
 practically build a real-world application using Elixir, Phoenix, and Elm. That
-likely means writing about 1,000 pages of content before trying to distill that
+likely means writing hundreds of pages of content before trying to distill that
 down into something more useful.
 
 I'll continue building out the demo application and documenting the process as

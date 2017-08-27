@@ -27,23 +27,25 @@ progress.
   - Running Phoenix tests.
   - Working with Git and GitHub.
   - Configuring the application and deploying to Heroku.
-  - Continuous integration and deployment with TravisCI and Heroku.
 
 - Phoenix Sign Up
   - Extending existing resources with new fields.
   - Generating and running migrations.
   - Basic queries with IEx.
   - Updating templates and working with forms.
-  - Data validation and database seeds.
 
 - Phoenix Authentication
   - Importing Hex dependencies.
   - Working with changesets.
   - Building an authentication plug.
   - Adding login and session features.
+  - Database seeds.
 
 - Phoenix API
   - Generating a JSON API for games.
+  - Routing and scopes.
+  - Ecto relationships, migrations, and schemas.
+  - Adding JSON API features for players.
 
 - Elm Introduction
   - Brief introduction to the Elm language and tooling.
