@@ -18,7 +18,7 @@ this will be a good start.
 We'll run the Phoenix generator from the command line to get started:
 
 ```shell
-mix phx.gen.json Products Game games title:string:unique description:string thumbnail:string featured:boolean
+$ mix phx.gen.json Products Game games title:string description:string thumbnail:string featured:boolean
 ```
 
 This is similar to the way we created our players resource, but this time we're
@@ -39,8 +39,7 @@ Here's what the output should look like when we run the generator for our new
 games resource:
 
 ```shell
-$ mix phx.gen.json Products Game games title:string description:string thumbnail
-:string featured:boolean
+$ mix phx.gen.json Products Game games title:string description:string thumbnail:string featured:boolean
 * creating lib/platform_web/controllers/game_controller.ex
 * creating lib/platform_web/views/game_view.ex
 * creating test/platform_web/controllers/game_controller_test.exs
@@ -279,7 +278,7 @@ application is working when the tests are passing.
 Let's start up our Phoenix server with `mix phx.server`.
 
 For our players resource, we were using URLs like `http://0.0.0.0:4000/players`
-to access the HTML pages. But now that we added a JSON resource, we'll need to
+to access the templates. But now that we added a JSON resource, we'll need to
 use `/api` in our URLs. Try to access `http://0.0.0.0:4000/api/games` in the
 browser. We shouldn't see an error, but we also don't have any game data to
 display yet (note that your browser might display JSON data differently):
