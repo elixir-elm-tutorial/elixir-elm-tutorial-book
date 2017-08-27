@@ -63,8 +63,8 @@ This will add two new lines to the `devDependencies` section of our
 
 ## Updating .gitignore
 
-Thankfully, the default `.gitignore` file is setup to ignore all the files that
-get added to the `node_modules` folder. So our repository tracks changes to the
+The default `.gitignore` file is configured to ignore all the files that get
+added to the `node_modules` folder. So our repository tracks changes to the
 `package.json` file, but ignores all the files created in the `node_modules`
 directory when we ran the `npm install` command.
 
@@ -158,9 +158,9 @@ up and running, we'll need to configure Brunch.
 
 ## Brunch Configuration
 
-Inside the `assets` folder, open the `brunch-config.js` file and replace it
-with the code below (note that the default file contains _a lot_ of comments,
-but we're removing them here for brevity):
+Inside the `assets` folder, open the `brunch-config.js` file and replace the
+contents with the code below (note that the default file contains _a lot_ of
+comments, but we're removing them here for brevity):
 
 ```javascript
 exports.config = {
@@ -277,7 +277,8 @@ main =
     text "Hello from Elm inside Phoenix!"
 ```
 
-The content should be reloaded in the browser without needing a refresh.
+The content should be reloaded in the browser without needing a refresh (after
+waiting a second or two for our code to compile).
 
 ![Working Live Reload for Elm](images/elm_setup/elm_live_reload.png)
 
@@ -289,4 +290,4 @@ we learned about configuring Elm to work inside Phoenix, and this will enable
 us to start building the front-end for our application.
 
 In the next chapter, we'll start putting together our Elm front-end
-application so that we can start working with game data from our API.
+application so that we can start working with the JSON data from our API.
