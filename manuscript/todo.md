@@ -21,4 +21,5 @@
 
 ## Elm
 
+- [ ] Rewrite setup chapter with new location.
 - [ ] Add list of players and games on index page.
