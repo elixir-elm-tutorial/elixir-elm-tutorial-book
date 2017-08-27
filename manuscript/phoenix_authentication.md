@@ -836,6 +836,82 @@ In the code above, we're creating a conditional to determine whether or not a
 
 ![Header Signed In Display](images/phoenix_authentication/signed_in_header.png)
 
+## Database Seeds
+
+Now that we have our authentication features working for the sample accounts
+we've created, we can also add some default data seeds for our application.
+Instead of manually creating new database records while we're working in the
+development environment, this gives us a quick way to seed the database.
+
+The other benefit of this approach is that other developers can clone our
+repository and run the `mix ecto.setup` command to create the database, run
+migrations, and seed the application with some sample data.
+
+Open the `priv/repo/seeds.exs` file:
+
+```elixir
+# Script for populating the database. You can run it as:
+#
+#     mix run priv/repo/seeds.exs
+#
+# Inside the script, you can read and write to any of your
+# repositories directly:
+#
+#     Platform.Repo.insert!(%Platform.SomeSchema{})
+#
+# We recommend using the bang functions (`insert!`, `update!`
+# and so on) as they will fail if something goes wrong.
+```
+
+We can see that this file only contains comments initially. Below the comments,
+add the following code that we can use to seed our database with sample
+accounts.
+
+```elixir
+alias Platform.Accounts
+
+Accounts.create_player(%{display_name: "José Valim", username: "josevalim", password: "josevalim", score: 1000})
+Accounts.create_player(%{display_name: "Evan Czaplicki", username: "evancz", password: "evancz", score: 2000})
+Accounts.create_player(%{display_name: "Chris McCord", username: "chrismccord", password: "chrismccord", score: 3000})
+```
+
+At the top of the file, the comments show that we can run the
+`mix run priv/repo/seeds.exs` command to populate the database with any seed
+data we add to this file. But keep in mind that we may have already created
+these records manually, and we did add a constraint to our database to make
+sure that the `username` fields are unique. The good news is we can always
+adjust this file with sample data to work with. By doing that, we don't have to
+worry about manually creating records in our development environment to test
+things out.
+
+In fact, there's a command we can use often if we end up creating extraneous
+data in our development environment and want to start fresh. If you have records
+that you created locally and you don't want to lose them, then DON'T run this
+command! But if you ever run into database issues, running `mix ecto.reset` can
+be a lifesaver. It drops the existing database (don't say I didn't warn you),
+creates a new one, runs all the migrations, and then seeds the database.
+
+Here's what it looks like in action (the SQL statements have been trimmed for
+the sake of brevity):
+
+```shell
+$ mix ecto.reset
+The database for Platform.Repo has been dropped
+The database for Platform.Repo has been created
+
+12:27:16.348 [info]  == Running Platform.Repo.Migrations.CreatePlayers.change/0 forward
+12:27:16.348 [info]  create table players
+12:27:16.354 [info]  == Migrated in 0.0s
+12:27:16.394 [info]  == Running Platform.Repo.Migrations.AddFieldsToPlayerAccounts.change/0 forward
+12:27:16.394 [info]  alter table players
+12:27:16.396 [info]  create index players_username_index
+12:27:16.398 [info]  == Migrated in 0.0s
+
+INSERT INTO "players" ... "josevalim" ...
+INSERT INTO "players" ... "evancz" ...
+INSERT INTO "players" ... "chrismccord" ...
+```
+
 ## Summary
 
 We managed to accomplish what we set out to do in this chapter. We've given our
