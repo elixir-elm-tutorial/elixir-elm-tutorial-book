@@ -408,7 +408,9 @@ scope "/api", PlatformWeb do
 end
 ```
 
-Add the view:
+To finish making our players accessible via a JSON API, we need to add a view.
+Create a file named `player_api_view.ex` inside the `lib/platform_web/views`
+folder and add the following content:
 
 ```elixir
 defmodule PlatformWeb.PlayerApiView do
@@ -432,12 +434,25 @@ defmodule PlatformWeb.PlayerApiView do
 end
 ```
 
-This is great news because it means we can still use the
+This code is very similar to what we have in the `game_view.ex` file. When we
+load the `http://0.0.0.0:4000/api/players` URL, we're using `render_many/3` to
+list all the players. When we only want to show a single player, we can use a
+URL like `http://0.0.0.0:4000/api/players/1` that will use `render_one/3` to
+only display a single user's JSON data. At the bottom, we're creating a function
+that returns a map with all our player data. We can add or remove fields here
+whenever we want to adjust the fields that are accessible via the JSON API.
+
+This is all great news because it means we can still use the
 `http://0.0.0.0:4000/players` URL to access our list of players in the browser,
 and we can use `http://0.0.0.0:4000/api/players` to see our player data as
 JSON.
 
-![Image](image.png)
+![Player Data in Browser Scope](images/phoenix_api/player_data_browser_scope.png)
+
+![Player Data in API Scope](images/phoenix_api/player_data_api_scope.png)
+
+Now would be a good time to commit changes to your Git repository if you
+haven't already done so since we've come a long way in this chapter.
 
 ## Summary
 
