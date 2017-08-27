@@ -18,14 +18,13 @@ simply can't. Not only does it enable developers to write code that is free
 from errors, but also results in code that is easier to refactor and more
 maintainable.
 
-I could honestly go on for months about how great Elm is (and I do that at the
-local Elm meetup that I help organize), but let's just dive into some really
-basic examples.
+I could go on for months about how great Elm is (and I do that at the local Elm
+meetup that I help organize), but let's dive into some basic examples.
 
 ## Hello.elm
 
-We can start with a simple "Hello World" example, and it will show how easy it
-can be to get Elm up and running. Here's what a simple Elm program (with a
+We can start with a simple "Hello World" example as a demonstration of how easy
+it can be to get Elm up and running. Here's what a simple Elm program (with a
 filename of `Hello.elm`) looks like:
 
 ```elm
@@ -38,11 +37,11 @@ main =
     Html.text "Hello World"
 ```
 
-On the one hand, the syntax is _really_ concise, and this is a really quick way
-to get some text on to a page in your browser (we'll get to that in a second).
-But this example is particularly good because it already shows a handful of
-things about Elm that might seem unsettling at first. Where are all the
-parentheses and curly braces? What's with the odd spacing?
+The syntax is concise, and this serves as a quick way to display some text on a
+page in the browser (we'll get to that in a second). But this is also a good
+example in the sense that it shows a handful of things about Elm that might
+seem unsettling at first. Where are all the parentheses and curly braces?
+What's with the odd spacing?
 
 ## Elm Syntax
 
@@ -58,10 +57,10 @@ need to import it and they could use any function they'd like.
 
 Speaking of imports, the next line says `import Html`. This allows us to use
 any function from Elm's built-in
-[Html library](http://package.elm-lang.org/packages/elm-lang/html/2.0.0/Html).
+[Html library](http://package.elm-lang.org/packages/elm-lang/html/latest/Html).
 
 The function that we're using in this program is the
-[`Html.text`](http://package.elm-lang.org/packages/elm-lang/html/2.0.0/Html#text)
+[`Html.text`](http://package.elm-lang.org/packages/elm-lang/html/latest/Html#text)
 function, which takes a single string as an argument. If we take a look at the
 documentation for the `text` function, we can see the Elm type syntax:
 
@@ -70,21 +69,21 @@ text : String -> Html msg
 ```
 
 That means when we added `Html.text "Hello World"` to our program, the `"Hello
-World"` was our only argument. And `Html msg` was the return type. Don't worry
-too much about typing yet, but it's helpful to think about a couple of quick
-things for now:
+World"` string was our only argument. And `Html msg` was the return type. Don't
+worry too much about typing yet, but it's helpful to think about a couple of
+quick things for now:
 
 - How many arguments does a function take?
 - What is the type of each argument?
 - What is the type of the return value?
 
-In our case, `text` is the name of the function. Then we use a `:` before the
-list of arguments. This function only takes a single argument, and it's a
-`String`. Then we use the arrow symbol `->` after the argument. And lastly we
-indicate the return type, which is an `Html msg`. The `msg` part isn't
-important, and we could've said `Html a`. The important part is that we are
-returning some HTML code that we are going to use to display the text on a
-page in the browser.
+In our case, `text` is the name of the function. Then we use a `:` symbol
+before the list of arguments. This function only takes a single argument, and
+it's a `String`. Then, we use the arrow symbol `->` after the argument. Lastly,
+we indicate the return type, which is an `Html msg`. The `msg` part isn't
+important, and we could have said `Html a`. The important part is that we are
+returning some HTML code that we are going to use to display the text on a page
+in the browser.
 
 ## Main Function
 
@@ -94,10 +93,11 @@ fun to play with than it is to read about, so let's finally run our example.
 
 Before we can run Elm code, we'll need to install Elm. There are different
 ways of doing it, but the easiest way is to use `npm` since most web developers
-have Node installed already.
+have [Node.js](https://nodejs.org/en/) installed already. Alternatively, there
+are also installers available on the [Elm home page](http://elm-lang.org/).
 
 ```shell
-npm install -g elm
+$ npm install -g elm
 ```
 
 That should be all you need. It globally installs the `elm` command on your
@@ -128,9 +128,12 @@ executable named 'elm-foobar' you will be able to run it as 'elm foobar' as
 long as it appears on your PATH.
 ```
 
-We'll use all these features at some point, but for now let's focus on two of
-them. First, we'll use the `package` option we see above to fetch the tools
-we'll use.
+We'll use all these features eventually, but for now let's focus on two of
+them. First, let's create a temporary directory called `elm` that we'll use to
+hold our Elm files, and then we'll use the `elm-package` command we see above
+to fetch the libraries we need. Also note that we don't necessarily need to
+place this folder inside our existing Phoenix application yet, and that we'll
+take care of integrating Phoenix and Elm in the next chapter.
 
 ```shell
 $ mkdir elm
@@ -194,7 +197,7 @@ so let's click it to compile and see the results.
 ## elm-format
 
 "Hello World" is admittedly not the most exciting example. But the good news is
-that we have Elm installed and have a simple program up and running.
+that we have Elm installed and we have a simple program up and running.
 
 Let's take a look a couple more simple things with this example that will
 make our lives easier.

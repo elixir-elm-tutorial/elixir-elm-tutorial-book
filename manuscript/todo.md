@@ -1,5 +1,9 @@
 # TODO
 
+## General
+
+- [ ] Check Phoenix API chapter for function arity syntax.
+
 ## Players
 
 - [ ] Fix **Player Sign In** form with labels and errors.
