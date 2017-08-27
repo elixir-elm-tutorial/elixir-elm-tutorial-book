@@ -288,6 +288,10 @@ function from the
 module. Then, we pipe the result of that to the `text` function that will
 return the `Html msg` that our function is meant to return.
 
+After seeing the results in the browser, feel free to delete the temporary
+`elm` folder that we created in this chapter since we'll be setting things up
+inside our Phoenix application in the next chapter.
+
 ## Summary
 
 There's a lot more to Elm than what we've covered in our simple "Hello World"

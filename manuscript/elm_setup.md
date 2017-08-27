@@ -1,19 +1,16 @@
 # Elm Setup
 
-We're so excited to have our back-end up and running, and we've gotten a brief
-look at the Elm language. So now let's figure out how we can write Elm code for
+We're excited to have our back-end up and running, and we've gotten a brief
+look at the Elm language. Now, let's figure out how we can write Elm code for
 the front-end of our Phoenix application.
 
-We already installed Elm globally in the last chapter using npm, but in this
-chapter let's take a look at configuring Elm with Phoenix using a tool called
-Brunch.
+We already installed Elm globally in the last chapter, and now we can take a
+look at configuring Elm with Phoenix using a tool called Brunch.
 
 ## Configuring Elm within Phoenix
 
-Phoenix front-end assets are located in the `assets` folder. Let's go to the
-command line and navigate to that directory.
-
-Open the existing `package.json` file that Phoenix gives us by default:
+Phoenix front-end files are located in the `assets` folder. Let's begin by
+checking out the existing `package.json` file that Phoenix gives us by default:
 
 ```javascript
 {
@@ -28,31 +25,97 @@ Open the existing `package.json` file that Phoenix gives us by default:
     "phoenix_html": "file:../deps/phoenix_html"
   },
   "devDependencies": {
-    "babel-brunch": "6.0.6",
-    "brunch": "2.10.7",
+    "babel-brunch": "6.1.1",
+    "brunch": "2.10.9",
     "clean-css-brunch": "2.10.0",
-    "css-brunch": "2.10.0",
-    "uglify-js-brunch": "2.1.1"
+    "uglify-js-brunch": "2.10.0"
   }
 }
 ```
 
-We can use any front-end build tool we want here, but Phoenix comes with a
-minimalist build tool called [Brunch](http://brunch.io) by default. You're
-welcome to try other options, but Brunch tends to work well for our purposes.
-This configuration takes some time, but afterward we'll be able to develop in
-Elixir and Elm without having to think about tooling as much moving forward.
+We can use any front-end build tool we prefer, but Phoenix comes with a
+minimalist tool called [`brunch`](http://brunch.io), which we can see listed in
+the `devDependencies`. You're welcome to try other options, but Brunch tends to
+work well for our purposes. The initial configuration takes some work, but
+afterward we'll be able to focus on development with Elixir and Elm.
 
-Inside the `assets` folder, let's run the following command to ensure our
-project works with the `elm` language and the `elm-brunch` tool:
+Let's navigate to the `assets` folder from the command line and run the
+following command to ensure our project works with the `elm` language and the
+`elm-brunch` tool:
 
 ```shell
-npm install --save-dev elm elm-brunch
+$ npm install --save-dev elm elm-brunch
 ```
 
-Note that this will add lines to the `package.json` file, but thankfully the
-default `.gitignore` file is setup to ignore all the files that get added to the
-`node_modules` folder.
+This will add two new lines to the `devDependencies` section of our
+`package.json` file.
+
+```javascript
+"devDependencies": {
+  "babel-brunch": "6.1.1",
+  "brunch": "2.10.9",
+  "clean-css-brunch": "2.10.0",
+  "elm": "^0.18.0",
+  "elm-brunch": "^0.9.0",
+  "uglify-js-brunch": "2.10.0"
+}
+```
+
+## Updating .gitignore
+
+Thankfully, the default `.gitignore` file is setup to ignore all the files that
+get added to the `node_modules` folder. So our repository tracks changes to the
+`package.json` file, but ignores all the files created in the `node_modules`
+directory when we ran the `npm install` command.
+
+Let's take this opportunity to update the `.gitignore` file in the root of our
+`platform` project so our repository won't need to track extraneous files that
+Elm will generate for us. Similar to the way that npm creates a `node_modules`
+folder, Elm will generate a folder called `elm-stuff` that we can ignore.
+
+Open the `.gitignore` file at the root of our project, and add the following
+code to the bottom:
+
+```gitignore
+# Elm
+/assets/elm-stuff
+```
+
+Now, run the following command from inside the `assets` folder of our Phoenix
+project to install Elm packages:
+
+```shell
+$ elm-package install
+```
+
+It should show similar output to what we saw in the previous chapter:
+
+```shell
+$ elm-package install
+Some new packages are needed. Here is the upgrade plan.
+
+  Install:
+    elm-lang/core 5.1.1
+    elm-lang/html 2.0.0
+    elm-lang/virtual-dom 2.0.4
+
+Do you approve of this plan? [Y/n] Y
+Starting downloads...
+
+  ● elm-lang/html 2.0.0
+  ● elm-lang/virtual-dom 2.0.4
+  ● elm-lang/core 5.1.1
+
+Packages configured successfully!
+```
+
+This command creates a new `elm-package.json` file that we need inside our
+`assets` folder. And it also creates the `elm-stuff` folder that won't need to
+be tracked by our repository.
+
+This is a great location for our files, because it means we'll have collocated
+our front-end files with `package.json` for any Node libraries and
+`elm-package.json` for any Elm libraries we want to include.
 
 ## Elm Folder
 
