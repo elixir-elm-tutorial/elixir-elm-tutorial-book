@@ -19,38 +19,10 @@ and give us something tangible to work with.
 
 ## elm-format
 
-We mentioned this briefly in the Elm Intro chapter, but it bears repeating that
-the [elm-format](https://github.com/avh4/elm-format) tool is _invaluable_ in
-this situation. It will really help cut down on initial mistakes and make Elm
-code easier to write.
-
-## Converting Existing Code
-
-Let's start with our existing `http://0.0.0.0:4000/elm` page. In the
-`index.html.eex` file from the `lib/platform/web/templates/page` folder, let's
-remove everything other than our Elm container. Here's what the file currently
-looks like:
-
-```embedded_elixir
-<p class="well">Signed in as <strong><%= @current_user.username %></strong></p>
-<span><%= link "List All Players", to: player_path(@conn, :index), class: "btn btn-info" %></span>
-<span><%= link "Sign Out", to: player_session_path(@conn, :delete, @current_user), method: "delete", class: "btn btn-danger" %></span>
-
-<div class="elm-container"></div>
-```
-
-We're going to add our authentication features back in later, but for now we
-want this page to only contain our Elm application. So let's replace the code
-above with the following:
-
-```embedded_elixir
-<div class="elm-container"></div>
-```
-
-At this point, we're displaying only a single line of text that's coming from
-our Elm application:
-
-![Minimal Elm Application](images/elm_application/elm_application.png)
+We mentioned this briefly in the Elm Introduction chapter, but it bears
+repeating that the [elm-format](https://github.com/avh4/elm-format) tool is
+_invaluable_ in this situation. It will really help cut down on initial
+mistakes and make Elm code easier to write.
 
 ## Main.elm
 
@@ -77,9 +49,8 @@ start with something like this:
 ```html
 <div class="games-index">
   <ul class="games-list">
-    <li>Adventure Game</li>
-    <li>Driving Game</li>
     <li>Platform Game</li>
+    <li>Adventure Game</li>
   </ul>
 </div>
 ```
@@ -101,11 +72,14 @@ main =
     div [] []
 ```
 
-Note that the first step is to import the `div` function from Elm's `Html`
-module. Then we replaced our text with `div [] []`. Those empty square brackets
-indicate that we're passing two empty lists to the `div` function. The first
-one will be a list of attributes (like our class name), and the second one will
-be the contents of our `div` (our unordered list).
+Note that the first step is to import the
+[`div`](http://package.elm-lang.org/packages/elm-lang/html/latest/Html#div)
+function from Elm's
+[`Html`](http://package.elm-lang.org/packages/elm-lang/html/latest/Html)
+module. Then, we replace our original text with `div [] []`. Those empty square
+brackets indicate that we're passing two empty lists to the `div` function. The
+first one will be a list of attributes (like our class name), and the second
+will be the contents of our `div` (our unordered list).
 
 In order to use the `class` attribute, we'll need to import that too:
 
@@ -123,11 +97,11 @@ main =
 
 In other words, we can import HTML elements from the `Html` module, and we can
 import HTML attributes from the `Html.Attributes` module. In fact, we can
-import _everything_ from those modules using `..` and not have to worry about
-manually importing things one at a time. On the one hand, we're importing a lot
-of things we won't need, but it will save us time in development now and we can
-go back and refactor to import only what we need later. Let's update our import
-statements with the following:
+import _all_ the functions available in these modules using `..` and we won't
+have to worry about manually importing things one at a time. On the one hand,
+we're importing a lot of functions with this approach, but it will save us time
+while we're in development mode and we can go back later and refactor to import
+only what we need. Let's adjust our import statements with the following:
 
 ```elm
 module Main exposing (..)
@@ -191,9 +165,8 @@ main : Html msg
 main =
     div [ class "games-index" ]
         [ ul [ class "games-list" ]
-            [ li [] [ text "Adventure Game" ]
-            , li [] [ text "Driving Game" ]
-            , li [] [ text "Platform Game" ]
+            [ li [] [ text "Platform Game" ]
+            , li [] [ text "Adventure Game" ]
             ]
         ]
 ```
@@ -223,9 +196,8 @@ main : Html msg
 main =
     div [ class "games-index" ]
         [ ul [ class "games-list" ]
-            [ li [] [ text "Adventure Game" ]
-            , li [] [ text "Driving Game" ]
-            , li [] [ text "Platform Game" ]
+            [ li [] [ text "Platform Game" ]
+            , li [] [ text "Adventure Game" ]
             ]
         ]
 
@@ -278,7 +250,7 @@ gamesList =
 
 gamesListItem : Html msg
 gamesListItem =
-    li [] [ text "Adventure Game" ]
+    li [] [ text "Platform Game" ]
 ```
 
 Lastly, we can just assign our new `gamesIndex` function to `main` and it will
@@ -308,15 +280,15 @@ gamesList =
 
 gamesListItem : Html msg
 gamesListItem =
-    li [] [ text "Adventure Game" ]
+    li [] [ text "Platform Game" ]
 ```
 
 ![Refactored Games List](images/elm_application/refactored_games_list.png)
 
 ## Extracting Our Data
 
-Currently we have some hardcoded `view` code. But most Elm applications will
-separate the data into a Model. I find it helpful to add comments and
+Currently, we have some hard-coded `view` data. But most Elm applications will
+separate the data into a model. I find it helpful to add comments and
 placeholder functions to my code so I can start to scaffold out where I want
 things to go. In this example, we're going to start our `model` as an empty
 list:
@@ -360,7 +332,7 @@ gamesList =
 
 gamesListItem : Html msg
 gamesListItem =
-    li [] [ text "Adventure Game" ]
+    li [] [ text "Platform Game" ]
 ```
 
 In our initial example, we just want our data to be a list of game titles as
@@ -369,9 +341,8 @@ strings. That means we can add our data and type annotation:
 ```elm
 model : List String
 model =
-    [ "Adventure Game"
-    , "Driving Game"
-    , "Platform Game"
+    [ "Platform Game"
+    , "Adventure Game"
     ]
 ```
 
@@ -393,8 +364,8 @@ have there?
 Our first step would be to use the `model` list and find the first item. To do
 that, we'd head to the Elm documentation for the `List` module, and try to find
 a function that would give us the results we're looking for. Take a look at the
-[`List` module documentation](http://package.elm-lang.org/packages/elm-lang/core/5.1.1/List),
-and find the `head` function.
+[`List`](http://package.elm-lang.org/packages/elm-lang/core/latest/List)
+module documentation and find the `head` function.
 
 The `List.head` function is exactly what we need to grab the first item from
 our `model`:
@@ -402,9 +373,8 @@ our `model`:
 ```elm
 model : List String
 model =
-    [ "Adventure Game"
-    , "Driving Game"
-    , "Platform Game"
+    [ "Platform Game"
+    , "Adventure Game"
     ]
 
 
@@ -412,17 +382,30 @@ firstGame =
     List.head model
 ```
 
-You might think that `firstGame` would be set to `"Adventure Game"`, but in
-actuality we're working with something called a `Maybe` in Elm. The `List.head`
-function doesn't return the result itself, it returns a "Maybe". The reason for
+You might think that `firstGame` would be set to `"Platform Game"`, but in
+actuality we're working with something called a "Maybe" in Elm. The `List.head`
+function doesn't return the result itself, it returns a `Maybe`. The reason for
 this is that our list of data _could_ be empty.
 
-To illustrate what's happening, here's a quick example in the `elm-repl`:
+To illustrate what's happening, we can take a quick look in the interactive
+Elm REPL. From the command line, type `elm-repl` to get started:
+
+```shell
+$ elm-repl
+```
+
+This will display an interactive prompt where we can type in some Elm code and
+view the output. Here's an example where we're accessing the `head` from a
+list that contains a couple of strings and another example where we're trying
+to access the `head` from an empty list.
 
 ```elm
 $ elm-repl
-> List.head [ "Adventure Game", "Driving Game", "Platform Game" ]
-Just "Adventure Game"
+---- elm-repl 0.18.0 -----------------------------------------------------------
+ :help for help, :exit to exit, more at <https://github.com/elm-lang/elm-repl>
+--------------------------------------------------------------------------------
+> List.head [ "Platform Game", "Adventure Game" ]
+Just "Platform Game"
 > List.head []
 Nothing
 ```
@@ -438,9 +421,8 @@ the `firstGame` function to `firstGameMaybe` and add a type annotation:
 ```elm
 model : List String
 model =
-    [ "Adventure Game"
-    , "Driving Game"
-    , "Platform Game"
+    [ "Platform Game"
+    , "Adventure Game"
     ]
 
 
@@ -456,9 +438,8 @@ Otherwise, we'll just return an empty string.
 ```elm
 model : List String
 model =
-    [ "Adventure Game"
-    , "Driving Game"
-    , "Platform Game"
+    [ "Platform Game"
+    , "Adventure Game"
     ]
 
 
@@ -491,7 +472,7 @@ contains strings like we're expecting, we return the first string with
 `gameTitle`. If the list was empty, we just return an empty string with `""`.
 
 The result is that we can add this to our view and our application should
-still work as intended by showing the `"Adventure Game"` as the only list item
+still work as intended by showing the `"Platform Game"` as the only list item
 on the page:
 
 ```elm
@@ -502,10 +483,12 @@ gamesListItem =
 
 ## Maybe.withDefault
 
-Since this is a common pattern in Elm, there is a function called `withDefault`
-in the [`Maybe` module](http://package.elm-lang.org/packages/elm-lang/core/5.1.1/Maybe)
-that can be really helpful to gather the results we're looking for. Let's
-refactor our `firstGameTitle` function with the following approach:
+Since this is a common pattern in Elm, there is a function called
+[`withDefault`](http://package.elm-lang.org/packages/elm-lang/core/latest/Maybe#withDefault)
+in the
+[`Maybe`](http://package.elm-lang.org/packages/elm-lang/core/latest/Maybe)
+module that can be really helpful to gather the results we're looking for.
+Let's refactor our `firstGameTitle` function with the following approach:
 
 ```elm
 firstGameTitle : String
@@ -529,14 +512,13 @@ because we always account for situations where something might not have a
 value. There is no usage of `null` or `undefined` in Elm. This is why Elm can
 make a claim of producing no runtime errors, because we're always able to
 account for possible values. It means the users of our applications won't run
-into errors, and enables us to make guarantees that many languages simply
-can't.
+into errors, and enables us to make guarantees that many languages cannot.
 
 If you're interested in these concepts, be sure to read more about the
 [`null` reference on Wikipedia](https://en.wikipedia.org/wiki/Tony_Hoare).
 
 This is one of the more difficult concepts to grasp at first when working with
-Elm, but it becomes our most treasured asset.
+Elm, but it becomes one of our most treasured assets.
 
 ## Iterating Through the List
 
