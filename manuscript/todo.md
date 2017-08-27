@@ -2,7 +2,6 @@
 
 ## Players
 
-- [ ] Fix database seeds.
 - [ ] Fix **Player Sign In** form with labels and errors.
 - [ ] Restrict access to players index page after working API.
 - [ ] Add link to **Edit Player** page in header.
