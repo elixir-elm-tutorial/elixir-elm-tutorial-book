@@ -199,10 +199,10 @@ so let's click it to compile and see the results.
 "Hello World" is admittedly not the most exciting example. But the good news is
 that we have Elm installed and we have a simple program up and running.
 
-Let's take a look a couple more simple things with this example that will
-make our lives easier.
+Let's take a look a couple more things that will make our lives easier with
+this example still in mind.
 
-Before we move any further, definitely take a look at
+Before we move any further, definitely consider trying
 [`elm-format`](https://github.com/avh4/elm-format). It's a plugin that you can
 use with your editor that makes working with Elm much easier. It's particularly
 great when you're getting started, because you can type a rough idea of what
@@ -210,8 +210,8 @@ you want to do and then immediately know if it's valid code as long as
 `elm-format` reformats the code and doesn't mention errors or warnings.
 
 While `elm-format` is not strictly necessary, and it's possible to write solid
-Elm code without it, it's a very helpful tool that can help you focus on
-problem-solving instead of worrying about valid syntax.
+Elm code without it, it's a remarkably helpful tool that can help you focus on
+problem solving instead of worrying about valid syntax.
 
 ## Comments and Type Signatures
 
@@ -230,13 +230,13 @@ main =
 ```
 
 Next, let's refactor our `import` statement slightly to be more explicit about
-which functions we want to import:
+which functions we want to import from the `Html` module:
 
 ```elm
 -- Hello.elm
 module Hello exposing (..)
 
-import Html exposing (text)
+import Html exposing (Html, text)
 
 
 main =
@@ -257,7 +257,7 @@ main =
     text "Hello World"
 ```
 
-When we create type signatures, we're restating the function name first. Then
+When we create type signatures, we're restating the function name first. Then,
 after the `:` character, we give the types of the arguments and the return
 value. Since this function doesn't have any arguments, we're just giving the
 return type here, which is `Html msg`. That just means we're returning some
@@ -279,6 +279,14 @@ main =
         |> String.toUpper
         |> text
 ```
+
+Inside the `main` function, we start with the raw `"Hello World"` string. Then,
+we pipe that to the
+[`toUpper`](http://package.elm-lang.org/packages/elm-lang/core/latest/String#toUpper)
+function from the
+[`String`](http://package.elm-lang.org/packages/elm-lang/core/latest/String)
+module. Then, we pipe the result of that to the `text` function that will
+return the `Html msg` that our function is meant to return.
 
 ## Summary
 
