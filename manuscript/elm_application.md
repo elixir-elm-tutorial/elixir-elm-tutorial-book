@@ -566,14 +566,13 @@ to our `gamesList` function. Then, we're going to iterate through those game
 titles one at a time using `List.map`. Take a look at the documentation for the
 [`List.map`](http://package.elm-lang.org/packages/elm-lang/core/latest/List#map) function, and we see that it takes two arguments: a function and a list.
 
-What's happening is that we're passing the list of all our game titles to the
-`List.map` function, and it's splitting them apart and sending the titles one
-at a time to the `gamesListItem` function. We need to wrap all this in
-parentheses because we're using it as the second argument to our `ul` function,
-but don't get too caught up in understanding everything at once. For now, we
-just want to get an overall understanding of how to render the list on our
-page, and we'll go back later to get a better explanation of how it all fits
-together.
+We're passing the list of all our game titles to the `List.map` function, and
+it's splitting them apart and sending the titles one at a time to the
+`gamesListItem` function. We need to wrap all this in parentheses because we're
+using it as the second argument to our `ul` function, but don't get too caught
+up in understanding everything at once. For now, we just want to get an overall
+understanding of how to render the list on our page, and we'll go back later to
+get a better explanation of how it all fits together.
 
 Finishing up with the `gamesListItem` function will help clarify what's
 happening above. Let's update the function to take a single string argument

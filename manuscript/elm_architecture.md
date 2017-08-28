@@ -53,8 +53,8 @@ that will pull everything together for us.
 
 The Model will be a good place to start as we structure our data. Instead of
 just displaying our game titles, let's show both the game title and a brief
-description. We're going to be mirroring some of the data we originally created
-in our Phoenix JSON API for games.
+description. We're going to be mirroring some of the data we created in our
+Phoenix JSON API for games.
 
 We'll name this function `initialModel`, and we'll use Elm's "Record" syntax
 to create our games:
