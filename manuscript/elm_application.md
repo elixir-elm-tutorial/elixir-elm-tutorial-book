@@ -253,8 +253,8 @@ gamesListItem =
     li [] [ text "Platform Game" ]
 ```
 
-Lastly, we can just assign our new `gamesIndex` function to `main` and it will
-render our new structure to the page with a single game:
+With our `main` function, we can create a `div` that will display a header and
+our `gamesIndex` to render our new structure to the page with a single game:
 
 ```elm
 module Main exposing (..)
@@ -265,7 +265,10 @@ import Html.Attributes exposing (..)
 
 main : Html msg
 main =
-    gamesIndex
+    div []
+        [ h1 [] [ text "Games" ]
+        , gamesIndex
+        ]
 
 
 gamesIndex : Html msg
@@ -287,7 +290,7 @@ gamesListItem =
 
 ## Extracting Our Data
 
-Currently, we have some hard-coded `view` data. But most Elm applications will
+Currently, we've hard-coded our view data. But most Elm applications will
 separate the data into a model. I find it helpful to add comments and
 placeholder functions to my code so I can start to scaffold out where I want
 things to go. In this example, we're going to start our `model` as an empty
@@ -305,7 +308,10 @@ import Html.Attributes exposing (..)
 
 main : Html msg
 main =
-    gamesIndex
+    div []
+        [ h1 [] [ text "Games" ]
+        , gamesIndex
+        ]
 
 
 
@@ -524,13 +530,14 @@ Elm, but it becomes one of our most treasured assets.
 
 We know how to display a single item from our `model` using `List.head`. But
 how do we iterate through all the game titles and display them on the page?
-We're going to use `List.map` to iterate through our values and pass them to
-our `gamesList` function.
+We can use
+[`List.map`](http://package.elm-lang.org/packages/elm-lang/core/latest/List#map)
+to iterate through our values and pass them to our `gamesList` function.
 
 We can start by refactoring our view functions to accept arguments. This is
 going to be a little difficult at first since we have to make changes to
-`gamesIndex`, `gamesList`, and `gamesListItem` all at the same time, but at the
-end we'll have all the data from our Model being displayed in the View.
+`gamesIndex`, `gamesList`, and `gamesListItem` all at the same time. At the
+end, we'll have all the data from our model being displayed in the view.
 
 First, let's update our `gamesIndex` function to take our `model` as an
 argument, and we'll call the argument `gameTitles`. This will involve updating
@@ -543,11 +550,10 @@ gamesIndex gameTitles =
     div [ class "games-index" ] [ gamesList gameTitles ]
 ```
 
-Now we have to update our `gamesList` function to accept the argument that
+Now, we have to update our `gamesList` function to accept the argument that
 we're passing along from our `gamesIndex` function. We'll update the type
 annotation, add the `gameTitles` argument, and then we'll take a look at the
-`map` function from the
-[`List` module](http://package.elm-lang.org/packages/elm-lang/core/latest/List):
+`map` function from the `List` module:
 
 ```elm
 gamesList : List String -> Html msg
@@ -556,10 +562,9 @@ gamesList gameTitles =
 ```
 
 There's a lot going on here. We're accepting a list of strings as the argument
-to our `gamesList` function. Then we're going to iterate through those game
-titles one at a time using `List.map`. Take a look at the `List.map` function
-in the link to the Elm documentation posted above, and we'll see that it takes
-two arguments: a function and a list.
+to our `gamesList` function. Then, we're going to iterate through those game
+titles one at a time using `List.map`. Take a look at the documentation for the
+[`List.map`](http://package.elm-lang.org/packages/elm-lang/core/latest/List#map) function, and we see that it takes two arguments: a function and a list.
 
 What's happening is that we're passing the list of all our game titles to the
 `List.map` function, and it's splitting them apart and sending the titles one
@@ -581,7 +586,7 @@ gamesListItem gameTitle =
 ```
 
 Our `gamesListItem` function is using the individual strings that are getting
-passed from the `List.map` function in `gamesList`, and it's rendereing them
+passed from the `List.map` function in `gamesList`, and it's rendering them
 inside a `li` element.
 
 ## Tying It All Together
@@ -605,7 +610,10 @@ import Html.Attributes exposing (..)
 
 main : Html msg
 main =
-    gamesIndex model
+    div []
+        [ h1 [] [ text "Games" ]
+        , gamesIndex model
+        ]
 
 
 
@@ -614,9 +622,8 @@ main =
 
 model : List String
 model =
-    [ "Adventure Game"
-    , "Driving Game"
-    , "Platform Game"
+    [ "Platform Game"
+    , "Adventure Game"
     ]
 
 
@@ -639,6 +646,8 @@ gamesListItem gameTitle =
     li [] [ text gameTitle ]
 ```
 
+![Games List with Model Data](images/elm_application/games_list_with_model_data.png)
+
 With functional programming, one of the best strategies for improving our
 understanding is to think in terms of data transformation. We'll start with
 the data from our model, and we'll follow it through our application as we
@@ -647,13 +656,13 @@ render it onto the page.
 Our `model` function returns a list of strings. Each of these strings contains
 a game title that we'll use when we display our list of games.
 
-In our `main` function, we pass the data from our Model to our View by passing
-`model` to `gamesIndex`. This function gives us a `div` element as a container
-for our list of games, but it's essentially just passing the data through to
-our `gamesList` function without performing any alteration to the data. This
-might seem unnecessary, but we'll see the value of this approach later as we
-start building other views for our player index. And it currently enables us to
-keep our functions small and easy to understand.
+In our `main` function, we pass the data from our model to our view by passing
+`model` to `gamesIndex`. The `gamesIndex` function gives us a `div` element as
+a container for our list of games, but it's essentially just passing the data
+through to our `gamesList` function without performing any alteration to the
+data. This might seem unnecessary, but we'll see the value of this approach
+later as we start building other views for our player index. And it currently
+enables us to keep our functions small and easy to understand.
 
 The `gamesList` function is where most of the work is getting done. We're using
 `List.map` to iterate through our list of strings. We take in the full list of
@@ -681,7 +690,7 @@ and learned how to iterate through data with the `List` module.
 Since Elm applications tend to share a standard structure and follow similar
 patterns, the Elm community has adopted the Elm Architecture. We've already
 seen some of the concepts at play when we separated our code into separate
-sections for the Model and the View, and then pulled them together with the
+sections for the model and the view, and then pulled them together with the
 `main` function.
 
 In the next chapter, we'll take a deeper look at the Elm Architecture as we
