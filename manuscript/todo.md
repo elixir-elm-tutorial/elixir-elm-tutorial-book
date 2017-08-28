@@ -1,5 +1,11 @@
 # TODO
 
+## Big Picture
+
+- [ ] Routing for games.
+- [ ] Channels for syncing gameplay data.
+- [ ] Game levels and player skill acquisition.
+
 ## General
 
 - [ ] Check Phoenix API chapter for function arity syntax.
