@@ -554,7 +554,7 @@ passing tests that give us confidence to keep adding features.
 ## Signing In
 
 How do we allow users to sign in to their newly created accounts? Let's define
-a `signin/2` function in our `PlayerAuthController`:
+a `sign_in/2` function in our `PlayerAuthController`:
 
 ```elixir
 def sign_in(conn, player) do
