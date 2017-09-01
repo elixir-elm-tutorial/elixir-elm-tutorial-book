@@ -221,8 +221,8 @@ defmodule Platform.Products.Gameplay do
   alias Platform.Accounts.Player
 
   schema "gameplays" do
-    has_one :game, Game
-    has_one :player, Player
+    belongs_to :game, Game
+    belongs_to :player, Player
 
     field :player_score, :integer, default: 0
   end
@@ -239,7 +239,7 @@ end
 Our new schema follows the same general structure as the other ones we were
 just working with, but has a couple of new items. We created our `alias` lines
 at the top just as we did previously. For our new `gameplays` schema, we're
-creating [`has_one`](https://hexdocs.pm/ecto/Ecto.Schema.html#has_one/3)
+creating [`belongs_to`](https://hexdocs.pm/ecto/Ecto.Schema.html#belongs_to/3)
 relationships so that each gameplay will have just one `player` and one `game`.
 We also include a `default` value for our `player_score` field. In our
 `changeset/2` function, we also make sure to require all of these fields.
