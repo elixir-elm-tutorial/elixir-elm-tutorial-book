@@ -1,9 +1,9 @@
 # Layout and Design
 
-This isn't a book about design, but our application could certainly use some
-work to make it more usable and nicer to look at. The author is admittedly not
-a strong designer, but we'll do the best we can to improve the styling and
-usability for our platform application.
+Although this isn't a book about design, our application could certainly
+benefit from an effort to make it more usable and nicer to look at. The author
+is admittedly not a strong designer, but we'll do the best we can to improve
+the styling and usability for our platform application.
 
 ## Pages
 
@@ -134,7 +134,7 @@ container:
 
 ## Logo
 
-Instead of displaying the Phoenix logo in our header, let's dipslay a simple
+Instead of displaying the Phoenix logo in our header, let's display a simple
 link that we can use to navigate back to our home page.
 
 Here's the line that's currently being used to apply a `logo` class and render
@@ -148,7 +148,7 @@ We can replace this with a Phoenix
 [`link`](https://hexdocs.pm/phoenix_html/Phoenix.HTML.Link.html#link/2) that
 routes back to our home page with `page_path(@conn, :index)`. We'll keep it
 simple with the `"Platform"` text, and we're still going to apply the `logo`
-class so we can preserve the height of our header area:
+class so we can adjust the styles.
 
 ```embdedded_elixir
 <%= link "Platform", to: page_path(@conn, :index), class: "logo" %>
@@ -158,23 +158,21 @@ Next, open up the `phoenix.css` file inside the `assets/css` folder and we'll
 scroll down to find the `/* Custom page header */` section.
 
 Let's remove the `.header` CSS declaration that's adding a thin line beneath
-our header section. And we'll adjust the `.logo` CSS declaration so we can
+our header section. Then, we'll adjust the `.logo` CSS declaration so we can
 remove our Phoenix background image and style the `"Platform"` text in our
 link:
 
 ```css
 /* Custom page header */
 .logo {
-  height: 71px;
-  margin-bottom: 1em;
   text-decoration: none;
   font-weight: bold;
   font-size: 3em;
   color: #333;
 }
+
 .logo:hover {
   text-decoration: none;
-  color: #000;
 }
 ```
 
@@ -186,9 +184,9 @@ This gives us a working link we can use to reload the home page:
 
 You've gotten a chance to look at some of the styles that Phoenix gives us in
 the `phoenix.css` file. For the rest of this chapter, let's work with the
-`app.css` file that's also in the `assets/css` folder. In fact, let's remove
-all the custom declarations at the bottom of the `phoenix.css` file and migrate
-the few we'll need to `app.css`.
+`app.css` file that's also located inside the `assets/css` folder. In fact,
+let's remove all the custom CSS declarations at the bottom of the `phoenix.css`
+file and migrate the few we'll need to `app.css`.
 
 In other words, we'll leave all the minified Bootstrap CSS code in our
 `phoenix.css` file. But we'll delete all the custom CSS declarations from the
@@ -207,9 +205,9 @@ bottom, and our `app.css` file should just look like this:
   font-size: 3em;
   color: #333;
 }
+
 .logo:hover {
   text-decoration: none;
-  color: #000;
 }
 ```
 
@@ -283,9 +281,11 @@ Now we can use this new function in our `featured` function to display the data
 from our featured game. We can use a `case` statement to show our featured
 section when our `featuredGame` function returns a game for us to work with.
 Otherwise, we'll just render an empty `div` element if there are no featured
-games. This is a great example of where `Maybe` is so powerful, because our
-application won't compile unless we handle both of these possibilities where
-we may or may not have a featured game to work with. In other languages and
+games.
+
+This is a great example of where `Maybe` is so powerful, because our
+application won't compile unless we handle both of these possibilities where we
+may or may not have a featured game to work with. In other languages and
 frameworks, we might forget to handle situations where we have no featured game
 data, and we wouldn't actually find out until our application threw an error.
 
@@ -314,10 +314,10 @@ featured model =
                     [ div [ class "featured-img" ]
                         [ img [ class "featured-thumbnail", src game.thumbnail ] [] ]
                     , div [ class "featured-data" ]
-                        [ h1 [ class "featured-text" ] [ text "Featured" ]
-                        , h2 [ class "featured-title" ] [ text game.title ]
-                        , p [ class "featured-description" ] [ text game.description ]
-                        , button [ class "btn btn-primary" ] [ text "Play Now!" ]
+                        [ h1 [] [ text "Featured" ]
+                        , h2 [] [ text game.title ]
+                        , p [] [ text game.description ]
+                        , button [ class "btn btn-lg btn-primary" ] [ text "Play Now!" ]
                         ]
                     ]
                 ]
@@ -362,17 +362,17 @@ to the left so that our text data will appear on the right. We also apply an
 `overflow` property to our game data so that it won't spill out of the featured
 section on smaller screens.
 
-Granted, these aren't the fanciest of styles, but our featured game section
-works well for now:
+These aren't the fanciest of styles, but our featured game section works well
+for now:
 
 ![Featured Section](images/layout_design/featured-section.png)
 
 ## Authentication Section
 
 You may have noticed that our authentication information at the top right of
-the window doesn't look great. Let's open our `app.html.eex` file back up and
-we'll make a few more changes. We'll change the classes we're using for our
-buttons, and we'll display our "Signed in" text with a new class too:
+the window doesn't look great. Let's open our `app.html.eex` file and we'll
+make a few more changes. We'll change the classes we're using for our buttons,
+and we'll display our "Signed in" text with a new class too:
 
 ```embedded_elixir
 <header class="header">
@@ -396,7 +396,7 @@ of the window look okay and don't break our layout on small screens:
 
 ```css
 .nav {
-  margin-top: 3px;
+  margin-top: 6px;
   max-height: 50px;
   overflow: hidden;
 }
@@ -431,6 +431,19 @@ an upcoming chapter, but for now let's keep moving.
 
 ## List of Games
 
+For our list of games, it looks like Bootstrap has a
+[media object component](https://getbootstrap.com/docs/3.3/components/#media)
+that will work well for our needs.
+
+We'll add a `media-list` class to our list of games, and then we'll use
+`media-left` for the thumbnail and `media-body` for the text information. Feel
+free to take a look at the examples in the Bootstrap documentation if you're
+interested in tinkering around with the styles for our application.
+
+We also want to wrap the each game in a link tag so that the clickable area is
+large for users to click on and access the game. We don't have a game to send
+users to yet, so we're just adding `href "#"` for now.
+
 ```elm
 gamesList : List Game -> Html msg
 gamesList games =
@@ -452,12 +465,16 @@ gamesListItem game =
         ]
 ```
 
+Bootstrap takes care of most of the heavy lifting for us, but let's add a
+couple of custom styles to the `app.css` file. Add the following CSS code to
+style our list of games:
+
 ```css
 /* Games section */
 .game-item {
+  margin-bottom: 15px;
   border: 2px solid black;
   border-radius: 10px;
-  margin-bottom: 15px;
 }
 
 .media-object {
@@ -466,6 +483,16 @@ gamesListItem game =
 ```
 
 ## List of Players
+
+Lastly, let's style our list of players into a leaderboard. Bootstrap has a
+[panel component](https://getbootstrap.com/docs/3.3/components/#panels) that we
+can use to wrap around our player list. Then, we can use the
+[list group component](https://getbootstrap.com/docs/3.3/components/#list-group)
+to display each player along with their current score.
+
+Update the `playersList` function and `playersListItem` function with the
+following and Bootstrap will take care of the rest of the styling for us:
+
 
 ```elm
 playersList : List Player -> Html msg
@@ -484,8 +511,17 @@ playersListItem player =
         ]
 ```
 
+Looks like this works well for us. We've got our sorted list of players
+displaying inside a leaderboard with their display names and scores.
+
 ![Player Leaderboard](images/layout_design/player_leaderboard.png)
 
 ## Summary
 
-...
+This book is primarily focused on working with Elixir and Elm, but this chapter
+was a fun aside into seeing how we can still use a familiar approach to styling
+with CSS and Bootstrap within the context of a Phoenix application.
+
+We have our Phoenix API up and running, and our Elm application is pulling in
+all the sample data. Let's move on to creating a game with Elm and pulling
+everything together!
