@@ -4,6 +4,7 @@
 
 - [ ] Still need to cast other fields in `registration_changeset` or seeds don't work.
   - `cast(attrs, [:display_name, :password, :score, :username])`
+- [ ] Gracefully handle null values when decoding JSON.
 
 ## Big Picture
 
