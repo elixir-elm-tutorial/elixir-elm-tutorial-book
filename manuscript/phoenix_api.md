@@ -122,7 +122,7 @@ a `game_id` as a reference to the `games` table, a `player_id` as a reference
 to the `players` table, and a `player_score` that will track a player's score
 for the current play through the game.
 
-Let's update the `change` function in our migration to include the following:
+Let's update the `change/0` function in our migration to include the following:
 
 ```elixir
 defmodule Platform.Repo.Migrations.CreateGames do

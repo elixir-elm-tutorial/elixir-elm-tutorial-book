@@ -11,10 +11,6 @@
 - [ ] Channels for syncing gameplay data.
 - [ ] Game levels and player skill acquisition.
 
-## General
-
-- [ ] Check Phoenix API chapter for function arity syntax.
-
 ## Players
 
 - [ ] Fix **Player Sign In** form with labels and errors.
@@ -38,3 +34,7 @@
 
 - [ ] Rewrite setup chapter with new location.
 - [ ] Add list of players and games on index page.
+
+## Chores
+
+- [ ] Run `mix hex.outdated` and verify that content still works with latest.
