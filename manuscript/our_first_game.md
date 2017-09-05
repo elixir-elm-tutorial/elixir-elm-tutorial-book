@@ -4,9 +4,9 @@ Let's start creating our first minigame with Elm. We want to begin with
 something small and simple that still has the characteristics we want for all
 of our games.
 
-Our initial game should be (very) small, self-contained, interactive, and fun.
-And we'll also want to add a simple scoring mechanism so we can work towards
-tracking player scores and sending that data to our back-end platform.
+Our initial game should be (really) small, self-contained, interactive, and
+fun. And we'll also want to add a simple scoring mechanism so we can work
+towards tracking player scores and sending that data to our back-end platform.
 
 ## Creating an Initial Game File
 
@@ -32,9 +32,9 @@ game. We'll start by manually creating a new page and route, and later we'll
 work towards a more flexible approach.
 
 Inside the `lib/platform/web/templates/page` folder, let's create a new file
-called `game.html.eex`. This will be very similar to what we did for our Elm
-home page, and this time we'll just be creating a container div element for our
-Elm game. This is all we need to add for the `game.html.eex` file:
+called `game.html.eex`. This will be similar to what we did for our Elm home
+page, and this time we'll just be creating a container div element for our Elm
+game. This is all we need to add for the `game.html.eex` file:
 
 ```embedded_elixir
 <div class="elm-game-container"></div>
@@ -435,10 +435,10 @@ starting to come to life!
 We have a few options for adding a small character to our game:
 
 - Create a small SVG rectangle shape that represents the character. This option
-  isn't very fun, but it's a quick way to get something on the page and keep
+  isn't as fun, but it's a quick way to get something on the page and keep
   moving.
-- Use an existing character image from the web. Check out sites like
-  opengameart.org for free assets, or if you're not planning on releasing your
+- Use an existing character image from the web. Check out free sites like
+  opengameart.org for assets, or if you're not planning on releasing your
   game publicly then you can search Google for character sprites from your
   favorite games and use those. If you choose this option, be sure to look for
   characters that have a transparent background. And you may need to resize the
