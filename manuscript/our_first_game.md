@@ -4,18 +4,22 @@ Let's start creating our first minigame with Elm. We want to begin with
 something small and simple that still has the characteristics we want for all
 of our games.
 
-Our initial game should be (really) small, self-contained, interactive, and
-fun. And we'll also want to add a simple scoring mechanism so we can work
-towards tracking player scores and sending that data to our back-end platform.
+Our initial game should be small, self-contained, interactive, and fun. And
+we'll also want to add a simple scoring mechanism so we can work towards
+tracking player scores and sending that data to our back-end platform.
 
 ## Creating an Initial Game File
 
-Inside the `lib/platform/web/elm` folder, let's create a new file named
-`Game.elm`. We can initialize it with the following code so we'll have
+While we were creating the JSON API for our games, we created a sample game
+called `Platformer`. Now, we can use that same title as our Elm module name so
+we can sync up the assets we generate between the front-end and back-end.
+
+Inside the `assets/elm` folder, let's create a new file named
+`Platformer.elm`. We can initialize it with the following code so we'll have
 something to display on the page:
 
 ```elm
-module Game exposing (..)
+module Platformer exposing (..)
 
 import Html exposing (..)
 
@@ -28,114 +32,92 @@ main =
 ## Creating a New Page for Games
 
 On the Phoenix side, we'll need to create a new page where we can display our
-game. We'll start by manually creating a new page and route, and later we'll
-work towards a more flexible approach.
-
-Inside the `lib/platform/web/templates/page` folder, let's create a new file
-called `game.html.eex`. This will be similar to what we did for our Elm home
-page, and this time we'll just be creating a container div element for our Elm
-game. This is all we need to add for the `game.html.eex` file:
+game. Inside the `lib/platform_web/templates` folder, create a new folder
+called `game`. Then, let's create a new file called `show.html.eex`. This will
+be similar to what we did for our Elm home page, and this time we'll create
+another container `div` element for our Elm game. This is all we need to add
+for the `show.html.eex` file:
 
 ```embedded_elixir
-<div class="elm-game-container"></div>
+<div id="elm-game-container"></div>
 ```
 
-Now let's update our `router.ex` file inside the `lib/platform/web` folder.
-For now, we can add a simple route so that users can access our game by going
-to `/elm/game` in the browser. Update the browser scope inside the `router.ex`
-file with the following:
+We'll also need to add to our `lib/platform_web/controllers/game_controller.ex`
+file. We already have a `show/2` function that responds to JSON requests. Now,
+let's add another function called `play/2` just below it to display a game in
+the browser.
 
 ```elixir
-scope "/", Platform.Web do
+def show(conn, %{"id" => id}) do
+  game = Products.get_game!(id)
+  render(conn, "show.json", game: game)
+end
+
+def play(conn, %{"id" => id}) do
+  game = Products.get_game!(id)
+  render(conn, "show.html", game: game)
+end
+```
+
+Now, let's update our `router.ex` file inside the `lib/platform_web` folder.
+For now, we can add a simple route so that users can access our game by going
+to `/games/1` in the browser. Update the `:browser` scope inside the
+`router.ex` file with the following:
+
+```elixir
+scope "/", PlatformWeb do
   pipe_through :browser
 
-  get "/", PlayerController, :new
-  get "/elm", PageController, :index
-  get "/elm/game", PageController, :game
+  get "/", PageController, :index
+  get "/games/:id", GameController, :play
   resources "/players", PlayerController
   resources "/sessions", PlayerSessionController, only: [:new, :create, :delete]
 end
 ```
 
 We'll be able to view the Elm game that we're creating when we visit
-`http://0.0.0.0:4000/elm/game` in our browser, but we still need to take a
+`http://0.0.0.0:4000/games/1` in our browser, but we still need to take a
 couple more steps before this will work.
-
-Let's update our `PageController` with a function that will render our new game
-page. In the `lib/platform/web/controllers` folder, update the
-`page_controller.ex` file with the following:
-
-```elixir
-defmodule Platform.Web.PageController do
-  use Platform.Web, :controller
-
-  plug :authenticate when action in [:index]
-
-  def index(conn, _params) do
-    render conn, "index.html"
-  end
-
-  def game(conn, _params) do
-    render conn, "game.html"
-  end
-
-  defp authenticate(conn, _opts) do
-    if conn.assigns.current_user() do
-      conn
-    else
-      conn
-      |> put_flash(:error, "You must be logged in to access that page.")
-      |> redirect(to: player_path(conn, :new))
-      |> halt()
-    end
-  end
-end
-```
 
 ## Configuring our Game Page
 
-We have our template, route, and controller configured properly. We just have
+We have our template, controller, and route configured properly. We just have
 a couple more small steps to take before we can see it rendered in the browser.
 
 First, we'll need to update our `brunch-config.js` file so that both `Main.elm`
-and `Game.elm` will both be compiled (note that the only change here is on the
-`elmBrunch` line).
+and `Platformer.elm` will both be compiled. Update the `plugins` section of the
+`brunch-config.js` file with the following:
 
 ```javascript
-exports.config = {
-  files: {
-    javascripts: { joinTo: "js/app.js" },
-    stylesheets: { joinTo: "css/app.css" },
-    templates: { joinTo: "js/app.js" }
-  },
-  conventions: { assets: /^(static)/ },
-  paths: {
-    watched: ["../lib/platform/web/elm", "static", "css", "js", "vendor"],
-    public: "../priv/static"
-  },
-  plugins: {
-    babel: { ignore: [/vendor/] },
-    elmBrunch: { elmFolder: "../lib/platform/web/elm", mainModules: ["Main.elm", "Game.elm"], outputFolder: "../../../../assets/vendor" }
-  },
-  modules: { autoRequire: { "js/app.js": ["js/app"] } },
-  npm: { enabled: true }
-};
+plugins: {
+  babel: { ignore: [/vendor/] },
+  elmBrunch: {
+    mainModules: ["elm/Main.elm", "elm/Platformer.elm"],
+    makeParameters: ["--debug"],
+    outputFolder: "../assets/js"
+  }
+},
 ```
 
 Lastly, we can update our `app.js` file to render our game inside the Phoenix
 application. At the bottom of our `assets/js/app.js` file, let's update our
-code to look like this:
+code. Note that we're importing from our `platformer.js` file and then
+embedding our Elm game inside the `#elm-game-container`.
 
 ```javascript
-const elmContainer = document.querySelector(".elm-container");
-const elmGameContainer = document.querySelector(".elm-game-container");
+// Elm
+import Elm from "./main"
+import Game from "./platformer"
+
+const elmContainer = document.querySelector("#elm-container");
+const elmGameContainer = document.querySelector("#elm-game-container");
 
 if (elmContainer) {
   const elmApplication = Elm.Main.embed(elmContainer);
 }
 
 if (elmGameContainer) {
-  const elmGame = Elm.Game.embed(elmGameContainer);
+  const elmGame = Game.Platformer.embed(elmGameContainer);
 }
 ```
 
@@ -154,10 +136,10 @@ little character to work with, and wire up the keyboard for interaction.
 We've already got some experience in the preceding chapters with the Elm
 Architecture, so we're not going to cover it in great detail here. Instead,
 we're going to start by pasting in the following code, which will give us some
-starter code to work with. Add the following to the `Game.elm` file:
+starter code to work with. Add the following to the `Platformer.elm` file:
 
 ```elm
-module Game exposing (..)
+module Platformer exposing (..)
 
 import Html exposing (Html, div, text)
 
@@ -244,13 +226,12 @@ We have all the things we need to get started:
 ## Creating a Game Canvas
 
 Before we can add our game character, we need to create a window where our hero
-(or heroine) can live. We may decide on an alternative approach later, but for
-now let's use SVG to create our game world.
+(or heroine) can live. Let's start using SVG to create our game world.
 
 In order to work with Elm's SVG library, we'll need to install the package and
 import it into our project.
 
-From the command line, let's switch to the `lib/platform/web/elm` folder and
+From the command line, let's switch to the `assets` folder and
 run the following command:
 
 ```shell
@@ -283,12 +264,12 @@ Packages configured successfully!
 ```
 
 Now that we have the package installed, let's import it at the top of our
-`Game.elm` file. We'll import all of the `Svg` functions along with all the
+`Platformer.elm` file. We'll import all the `Svg` functions along with all the
 `Svg.Attributes` functions since we'll be using many of them. Update the top of
-your `Game.elm` file with the following code:
+your `Platformer.elm` file with the following code:
 
 ```elm
-module Game exposing (..)
+module Platformer exposing (..)
 
 import Html exposing (Html, div)
 import Svg exposing (..)
@@ -329,7 +310,7 @@ to take a look online, though, because there are some great SVG learning
 materials and courses available.
 
 Let's add our SVG code to our Elm view, and we'll walk through how it all fits
-together. At the bottom of the `Game.elm` file, add the following:
+together. At the bottom of the `Platformer.elm` file, add the following:
 
 ```elm
 view : Model -> Html Msg
@@ -354,12 +335,10 @@ viewGameWindow =
 ```
 
 We start with a `div` element at the top, which will contain our `svg` element.
-There is some duplication when we add our `width` and `height` attributes in
-two separate places, but for now we'll just keep going so we can get something
-rendered on the page. The `svg` element will contain the `rect` element that
-serves as our small game window. Note that we need to add the same `width` and
-`height` for both of these elements, or else we'd run the risk that the size
-of our rectangle might exceed the size of our surrounding `svg` element.
+The `svg` element will contain the `rect` element that serves as our small game
+window. Note that we need to add the same `width` and `height` for both of
+these elements, or else we'd run the risk that the size of our rectangle might
+exceed the size of our surrounding `svg` element.
 
 Lastly, we add a `stroke` attribute to see a `"black"` line around our game
 window, and a `fill` attribute with an initial value of `"none"`.
