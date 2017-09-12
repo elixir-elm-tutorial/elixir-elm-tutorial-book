@@ -19,7 +19,7 @@ confusing, we'll take a look at how we can subscribe to keyboard input now.
 In order to work with keyboard input, we'll need to start by importing the Elm
 `Keyboard` package.
 
-From the command line, let's switch to the `lib/platform/web/elm` folder and
+From the command line, let's switch to the `assets` folder and
 run the following command:
 
 ```shell
@@ -333,6 +333,41 @@ is able to discover the item at the correct position, and should improve our
 gameplay until we can find a better approach.
 
 ## Spawning Items
+
+In order to animate our scene, we'll need to start by importing the Elm
+`AnimationFrame` package.
+
+From the command line, let's switch to the `assets` folder and
+run the following command:
+
+```shell
+$ elm-package install elm-lang/animation-frame
+```
+
+After agreeing to install the package by entering the `Y` key, here's the
+output we should see:
+
+```shell
+$ elm-package install elm-lang/animation-frame
+To install elm-lang/animation-frame I would like to add the following
+dependency to elm-package.json:
+
+    "elm-lang/animation-frame": "1.0.1 <= v < 2.0.0"
+
+May I add that to elm-package.json for you? [Y/n]
+
+Some new packages are needed. Here is the upgrade plan.
+
+  Install:
+    elm-lang/animation-frame 1.0.1
+
+Do you approve of this plan? [Y/n]
+Starting downloads...
+
+  ● elm-lang/animation-frame 1.0.1
+
+Packages configured successfully!
+```
 
 We now have mechanisms for moving our character around the screen, and we
 managed to add some initial code for the character to find items. But we don't
