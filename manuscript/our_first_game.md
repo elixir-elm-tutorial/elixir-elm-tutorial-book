@@ -10,7 +10,7 @@ tracking player scores and sending that data to our back-end platform.
 
 ## Creating an Initial Game File
 
-Inside the `lib/platform/web/elm` folder, let's create a new file named
+Inside the `assets/elm` folder, let's create a new file named
 `Game.elm`. We can initialize it with the following code so we'll have
 something to display on the page:
 
@@ -31,7 +31,7 @@ On the Phoenix side, we'll need to create a new page where we can display our
 game. We'll start by manually creating a new page and route, and later we'll
 work towards a more flexible approach.
 
-Inside the `lib/platform/web/templates/page` folder, let's create a new file
+Inside the `lib/platform_web/templates/page` folder, let's create a new file
 called `game.html.eex`. This will be very similar to what we did for our Elm
 home page, and this time we'll just be creating a container div element for our
 Elm game. This is all we need to add for the `game.html.eex` file:
@@ -40,29 +40,28 @@ Elm game. This is all we need to add for the `game.html.eex` file:
 <div class="elm-game-container"></div>
 ```
 
-Now let's update our `router.ex` file inside the `lib/platform/web` folder.
+Now let's update our `router.ex` file inside the `lib/platform_web` folder.
 For now, we can add a simple route so that users can access our game by going
-to `/elm/game` in the browser. Update the browser scope inside the `router.ex`
+to `/game` in the browser. Update the browser scope inside the `router.ex`
 file with the following:
 
 ```elixir
 scope "/", Platform.Web do
   pipe_through :browser
 
-  get "/", PlayerController, :new
-  get "/elm", PageController, :index
-  get "/elm/game", PageController, :game
+  get "/", PageController, :index
+  get "/game", PageController, :game
   resources "/players", PlayerController
   resources "/sessions", PlayerSessionController, only: [:new, :create, :delete]
 end
 ```
 
 We'll be able to view the Elm game that we're creating when we visit
-`http://0.0.0.0:4000/elm/game` in our browser, but we still need to take a
+`http://0.0.0.0:4000/game` in our browser, but we still need to take a
 couple more steps before this will work.
 
 Let's update our `PageController` with a function that will render our new game
-page. In the `lib/platform/web/controllers` folder, update the
+page. In the `lib/platform_web/controllers` folder, update the
 `page_controller.ex` file with the following:
 
 ```elixir
@@ -99,27 +98,19 @@ a couple more small steps to take before we can see it rendered in the browser.
 
 First, we'll need to update our `brunch-config.js` file so that both `Main.elm`
 and `Game.elm` will both be compiled (note that the only change here is on the
-`elmBrunch` line).
+`mainModules` line).
 
 ```javascript
-exports.config = {
-  files: {
-    javascripts: { joinTo: "js/app.js" },
-    stylesheets: { joinTo: "css/app.css" },
-    templates: { joinTo: "js/app.js" }
-  },
-  conventions: { assets: /^(static)/ },
-  paths: {
-    watched: ["../lib/platform/web/elm", "static", "css", "js", "vendor"],
-    public: "../priv/static"
-  },
   plugins: {
-    babel: { ignore: [/vendor/] },
-    elmBrunch: { elmFolder: "../lib/platform/web/elm", mainModules: ["Main.elm", "Game.elm"], outputFolder: "../../../../assets/vendor" }
+    babel: {
+      ignore: [/vendor/]
+    },
+    elmBrunch: {
+      mainModules: ["elm/Main.elm", "elm/Game.elm"],
+      makeParameters: ["--debug"],
+      outputFolder: "../assets/js"
+    }
   },
-  modules: { autoRequire: { "js/app.js": ["js/app"] } },
-  npm: { enabled: true }
-};
 ```
 
 Lastly, we can update our `app.js` file to render our game inside the Phoenix
@@ -127,6 +118,7 @@ application. At the bottom of our `assets/js/app.js` file, let's update our
 code to look like this:
 
 ```javascript
+import ElmGame from "./game"
 const elmContainer = document.querySelector(".elm-container");
 const elmGameContainer = document.querySelector(".elm-game-container");
 
@@ -135,7 +127,7 @@ if (elmContainer) {
 }
 
 if (elmGameContainer) {
-  const elmGame = Elm.Game.embed(elmGameContainer);
+  const elmGame = ElmGame.Game.embed(elmGameContainer);
 }
 ```
 
@@ -250,7 +242,7 @@ now let's use SVG to create our game world.
 In order to work with Elm's SVG library, we'll need to install the package and
 import it into our project.
 
-From the command line, let's switch to the `lib/platform/web/elm` folder and
+From the command line, let's switch to the `assets` folder and
 run the following command:
 
 ```shell
