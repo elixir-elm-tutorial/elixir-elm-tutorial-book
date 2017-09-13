@@ -1,16 +1,20 @@
 # TODO
 
-## Bugs
-
-- [ ] Still need to cast other fields in `registration_changeset` or seeds don't work.
-  - `cast(attrs, [:display_name, :password, :score, :username])`
-- [ ] Gracefully handle null values when decoding JSON.
-
 ## Big Picture
 
 - [ ] Routing for games.
 - [ ] Channels for syncing gameplay data.
 - [ ] Game levels and player skill acquisition.
+
+## Bugs
+
+- [ ] Still need to cast other fields in `registration_changeset` or seeds
+      don't work.
+  - `cast(attrs, [:display_name, :password, :score, :username])`
+- [ ] Gracefully handle null values when decoding JSON.
+- [ ] If I had it to do over again, I think I'd move `elm-package.json` and
+      `elm-stuff` into the `assets/elm` folder. If I have time, I might try to
+      rewrite that content from the ground up.
 
 ## Players
 
@@ -25,7 +29,7 @@
 
 ## Games
 
-- [ ] Add `slug` field?
+- [ ] Add `slug` field from the beginning?
 
 ## Gameplays
 
@@ -33,8 +37,7 @@
 
 ## Elm
 
-- [ ] Rewrite setup chapter with new location.
-- [ ] Add list of players and games on index page.
+- [ ] ...
 
 ## Chores
 
