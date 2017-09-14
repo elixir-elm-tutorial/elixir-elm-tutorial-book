@@ -9,9 +9,9 @@ we'll also want to add a simple scoring mechanism so we can work towards
 tracking player scores and sending that data to our back-end platform.
 
 We have our platform running with a sample game file to work with, now we can
-finally focus on writing the actual game. In the next sections we're going to
-set up our Elm application, add SVG for our game's background, add a little
-character to work with, and wire up the keyboard for interaction.
+finally focus on writing the actual game. In the next sections, we're going to
+set up our Elm application, add SVG for our game's background, create a little
+character, and wire up the keyboard for interaction.
 
 ## Base Application for Our Game
 
@@ -148,7 +148,8 @@ Packages configured successfully!
 Now that we have the package installed, let's import it at the top of our
 `Platformer.elm` file. We'll import all the `Svg` functions along with all the
 `Svg.Attributes` functions since we'll be using many of them. Update the top of
-your `Platformer.elm` file with the following code:
+your `Platformer.elm` file with the following code (also note that we're
+removing the `text` import from the `Html` package to avoid ambiguity):
 
 ```elm
 module Platformer exposing (..)
@@ -161,7 +162,7 @@ import Svg.Attributes exposing (..)
 ## Setting Up a Game Window
 
 Now we can create a small window to use for our game. We're going to create
-a rectangle that has a 600px width and a 400px height. The rectangle will
+a rectangle that has a `600px` width and a `400px` height. The rectangle will
 reside inside our SVG element, and that will reside inside our HTML code.
 
 You don't need to type this code in, but here's an HTML visualization that
@@ -172,7 +173,7 @@ might help conceptualize how we'll lay out the elements on our page:
   <body>
     <div>
       <svg>
-        <rect> <!-- We'll create our game inside this rectangle. -->
+        <rect /> <!-- We'll create our game inside this rectangle. -->
       </svg>
     </div>
   </body>
@@ -189,7 +190,11 @@ experience working with HTML elements and attributes and values, then it's easy
 to pick up. There are some quirks to working with SVG, but we'll learn what we
 need to learn to start creating our Elm games so we can keep moving. Feel free
 to take a look online, though, because there are some great SVG learning
-materials and courses available.
+materials and courses available. The
+[SVG documentation from MDN](https://developer.mozilla.org/en-US/docs/Web/SVG)
+is always helpful as a searchable reference, and the
+[package documentation](http://package.elm-lang.org/packages/elm-lang/svg/latest/Svg)
+for `elm-lang/svg` is also helpful.
 
 Let's add our SVG code to our Elm view, and we'll walk through how it all fits
 together. At the bottom of the `Platformer.elm` file, add the following:
@@ -230,8 +235,8 @@ window, and a `fill` attribute with an initial value of `"none"`.
 ## Adding the Sky and the Ground
 
 Now that we have an empty canvas to work with, let's add a sky and a ground
-for our video game world. Just like we did for our game window rectangle, we'll
-use two more `rect` elements to represent a beautiful blue sky and some green
+for our game world. Just like we did for our game window rectangle, we'll use
+two more `rect` elements to represent a beautiful blue sky and some green
 grass for the ground.
 
 Add the following code to see our game world start taking shape:
@@ -303,7 +308,7 @@ We have a few options for adding a small character to our game:
   game publicly then you can search Google for character sprites from your
   favorite games and use those. If you choose this option, be sure to look for
   characters that have a transparent background. And you may need to resize the
-  images you find to fit properly within the games we'll be creating.
+  images you find to fit properly within the game we'll be creating.
 - Draw your own character with piskelapp.com. It's a lot of fun, but it's also
   difficult and it may be more worthwhile to use something else for now while
   we build our initial minigame.
