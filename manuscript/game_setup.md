@@ -375,6 +375,60 @@ def render("game.json", %{game: game}) do
 end
 ```
 
+This update to the JSON response will require some quick updates to our tests
+again. Open the `test/platform_web/controllers/game_controller_test.exs` file
+and update the `describe` blocks for `"create game"` and `"update game"`. We
+only need to add keys and values for our new `slug` field to the JSON
+responses, but here are the full blocks of code for context:
+
+```elixir
+describe "create game" do
+  test "renders game when data is valid", %{conn: conn} do
+    conn = post conn, game_path(conn, :create), game: @create_attrs
+    assert %{"id" => id} = json_response(conn, 201)["data"]
+
+    conn = get conn, game_path(conn, :show, id)
+    assert json_response(conn, 200)["data"] == %{
+    "id" => id,
+    "description" => "some description",
+    "featured" => true,
+    "thumbnail" => "some thumbnail",
+    "title" => "some title",
+    "slug" => "some-slug"}
+  end
+
+  test "renders errors when data is invalid", %{conn: conn} do
+    conn = post conn, game_path(conn, :create), game: @invalid_attrs
+    assert json_response(conn, 422)["errors"] != %{}
+  end
+end
+
+describe "update game" do
+  setup [:create_game]
+
+  test "renders game when data is valid", %{conn: conn, game: %Game{id: id} = game} do
+    conn = put conn, game_path(conn, :update, game), game: @update_attrs
+    assert %{"id" => ^id} = json_response(conn, 200)["data"]
+
+    conn = get conn, game_path(conn, :show, id)
+    assert json_response(conn, 200)["data"] == %{
+    "id" => id,
+    "description" => "some updated description",
+    "featured" => false,
+    "thumbnail" => "some updated thumbnail",
+    "title" => "some updated title",
+    "slug" => "some-slug"}
+  end
+
+  test "renders errors when data is invalid", %{conn: conn, game: game} do
+    conn = put conn, game_path(conn, :update, game), game: @invalid_attrs
+    assert json_response(conn, 422)["errors"] != %{}
+  end
+end
+```
+
+## Decoding Slug Data in Elm
+
 Now, we can go back to our main Elm front-end application in
 `assets/elm/Main.elm` and decode this JSON. First, we'll add to our `Game` type
 at the top:
