@@ -17,7 +17,8 @@ confusing, we'll take a look at how we can subscribe to keyboard input now.
 ## Importing the Keyboard Package
 
 In order to work with keyboard input, we'll need to start by importing the Elm
-`Keyboard` package.
+[`Keyboard`](http://package.elm-lang.org/packages/elm-lang/keyboard/latest/Keyboard)
+package.
 
 From the command line, let's switch to the `assets` folder and
 run the following command:
@@ -54,24 +55,23 @@ Packages configured successfully!
 ```
 
 Now that we have the package installed, let's import it at the top of our
-`Game.elm` file. We'll need to import `KeyCode`s along with the `downs`
-function. The way it works is that each key on your keyboard is represented by
-an integer. The Elm core library comes with functions called `fromCode` and
-`toCode` to convert back and forth between keyboard keys and their related
-integer representations.
+`Platformer.elm` file. We'll need to import `KeyCode`s along with the `downs`
+function. Each key on your keyboard is represented by an integer. The Elm core
+library comes with functions called `fromCode` and `toCode` to convert back and
+forth between keyboard keys and their related integer representations.
 
 As an example, we're going to want our character to move right when we press
 the right arrow key on the keyboard. That key is represented by the integer
-`39` (you can use http://keycode.info to type on your keyboard and see the
-related integer value, but these values are easy to look up so we don't need
-to memorize them). In our application, we'll be able to determine that users
-are pressing the right arrow key, and adjust our character's position
-accordingly.
+`39` (you can use [keycode.info](http://keycode.info) to type on your keyboard
+and see the related integer value, but these values are easy to look up online,
+so we don't need to memorize them). In our application, we'll be able to
+determine that users are pressing the right arrow key, and adjust our
+character's position accordingly.
 
-Let's update the top of our `Game.elm` file with the following:
+Let's update the top of our `Platformer.elm` file with the following:
 
 ```elm
-module Game exposing (..)
+module Platformer exposing (..)
 
 import Html exposing (Html, div)
 import Keyboard exposing (KeyCode, downs)
@@ -99,7 +99,7 @@ One thing to keep in mind is that this code won't work until we add `KeyDown`
 to our `update` function. The `Sub.batch` function allows us to batch together
 different subscriptions, so we could also subscribe to mouse input if we needed
 to. For now, all we need to know is that we're using the Elm Architecture to
-subscribe to keyboard input via the `presses` function, and we're going to
+subscribe to keyboard input via the `downs` function, and we're going to
 handle these presses with the `KeyDown` message in the `update` function.
 
 As an initial way to get keyboard input working, we're going to set things up
@@ -133,13 +133,13 @@ update msg model =
 
 There's a lot going on here, so don't worry if it seems a little overwhelming
 at first. The best way to think about the `update` function is that it takes in
-the existing model as an argument, applies an update message, and returns the
-new updated version of the model. In this case, we start with our character at
-the initial starting position, and with each key press we're going to update
-that position and see that value change through the model.
+the existing model as an argument, applies an update, and returns the new
+updated version of the model. In this case, we start with our character at the
+initial starting position, and with each key press we're going to update that
+position and see that value change through the model.
 
-The way this works is that we're using Elm's record update syntax, and we can
-just focus on this part of the code for now:
+The key part to focus on for now is Elm's record update syntax, which looks
+like this:
 
 ```elm
 { model | characterPositionX = model.characterPositionX + 15 }
@@ -151,8 +151,9 @@ some getting used to, but for now all we need to know is that we're setting a
 new value to `characterPositionX` every time we press a key on the keyboard.
 
 In the `initialModel`, we set our `characterPositionX` value to `50`. Now with
-every key press we're increasing that value by `15`. So if you press any key
-four times, the character will move to the right by a total of 60 pixels.
+every key press we're increasing that value by `15`. In other words, if you
+press any key four times, the character will move to the right by a total of 60
+pixels.
 
 ## Setting the Correct Keys
 
