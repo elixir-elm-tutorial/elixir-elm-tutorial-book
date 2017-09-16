@@ -451,7 +451,7 @@ initialModel =
     }
 ```
 
-Now we'll have to pass our model through the view functions so we can access
+Now, we'll have to pass our model through the view functions so we can access
 those values in the right places. Our `view` function already takes `model`
 as an argument, so we can pass that along to the `viewGame` function like this:
 
@@ -499,8 +499,8 @@ viewCharacter model =
 ```
 
 At this point, we have working data from the model that's being rendered to the
-view. Let's move our character to the right on the screen by increasing the
-`characterPositionX` value to `50` in the `initialModel`:
+view. Let's move our character slightly to the right on the screen by
+increasing the `characterPositionX` value to `50` in the `initialModel`:
 
 ```elm
 initialModel : Model
@@ -522,7 +522,7 @@ We're going to follow many of the same steps we did for our character image, so
 we'll move quickly in this section. First, let's add a `coin.svg` image to our
 project to use as our item.
 
-The `coin.svg` asset we'll be using here is
+The `coin.svg` asset we'll be using is
 [available in the GitHub repository](https://github.com/elixir-elm-tutorial/elixir-elm-tutorial-book/tree/master/manuscript/images/our_first_game/coin.svg)
 for this book.
 
@@ -550,8 +550,8 @@ initialModel =
     }
 ```
 
-Then, we can update our `view` function and create a new `viewItem` function
-that takes in a `model` argument and returns some SVG code to render:
+Then, we can update our `viewGame` function and create a new `viewItem`
+function that takes in a `model` argument and returns some SVG code to render:
 
 ```elm
 viewGame : Model -> Svg Msg
@@ -563,7 +563,13 @@ viewGame model =
         , viewCharacter model
         , viewItem model
         ]
+```
 
+Keep in mind that the order of our view functions doesn't matter, but it's
+still a good idea to group similar functions. Add the following below the
+`viewCharacter` function:
+
+```elm
 viewItem : Model -> Svg Msg
 viewItem model =
     image
@@ -587,9 +593,9 @@ This is what our results should look like so far:
 
 ## Summary
 
-We managed to accomplish _a lot_ in this chapter. We created a space for our
+We managed to accomplish a lot in this chapter. We created a space for our
 first game, set up an initial SVG game world, added a character, and added an
 item. But keep in mind that we've been hard-coding a lot of values in our quest
 to get something up and running. In the next chapter, we'll be taking a look at
-Elm subscriptions as a way to handle keyboard input and adding interaction to
-our game.
+Elm subscriptions as a way to handle keyboard input and add interaction to our
+game.
