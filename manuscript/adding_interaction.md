@@ -158,7 +158,7 @@ pixels.
 ## Setting the Correct Keys
 
 It's exciting to see our character moving around the screen, but we want to
-be able to change the direction based on the key we're pressing.
+be able to change direction based on the specific key we're pressing.
 
 In order to accomplish this, let's add a `case` expression inside our `update`
 function. We only want our character to move to the right when we press the
@@ -188,9 +188,9 @@ when we press down on the right arrow key.
 
 In other words, we're adding `15` to the `characterPositionX` value every time
 we press the right arrow key on the keyboard. And the `_` part of the `case`
-expression allows us to handle all other scenarios (any other key presses). And
-we'll make no change to the model when any other key than the right arrow is
-being pressed.
+expression allows us to handle all other scenarios (any other key presses).
+We'll make no change to the model when any other key than the right arrow is
+pressed.
 
 One of the reasons that Elm is such a strong language and offers so many
 guarantees is that it forces us to account for all possibilities. So when we
@@ -227,20 +227,19 @@ KeyDown keyCode ->
             ( model, Cmd.none )
 ```
 
-So far so good. We now have the ability to move our character to the left and
-the right on the screen. It's great that we've already managed to add some
-interactivity to our game, but keep in mind that we're taking some shortcuts
-for now. As we continue, it will be nice to account for our character's
-acceleration instead of just manually pushing the position around using pixel
-values. We'll work towards adding more complex behaviors, but for now let's
-continue adding some basic game elements.
+We now have the ability to move our character to the left and the right on the
+screen. It's great that we've already managed to add some interactivity to our
+game, but keep in mind that we're taking some shortcuts for now. As we
+continue, it will be nice to account for our character's acceleration instead
+of manually pushing the position around using pixel values. We'll work towards
+adding more complex behaviors, but for now let's continue adding some basic
+game elements.
 
 ## Collecting Items
 
-We now have the ability to move our character to the left and right, and we
-already added an item that our character should be able to pick up. Currently,
-our character can move over to the item, but nothing really happens when we get
-there.
+We can move our character to the left and right, and we already added an item
+that our character will be able to pick up. Currently, our character can move
+over to the item, but nothing happens when we get there.
 
 What we'd like to do at this point is to be able to move the character to the
 item, increment our score, and spawn a new item.
@@ -288,27 +287,33 @@ our goal of having the character be able to "find" the item and have it
 disappear. But you'll notice there's a small problem where the character needs
 to arrive at a particular position to find the item.
 
-![Character Finding Item](images/adding_interaction/item_found.png)
+![Item Found Successfully](images/adding_interaction/item_found.png)
 
-![Character Finding Item](images/adding_interaction/item_found_issue.png)
+![Item Found Issue](images/adding_interaction/item_found_issue.png)
 
-We could probably look for an ideal fix for this issue, but for now let's keep
-in mind that our current goal is to just make the game playable and to track
-the player's score. So let's find a workable solution that will involve giving
-the item a _range_ instead of an exact position. And we'll use this opportunity
-to learn to use a few new functions from the `List` module.
+We _could_ spend time looking for an ideal long-term fix for this issue, but
+for now let's keep in mind that our current goal is to just make the game
+playable and to track the player's score. So let's find a workable solution
+that will involve giving the item a _range_ instead of an exact position. And
+we'll use this opportunity to learn to use a few new functions from the
+[`List`](http://package.elm-lang.org/packages/elm-lang/core/latest/List)
+module.
 
 Instead of using the exact `model.itemPositionX` value like we did above, we
 want to add a lower and upper bound for where the character should be able to
 find the item. We'll use a `let` expression inside our `characterFoundItem`
 function to set values for the `approximateItemLowerBound` and
-`approximateItemUpperBound`. Then we'll use the `List.range` function to create
-a range of numbers where the character can discover the item.
+`approximateItemUpperBound`. Then we'll use the
+[`List.range`](http://package.elm-lang.org/packages/elm-lang/core/latest/List#range)
+function to create a range of numbers where the character can discover the
+item.
 
 After we create a range of values where our character can find the item, we use
-the `List.member` function to determine whether or not the character position
-is currently somewhere inside the item's range. Let's update our
-`characterFoundItem` function to see how this works:
+the
+[`List.member`](http://package.elm-lang.org/packages/elm-lang/core/latest/List#member)
+function to determine whether or not the character position is currently
+somewhere inside the item's range. Let's update our `characterFoundItem`
+function to see how this works:
 
 ```elm
 characterFoundItem : Model -> Bool
@@ -327,7 +332,7 @@ characterFoundItem model =
 ```
 
 This is generally not great programming practice to use a "magic number" value
-like `35` here which is just a rough approximation of where the character
+like `35` here, which is just a rough approximation of where the character
 position meets the item position. But tinkering with these values in the
 browser looks like it's just good enough to keep moving since the character
 is able to discover the item at the correct position, and should improve our
@@ -336,7 +341,8 @@ gameplay until we can find a better approach.
 ## Spawning Items
 
 In order to animate our scene, we'll need to start by importing the Elm
-`AnimationFrame` package.
+[`AnimationFrame`](http://package.elm-lang.org/packages/elm-lang/animation-frame/latest/AnimationFrame)
+package.
 
 From the command line, let's switch to the `assets` folder and
 run the following command:
@@ -377,11 +383,15 @@ new coins in new locations, and this is an opportunity to start making our game
 come to life.
 
 Let's get started by importing a handful of new packages that we'll need for
-our game at the top of our file. We'll import `AnimationFrame`, `Random`, and
-`Time` (note that I tend to sort my imports in alphabetical order):
+our game at the top of our file. We'll import
+[`AnimationFrame`](http://package.elm-lang.org/packages/elm-lang/animation-frame/latest/AnimationFrame),
+[`Random`](http://package.elm-lang.org/packages/elm-lang/core/latest/Random),
+and
+[`Time`](http://package.elm-lang.org/packages/elm-lang/core/latest/Time) (note
+that I tend to sort my imports in alphabetical order):
 
 ```elm
-module Game exposing (..)
+module Platformer exposing (..)
 
 import AnimationFrame exposing (diffs)
 import Html exposing (Html, div)
@@ -394,9 +404,10 @@ import Time exposing (Time)
 
 The `AnimationFrame` library will be helpful for our game, because it enables
 us to render smooth animations and subscribe to differences over time. We can
-start by updating our `subscriptions` function to use the `diffs` function from
-the `AnimationFrame` library, and we'll pass a new message that we'll create
-momentarily. Update `subscriptions` with the following:
+start by updating our `subscriptions` function to use the
+[`diffs`](http://package.elm-lang.org/packages/elm-lang/animation-frame/latest/AnimationFrame#diffs)
+function from the `AnimationFrame` library, and we'll pass a new message that
+we'll create momentarily. Update `subscriptions` with the following:
 
 ```elm
 subscriptions : Model -> Sub Msg
@@ -452,7 +463,7 @@ TimeUpdate time ->
         ( model, Cmd.none )
 ```
 
-And now that we're using our `characterFoundItem` condition in the `update`
+Now that we're using our `characterFoundItem` condition in the `update`
 function, we can simplify the `viewItem` function we had temporarily changed
 before:
 
@@ -471,7 +482,9 @@ viewItem model =
 
 This basically allows the player to move the character to the item's location,
 and it will give the appearance that a new coin is being "spawned" in a new
-location 100 pixels to the left.
+location `100` pixels to the left.
+
+![Item Shifting Position After Found](images/adding_interaction/item_shift_after_found.png)
 
 ## Working with Randomness
 
@@ -542,6 +555,8 @@ update msg model =
         SetNewItemPositionX newPositionX ->
             ( { model | itemPositionX = newPositionX }, Cmd.none )
 ```
+
+![Item Shifting to Random Position After Found](images/adding_interaction/item_shift_random_after_found.png)
 
 ## Summary
 
