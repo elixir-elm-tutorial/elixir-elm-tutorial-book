@@ -1,19 +1,19 @@
 # Handling Game States
 
-Since this isn't book about game programming, we won't have time to delve too
-deeply into the topic of game design. But we still want our minigames to be
-fun, and one way to do this is to be thoughtful about gameplay.
+This isn't necessarily a book about game programming, so we won't have time to
+delve too deeply into the topic of game design. But we still want our minigames
+to be fun, and one way to do this is to be thoughtful about gameplay.
 
 ## Game State
 
-Let's begin by thinking about how we want our game to start, and also how we
-want it to end. It looks like our game is going to be a simple race against the
-clock to collect items. We don't have some amazing plot to add yet, because we
-really want to focus on the core gameplay being fun first.
+Let's begin by thinking about how we want our game to start and how we want it
+to end. It looks like our game is going to be a simple race against the clock
+to collect items. We don't have some amazing plot to add yet, because we
+really want to focus on the core gameplay being fun.
 
 The starting state should be pretty straightforward. We just want a simple text
-screen that appears with some basic instructions, and perhaps an indicator of
-which key to press to start the game.
+screen that appears with basic instructions, and an indicator of which key to
+press to start the game.
 
 We'll also want to add states for when the game is currently being played,
 a success state for when the player wins, and a game over screen.
@@ -21,10 +21,10 @@ a success state for when the player wins, and a game over screen.
 ## Union Types
 
 This is a great opportunity to talk about union types in Elm. Types can be
-a really helpful way to think about something that has a limited set of
-possible states. In our case, we want to create a `GameState` type that handles
-all the scenarios we mentioned above. You can add this type right above the
-`Model` type alias:
+a helpful way to think about something that has a limited set of possible
+states. In our case, we want to create a `GameState` type that handles all the
+scenarios we mentioned above. You can add this type right above the `Model`
+type alias:
 
 ```elm
 type GameState = StartScreen | Playing | Success | GameOver
@@ -32,7 +32,7 @@ type GameState = StartScreen | Playing | Success | GameOver
 
 I like to think of union types in this way on a single line. We're creating a
 `GameState` type that has four possibilities, and it's easy to reason about.
-Once the code gets formatted it should look like this instead:
+Once the code gets formatted, it should look like this instead:
 
 ```elm
 type GameState
@@ -42,7 +42,7 @@ type GameState
     | GameOver
 ```
 
-And we can use this new type in our model to indicate the game's current state.
+We can use this new type in our model to indicate the game's current state.
 We'll initialize the state to the game's `StartScreen`, which we'll create
 soon.
 
@@ -83,7 +83,7 @@ initialModel =
 
 Now we want to update our `viewGame` function to account for the different game
 states that we've created. But before we make changes to that function, let's
-create a new function called `viewGameStates` below it that will handle our
+create a new function called `viewGameState` below it that will handle our
 cases. The idea is that we'll take in the `model` as an argument, and then
 we'll display a list of SVG content based on the current state of the game.
 
@@ -107,7 +107,7 @@ viewGameState model =
 We started with empty lists for each of these cases, but let's go ahead and
 fill in the `Playing` state since we already had the content for that one.
 While users are actively playing the game, we'll want them to be able to see
-all the relevant view functions we created for the game:
+all the relevant view functions we created previously:
 
 ```elm
 viewGameState : Model -> List (Svg Msg)
@@ -137,8 +137,8 @@ viewGameState model =
 Now we can update our `viewGame` function to reference this new function that
 we just created. This might seem a bit confusing at first, but the idea is that
 we're keeping the main `svg` element for our game, and then we're using the
-`viewGameState` function to populate it with whatever elements are relevant to
-the current state. Here's the new `viewGame` function:
+`viewGameState` function to populate it with elements that are relevant to the
+current state. Here's the new `viewGame` function:
 
 ```elm
 viewGame : Model -> Svg Msg
@@ -151,7 +151,7 @@ viewGame model =
 
 For the start screen, we'll still show our basic game window with the sky, the
 ground, the character, and the item. And we also want to display some text to
-the player to get an idea for what to accomplish. Let's add a `viewStartScreen`
+the player to give an idea of what to do. Let's add a `viewStartScreenText`
 function that will display some introductory text:
 
 ```elm
@@ -163,8 +163,8 @@ viewStartScreenText =
         ]
 ```
 
-Now we can add this at the bottom of the `StartScreen` state in our
-`viewGameState` function.
+Inside the `viewGameState` function, we'll add the contents of our
+`StartScreen` state:
 
 ```elm
 viewGameState : Model -> List (Svg Msg)
@@ -197,23 +197,23 @@ viewGameState model =
             []
 ```
 
-The structure should be getting a little clearer now. We're basically going to
-keep using the `viewGameState` function as our way to selectively show
-different components of our game. In this case, we want players to start with
-some brief instructions, and they'll be able to see the character and the item
-they're going after.
+The structure should be getting a little clearer now. We're going to keep using
+the `viewGameState` function as a way to selectively show different components
+of the game. In this case, we want players to start with some brief
+instructions, and they'll be able to see the character and the item they'll be
+pursuing.
 
 ![Start Screen](images/handling_game_states/start_screen.png)
+
+## Space Bar to Start
 
 The instructions mention using the space bar key to start the game, so let's
 add that feature now. It will also be useful as a way to reset to default
 values when we need to.
 
 We already have a `KeyDown` message that we've been using to track keyboard
-input, so we can use that to look for when the user presses the space bar key,
-which has the key code of `32`.
-
-Update the contents of the `KeyDown` action with the following:
+input, so we can use that to handle space bar key presses with `32` as the key
+code. Update the contents of the `KeyDown` action with the following:
 
 ```elm
 KeyDown keyCode ->
@@ -231,42 +231,57 @@ KeyDown keyCode ->
             ( model, Cmd.none )
 ```
 
-Rather than just setting the `gameState` to `Playing`, we'll take this
-opportunity to reset a few other values to make sure the player is starting
-with the correct time and score. And we'll make sure players don't accidentally
-reset the game by pressing the space bar in the middle of playing by wrapping
-it in a conditional.
+## Clean Starting State
+
+If you tried things out in the browser, you might have noticed some issues with
+our approach so far. The space bar works to begin our game, but the timer
+starts on the `StartScreen` state instead of the `Playing` state. And players
+are currently able to move the character around and collect items before the
+`Playing` state is set, which could result in a confusing game experience.
+
+Let's restrict character motion until the `gameState` is set to `Playing`. We
+can handle this in the `KeyDown` section of our `update` function. We'll add a
+conditional to check that we're in the `Playing` state before the left and
+right arrow keys become usable.
 
 ```elm
 KeyDown keyCode ->
     case keyCode of
         32 ->
-            if model.gameState == StartScreen then
-                ( { model
-                    | gameState = Playing
-                    , playerScore = 0
-                    , itemsCollected = 0
-                    , timeRemaining = 10
-                    }
-                , Cmd.none
-                )
+            ( { model | gameState = Playing }, Cmd.none )
+
+        37 ->
+            if model.gameState == Playing then
+                ( { model | characterPositionX = model.characterPositionX - 15 }, Cmd.none )
             else
                 ( model, Cmd.none )
 
-        37 ->
-            ( { model | characterPositionX = model.characterPositionX - 15 }, Cmd.none )
-
         39 ->
-            ( { model | characterPositionX = model.characterPositionX + 15 }, Cmd.none )
+            if model.gameState == Playing then
+                ( { model | characterPositionX = model.characterPositionX + 15 }, Cmd.none )
+            else
+                ( model, Cmd.none )
 
         _ ->
             ( model, Cmd.none )
 ```
 
+We also don't want our timer to start counting down until our players are in
+the active `Playing` state. Let's update the conditional check in our
+`CountdownTimer` section:
+
+```elm
+CountdownTimer time ->
+    if model.gameState == Playing && model.timeRemaining > 0 then
+        ( { model | timeRemaining = model.timeRemaining - 1 }, Cmd.none )
+    else
+        ( model, Cmd.none )
+```
+
 ## Success State
 
-If a player has managed to collect ten coins before the time has expired, then
-we can consider the level completed and display a success message.
+If a player has managed to collect ten coins before the time has expired, we
+can consider the level completed and display a success message.
 
 Let's create a new function called `viewSuccessScreenText` with the following
 content:
@@ -275,13 +290,13 @@ content:
 viewSuccessScreenText : Svg Msg
 viewSuccessScreenText =
     Svg.svg []
-        [ viewGameText 120 180 "Success!"
+        [ viewGameText 260 180 "Success!"
         ]
 ```
 
-If we had time, it would be fun to add some SVG fireworks or animations here
-for the game's success state. But for now we'll just add some text like we did
-for the starting screen.
+It would be fun to add some SVG fireworks or animations here for the game's
+success state. If you have time, feel free to get creative with the SVG in our
+game, but for now we'll just add some text like we did for the starting screen.
 
 Let's update the `viewGameState` function with the following:
 
@@ -341,6 +356,8 @@ TimeUpdate time ->
         ( model, Cmd.none )
 ```
 
+## Restarting
+
 We also want our players to be able to restart the game without having to
 refresh the page in the browser. Let's update the `viewSuccessScreenText`
 function we just created to include some more text about restarting the game:
@@ -355,35 +372,28 @@ viewSuccessScreenText =
 ```
 
 And now we can update the space bar case in our `update` function` so that
-users can restart the game from the `Success` state.
+users can restart the game from the `Success` state. In fact, we can use this
+opportunity to reset the values in the model to their initial values when we
+restart the game. If the user isn't currently in the `Playing` state, they
+can use the space bar to start the game from a clean state:
 
 ```elm
 KeyDown keyCode ->
     case keyCode of
         32 ->
-            case model.gameState of
-                StartScreen ->
-                    ( { model
-                        | gameState = Playing
-                        , playerScore = 0
-                        , itemsCollected = 0
-                        , timeRemaining = 10
-                        }
-                    , Cmd.none
-                    )
+            if model.gameState /= Playing then
+                ( { model
+                    | gameState = Playing
+                    , playerScore = 0
+                    , itemsCollected = 0
+                    , timeRemaining = 10
+                    }
+                , Cmd.none
+                )
+            else
+                ( model, Cmd.none )
 
-                Success ->
-                    ( { model
-                        | gameState = Playing
-                        , playerScore = 0
-                        , itemsCollected = 0
-                        , timeRemaining = 10
-                        }
-                    , Cmd.none
-                    )
-
-                _ ->
-                    ( model, Cmd.none )
+        -- ...
 ```
 
 At this point, we should have working states for the start screen, the active
@@ -396,7 +406,7 @@ playing state, and the success screen.
 We still haven't figured out what to do when the timer reaches zero and the
 player hasn't collected enough coins. In this case, we'll take a similar
 approach to the one we used for the success state in that we want to show some
-game over text along with an option for the player to restart the game.
+"Game Over" text along with an option for the player to restart the game.
 
 We'll start with a simple `viewGameOverScreenText` function for the text we
 want to display:
@@ -479,52 +489,14 @@ TimeUpdate time ->
         ( model, Cmd.none )
 ```
 
-Lastly, we want users to be able to restart gameplay from the `GameOver` state.
-We can also go ahead and refactor our cases quite a bit here since a lot of
-them are intended to reset the game state. Update the `KeyDown` with the
-following:
+Users are now able to reach the `GameOver` screen when time runs out, and they
+can restart the game by pressing the space bar key.
 
-```elm
-KeyDown keyCode ->
-    let
-        resetGameState =
-            ( { model
-                | gameState = Playing
-                , playerScore = 0
-                , itemsCollected = 0
-                , timeRemaining = 10
-                }
-            , Cmd.none
-            )
-    in
-        case keyCode of
-            32 ->
-                case model.gameState of
-                    StartScreen ->
-                        resetGameState
-
-                    Success ->
-                        resetGameState
-
-                    Playing ->
-                        ( model, Cmd.none )
-
-                    GameOver ->
-                        resetGameState
-
-            37 ->
-                ( { model | characterPositionX = model.characterPositionX - 15 }, Cmd.none )
-
-            39 ->
-                ( { model | characterPositionX = model.characterPositionX + 15 }, Cmd.none )
-
-            _ ->
-                ( model, Cmd.none )
-```
+![Game Over Screen](images/handling_game_states/game_over_screen.png)
 
 ## Summary
 
-So far so good! We have working game states now so that players can see a start
-screen, play the game, view a success state, and also restart in the game over
-state. This is a great start, but let's keep working towards improving our
-gameplay and injecting some fun in the next chapter.
+Our game is starting to take shape! We now have working game states, so players
+can see a start screen, play the game, view a success state, and also restart
+from the game over screen. This is a great start, but let's keep working
+towards improving our gameplay and injecting some fun in the next chapter.
