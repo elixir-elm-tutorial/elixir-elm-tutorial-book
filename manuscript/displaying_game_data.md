@@ -233,7 +233,7 @@ initialModel =
     }
 ```
 
-Then we'll add another function to our view called `viewGameTime` that will
+Then, we'll add another function to our view called `viewGameTime` that will
 convert the time in seconds to a string so we can render it.
 
 ```elm
@@ -272,7 +272,7 @@ viewGame model =
 ![Displaying Time Remaining](images/displaying_game_data/displaying_time_remaining.png)
 
 Keep in mind that we've managed to add text content to our game window that
-will allow players to see changes in game data. But these fields don't actually
+will allow players to see changes in game data, but these fields don't actually
 reflect the score, item collection count, and time yet. Let's take care of that
 next.
 
@@ -342,8 +342,8 @@ CountdownTimer time ->
 ```
 
 Now let's go ahead and import a few new functions from the `Time` library that
-we'll want to use so we can subscribe to time and track each passing second of
-time. Change the `Time` import at the top of the file to look like this:
+we'll want to use so we can subscribe to time and track each passing second.
+Change the `Time` import at the top of the file to look like this:
 
 ```elm
 import Time exposing (Time, every, second)
@@ -406,6 +406,8 @@ like it should be working at this point in terms of counting from `10` down to
 ## Summary
 
 We managed to accomplish our goal of displaying game data in this chapter. Our
-game is inching its way closer to being fun to play, but we haven't really
-thought much about gameplay yet. We'll take a look at our game's design in the
-next chapter.
+game is inching its way closer to being fun to play, but we haven't created
+much structure for our game yet.
+
+In the next chapter, we'll start handling different states for our game and
+working towards improving gameplay.
