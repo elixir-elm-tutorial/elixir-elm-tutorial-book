@@ -384,6 +384,7 @@ KeyDown keyCode ->
             if model.gameState /= Playing then
                 ( { model
                     | gameState = Playing
+                    , characterPositionX = 50
                     , playerScore = 0
                     , itemsCollected = 0
                     , timeRemaining = 10
