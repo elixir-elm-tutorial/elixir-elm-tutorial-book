@@ -101,7 +101,7 @@ import _all_ the functions available in these modules using `..` and we won't
 have to worry about manually importing things one at a time. On the one hand,
 we're importing a lot of functions with this approach, but it will save us time
 while we're in development mode and we can go back later and refactor to import
-only what we need. Let's adjust our import statements with the following:
+only what we need. Let's adjust our import declarations with the following:
 
 ```elm
 module Main exposing (..)

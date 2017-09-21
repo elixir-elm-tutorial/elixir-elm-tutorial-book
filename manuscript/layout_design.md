@@ -278,7 +278,7 @@ featuredGame games =
 ```
 
 Now we can use this new function in our `featured` function to display the data
-from our featured game. We can use a `case` statement to show our featured
+from our featured game. We can use a `case` expression to show our featured
 section when our `featuredGame` function returns a game for us to work with.
 Otherwise, we'll just render an empty `div` element if there are no featured
 games.

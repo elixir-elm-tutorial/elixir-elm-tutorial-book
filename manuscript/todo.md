@@ -36,5 +36,4 @@
 
 ## Chores
 
-- [ ] Global search for "statement" and consider switching to "expression".
 - [ ] Run `mix hex.outdated` and verify that content still works with latest.

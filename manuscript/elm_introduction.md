@@ -229,8 +229,8 @@ main =
     Html.text "Hello World"
 ```
 
-Next, let's refactor our `import` statement slightly to be more explicit about
-which functions we want to import from the `Html` module:
+Next, let's refactor our `import` declaration slightly to be more explicit
+about which functions we want to import from the `Html` module:
 
 ```elm
 -- Hello.elm

@@ -162,7 +162,7 @@ Starting downloads...
 Packages configured successfully!
 ```
 
-With that completed, we can now add the `import` statements to the top of our
+With that completed, we can now add the `import` declarations to the top of our
 `Main.elm` file. Here's what the top of the file should look like:
 
 ```elm
@@ -303,10 +303,10 @@ type Msg
 ```
 
 Inside the `update` function, we'll add a `result` argument to our
-`FetchGamesList` action. And we'll add a `case` statement to handle the result.
-When we get an `Ok` response, we update the `gamesList` in our model to contain
-the list of games from our API. Otherwise, we'll just leave the model unchanged
-if we get back and error.
+`FetchGamesList` action. And we'll add a `case` expression to handle the
+result. When we get an `Ok` response, we update the `gamesList` in our model to
+contain the list of games from our API. Otherwise, we'll just leave the model
+unchanged if we get back and error.
 
 ```elm
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -454,7 +454,7 @@ decodePlayer =
 
 For our update section, we'll add a new `FetchPlayersList` action, and take the
 same approach we did for our games. We add our type first, and then we fill out
-the `case` statement inside the `update` function with the following:
+the `case` expression inside the `update` function with the following:
 
 ```elm
 type Msg

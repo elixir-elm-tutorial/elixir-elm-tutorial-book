@@ -238,7 +238,7 @@ games. For now, all we need to know is that there are only two actions that a
 user can perform in our application: `DisplayGamesList` and `HideGamesList`.
 
 Before we update our model and perform our actions, let's create a `case`
-statement that will allow us to handle our different messages (note that we're
+expression that will allow us to handle our different messages (note that we're
 actually just returning the same model that's being passed in for now, and
 we'll perform the actual updates soon):
 
@@ -259,7 +259,7 @@ update msg model =
 ```
 
 We have two types of actions that our users can perform, and we'll use a `case`
-statement to determine which changes get made to our data as a result.
+expression to determine which changes get made to our data as a result.
 
 ## Changing the Model
 
@@ -378,7 +378,7 @@ we can get all our features working.
 ## The Main Function
 
 Let's go back to the top of our `Main.elm` file and add the following `main`
-function back in just below the `import` statements. This code is how the Elm
+function back in just below the `import` declarations. This code is how the Elm
 runtime pulls all the different functions we've created together:
 
 ```elm

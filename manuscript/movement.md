@@ -140,7 +140,7 @@ in order to stop movement.
 
 After we set our character in motion by pressing an arrow key on the keyboard,
 we want the character to stop moving when we release the key. To accomplish
-this, we'll need to update the `Keyboard` import statement at the top of our
+this, we'll need to update the `Keyboard` import declaration at the top of our
 file to use the `ups` function:
 
 ```elm
