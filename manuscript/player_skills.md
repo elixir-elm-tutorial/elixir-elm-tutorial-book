@@ -1,5 +1,6 @@
-# Movement
+# Player Skills
 
+In this chapter, let's add new character abilities for running and jumping.
 When it comes to moving our character around on the screen, we've been kind of
 cheating. We've just been manually altering the position when the left and
 right arrow keys are pressed, and shifting the character's position. What we'd
@@ -10,15 +11,16 @@ worth it in terms of moving towards a game that's more fun to play.
 ## Velocity
 
 Let's start by updating our model and adding a new field for the character's
-velocity as a `Float`. In fact, we'll also need to update the other fields for
-our character's position to be the same type.
+velocity as a `Float`. We'll also need to make some adjustments to the other
+fields relating to the character's position.
 
 ```elm
 type alias Model =
     { gameState : GameState
     , characterPositionX : Float
     , characterPositionY : Float
-    , characterVelocity : Float
+    , characterVelocityX : Float
+    , characterVelocityY : Float
     , itemPositionX : Int
     , itemPositionY : Int
     , itemsCollected : Int
@@ -32,8 +34,10 @@ initialModel =
     { gameState = StartScreen
     , characterPositionX = 50.0
     , characterPositionY = 300.0
-    , characterVelocity = 0.0
-    , itemPositionX = 500
+    , characterVelocityX = 0.0
+    , characterVelocityY = 0.0
+    , characterDirection = Right
+    , itemPositionX = 150
     , itemPositionY = 300
     , itemsCollected = 0
     , playerScore = 0
@@ -74,16 +78,16 @@ solution, but it works to get our game functioning properly again.
 
 ## Adjusting Arrow Keys
 
-Now we want to adjust our `characterVelocity` with our left and right arrow
+Now we want to adjust our `characterVelocityX` with our left and right arrow
 keys instead of changing the position. Let's update the cases for the left and
 right arrow keys (`37` and `39`) in our `KeyDown` message:
 
 ```elm
 37 ->
-    ( { model | characterVelocity = -0.3 }, Cmd.none )
+    ( { model | characterVelocityX = -0.3 }, Cmd.none )
 
 39 ->
-    ( { model | characterVelocity = 0.3 }, Cmd.none )
+    ( { model | characterVelocityX = 0.3 }, Cmd.none )
 ```
 
 Keep in mind that this will break our character's previous ability to move

@@ -17,7 +17,7 @@ adding_interaction.md
 displaying_game_data.md
 handling_game_states.md
 gameplay.md
-movement.md
+player_skills.md
 syncing_score_data.md
 games.md
 current_outline.md

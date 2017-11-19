@@ -131,7 +131,7 @@ and implementation:
 ```elm
 levelOneItemPositions : Array Int
 levelOneItemPositions =
-    Array.fromList [ 200, 250, 300, 350, 400, 450, 500, 400, 300 ]
+    Array.fromList [ 200, 250, 300, 350, 400, 450, 500, 300, 100 ]
 ```
 
 Now we have an indexed array of values to select from. Let's create a new
@@ -252,9 +252,17 @@ spawnNewItem currentItemCount =
                 hiddenPosition
 ```
 
-## TODO
+## Changing Levels
 
-- Game Theory: Learning and pattern recognition
-- Switch from random item locations to specific patterns
-- Player should learn new skill at each level
-- Add different levels and final success state
+We have item positions for two levels, but we haven't written the code to
+switch between levels yet.
+
+...
+
+## Next Levels
+
+Now that we've got a couple of introductory levels built, we'll transition to
+adding new character features that our players can learn. In order for players
+to pass the next levels, they'll have to pick up on running and jumping skills.
+This will require a bit of refactoring, and we'll get started in our next
+chapter.
