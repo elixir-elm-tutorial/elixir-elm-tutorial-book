@@ -639,7 +639,8 @@ Lastly, Elixir allows us to add "guard clauses" to our functions to make sure
 they're working with the right values.
 
 Our `add/2` function is only designed to work with numbers. They can be integers
-or floating point numbers, but we don't want to add strings together.
+or floating point numbers, but we don't want to add strings together (string
+concetenation would actually require the use of the `<>` operator).
 
 We can use the `when` keyword along with the `is_number/1` function we saw
 previously to make sure that our function is working with numerical values.
