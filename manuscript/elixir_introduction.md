@@ -564,9 +564,10 @@ can create a new clause of our `add/2` function, and Elixir will use pattern
 matching to determine which clause actually gets used when the function is
 called. It sounds confusing, so let's see an example.
 
-When we add `0` to a number, the result is actually just the number itself. So
-`0 + 1` should return a result of `1`. When we use the `add/2` function, that
-would look like this:
+When we add `0` to a number, the result is actually just the number itself
+(this is known as _the identity property of addition_). So `0 + 1` should
+return a result of `1`. When we use the `add/2` function, it would look like
+this:
 
 ```elixir
 iex> Temporary.add(0, 1)
@@ -574,8 +575,8 @@ iex> Temporary.add(0, 1)
 ```
 
 That means whenever we pass `0` as an argument to our function, we don't really
-need to perform any addition. That means we can add a new clause of our
-function that handles cases where the first argument is `0`:
+need to perform any addition. We can add a new clause for our `add/2` function
+that handles cases where the first argument is `0`:
 
 ```elixir
 def add(0, y), do: y
