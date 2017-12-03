@@ -53,11 +53,12 @@ project share a lot in common. The folder structure is similar:
 
 ![Elixir Folder Structure](images/elixir_introduction/elixir_folder_structure.png)
 
-The `temporary` project is a lot simpler, but has a lot in common with how
-Phoenix applications work. The `config` folder contains configuration settings,
-the `lib` folder is where we'll write most of our Elixir code, and the `test`
-folder contains the tests that let us know our application is working as
-intended.
+The `platform` project we created in the last chapter contains more files and
+folders, but it's important to note that it's still an Elixir project just like
+the `temporary` one that we just created. The `config` folder contains
+configuration settings, the `lib` folder is where we'll write most of our
+Elixir code, and the `test` folder contains the tests that let us know our
+application is working as intended.
 
 ## Elixir Testing
 
@@ -165,9 +166,9 @@ Inside that function, we have our **return value**:
 :world
 ```
 
-Let's change things up. Rename the `hello` function to `add`. We'll pass two
-parameters (`x` and `y`), and we'll return the addition of these two values
-using `x + y` inside the function:
+Let's start making some changes. Rename the `hello` function to `add`. We'll
+pass two parameters (`x` and `y`), and we'll return the addition of these two
+values using `x + y` inside the function:
 
 ```elixir
 def add(x, y) do
@@ -395,10 +396,11 @@ code into small chunks, and we assign the values to variables. This has a great
 benefit of being able to name things in obvious ways, but Elixir has an
 alternative approach that helps us reconsider the way we write code.
 
-The idea behind the "pipe operator" (`|>`) is that it enables us to think about
-our functions in terms of data transformation. Instead of using variables, we
-take an initial value, pipe it through a handful of functions, and return the
-result at the end. Let's take another look at our third `test` case:
+The idea behind the "pipe operator" (`|>`) is that it encourages us to think
+about our functions in terms of data transformation. Instead of using
+variables, we take an initial value, pipe it through a handful of functions,
+and return the result at the end. Let's take another look at our third `test`
+case:
 
 ```elixir
 test "the add function returns a number" do
@@ -449,8 +451,8 @@ Finished in 0.03 seconds
 Randomized with seed 312071
 ```
 
-That explains why our test is passing, because `true` is getting passed to
-`assert`.
+That explains why our test is passing, because `true` is getting passed to the
+`assert` function.
 
 ## More Piping
 
