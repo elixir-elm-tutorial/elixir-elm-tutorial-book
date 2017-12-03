@@ -497,7 +497,7 @@ function, and we're passing it the string `"Hello World!"`:
   <a class="btn btn-success" href="/players/new">Create Player Account</a>
   <a class="btn btn-info" href="/players">List All Players</a>
 
-  <%= IO.inspect "Hello World!" %>
+  <%= IO.inspect("Hello World!") %>
 </div>
 ```
 
