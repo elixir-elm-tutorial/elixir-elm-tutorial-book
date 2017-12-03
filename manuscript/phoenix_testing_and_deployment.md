@@ -6,7 +6,7 @@ GitHub version control, and Heroku deployment.
 
 If you're already familiar with these concepts and only want to work locally
 for this project, feel free to skim through the content. Even if you decide to
-skip the Heroku deployments, the concepts here are important. Keeping our tests
+skip the Heroku deployment, the concepts here are important. Keeping our tests
 passing and consistently checking in our code contributes to a sane development
 workflow.
 
@@ -96,8 +96,8 @@ Randomized with seed 187055
 
 ## Git and GitHub
 
-Now that all our tests are passing, and our application is in a good working
-condition, let's go ahead and commit what we have so far and push it to GitHub.
+Now that all our tests are passing and our application is in working condition,
+let's go ahead and commit what we have so far and push it to GitHub.
 
 We won't cover version control in detail in this book, and you're welcome to
 skip the parts with `git` commands if you'd like. But it's a good idea to keep
@@ -131,10 +131,10 @@ ahead as needed.
 
 For those that haven't used [Heroku](https://www.heroku.com) before, it
 essentially gives us an easy and free way to deploy our application and see it
-running live in the real world.
+running live.
 
 It's not always an ideal deployment environment for Elixir applications, but
-it's perfect for our purposes because we're just looking for the simplest way
+it's perfect for our purposes, because we're just looking for the simplest way
 to get our application up and running.
 
 Sign up for a Heroku account if you haven't already, and then our deployments
@@ -144,7 +144,7 @@ will be as simple as running `git push heroku master` when we're ready.
 
 After you've signed up for a Heroku account, create a free app using their web
 interface (the name `platform` will already be taken, so you'll have to come up
-with a name you'd like or allow Heroku to choose a random name for you). Then
+with a name you like or allow Heroku to choose a random name for you). Then,
 download the [Heroku toolbelt](https://toolbelt.heroku.com) command line tool.
 
 Once you have that installed, you can run the `heroku login` command to sign in
@@ -197,7 +197,7 @@ called `elixir_buildpack.config` in the `platform` folder.
 
 ```config
 erlang_version=20.0
-elixir_version=1.5.0
+elixir_version=1.5.2
 ```
 
 Since we're using the latest versions of Erlang, Elixir, and Phoenix, these
