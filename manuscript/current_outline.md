@@ -38,7 +38,7 @@ progress.
   - Importing Hex dependencies.
   - Working with changesets.
   - Building an authentication plug.
-  - Adding login and session features.
+  - Adding sign in and session features.
   - Database seeds.
 
 - Phoenix API
