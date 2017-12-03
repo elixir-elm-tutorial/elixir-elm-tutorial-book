@@ -12,20 +12,13 @@ application up and running.
 
 ## Installation
 
-If you haven't already set up your development
-environment with Elixir, Phoenix, and PostgreSQL, then check out the
-[Appendix](#appendix) in the back of the book for more information.
+If you haven't already set up your development environment with Elixir,
+Phoenix, and PostgreSQL, **check out the [Appendix](#appendix) in the back
+of the book for quick installation instructions**.
 
-## Note on Phoenix Versions
-
-In this book, we're using the _latest_ version of Phoenix available. Make sure
-you're working with **Phoenix 1.3**, or the commands and files will all look
-different as you work through the instructions. To fetch the latest version of
-Phoenix, run the following command:
-
-```shell
-$ mix archive.install https://github.com/phoenixframework/archives/raw/master/phx_new.ez
-```
+Also note that we're working with the _latest_ version of Phoenix in this book.
+Make sure you have **Phoenix 1.3** installed, or the commands and files will
+all look different as you work through the material.
 
 ## Creating the Platform
 
