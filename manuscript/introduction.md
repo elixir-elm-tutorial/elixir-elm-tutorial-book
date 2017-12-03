@@ -21,12 +21,12 @@ web applications as well.
 
 ## Acknowledgements
 
-I would like to thank Envy Labs and Code School for fostering an environment
-where I've been able to work hard and learn and grow. I'd also like to thank
-José Valim and Evan Czaplicki for crafting such beautiful and fun languages.
-Thanks to Michael Hartl for setting the standard for technical writing with
-The Ruby on Rails Tutorial, and Bret Victor for inspiring all of us with
-his visions of the future.
+I would like to thank **Envy Labs** and **Code School** for fostering an
+environment where I've been able to work hard and learn and grow. I'd also like
+to thank **José Valim** and **Evan Czaplicki** for crafting such beautiful and
+fun languages. Thanks to **Michael Hartl** for setting the standard for
+technical writing with The Ruby on Rails Tutorial, and **Bret Victor** for
+inspiring all of us with his visions of the future.
 
 ## Who Is This Book For?
 
