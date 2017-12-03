@@ -454,9 +454,10 @@ code in the `lib/platform_web/templates/page/index.html.eex` file. Then,
 replace it with the following:
 
 ```html
-<a class="btn btn-success" href="/players/new">Create Player Account</a>
-
-<a class="btn btn-info" href="/players">List All Players</a>
+<div class="container">
+  <a class="btn btn-success" href="/players/new">Create Player Account</a>
+  <a class="btn btn-info" href="/players">List All Players</a>
+</div>
 ```
 
 Save the file and go back to the browser to see the changes (make sure the
@@ -492,11 +493,12 @@ results. In this example, we're using the `IO` module with the `inspect`
 function, and we're passing it the string `"Hello World!"`:
 
 ```embedded_elixir
-<a class="btn btn-success" href="/players/new">Create Player Account</a>
+<div class="container">
+  <a class="btn btn-success" href="/players/new">Create Player Account</a>
+  <a class="btn btn-info" href="/players">List All Players</a>
 
-<a class="btn btn-info" href="/players">List All Players</a>
-
-<%= IO.inspect "Hello World!" %>
+  <%= IO.inspect "Hello World!" %>
+</div>
 ```
 
 Let's take a look at the results in our browser:
@@ -511,9 +513,10 @@ location, and some extra classes for Bootstrap (which comes preloaded with
 Phoenix by default) to make it look nice:
 
 ```embedded_elixir
-<%= link("Create Player Account", to: "/players/new", class: "btn btn-success") %>
-
-<%= link("List All Players", to: "/players", class: "btn btn-info") %>
+<div class="container">
+  <%= link("Create Player Account", to: "/players/new", class: "btn btn-success") %>
+  <%= link("List All Players", to: "/players", class: "btn btn-info") %>
+</div>
 ```
 
 We can now verify that our links still work the same way they did previously:
