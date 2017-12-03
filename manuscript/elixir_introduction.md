@@ -498,9 +498,14 @@ In this book, we've referred to functions like the `add` function as simply
 The arity of a function is the number of arguments it takes. In our examples
 above, the `add` function takes two arguments, so it would be referred to as
 `add/2`. The `is_number` function only takes a single argument, so we
-would refer to it as `is_number/1`. For the rest of the book, we'll try to be
-consistent about referring to functions with their arity included, because the
-arity is of particular importance in the Elixir language.
+would refer to it as `is_number/1`.
+
+For the rest of the book, we'll try to be consistent about referring to
+functions with their arity included, because the arity is of particular
+importance in the Elixir language. In fact, we can define multiple functions
+that share the same name, but behave differently depending on the number of
+arguments we pass to them. This can be a tricky concept at first, but we'll see
+some examples soon that should help to clarify.
 
 ## Shorthand Function Syntax
 
@@ -534,6 +539,15 @@ works.
 ```elixir
 def add(x, y), do: x + y
 ```
+
+There aren't strict rules about when you should use shorthand function syntax.
+On the one hand, it's good practice to break up our programs into small
+functions that are easy to reason about, which could mean many of our functions
+fit well on a single line. However, we shouldn't feel compelled to force
+multiline functions to fit on a single line arbitrarily. The reason we're
+introducing this concept now is that the `add/2` function will be easier to
+visualize and reason about in the next section when using the shorthand
+function syntax.
 
 ## Pattern Matching
 
