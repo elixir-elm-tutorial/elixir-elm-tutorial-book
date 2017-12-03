@@ -250,8 +250,8 @@ the correct direction too. Let's create two new copies of the `character.gif`
 file in the `/assets/static/images` folder. We'll create one called
 `character-right.gif` which will be exactly the same as `character.gif`. And
 we'll also create `character-left.gif`, which is the same image flipped along
-the horizontal axis. If you're using OS X, you can open the file in Preview and
-click the Tools > Flip Horizontal option.
+the horizontal axis. If you're using macOS, you can open the file in Preview
+and click the Tools > Flip Horizontal option.
 
 ![character-right.gif](images/movement/character-right.gif)
 

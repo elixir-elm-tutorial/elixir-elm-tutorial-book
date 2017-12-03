@@ -762,7 +762,7 @@ sign them out of the platform.
 
 It's a good idea to try out these features using "incognito" browser windows.
 That will give us a way to open a new browser window in a clean state. If
-you're using Google Chrome on OS X, you can create a new incognito window with
+you're using Google Chrome on macOS, you can create a new incognito window with
 `Command + Shift + N`. It's also a good idea to restart your Phoenix server
 with `mix phx.server` at this point to get things up and running.
 
