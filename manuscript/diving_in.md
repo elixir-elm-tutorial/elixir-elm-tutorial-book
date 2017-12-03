@@ -333,10 +333,10 @@ soon be able to start creating the players for our game platform.
 ## Running a Migration
 
 Our application has all the information it needs to render the players resource
-that we created, but we still need to tell the database about the changes that
-we made. For the database to store our player data (with the `username`
-and `score` fields), we'll need to run a migration. Go back to the Terminal,
-and run the following command:
+that we created, but we still need to tell the database about the changes we
+made. For the database to store our player data (with the `username` and
+`score` fields), we'll need to run a migration. Go back to the Terminal, and
+run the following command:
 
 ```shell
 $ mix ecto.migrate
@@ -374,14 +374,14 @@ Click the **New Player** link at the bottom and try creating a player on the
 
 ![New Player Page](images/diving_in/new_player.png)
 
-When we successfully create a new player account, we'll see the "show" page
+After we successfully create a new player account, we'll see the "show" page
 with the individual player's data (notice the player `id` number is displayed
 in the URL too):
 
 ![Player Show Page](images/diving_in/new_player_created.png)
 
-Feel free to create some more player accounts so we have some data to work with
-on our players page:
+Feel free to create additional player accounts so we have data to work with on
+our players page:
 
 ![Players Index with Sample Data](images/diving_in/list_players.png)
 
