@@ -12,7 +12,7 @@ think there's an easier approach to setting things up.
 The intention for this chapter is that we want to get everything we'll need
 installed quickly so we can start creating Phoenix projects.
 
-These instructions assume that you're running OS X, but instructions can also
+These instructions assume that you're running macOS, but instructions can also
 be found online for installing these tools on Linux.
 
 ### Elixir
@@ -73,7 +73,7 @@ Any trouble with this step? Check out the
 
 We'll be using [PostgreSQL](https://www.postgresql.org/) for our database. The
 easiest way to get started if you're new to PostgreSQL is to use
-[**Postgres.app**](https://postgresapp.com/). It's an OS X application that
+[**Postgres.app**](https://postgresapp.com/). It's a macOS application that
 makes it really simple to get PostgreSQL up and running, and also creates a
 `postgres` user that Phoenix uses as a default when creating databases.
 

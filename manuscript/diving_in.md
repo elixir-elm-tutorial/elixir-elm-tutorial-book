@@ -3,12 +3,16 @@
 Instead of simply _reading_ about Elixir and Elm, let's dive in and
 _experience_ what these languages have to offer. In this chapter, we're going
 to avoid detailed explanations and theory in favor of quickly building the
-foundation for our project. We'll focus on running the right console commands
-and writing the code we'll need to start creating our application.
+foundation for our project. We'll focus on running the necessary console
+commands and writing the code we'll need to start creating our application.
 
 Later in the book, we'll cover more about the fundamentals of Elixir, but for
 now let's focus on following along and getting a glimpse of how to get an
-application up and running. If you haven't already set up your development
+application up and running.
+
+## Installation
+
+If you haven't already set up your development
 environment with Elixir, Phoenix, and PostgreSQL, then check out the
 [Appendix](#appendix) in the back of the book for more information.
 
