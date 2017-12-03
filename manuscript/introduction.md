@@ -9,15 +9,15 @@ application.
 
 ## What We're Building
 
-**The application we'll be building is a small game platform for the web**.
-We'll use Elixir and the Phoenix web framework to power the back-end, where
-players can sign in and keep track of their scores. Then, we'll use Elm on the
-front-end to create fun minigames. We'll tie everything together so we can
-pass data back and forth between the back-end and front-end. Users on our
-platform will be able to join a chat to discuss the available minigames, and
-the scores from those games will be updated on the platform in real-time. We'll
-focus on building things with a strong foundation so we can use these same
-concepts to create different web applications as well.
+**The application we'll be building together is a small game platform for the
+web**. We'll use Elixir and the Phoenix web framework to power the back-end,
+where players can sign in and keep track of their scores. Then, we'll use Elm
+on the front-end to create fun minigames. We'll connect everything together so
+we can pass data back and forth between the back-end and front-end. Users on
+our platform will be able to join a chat to discuss the available minigames,
+and the scores from those games will be updated on the platform in real-time.
+We'll focus on building things with a strong foundation so we can use these
+same concepts to create different web applications as well.
 
 ## Acknowledgements
 
