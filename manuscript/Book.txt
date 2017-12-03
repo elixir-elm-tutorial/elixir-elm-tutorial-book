@@ -19,7 +19,7 @@ handling_game_states.md
 gameplay.md
 player_skills.md
 syncing_score_data.md
-games.md
-current_outline.md
+whats_next.md
+outline.md
 appendix.md
 contact.md

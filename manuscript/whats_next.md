@@ -1,9 +1,34 @@
-# Elm Minigames
+# What's Next?
 
-## TODO
+The original plan for this book included additional features and more minigame
+ideas. However, the priority shifted towards shipping a solid, stable _v1.0_
+release instead of an exhaustive resource. Rather than having a dozen
+half-written and half-implemented features, the hope is that this release will
+be a stable foundational resource.
 
-- Switch away from hard-coded `/elm/game` route.
-- Add features to allow for multiple games to be generated and accessed.
+What features do we have to look forward to for _v2.0_?
+
+## More Minigames
+
+This is the most fun part of the Elixir and Elm Tutorial, and perhaps the
+biggest differentiator between this resource and many of the other great
+resources available.
+
+- Adventure
+- Pong
+- Snake
+
+Future versions of this book will most certainly contain additional minigame
+chapters. 
+
+- [404 Elm Street](https://github.com/zalando/elm-street-404)
+- [Asteroids](https://github.com/justinmimbs/asteroids)
+- [Elm Shooter](https://github.com/sporto/elm-shooter)
+- [Vessel](https://github.com/slawrence/vessel)
+
+## Multiplayer?
+
+- [Phoenix Elm Battleship](https://github.com/bigardone/phoenix-elm-battleship)
 
 ## Game Ideas
 
