@@ -31,7 +31,7 @@ command:
 ```shell
 $ elixir -v
 Erlang/OTP 20
-Elixir 1.5
+Elixir 1.5.2
 ```
 
 Any trouble with this step? Check out the
