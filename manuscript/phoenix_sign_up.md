@@ -133,7 +133,7 @@ defmodule Platform.Accounts.Player do
     field :password, :string, virtual: true
     field :password_digest, :string
     field :score, :integer
-    field :username, :string
+    field :username, :string, unique: true
 
     timestamps()
   end
@@ -143,6 +143,7 @@ defmodule Platform.Accounts.Player do
     player
     |> cast(attrs, [:display_name, :password, :score, :username])
     |> validate_required([:username])
+    |> unique_constraint(:username)
   end
 end
 ```
@@ -150,6 +151,9 @@ end
 We're adding our new fields to the `"players"` schema. Each of our new fields
 is a `:string` type, and also note that the `password` field is marked with
 `virtual: true`.
+
+Since we want every player to have a unique individual `username` field, we
+also add `unique:true` to the schema.
 
 ## Player Changeset
 
@@ -165,6 +169,10 @@ get that working properly.
 Although the `display_name` field isn't required when users sign up for an
 account, we want them to be able to change this field on the **Edit Player**
 page, so we add it to the `cast/2` function along with the other fields.
+
+Lastly, we need to pipe to the `unique_constraint/1` function with our
+`:username` field so users will get a message if they try creating multiple
+accounts with the same `username`.
 
 ## Generating a Migration
 
