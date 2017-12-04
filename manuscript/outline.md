@@ -38,7 +38,6 @@ attempt to break down the topics and concepts covered within each chapter.
   - Working with changesets.
   - Building an authentication plug.
   - Adding sign in and session features.
-  - Database seeds.
 
 - **Phoenix API**
   - Generating a JSON API for games.
