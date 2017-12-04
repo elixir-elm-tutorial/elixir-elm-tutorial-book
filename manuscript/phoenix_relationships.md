@@ -1,3 +1,0 @@
-# Phoenix Relationships
-
-...
