@@ -298,8 +298,7 @@ Let's start by updating our `new.html.eex` file:
   </div>
 
   <div class="form-group">
-    <%= submit "Submit", class: "btn btn-primary" %>
-    <span><%= link "Back", to: page_path(@conn, :index), class: "btn btn-default" %></span>
+    <%= submit "Sign Up", class: "btn btn-primary" %>
   </div>
 <% end %>
 ```
