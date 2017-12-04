@@ -313,17 +313,15 @@ default home page. This is what it should look like in the browser:
 
 After a new user is created, the application currently redirects them to the
 **Show Player** page. When we have the full platform application built out later,
-we'll probably want to redirect them to a list of games to play. But for now
-we'll update this page to display all the relevant fields for the player's
-account:
+we'll probably want to redirect them to a list of games to play. For now, we'll
+update this page to display all the relevant fields for the player's account:
 
 - `id`
 - `display_name`
 - `username`
 - `score`
 
-We can work towards making this page look nicer with styles later, but for now
-let's update the `lib/platform_web/templates/player/show.html.eex` file with
+Let's update the `lib/platform_web/templates/player/show.html.eex` file with
 the following:
 
 ```embedded_elixir
