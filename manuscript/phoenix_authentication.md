@@ -668,32 +668,25 @@ We'll also need to create the corresponding template. Create a
 
 <%= form_for @conn, player_session_path(@conn, :create), [as: :session], fn f -> %>
   <div class="form-group">
+    <%= label f, :username, "Player Username", class: "control-label" %>
     <%= text_input f, :username, placeholder: "Enter username...", class: "form-control" %>
+    <%= error_tag f, :username %>
   </div>
+
   <div class="form-group">
+    <%= label f, :password, "Player Password", class: "control-label" %>
     <%= password_input f, :password, placeholder: "Enter password...", class: "form-control" %>
+    <%= error_tag f, :password %>
   </div>
-  <%= submit "Sign In", class: "btn btn-primary" %>
-  <span><%= link "Create New Account", to: player_path(@conn, :new), class: "btn btn-success" %></span>
-<% end %>
+
+  <div class="form-group">
+    <%= submit "Sign In", class: "btn btn-primary" %>
+  </div>
+<%end%>
 ```
 
 This gives us a **Player Sign In** page with a form for existing users to enter
-their `username` and `password`. And if they don't already have an account, we
-display a button at the bottom that links to the **New Player** page.
-
-Let's also update our **New Player** page with a link to the **Player Sign In**
-page for users that already have an account. Open the
-`lib/platform_web/templates/player/new.html.eex` file, and we'll add another
-button at the bottom.
-
-```embedded_elixir
-<div class="form-group">
-  <%= submit "Submit", class: "btn btn-primary" %>
-  <span><%= link "Sign In", to: player_session_path(@conn, :new), class: "btn btn-success" %></span>
-  <span><%= link "Back", to: page_path(@conn, :index), class: "btn btn-default" %></span>
-</div>
-```
+their `username` and `password`.
 
 ## Session Routing
 
