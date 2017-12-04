@@ -266,7 +266,7 @@ Here's an example of what a simple player struct might look like:
 ```
 
 Our actual player struct is more complicated, because it needs to account for
-all the other fields including things like `id`, `updated_at`, and other
+all the other fields, including things like `id`, `updated_at`, and other
 metadata.
 
 Let's take a look at our existing `player_fixture/1` function:
