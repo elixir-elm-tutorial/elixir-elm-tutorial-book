@@ -119,6 +119,7 @@ def changeset(%Player{} = player, attrs) do
   player
   |> cast(attrs, [:display_name, :password, :score, :username])
   |> validate_required([:username])
+  |> unique_constraint(:username)
   |> validate_length(:username, min: 2, max: 100)
   |> validate_length(:password, min: 6, max: 100)
   |> put_pass_digest()
@@ -129,6 +130,7 @@ def registration_changeset(%Player{} = player, attrs) do
   player
   |> cast(attrs, [:password, :username])
   |> validate_required([:password, :username])
+  |> unique_constraint(:username)
   |> validate_length(:username, min: 2, max: 100)
   |> validate_length(:password, min: 6, max: 100)
   |> put_pass_digest()
