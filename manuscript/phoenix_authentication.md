@@ -248,7 +248,7 @@ environment. We can use this as an opportunity to learn a little bit about
 Elixir structs and maps.
 
 We saw some examples of
-[Elixir Maps](https://elixir-lang.org/getting-started/keywords-and-maps.html#maps)
+[Elixir maps](https://elixir-lang.org/getting-started/keywords-and-maps.html#maps)
 in the previous section about attributes. They are useful as key-value stores,
 and they're considered an essential data structure. Here's a simple example with
 two keys and two values:
