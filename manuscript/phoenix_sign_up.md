@@ -262,9 +262,9 @@ Here's what our original **New Player** page looks like:
 ![Original New Player Page](images/phoenix_sign_up/phoenix_original_sign_up.png)
 
 We don't actually want our players to be able to manually enter their scores,
-because the games should track player scores and update their accounts in
-real-time. For now, we just want players to create a `username` and `password`
-to sign up.
+because the games should track player scores and update their accounts
+automatically. For now, we just want players to create a `username` and
+`password` to sign up.
 
 We're going to move part of the `form.html.eex` file over to the `new.html.eex`
 file. We'll also create a form in the `edit.html.eex` file, and ultimately we'll
