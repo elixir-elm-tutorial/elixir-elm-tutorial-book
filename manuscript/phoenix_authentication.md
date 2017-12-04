@@ -795,8 +795,8 @@ This places buttons in the header for users to either sign up or sign in.
 
 Depending on whether players are signed in or not, we want to show something
 different in the header. Before a player has authenticated, we want to display
-the buttons that we see above. If a player has signed in, we want to show them
-their `username` in the header along with a sign out button.
+the buttons that we see in the screenshot above. If a player has signed in, we
+want to show them their `username` in the header along with a sign out button.
 
 Let's update our `<header>` tag again with the following:
 
