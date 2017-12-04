@@ -298,7 +298,7 @@ Let's start by updating our `new.html.eex` file:
   </div>
 
   <div class="form-group">
-    <%= submit "Sign Up", class: "btn btn-primary" %>
+    <%= submit "Submit", class: "btn btn-primary" %>
   </div>
 <% end %>
 ```
