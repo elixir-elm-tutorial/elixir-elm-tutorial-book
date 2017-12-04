@@ -1,10 +1,9 @@
 # Phoenix Sign Up
 
 There are multiple options available for handling player sign up and sign in
-features. In our case, we want to keep things straightforward so that players
-can sign up easily and play games on our platform, which means we'll forego
-asking them for their email or building out a full featured authentication
-system.
+features. In our case, we want to keep things straightforward so players can
+sign up easily and play games on our platform, which means we'll forego asking
+them for their email or building out a full featured authentication system.
 
 We're also eager to start using Elm to build the front-end, so we're going to
 take a simple approach. We'll use Phoenix to handle authentication initially,
