@@ -60,7 +60,7 @@ defp deps do
     {:gettext, "~> 0.11"},
     {:cowboy, "~> 1.0"},
     {:comeonin, "~> 4.0"},
-    {:bcrypt_elixir, "~> 0.12"}
+    {:bcrypt_elixir, "~> 1.0"},
   ]
 end
 ```
@@ -72,25 +72,22 @@ fetches dependencies:
 $ mix deps.get
 ```
 
-We'll see the following results:
+We should see the following results:
 
 ```shell
 $ mix deps.get
-Running dependency resolution...
+Resolving Hex dependencies...
 Dependency resolution completed:
-  comeonin 4.0.0
-  bcrypt_elixir 0.12.1
-  elixir_make 0.4.0
+  bcrypt_elixir 1.0.5
+  comeonin 4.0.3
   ...
 * Getting comeonin (Hex package)
-  Checking package (https://repo.hex.pm/tarballs/comeonin-4.0.0.tar)
+  Checking package (https://repo.hex.pm/tarballs/comeonin-4.0.3.tar)
   Fetched package
 * Getting bcrypt_elixir (Hex package)
-  Checking package (https://repo.hex.pm/tarballs/bcrypt_elixir-0.12.1.tar)
+  Checking package (https://repo.hex.pm/tarballs/bcrypt_elixir-1.0.5.tar)
   Fetched package
-* Getting elixir_make (Hex package)
-  Checking package (https://repo.hex.pm/tarballs/elixir_make-0.4.0.tar)
-  Fetched package
+  ...
 ```
 
 ## Player Changesets
