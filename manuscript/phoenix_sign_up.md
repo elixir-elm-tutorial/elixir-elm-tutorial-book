@@ -132,7 +132,7 @@ defmodule Platform.Accounts.Player do
     field :display_name, :string
     field :password, :string, virtual: true
     field :password_digest, :string
-    field :score, :integer
+    field :score, :integer, default: 0
     field :username, :string, unique: true
 
     timestamps()
@@ -149,11 +149,14 @@ end
 ```
 
 We're adding our new fields to the `"players"` schema. Each of our new fields
-is a `:string` type, and also note that the `password` field is marked with
-`virtual: true`.
+is a `:string` type.
 
-Since we want every player to have a unique individual `username` field, we
-also add `unique:true` to the schema.
+We'll also take this opportunity to add a few settings to our fields so they
+contain the correct data. The `password` field is marked with `virtual: true`
+so it doesn't get saved to the database (only the `password_digest` will get
+stored). The `score` field will be set to a default value with `default: 0`.
+And the `username` field is set to `unique:true` because we want every player
+to have a unique individual `username`.
 
 ## Player Changeset
 
