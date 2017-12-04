@@ -257,7 +257,7 @@ two keys and two values:
 %{password: "some password", username: "some username"}
 ```
 
-[Elixir Structs](https://elixir-lang.org/getting-started/structs.html) are
+[Elixir structs](https://elixir-lang.org/getting-started/structs.html) are
 similar to maps, but have additional structure for defining keys and values.
 Here's an example of what a simple player struct might look like:
 
