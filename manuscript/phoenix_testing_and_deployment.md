@@ -386,9 +386,8 @@ Our application is working in production!
 
 ## Summary
 
-This has a been a long chapter, but we were able to get all our Phoenix tests
-passing, push our code to GitHub, and deploy our application successfully to
-Heroku!
+In this chapter, we were able to get all our Phoenix tests passing, push our
+code to GitHub, and deploy our application successfully to Heroku!
 
 We're off to a solid start for our platform. Our back-end is up and running,
 and we've picked up some introductory knowledge about Phoenix and Elixir. In
