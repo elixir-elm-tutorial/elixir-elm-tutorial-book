@@ -684,7 +684,7 @@ We'll also need to create the corresponding template. Create a
   <div class="form-group">
     <%= submit "Sign In", class: "btn btn-primary" %>
   </div>
-<%end%>
+<% end %>
 ```
 
 This gives us a **Player Sign In** page with a form for existing users to enter
