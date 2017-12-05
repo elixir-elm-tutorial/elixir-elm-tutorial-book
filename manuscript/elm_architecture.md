@@ -557,9 +557,8 @@ hidden based on our interactions:
 ![Working Buttons to Display and Hide the List of Games](images/elm_architecture/working_button_interactions.png)
 
 Now that we're changing state in our application, we can also start using the
-Elm debugger to see changes to our model as they occur over time.
-
-![Elm Debugger](images/elm_architecture/elm_debugger.png)
+Elm debugger by clicking the Explore History tab at the bottom right corner of
+the browser to see changes to our model as they occur over time.
 
 ## Summary
 
