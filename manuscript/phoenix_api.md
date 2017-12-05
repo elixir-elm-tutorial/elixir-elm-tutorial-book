@@ -285,54 +285,38 @@ display yet (note that your browser might display JSON data differently):
 
 ![Games API with No Data](images/phoenix_api/games_api_with_no_data.png)
 
-## Adding Data Seeds
+## Creating a Game
 
 We can't interact with our game resources the same way we did with players,
 because we're only working with JSON and don't have any HTML pages to view.
 
-Let's update our database for both our players and our games so we have some
-sample data to work with. Add the following to the bottom of the
-`priv/repo/seeds.ex` file:
-
-```elixir
-# Aliases
-
-alias Platform.Accounts
-alias Platform.Products
-
-# Players
-
-Accounts.create_player(%{display_name: "José Valim", username: "josevalim", password: "josevalim", score: 1000})
-Accounts.create_player(%{display_name: "Evan Czaplicki", username: "evancz", password: "evancz", score: 2000})
-Accounts.create_player(%{display_name: "Chris McCord", username: "chrismccord", password: "chrismccord", score: 3000})
-
-# Games
-
-Products.create_game(%{title: "Platformer", description: "Platform game example.", thumbnail: "http://via.placeholder.com/300x200", featured: true})
-```
-
-Assuming we don't have any local data that we want to keep, we can use this
-file to reseed the database with `mix ecto.reset`. This task will drop the
-existing database, create a new one, run migrations, and then seed the
-database with our sample data. Our full output will look something like this:
+Instead, let's fire up an `iex` session and create a new game from the command
+line. First, enter the following at the command line to get started:
 
 ```shell
-$ mix ecto.reset
-The database for Platform.Repo has been dropped
-The database for Platform.Repo has been created
+$ iex -S mix phx.server
+```
 
-18:15:28.202 [info]  == Running Platform.Repo.Migrations.CreatePlayers.change/0 forward
-18:15:28.202 [info]  create table players
-18:15:28.211 [info]  == Migrated in 0.0s
-18:15:28.251 [info]  == Running Platform.Repo.Migrations.AddFieldsToPlayerAccounts.change/0 forward
-18:15:28.251 [info]  alter table players
-18:15:28.254 [info]  create index players_username_index
-18:15:28.256 [info]  == Migrated in 0.0s
-18:15:28.278 [info]  == Running Platform.Repo.Migrations.CreateGames.change/0 forward
-18:15:28.278 [info]  create table games
-18:15:28.283 [info]  create table gameplays
-18:15:28.290 [info]  == Migrated in 0.0s
+Now we can create a new game called "Platformer" manually by using the
+`create_game/1` function from the `Platform.Products` module.
+
+```elixir
+iex> Platform.Products.create_game(%{title: "Platformer", description: "Platform game example.", thumbnail: "http://via.placeholder.com/300x200", featured: true})
+```
+
+We're setting values for the game's `title`, `description`, `thumbnail`, and
+`featured` fields. And the output should look something like this:
+
+```elixir
+iex> Platform.Products.create_game(%{title: "Platformer", description: "Platform game example.", thumbnail: "http://via.placeholder.com/300x200", featured: true})
 # ...
+{:ok,
+ %Platform.Products.Game{__meta__: #Ecto.Schema.Metadata<:loaded, "games">,
+  description: "Platform game example.", featured: true, id: 1,
+  inserted_at: ~N[2017-12-04 15:16:16.957673],
+  players: #Ecto.Association.NotLoaded<association :players is not loaded>,
+  thumbnail: "http://via.placeholder.com/300x200",
+  title: "Platformer", updated_at: ~N[2017-12-04 15:16:16.967729]}}
 ```
 
 Now that we have some data, we should be able to restart the server and reload
