@@ -422,13 +422,14 @@ defmodule PlatformWeb.PlayerApiView do
 end
 ```
 
-This code is similar to what we have in the `game_view.ex` file. When we load
-the `http://0.0.0.0:4000/api/players` URL, we're using `render_many/3` to list
-all the players. When we only want to show a single player, we can use a URL
-like `http://0.0.0.0:4000/api/players/1` that will use `render_one/3` to only
-display a single user's JSON data. At the bottom, we're creating a function
-that returns a map with all our player data. We can add or remove fields here
-whenever we want to adjust the fields that are accessible via the JSON API.
+Our `PlayerApiView` module is similar to what we have in the `GameView` module.
+When we load the `http://0.0.0.0:4000/api/players` URL, we're using
+`render_many/3` to list all the players. When we only want to show a single
+player, we can use a URL like `http://0.0.0.0:4000/api/players/1` that will use
+`render_one/3` to only display a single user's JSON data. At the bottom, we're
+creating a function that returns a map with all our player data. We can add or
+remove fields here whenever we want to adjust the fields that are accessible
+via the JSON API.
 
 This is all great news because it means we can still use the
 `http://0.0.0.0:4000/players` URL to access our list of players in the browser,
