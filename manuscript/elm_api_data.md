@@ -212,7 +212,7 @@ will give us another opportunity to improve our understanding.
 Let's take another look at the structure of the JSON data we're getting from
 our endpoint.
 
-```json
+```javascript
 {
     data: [
         {
@@ -662,6 +662,41 @@ Either way, we managed to successfully sort our list of players and show the
 top scorer at the top:
 
 ![Sorted List of Players](images/elm_api_data/sorted_list_of_players.png)
+
+## Handling Potentially Missing Data
+
+Before we finish up with this chapter, let's make sure we're handling our data
+gracefully when dealing with values that may or may not be there. For example,
+we know that our players and games will all have `id` fields because Phoenix
+creates those fields for us and they won't ever have a `nil` value. The players
+on our platform are able to create accounts with a `username` field as well,
+but they may or may not have a `display_name` field.
+
+In other words, when we decode our player data from the API, we'll need to
+consider the possibility that not all users will have a `display_name` string.
+
+Let's start by updating our `Player` type:
+
+```elm
+type alias Player =
+    { displayName : String
+    , id : Int
+    , score : Int
+    , username : String
+    }
+```
+
+Instead of assuming that `displayName` is a `String`, we'll use `Maybe` to
+indicate that the value could be a `String` or a `Nothing`.
+
+```elm
+type alias Player =
+    { displayName : Maybe String
+    , id : Int
+    , score : Int
+    , username : String
+    }
+```
 
 ## Summary
 
