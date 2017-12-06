@@ -99,11 +99,8 @@ attempt to break down the topics and concepts covered within each chapter.
   - Configuring elm-phoenix-socket.
 
 - **What's Next?**
-  - Additional features for Platformer game.
-  - More extensible game creation process.
-  - Additional Games.
-  - Feature: Chat lobby for game platform.
-  - Using a GenServer as a small score service.
+  - Additional features and game ideas that didn't make it into the v1.0 release.
+  - Planning for future versions of this book.
 
 - **Appendix**
   - Quick installation instructions.
