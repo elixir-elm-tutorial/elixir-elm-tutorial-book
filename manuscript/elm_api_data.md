@@ -663,6 +663,77 @@ top scorer at the top:
 
 ![Sorted List of Players](images/elm_api_data/sorted_list_of_players.png)
 
+## Handling Errors
+
+If a problem arises when we fetch data from our API (perhaps due to
+inconsistent JSON data), we're currently suppressing errors with the approach
+we took. Let's make sure we have a way to view errors when something goes wrong
+with our API fetch functions.
+
+The first step will be to add a new `errors` field to our existing `Model`:
+
+```elm
+type alias Model =
+    { gamesList : List Game
+    , playersList : List Player
+    , errors : String
+    }
+```
+
+Then, we can set a default value by setting `errors` to an empty string:
+
+```elm
+initialModel : Model
+initialModel =
+    { gamesList = []
+    , playersList = []
+    , errors = ""
+    }
+```
+
+Inside our `update` function, we'll need to make a few changes so that we're
+not ignoring errors in our `FetchGamesList` and `FetchPlayersList` cases. Let's
+take a look at what our error case looks like so far:
+
+```elm
+Err _ ->
+    ( model, Cmd.none )
+```
+
+This means that any time we get _any_ error from our HTTP request, we're just
+ignoring it and not making any changes to our model. Instead of ignoring these
+errors, we'll convert the error message to a string and make it viewable in the
+new `errors` field we added to our model.
+
+```elm
+Err message ->
+    ( { model | errors = toString message }, Cmd.none )
+```
+
+We'll need to make these changes in both the `FetchGamesList` and
+`FetchPlayersList` cases. Here's the full `update` function for reference:
+
+```elm
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+    case msg of
+        FetchGamesList result ->
+            case result of
+                Ok games ->
+                    ( { model | gamesList = games }, Cmd.none )
+
+                Err message ->
+                    ( { model | errors = toString message }, Cmd.none )
+
+        FetchPlayersList result ->
+            case result of
+                Ok players ->
+                    ( { model | playersList = players }, Cmd.none )
+
+                Err message ->
+                    ( { model | errors = toString message }, Cmd.none )
+```
+
 ## Handling Potentially Missing Data
 
 Before we finish up with this chapter, let's make sure we're handling our data
