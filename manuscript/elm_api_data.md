@@ -739,14 +739,15 @@ update msg model =
 Before we finish up with this chapter, let's make sure we're handling our data
 gracefully when dealing with values that may or may not be there. For example,
 we know that our players and games will all have `id` fields because Phoenix
-creates those fields for us and they won't ever have a `nil` value. The players
-on our platform are able to create accounts with a `username` field as well,
-but they may or may not have a `display_name` field.
+creates those fields for us and they won't ever have a `nil` value (or `null`
+value in the JSON response). The players on our platform are able to create
+accounts with a required `username` field, but they _may or may not_ have a
+`display_name` field.
 
 In other words, when we decode our player data from the API, we'll need to
 consider the possibility that not all users will have a `display_name` string.
 
-Let's start by updating our `Player` type:
+Let's start by taking a look at our `Player` type alias:
 
 ```elm
 type alias Player =
@@ -767,6 +768,48 @@ type alias Player =
     , score : Int
     , username : String
     }
+```
+
+Now, we just need to account for this in our `decodePlayer` function. Instead
+of just using the `Decode.field` function for the `"display_name"` field in our
+JSON API data, let's use the `Decode.maybe` function.
+
+```elm
+decodePlayer : Decode.Decoder Player
+decodePlayer =
+    Decode.map4 Player
+        (Decode.maybe (Decode.field "display_name" Decode.string))
+        (Decode.field "id" Decode.int)
+        (Decode.field "score" Decode.int)
+        (Decode.field "username" Decode.string)
+```
+
+This allows us to extract the string value from the API if it's there. If
+the API is giving us a `null` value, we'll know that it's set to `Nothing` in
+our Elm application and we can handle it accordingly.
+
+We'll add a `let` expression to our `playersListItem` function to account for
+the different conditions. If the player's `displayName` is set to `Nothing`,
+then we'll fall back to displaying the player's `username`. If we're successful
+in fetching a player's `displayName`, then that's what we'll display in our
+list of players.
+
+Here's the updated `playersListItem` function:
+
+```elm
+playersListItem : Player -> Html msg
+playersListItem player =
+    let
+        displayName =
+            if player.displayName == Nothing then
+                player.username
+            else
+                Maybe.withDefault "" player.displayName
+    in
+        li [ class "player-item list-group-item" ]
+            [ strong [] [ text displayName ]
+            , span [ class "badge" ] [ text (toString player.score) ]
+            ]
 ```
 
 ## Summary
