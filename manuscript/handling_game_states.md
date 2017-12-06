@@ -499,5 +499,8 @@ can restart the game by pressing the space bar key.
 
 Our game is starting to take shape! We now have working game states, so players
 can see a start screen, play the game, view a success state, and also restart
-from the game over screen. This is a great start, but let's keep working
-towards improving our gameplay and injecting some fun in the next chapter.
+from the game over screen.
+
+Ideally we'd like to add a lot more features for our game. But now that we have
+a game with a working scoring mechanism, let's switch gears and work on
+integrating our game with the Phoenix back-end.

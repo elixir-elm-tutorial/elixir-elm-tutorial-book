@@ -16,8 +16,6 @@ our_first_game.md
 adding_interaction.md
 displaying_game_data.md
 handling_game_states.md
-gameplay.md
-player_skills.md
 syncing_score_data.md
 whats_next.md
 outline.md
