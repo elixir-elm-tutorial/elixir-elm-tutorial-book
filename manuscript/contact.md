@@ -2,37 +2,34 @@
 
 ## Congrats
 
-Congrats on making it all the way to the end of this super early version of the
-book. I'd _really_ love to hear from you!
+Congrats on making it all the way to the end of the book. I'd _really_ love to
+hear from you!
 
-The current plan for the book is to be a fairly exhaustive resource on how to
-practically build a real-world application using Elixir, Phoenix, and Elm. That
-likely means writing hundreds of pages of content before trying to distill that
-down into something more useful.
+We managed to accomplish our goal of building a fun project together and learn
+a lot about functional web programming along the way.
 
-I'll continue building out the demo application and documenting the process as
-meticulously as possible. The good news is that it should provide a reproducible
-way to build a real application. But it's also really important to me that the
-book covers functional concepts in a compelling way that doesn't just feel like
-an afterthought.
+## Feedback
 
-I'll be working hard on adding a lot of content over the upcoming weeks and
-months, but definitely get in touch if you have any of the following ideas:
+Were there additional concepts you'd like to have seen covered in the material?
+Were there parts of the book that felt confusing? Was there something we could
+have done differently in our approach?
 
-- functional concepts you'd like covered.
-- minigame examples you'd like to see.
-- recommendations for tools.
-- anything else!
+If you have any feedback about the book's content or the demos contained
+within, then feel free to reach out.
+
+One simple way to reach out with feedback is to email the author directly at
+`bijanbwb@gmail.com`. Alternatively, feel free to create GitHub issues in
+either the book's content repository or the demo repository:
+
+- [Book Content Issues](https://github.com/elixir-elm-tutorial/elixir-elm-tutorial-book/issues)
+- [Platform Demo Issues](https://github.com/elixir-elm-tutorial/platform/issues)
 
 ## Slack
 
-As a bonus for purchasing an early copy of the book and making it this far, you
-get access to the Slack group! I know I'm part of a million different Slack
-communities now, but I'd also like to be able to provide live support for the
-book's content in the long run, so this is likely a good place to start. I also
-really wanted to provide a place to stop and chat about building and deploying
-things. Feel free to stop in and say hello!
+As a bonus for making it this far, you can access the book's Slack group! I
+know there are a million different Slack communities now, but I'd like to be
+able to provide live support for the book's content. I also really wanted to
+provide a place say hello, get help, and provide suggestions. Get an invite to
+the book's Slack channels with the following link:
 
-Get an invite with the following link:
-
-https://elixirelmtutorial.signup.team/
+https://elixirelmtutorial.signup.team
