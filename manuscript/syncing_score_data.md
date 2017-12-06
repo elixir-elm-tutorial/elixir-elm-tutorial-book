@@ -1,5 +1,7 @@
 # Syncing Score Data
 
+*This chapter is a work in progress!*
+
 We have our game platform up and running, where users can sign in and play a
 simple Elm game that tracks a score. Now let's work towards syncing the Elm
 front-end of our application with the Phoenix back-end. We'll learn about
