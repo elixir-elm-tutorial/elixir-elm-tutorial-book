@@ -17,7 +17,7 @@ channel. Open up your Terminal so we can run the following shell command:
 $ mix phx.gen.channel Score
 ```
 
-This command will create a `lib/platform/web/channels/score_channel.ex` file
+This command will create a `lib/platform_web/channels/score_channel.ex` file
 along with a test file for us too.
 
 The idea is that Phoenix channels will allow us to communicate over a WebSocket
@@ -28,12 +28,12 @@ When we run the generator mentioned above, we should see the following output:
 
 ```shell
 $ mix phx.gen.channel Score
-* creating web/channels/score_channel.ex
-* creating test/channels/score_channel_test.exs
+* creating lib/platform_web/channels/score_channel.ex
+* creating test/platform_web/channels/score_channel_test.exs
 
-Add the channel to your `web/channels/user_socket.ex` handler, for example:
+Add the channel to your `lib/platform_web/channels/user_socket.ex` handler, for example:
 
-    channel "score:*", Platform.Web.ScoreChannel
+    channel "score:lobby", PlatformWeb.ScoreChannel
 ```
 
 Let's go ahead and follow the instructions and add our new channel to the
@@ -45,7 +45,7 @@ defmodule Platform.Web.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  channel "score:*", Platform.Web.ScoreChannel
+  channel "score:*", PlatformWeb.ScoreChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket
@@ -56,53 +56,6 @@ defmodule Platform.Web.UserSocket do
 
   def id(_socket), do: nil
 end
-```
-
-We also want to update the `score_channel_test.exs` file that was generated in
-the `test/web/channels` folder to include `score:*`.
-
-```elixir
-defmodule Platform.Web.ScoreChannelTest do
-  use Platform.Web.ChannelCase
-
-  alias Platform.Web.ScoreChannel
-
-  setup do
-    {:ok, _, socket} =
-      socket("user_id", %{some: :assign})
-      |> subscribe_and_join(ScoreChannel, "score:*")
-
-    {:ok, socket: socket}
-  end
-
-  test "ping replies with status ok", %{socket: socket} do
-    ref = push socket, "ping", %{"hello" => "there"}
-    assert_reply ref, :ok, %{"hello" => "there"}
-  end
-
-  test "shout broadcasts to score:*", %{socket: socket} do
-    push socket, "shout", %{"hello" => "all"}
-    assert_broadcast "shout", %{"hello" => "all"}
-  end
-
-  test "broadcasts are pushed to the client", %{socket: socket} do
-    broadcast_from! socket, "broadcast", %{"some" => "data"}
-    assert_push "broadcast", %{"some" => "data"}
-  end
-end
-```
-
-Now, we can go ahead and run our Phoenix tests to make sure everything is still
-working as intended:
-
-```shell
-$ mix test
-Compiling 2 files (.ex)
-Generated platform app
-......................................
-
-Finished in 0.5 seconds
-38 tests, 0 failures
 ```
 
 ## elm-phoenix-socket
