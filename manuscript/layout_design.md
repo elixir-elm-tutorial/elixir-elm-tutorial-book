@@ -475,6 +475,90 @@ should be successful:
 
 ![Successful Player Deletion](images/layout_design/successful_deletion.png)
 
+## Authorization
+
+You may have noticed a serious issue with our account deletion approach.
+Players can now delete their accounts, but technically players could delete the
+accounts of other players too. For example, the `chrismccord` account could
+sign in to the platform, and then use the
+`http://0.0.0.0:4000/players/4/edit` URL to delete the `newuser` example
+player we removed in the screenshots above.
+
+For player authorization, we're going to take a simple approach similar to the
+one we used to authenticate players on our platform. Let's open the
+`lib/platform_web/controllers/player_controller.ex` file and take a look.
+
+At the bottom of the file, let's add a new function called `authorize/2` that
+takes in the `conn` and then decides whether players should be able to continue
+or if they should see a message indicating that they're not authorized to
+access the page. Add the following private function at the bottom of the
+`PlayerController` module:
+
+```elixir
+defp authorize(conn, _opts) do
+  current_player_id =
+    conn.assigns.current_user().id
+
+  requested_player_id =
+    conn.path_params["id"]
+    |> String.to_integer()
+
+  if current_player_id == requested_player_id do
+    conn
+  else
+    conn
+    |> put_flash(:error, "Your account is not authorized to access that page.")
+    |> redirect(to: page_path(conn, :index))
+    |> halt()
+  end
+end
+```
+
+What this function is going to do is to compare the player that's currently
+signed in with the player that is trying to be accessed. If a currently signed
+in player is trying to access their own account, we just return the `conn` and
+allow them to continue. If a player is trying to access an account that's not
+theirs, then we redirect back to the index page and provide the user a message
+telling them their account is not authorized.
+
+To get this working for the **Edit Player** page, add the following line above
+the `index/2` function in the `PlayerController` module:
+
+```elixir
+plug :authorize when action in [:edit]
+```
+
+This is the same simple approach we took in the `PageController` when
+authenticating users. Now, when players try to access the **Edit Player** page,
+it'll pipe them through the `authorize/2` function.
+
+To make the comparison, we get the currently signed in player's `id` from the
+`current_user()`, and we also get the requested player's `id` from the
+`path_params`. If those two `id` values are equal, it means a player is
+accessing their own account (and they are allowed to continue). Otherwise, it
+means a player is trying to access an account that doesn't belong to them (and
+they are redirected).
+
+Here's an example of how the currently signed in user (`chrismccord`) can view
+the **Edit Player** page for their own account:
+
+![Authorized Player](images/layout_design/authorized_player.png)
+
+But if the player tries to access an account that does not belong to them
+(`http://0.0.0.0:4000/players/1/edit`), they should be redirected back to the
+home page and see a flash message:
+
+![Unauthorized Player](images/layout_design/unauthorized_player.png)
+
+This is an admittedly reductive approach to authorization, but it works well
+for our simple application. If you're looking to build a more involved
+authorization system, consider using an authorization library. A good approach
+for finding libraries is to use the search feature on [hex.pm](https://hex.pm).
+For example, you can search for "authorization" on hex.pm and find a list of
+popular options.
+
+![hex.pm Search](images/layout_design/hex_search.png)
+
 ## List of Games
 
 For our list of games, it looks like Bootstrap has a
