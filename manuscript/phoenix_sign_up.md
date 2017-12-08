@@ -155,7 +155,7 @@ We'll also take this opportunity to add a few settings to our fields so they
 contain the correct data. The `password` field is marked with `virtual: true`
 so it doesn't get saved to the database (only the `password_digest` will get
 stored). The `score` field will be set to a default value with `default: 0`.
-And the `username` field is set to `unique:true` because we want every player
+And the `username` field is set to `unique: true` because we want every player
 to have a unique individual `username`.
 
 ## Player Changeset

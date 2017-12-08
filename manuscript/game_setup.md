@@ -210,7 +210,7 @@ schema "games" do
 
   field :description, :string
   field :featured, :boolean, default: false
-  field :slug, :string
+  field :slug, :string, unique: true
   field :thumbnail, :string
   field :title, :string
 
@@ -220,13 +220,15 @@ end
 
 At the bottom of that same `lib/products/game.ex` file, we'll want to add our
 new field to the `cast/2` and `validated_required/1` functions (note that I
-tend to alphabetize fields, but it's not entirely necessary).
+tend to alphabetize fields, but it's not entirely necessary). We'll also add a
+`unique_constraint/1` function to verify that our `slug` fields are unique.
 
 ```elixir
 def changeset(%Game{} = game, attrs) do
   game
   |> cast(attrs, [:description, :featured, :slug, :thumbnail, :title])
   |> validate_required([:description, :featured, :slug, :thumbnail, :title])
+  |> unique_constraint(:slug)
 end
 ```
 
