@@ -14,7 +14,7 @@ Let's get started by using the Phoenix generator to create a new `Score`
 channel. Open up your Terminal so we can run the following shell command:
 
 ```shell
-mix phx.gen.channel Score
+$ mix phx.gen.channel Score
 ```
 
 This command will create a `lib/platform/web/channels/score_channel.ex` file
