@@ -232,35 +232,48 @@ def changeset(%Game{} = game, attrs) do
 end
 ```
 
-## Updating the Seeds and Running the Migration
+## Running the Migration and Adding a Slug
 
-We should now be able to update our seed file so that our sample game also has
-a `slug` field. In the `priv/repo/seeds.exs` file, update the bottom of the
-file with the following:
+Let's run our migration to add our new `slug` field to our games.
+
+```shell
+$ mix ecto.migrate
+```
+
+Now, we should be able to update our existing game record so it has a `slug`
+field associated with it. First, we can start an interactive Phoenix server
+with the following command:
+
+```shell
+$ iex -S mix phx.server
+```
+
+Now that we have an interactive console available, let's find our existing
+game record:
 
 ```elixir
-# Games
-
-Products.create_game(%{title: "Platformer", slug: "platformer", description: "Platform game example.", thumbnail: "http://via.placeholder.com/300x200", featured: true})
+iex(1)> Platform.Products.get_game!(1)
 ```
 
-We should now be able to reseed the database with our new field. From the
-command line, run the following to drop the existing data, recreate the
-database, run our new migration, and reseed the database with our updated seed
-file:
+We can pipe this to the `update_game/2` function to add a `slug` to our
+existing game record:
 
-```shell
-$ mix ecto.reset
+```elixir
+iex(2)> Platform.Products.get_game!(1) |> Platform.Products.update_game(%{slug: "platformer"})
 ```
 
-At the bottom of the output, we should be able to see our new `slug` field:
+We should be able to see the results with the updated game record containing a
+`slug` field:
 
-```shell
-$ mix ecto.reset
-# ...
-INSERT INTO "games" ("description","featured","slug","thumbnail","title","inserted_at","updated_at") VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNI
-NG "id" ["Platform game example.", true, "platformer", "http://via.placeholder.com/300x200", "Platformer", {{2017, 9, 13}, {22, 6, 34, 975
-867}}, {{2017, 9, 13}, {22, 6, 34, 975874}}]
+```elixir
+iex(2)> Platform.Products.get_game!(1) |> Platform.Products.update_game(%{slug: "platformer"})
+{:ok,
+ %Platform.Products.Game{__meta__: #Ecto.Schema.Metadata<:loaded, "games">,
+  description: "Platform game example.", featured: true, id: 1,
+  inserted_at: ~N[2017-12-08 20:37:44.080271],
+  players: #Ecto.Association.NotLoaded<association :players is not loaded>,
+  slug: "platformer", thumbnail: "http://via.placeholder.com/300x200",
+  title: "Platformer", updated_at: ~N[2017-12-08 20:37:44.080277]}}
 ```
 
 ## Fixing the Tests
