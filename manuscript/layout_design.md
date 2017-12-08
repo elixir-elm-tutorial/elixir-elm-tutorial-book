@@ -429,6 +429,52 @@ an upcoming chapter, but for now let's keep moving.
 
 ![Current User Edit Feature](images/layout_design/current_user_edit_feature.png)
 
+## User Deletion
+
+As long as we're paying attention to usability in this chapter, we should also
+allow players to delete their accounts. Let's add a delete button to the **Edit
+Player** page.
+
+First, we'll open the `lib/platform_web/templates/player/index.html.eex` file
+and remove the delete button from that page. While we're here, let's remote the
+edit button too since we only want players to edit their own accounts.
+
+Here's what the contents of the `<tbody>` tag should look like:
+
+```embedded_elixir
+<%= for player <- @players do %>
+    <tr>
+      <td><%= player.username %></td>
+      <td><%= player.score %></td>
+
+      <td class="text-right">
+        <span><%= link "Show", to: player_path(@conn, :show, player), class: "btn btn-default btn-xs" %></span>
+      </td>
+    </tr>
+<% end %>
+```
+
+In the `lib/platform_web/templates/player/edit.html.eex` file, we'll add the
+delete button to the list of buttons at the bottom of our **Edit Player** page.
+
+```embedded_elixir
+<div class="form-group">
+  <%= submit "Submit", class: "btn btn-primary" %>
+  <span><%= link "Delete Account", to: player_path(@conn, :delete, @player), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger" %></span>
+  <span><%= link "Back", to: page_path(@conn, :index), class: "btn btn-default" %></span>
+</div>
+```
+
+In the screenshot below, we created a `newuser` account to test that the delete
+button works.
+
+![Delete Account Button](images/layout_design/delete_account_button.png)
+
+After verifying that a player wants to delete their account, the deletion
+should be successful:
+
+![Successful Player Deletion](images/layout_design/successful_deletion.png)
+
 ## List of Games
 
 For our list of games, it looks like Bootstrap has a
