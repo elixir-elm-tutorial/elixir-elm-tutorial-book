@@ -36,6 +36,8 @@ Add the channel to your `lib/platform_web/channels/user_socket.ex` handler, for 
     channel "score:lobby", PlatformWeb.ScoreChannel
 ```
 
+## Updating the UserSocket
+
 Let's go ahead and follow the instructions and add our new channel to the
 `user_socket.ex` file. Here's the full `user_socket.ex` file with our new
 channel (with most comments removed for brevity's sake):
@@ -168,6 +170,8 @@ default WebSocket server for the Phoenix development environment, which is
 `Phoenix.Socket.withDebug` so we can take a look at the DevTools Console and
 inspect the data once we get things up and running.
 
+## The Update Function
+
 Before we have a working socket connection, we'll need to add a new message
 to our update section. Still following along with the elm-phoenix-socket README
 file, we see that we can create a new message type at the bottom to handle
@@ -199,6 +203,8 @@ PhoenixMsg msg ->
 This enables us to track changes in state using the `phxSocket` field in our
 model.
 
+## Socket Subscription
+
 Lastly, we can add to our `subscriptions` function to subscribe to changes over
 time.
 
@@ -216,15 +222,17 @@ subscriptions model =
 At this point, we should have a working socket connection when we visit the
 `http://0.0.0.0:4000/games/platformer` route in our application. You may need to
 restart your local Phoenix server to get things up and running, but if you
-load the page and wait a few moment, you should be able to see a "heartbeat"
+load the page and wait a few moments, you should be able to see a "heartbeat"
 of websocket messages in the DevTools Console.
+
+## Using the DevTools
 
 If you're not familiar with the Chrome DevTools, you should be able to press
 `Command + Option + J` on your keyboard to pull up the JavaScript Console that
 displays the messages we're looking for. Another good way to inspect these
 is to use the **Network** tab in the Chrome DevTools and click the **WS**
-option to only view websocket communication. Here's a screenshot of what it
-would look like if you're interested in taking a look:
+option to only view WebSocket communication. Here's a screenshot of what it
+should look like if you're interested in taking a look:
 
 ![Working WebSocket Connection](images/syncing_score_data/working_websocket_connection.png)
 
