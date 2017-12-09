@@ -17,6 +17,7 @@ adding_interaction.md
 displaying_game_data.md
 handling_game_states.md
 syncing_score_data.md
+phoenix_channels.md
 whats_next.md
 outline.md
 appendix.md
