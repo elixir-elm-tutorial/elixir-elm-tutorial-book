@@ -1,7 +1,5 @@
 # Syncing Score Data
 
-*This chapter is a work in progress!*
-
 We have our game platform up and running, where users can sign in and play a
 simple Elm game that tracks a score. Now let's work towards syncing the Elm
 front-end of our application with the Phoenix back-end. We'll learn about
@@ -145,10 +143,10 @@ initialModel =
     { gameState = StartScreen
     , characterPositionX = 50
     , characterPositionY = 300
-    , phxSocket = initialSocket
     , itemPositionX = 150
     , itemPositionY = 300
     , itemsCollected = 0
+    , phxSocket = initialSocket
     , playerScore = 0
     , timeRemaining = 10
     }
@@ -293,10 +291,10 @@ pushing data over the socket yet.
 ## Phoenix.Push
 
 To continue, we'll use the `Phoenix.Push` module that we imported at the top of
-our file. We want to initialize using the `"score:lobby"` channel that we
-created on the Phoenix side, and we'll use the `payload` we constructed to send
-along the relevant data. We'll also use the pipe operator to pass data along
-and handle the success and failure cases.
+our file. We want to start using the `"score"` topic in our `ScoreChannel`, and
+we'll use the `payload` we constructed to send along the relevant data. We'll
+also use the pipe operator to pass data along and handle the success and
+failure cases.
 
 ```elm
 SendScoreRequest ->
@@ -305,7 +303,7 @@ SendScoreRequest ->
             Encode.object [ ( "player_score", Encode.int model.playerScore ) ]
 
         phxPush =
-            Phoenix.Push.init "shout" "score:lobby"
+            Phoenix.Push.init "save_score" "score:platformer"
                 |> Phoenix.Push.withPayload payload
                 |> Phoenix.Push.onOk SendScore
                 |> Phoenix.Push.onError SendScoreError
@@ -313,7 +311,25 @@ SendScoreRequest ->
         ( model, Cmd.none )
 ```
 
-We'll need to scaffold out new messages for `SendScore` and
+We're encoding the `playerScore` field in our game to use as the `payload`.
+Then, we use `Phoenix.push.init` to send a `"save_score"` message and join the
+`"score:platformer"` topic. This way, we know which game these messages are
+coming from, and we can destructure this in the `ScoreChannel`.
+
+In the `lib/platform_web/channels/score_channel.ex` file, let's change the
+`join` function so that it looks like this:
+
+```elixir
+def join("score:" <> game_slug, payload, socket) do
+  if authorized?(payload) do
+    {:ok, socket}
+  else
+    {:error, %{reason: "unauthorized"}}
+  end
+end
+```
+
+Now, we'll need to scaffold out new messages for `SendScore` and
 `SendScoreError` for the success and failure cases, respectively. We can add
 these to our `Msg` type first, and they'll both take an `Encode.Value` as an
 argument:
@@ -356,7 +372,7 @@ SendScoreRequest ->
             Encode.object [ ( "player_score", Encode.int model.playerScore ) ]
 
         phxPush =
-            Phoenix.Push.init "shout" "score:lobby"
+            Phoenix.Push.init "save_score" "score:platformer"
                 |> Phoenix.Push.withPayload payload
                 |> Phoenix.Push.onOk SendScore
                 |> Phoenix.Push.onError SendScoreError
@@ -371,14 +387,14 @@ SendScoreRequest ->
 
 ## Joining the Channel
 
-Now we can join the `"score:lobby"` channel and broadcast the player's score.
-Below our `initialSocket` function, let's create a new function called
+Now we can join the `"score:platforer"` channel and broadcast the player's
+score. Below our `initialSocket` function, let's create a new function called
 `initialChannel`.
 
 ```elm
 initialChannel : Phoenix.Channel.Channel msg
 initialChannel =
-    Phoenix.Channel.init "score:lobby"
+    Phoenix.Channel.init "score:platformer"
 ```
 
 We're going to adjust the `initialSocket` function so that it returns a tuple.
@@ -398,7 +414,7 @@ initialSocket =
     in
         Phoenix.Socket.init devSocketServer
             |> Phoenix.Socket.withDebug
-            |> Phoenix.Socket.on "shout" "score:lobby" SendScore
+            |> Phoenix.Socket.on "save_score" "score:platformer" SendScore
             |> Phoenix.Socket.join initialChannel
 ```
 
@@ -498,15 +514,15 @@ game in the browser. Collect a few coins to increment the player's score, and
 then click the new "Send Score" button.
 
 The DevTools console will show an initial message when the page loads, and this
-let's us know that our `"score:lobby"` topic was initialized with an `"ok"`
-status.
+let's us know that our `"score:platformer"` topic was initialized with an
+`"ok"` status.
 
 ```shell
-Phoenix message: { event = "phx_reply", topic = "score:lobby", payload = { status = "ok", response = {} }, ref = Just 0 }
+Phoenix message: { event = "phx_reply", topic = "score:platformer", payload = { status = "ok", response = {} }, ref = Just 0 }
 ```
 
 We also see a message triggered in the DevTools console when we click the score
-text. It shows that we triggered a `"shout"` event, which means we can
+text. It shows that we triggered a `"save_score"` event, which means we can
 broadcast the data over the socket. This is the behavior we want, because we'll
 want all the player scores to be visible and update in real-time on the Phoenix
 page where we list out all the players. In this example, you can see that we
@@ -514,7 +530,7 @@ collected three coins for a score of `300`, and that is reflected in the
 payload with `{ score = 300 }`.
 
 ```shell
-Phoenix message: { event = "shout", topic = "score:lobby", payload = { player_score = 300 }, ref = Nothing }
+Phoenix message: { event = "save_score", topic = "score:platformer", payload = { player_score = 300 }, ref = Nothing }
 ```
 
 ![Working Socket Payload](images/syncing_score_data/working_socket_payload.png)
