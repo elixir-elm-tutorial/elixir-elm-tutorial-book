@@ -65,8 +65,8 @@ import a new library on the Elm side. To enable communication between the
 front-end and back-end, let's use
 [elm-phoenix-socket](https://github.com/fbonetti/elm-phoenix-socket).
 
-To get started let's move to the `lib/platform/web/elm` folder in our project
-and run the following command to install the package:
+To get started, let's move to the `assets` folder in our project, and run the
+following command to install the package:
 
 ```shell
 $ elm-package install fbonetti/elm-phoenix-socket
@@ -103,12 +103,14 @@ Now, we can work through the elm-phoenix-socket
 [README](https://github.com/fbonetti/elm-phoenix-socket/blob/master/README.md)
 to configure everything on the Elm side of our application. We'll start by
 importing the necessary modules. Let's update the imports at the top of our
-`Game.elm` file to include three new `Phoenix` modules:
+`Platformer.elm` file to include three new `Phoenix` modules:
 
 ```elm
+module Platformer exposing (..)
+
 import AnimationFrame exposing (diffs)
 import Html exposing (Html, div)
-import Keyboard exposing (KeyCode, downs, ups)
+import Keyboard exposing (KeyCode, downs)
 import Phoenix.Channel
 import Phoenix.Push
 import Phoenix.Socket
@@ -120,15 +122,13 @@ import Time exposing (Time, every, second)
 
 Next, we can add a `phxSocket` field to our model. We'll update our `Model`
 type first, and then provide an initial value in our `initialModel` that points
-to a new function we'll create called `initPhxSocket`.
+to a new function we'll create called `initialSocket`.
 
 ```elm
 type alias Model =
     { gameState : GameState
-    , characterPositionX : Float
-    , characterPositionY : Float
-    , characterVelocity : Float
-    , characterDirection : Direction
+    , characterPositionX : Int
+    , characterPositionY : Int
     , itemPositionX : Int
     , itemPositionY : Int
     , itemsCollected : Int
@@ -141,30 +141,32 @@ type alias Model =
 initialModel : Model
 initialModel =
     { gameState = StartScreen
-    , characterPositionX = 50.0
-    , characterPositionY = 300.0
-    , characterVelocity = 0.0
-    , characterDirection = Right
-    , itemPositionX = 500
+    , characterPositionX = 50
+    , characterPositionY = 300
+    , phxSocket = initialSocket
+    , itemPositionX = 150
     , itemPositionY = 300
     , itemsCollected = 0
-    , phxSocket = initPhxSocket
     , playerScore = 0
     , timeRemaining = 10
     }
 
 
-initPhxSocket : Phoenix.Socket.Socket Msg
-initPhxSocket =
-    Phoenix.Socket.init "ws://localhost:4000/socket/websocket"
-        |> Phoenix.Socket.withDebug
+initialSocket : Phoenix.Socket.Socket Msg
+initialSocket =
+    let
+        devSocketServer =
+            "ws://localhost:4000/socket/websocket"
+    in
+        Phoenix.Socket.init devSocketServer
+            |> Phoenix.Socket.withDebug
 ```
 
-In our `initPhxSocket` function, we use the default websocket server for
-Phoenix, which is `"ws://localhost:4000/socket/websocket"`. And then we
-pipe the results to `Phoenix.Socket.withDebug` so we can take a look at the
-DevTools Console once we get things up and running and we'll be able to
-inspect the data being passed around.
+In our `initialSocket` function, we use a `let` expression to set up the
+default WebSocket server for the Phoenix development environment, which is
+`"ws://localhost:4000/socket/websocket"`. And then we pipe the results to
+`Phoenix.Socket.withDebug` so we can take a look at the DevTools Console and
+inspect the data once we get things up and running.
 
 Before we have a working socket connection, we'll need to add a new message
 to our update section. Still following along with the elm-phoenix-socket README
@@ -174,17 +176,15 @@ Phoenix socket messages with `PhoenixMsg`.
 ```elm
 type Msg
     = NoOp
-    | KeyDown KeyCode
-    | KeyUp KeyCode
-    | TimeUpdate Time
     | CountdownTimer Time
-    | SetNewItemPositionX Int
-    | MoveCharacter Time
-    | ChangeDirection Time
+    | KeyDown KeyCode
     | PhoenixMsg (Phoenix.Socket.Msg Msg)
+    | SetNewItemPositionX Int
+    | TimeUpdate Time
 ```
 
-And we can add the following case at the bottom of our `update` function:
+And we can add the following inside the `case` expression of our `update`
+function:
 
 ```elm
 PhoenixMsg msg ->
@@ -207,17 +207,14 @@ subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
         [ downs KeyDown
-        , ups KeyUp
         , diffs TimeUpdate
-        , diffs MoveCharacter
-        , diffs ChangeDirection
         , every second CountdownTimer
         , Phoenix.Socket.listen model.phxSocket PhoenixMsg
         ]
 ```
 
-At this point we should have a working socket connection when we visit the
-`http://localhost:4000/elm/game` route in our application. You may need to
+At this point, we should have a working socket connection when we visit the
+`http://0.0.0.0:4000/games/platformer` route in our application. You may need to
 restart your local Phoenix server to get things up and running, but if you
 load the page and wait a few moment, you should be able to see a "heartbeat"
 of websocket messages in the DevTools Console.
