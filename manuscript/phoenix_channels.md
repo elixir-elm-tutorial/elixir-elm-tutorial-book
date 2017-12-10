@@ -205,3 +205,92 @@ end
 
 These functions are very similar. We need to pass a `game_id`, a `player_id`,
 and a `player_score` to our new function to save a new record.
+
+## Testing Our New Message
+
+In our `Platformer.elm` file, let's create a new button to save our scores. In
+our view, we'll create a new `viewSaveScoreButton` function:
+
+```elm
+viewSaveScoreButton : Html Msg
+viewSaveScoreButton =
+    div []
+        [ button
+            [ onClick SaveScoreRequest
+            , class "btn btn-primary"
+            ]
+            [ text "Save Score" ]
+        ]
+```
+
+Then, we can add it to our `view`:
+
+```elm
+view : Model -> Html Msg
+view model =
+    div []
+        [ viewGame model
+        , viewSendScoreButton
+        , viewSaveScoreButton
+        ]
+```
+
+Next, we'll need to copy the approach we used for our `SendScore` features, but
+this time we're going to use the name `SaveScore`. Update the `Msg` type with
+the following:
+
+```elm
+type Msg
+    = NoOp
+    | CountdownTimer Time
+    | KeyDown KeyCode
+    | PhoenixMsg (Phoenix.Socket.Msg Msg)
+    | SaveScore Encode.Value
+    | SaveScoreError Encode.Value
+    | SaveScoreRequest
+    | SendScore Encode.Value
+    | SendScoreError Encode.Value
+    | SendScoreRequest
+    | SetNewItemPositionX Int
+    | TimeUpdate Time
+```
+
+Now we can add the following cases to our `update` function:
+
+```elm
+SaveScore value ->
+    ( model, Cmd.none )
+
+SaveScoreError message ->
+    Debug.log "Error saveing score over socket."
+        ( model, Cmd.none )
+
+SaveScoreRequest ->
+    let
+        payload =
+            Encode.object [ ( "player_score", Encode.int model.playerScore ) ]
+
+        phxPush =
+            Phoenix.Push.init "save_score" "score:platformer"
+                |> Phoenix.Push.withPayload payload
+                |> Phoenix.Push.onOk SaveScore
+                |> Phoenix.Push.onError SaveScoreError
+
+        ( phxSocket, phxCmd ) =
+            Phoenix.Socket.push phxPush model.phxSocket
+    in
+        ( { model | phxSocket = phxSocket }
+        , Cmd.map PhoenixMsg phxCmd
+        )
+```
+
+This is a lot of code to handle, but it's the same approach that we used in
+the previous chapter to shout scores over the socket. And now we're just using
+similar code in order to try saving our scores as `Gameplay` records in the
+database.
+
+## Viewing Gameplay Records
+
+At this point, we should have a working button to save our player scores to the
+database. But we don't have any way of viewing them yet, and we're currently
+hard-coding the `player_id` value.
