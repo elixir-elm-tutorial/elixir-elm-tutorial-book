@@ -145,10 +145,10 @@ initialModel =
     { gameState = StartScreen
     , characterPositionX = 50
     , characterPositionY = 300
-    , phxSocket = initialSocket
     , itemPositionX = 150
     , itemPositionY = 300
     , itemsCollected = 0
+    , phxSocket = initialSocket
     , playerScore = 0
     , timeRemaining = 10
     }
