@@ -10,7 +10,7 @@ Elixir examples and get a better idea of how to work with the tools.
 Let's create a small temporary project. We'll use the same `mix` tool that we
 used in the last chapter when we created our Phoenix application, but this time
 we're just creating a small Elixir project called `temporary`. Run the
-following command in the terminal:
+following command in the Terminal:
 
 ```shell
 $ mix new temporary
