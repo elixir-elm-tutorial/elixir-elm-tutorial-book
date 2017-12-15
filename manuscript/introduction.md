@@ -93,7 +93,7 @@ building scalable and maintainable applications.
 
   - Ruby's readable syntax and philosophy of developer happiness.
   - Erlang's stability and scalability.
-  - F#'s magical pipeline operator for data transformation.
+  - F#'s magical pipe operator for data transformation.
   - LISP's macros and metaprogramming.
 
 ### Elm
