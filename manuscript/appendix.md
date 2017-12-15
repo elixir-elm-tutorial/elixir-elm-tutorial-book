@@ -86,3 +86,31 @@ or the [PostgreSQL section of Stack Overflow](https://stackoverflow.com/question
 The steps above should be all that's required to get started. If you're
 interested in working with multiple versions different languages,
 check out the [asdf version manager](https://github.com/asdf-vm/asdf).
+
+## Recommended Tools
+
+### Authentication
+
+- [ueberauth](https://github.com/ueberauth/ueberauth)
+
+### Authorization
+
+- [BodyGuard](https://github.com/schrockwell/bodyguard)
+
+### Code Quality
+
+- [Credo](https://github.com/rrrene/credo)
+
+### Continuous Integration
+
+- [CircleCI](https://circleci.com)
+- [Semaphore](https://semaphoreci.com)
+
+### Monitoring
+
+- [AppSignal](https://appsignal.com/elixir)
+- [PryIn](https://github.com/pryin-io/pryin)
+
+### Testing
+
+- [Wallaby](https://github.com/keathley/wallaby)
