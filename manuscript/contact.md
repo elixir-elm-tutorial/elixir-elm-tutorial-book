@@ -17,7 +17,7 @@ have done differently in our approach?
 If you have any feedback about the book's content or the demos contained
 within, then feel free to reach out.
 
-One simple way to reach out with feedback is to email the author directly at
+One simple way to provide feedback is to email the author directly at
 `bijanbwb@gmail.com`. Alternatively, feel free to create GitHub issues in
 either the book's content repository or the demo repository:
 
