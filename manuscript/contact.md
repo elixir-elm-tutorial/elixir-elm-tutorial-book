@@ -26,10 +26,8 @@ either the book's content repository or the demo repository:
 
 ## Slack
 
-As a bonus for making it this far, you can access the book's Slack group! I
-know there are a million different Slack communities now, but I'd like to be
-able to provide live support for the book's content. I also really wanted to
-provide a place say hello, get help, and provide suggestions. Get an invite to
-the book's Slack channels with the following link:
+As a bonus for making it this far, you can access the book's Slack group! There
+are admittedly too many different Slack communities these days, but I'd like
+to be able to provide live support for the book's content.
 
-https://elixirelmtutorial.signup.team
+[Get an invite](https://join.slack.com/t/elixirelmtutorial/shared_invite/enQtMjg2NjYyNzI1NDA4LTFjZjZiZDg4ZDE2MjczOWI3YzJkNmI3NGI5ZWI2YmJkNTA5OTAzYzk2MTBmMDYyYzJmOGI2YmJlNGYzZTMxZjA) to say hello, get help, and provide suggestions!
