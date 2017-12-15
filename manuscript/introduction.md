@@ -44,7 +44,7 @@ about the fundamentals and concepts so you can be productive. But there are
 other books that will provide more depth when it comes to learning more about
 the languages themselves:
 
-- [Programming Elixir](https://pragprog.com/book/elixir/programming-elixir)
+- [Programming Elixir](https://pragprog.com/book/elixir13/programming-elixir-1-3)
   by Dave Thomas
 - [An Introduction to Elm](https://guide.elm-lang.org) by Evan Czaplicki
 
