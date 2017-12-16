@@ -369,7 +369,7 @@ extension. That means we can write standard HTML code, and we can also embed
 Elixir code too.
 
 Let's open the `lib/platform_web/templates/page/index.html.eex` file and take a
-look:
+look (note that some of the HTML was trimmed for the sake of readability):
 
 ```embedded_elixir
 <div class="jumbotron">
@@ -382,31 +382,14 @@ look:
   <div class="col-lg-6">
     <h4>Resources</h4>
     <ul>
-      <li>
-        <a href="http://phoenixframework.org/docs/overview">Guides</a>
-      </li>
-      <li>
-        <a href="https://hexdocs.pm/phoenix">Docs</a>
-      </li>
-      <li>
-        <a href="https://github.com/phoenixframework/phoenix">Source</a>
-      </li>
+      <!-- ... -->
     </ul>
   </div>
 
   <div class="col-lg-6">
     <h4>Help</h4>
     <ul>
-      <li>
-        <a href="http://groups.google.com/group/phoenix-talk">Mailing list</a>
-      </li>
-      <li>
-        <a href="http://webchat.freenode.net/?channels=elixir-lang">#elixir-lang
-        on freenode IRC</a>
-      </li>
-      <li>
-        <a href="https://twitter.com/elixirphoenix">@elixirphoenix</a>
-      </li>
+      <!-- ... -->
     </ul>
   </div>
 </div>
@@ -491,11 +474,11 @@ We can now verify that our links still work the same way they did previously:
 
 ## Summary
 
-In this chapter, we managed to cover _a lot_ of ground. We were able to create
+In this chapter, we managed to cover a lot of ground. We were able to create
 the entire foundation for our application with a Phoenix back-end. We leveraged
-the Phoenix generators to create our players resource. We also started getting
-an idea of what the Phoenix folder structure looks like, and started editing
-files. We also learned a little about routing and worked with the database.
+the Phoenix generators to create our players resource, started getting an idea
+of what the Phoenix folder structure looks like, and began editing files. We
+also learned a little about routing and working with the database.
 
 We've gotten an introductory look at how to create a full Elixir and Phoenix
 web platform, and we even created a couple of player records that we can use as
