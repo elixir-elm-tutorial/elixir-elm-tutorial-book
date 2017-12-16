@@ -33,53 +33,19 @@ It will ask the following question:
 
 > Fetch and install dependencies?
 
-Enter the letter `Y` and the following output will be displayed:
+Enter the letter `Y` and the following output will be displayed (note that some
+of the file creation lines were trimmed for the sake of readability):
 
 ```shell
 $ mix phx.new platform
-* creating platform/config/config.exs
-* creating platform/config/dev.exs
-* creating platform/config/prod.exs
-* creating platform/config/prod.secret.exs
-* creating platform/config/test.exs
-* creating platform/lib/platform/application.ex
-* creating platform/lib/platform.ex
-* creating platform/lib/platform_web/channels/user_socket.ex
-* creating platform/lib/platform_web/views/error_helpers.ex
-* creating platform/lib/platform_web/views/error_view.ex
-* creating platform/lib/platform_web/endpoint.ex
-* creating platform/lib/platform_web/router.ex
-* creating platform/lib/platform_web.ex
 * creating platform/mix.exs
 * creating platform/README.md
-* creating platform/test/support/channel_case.ex
-* creating platform/test/support/conn_case.ex
-* creating platform/test/test_helper.exs
-* creating platform/test/platform_web/views/error_view_test.exs
-* creating platform/lib/platform_web/gettext.ex
-* creating platform/priv/gettext/en/LC_MESSAGES/errors.po
-* creating platform/priv/gettext/errors.pot
-* creating platform/lib/platform/repo.ex
-* creating platform/priv/repo/seeds.exs
-* creating platform/test/support/data_case.ex
-* creating platform/lib/platform_web/controllers/page_controller.ex
-* creating platform/lib/platform_web/templates/layout/app.html.eex
-* creating platform/lib/platform_web/templates/page/index.html.eex
-* creating platform/lib/platform_web/views/layout_view.ex
-* creating platform/lib/platform_web/views/page_view.ex
-* creating platform/test/platform_web/controllers/page_controller_test.exs
-* creating platform/test/platform_web/views/layout_view_test.exs
-* creating platform/test/platform_web/views/page_view_test.exs
-* creating platform/.gitignore
-* creating platform/assets/brunch-config.js
-* creating platform/assets/css/app.css
-* creating platform/assets/css/phoenix.css
-* creating platform/assets/js/app.js
-* creating platform/assets/js/socket.js
-* creating platform/assets/package.json
-* creating platform/assets/static/robots.txt
-* creating platform/assets/static/images/phoenix.png
-* creating platform/assets/static/favicon.ico
+* creating platform/assets/...
+* creating platform/config/...
+* creating platform/lib/platform/...
+* creating platform/lib/platform_web/...
+* creating platform/priv/...
+* creating platform/test/...
 
 Fetch and install dependencies? [Yn] Y
 * running mix deps.get
