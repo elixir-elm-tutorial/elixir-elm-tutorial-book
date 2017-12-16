@@ -96,10 +96,10 @@ at the bottom of the `config/dev.exs` file. You can also check out the
 PostgreSQL.
 
 Since this is the first time we're running a command with our new application,
-we'll see that it takes time for the source code to compile. Elixir is based on
-the Erlang virtual machine, and needs to compile the source to bytecode before
-we can run our programs. Don't worry if this seems to take a while at first,
-because subsequent commands will run much more quickly after this.
+we'll see that it takes time for the source code to compile. Elixir runs on the
+Erlang virtual machine, and needs to compile the source to bytecode before we
+can run our programs. It takes time to run initially, but subsequent commands
+will run noticeably faster after this.
 
 If the database creation was successful, we'll see the following message at the
 bottom:
