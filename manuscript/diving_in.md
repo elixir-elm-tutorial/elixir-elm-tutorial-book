@@ -135,10 +135,10 @@ $ mix phx.server
 ![Phoenix Default Start Page](images/diving_in/phoenix_start.png)
 
 At this point, you might be impressed that we managed to get a full back-end
-up and running so quickly. Or you might have seen similar features in other
-frameworks and you're nonplussed with our progress so far. We're going to start
-adding features to our application, but it's worth taking a moment to
-appreciate just how much we already have going for us with just a few commands.
+up and running so quickly. Or, you may have seen similar features in other
+frameworks, and perhaps you're nonplussed with our progress so far. We're going
+to start adding features to our application, but it's worth taking a moment to
+appreciate how much we already have going for us with just a few commands.
 
 Feel free to take a look at some of the great documentation listed on the
 default Phoenix start page. Before we move on, let's stop the Phoenix web
