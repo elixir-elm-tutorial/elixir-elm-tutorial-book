@@ -143,9 +143,9 @@ appreciate how much we already have going for us with just a few commands.
 Feel free to take a look at some of the great documentation listed on the
 default Phoenix start page. Before we move on, let's stop the Phoenix web
 server. Go back to the Terminal where the server is running, and press
-`Control + C` on your keyboard twice to stop the server. This is what the
-output will look like as you return from the running web server to a blank
-command line:
+`Control + C` on your keyboard _twice_ to stop the server. This tends to be the
+simplest way to exit a running Elixir program, and here is what the output will
+look like as you stop the running web server:
 
 ```shell
 $ mix phx.server
