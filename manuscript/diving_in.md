@@ -69,10 +69,10 @@ You can also run your app inside IEx (Interactive Elixir) as:
     $ iex -S mix phx.server
 ```
 
-Notice that Phoenix displays _a lot_ of helpful information. First, the output
-shows all the files that were generated (don't worry if it seems overwhelming
-at first; we're only going to start with a handful of these files). Then, we
-see some information about how to configure our database and start the server.
+Phoenix displays _a lot_ of helpful information. First, the output shows all
+the files that were generated (don't worry if it seems overwhelming at first;
+we're only going to start with a handful of these files). Then, we see some
+information about how to configure our database and start the server.
 
 ## Configuring the Database
 
