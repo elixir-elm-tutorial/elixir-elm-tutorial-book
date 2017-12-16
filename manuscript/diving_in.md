@@ -183,8 +183,8 @@ $ mix phx.gen.html Accounts Player players username:string score:integer
 
 With this command, we're creating players for our game platform. We want to be
 able to use our browser to interact with the data, so we're starting with
-[`phx.gen.html`](https://hexdocs.pm/phoenix/Mix.Tasks.Phoenix.Gen.Html.html)
-to generate an HTML resource.
+[`phx.gen.html`](https://hexdocs.pm/phoenix/Mix.Tasks.Phx.Gen.Html.html) to
+generate an HTML resource.
 
 Because we're creating player accounts for our application, we use `Accounts`
 to provide a _context_ for our resource. Then, we use `Player` for the module
