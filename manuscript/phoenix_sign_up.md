@@ -162,13 +162,23 @@ to have a unique individual `username`.
 ## Player Changeset
 
 In the code example above, note that we didn't just change the player schema.
-We also updated the `changeset/2` function. The
-[`Ecto.Changeset`](https://hexdocs.pm/ecto/Ecto.Changeset.html) module allows
-us to filter, cast, and validate our data. In our case, we only want to use the
-`validate_required/1` function to verify that a new player enters a `username`
-so they can sign up for an account easily. We'll also require the `password`
-field later, but we'll need to implement additional functionality before we can
-get that working properly.
+We also updated the `changeset/2` function with the following:
+
+```elixir
+def changeset(%Player{} = player, attrs) do
+  player
+  |> cast(attrs, [:display_name, :password, :score, :username])
+  |> validate_required([:username])
+  |> unique_constraint(:username)
+end
+```
+
+The [`Ecto.Changeset`](https://hexdocs.pm/ecto/Ecto.Changeset.html) module
+allows us to filter, cast, and validate our data. In our case, we only want to
+use the `validate_required/1` function to verify that a new player enters a
+`username` so they can sign up for an account easily. We'll also require the
+`password` field later, but we'll need to implement additional functionality
+before we can get that working properly.
 
 Although the `display_name` field isn't required when users sign up for an
 account, we want them to be able to change this field on the **Edit Player**
@@ -306,9 +316,8 @@ Let's start by updating our `new.html.eex` file:
 
 We're basically moving some of the content from the `form.html.eex` file into
 our `new.html.eex` file along with some minor changes. On a successful
-submission, we're using the `create` action from our player controller. We also
-have a **Back** button at the bottom that allows users to navigate back to the
-default home page. This is what it should look like in the browser:
+submission, we're using the `create` action from our player controller. This is
+what it should look like in the browser:
 
 ![Updated New Player Page](images/phoenix_sign_up/phoenix_updated_sign_up.png)
 
