@@ -509,7 +509,7 @@ end
 Since we assigned the current player's session to be the `current_user` inside
 our `PlayerAuthController`, we can use that to determine whether a visitor to
 our site is signed in. If they are, we'll just return the connection and allow
-them to continue, otherwise if they're attempting to access a restricted
+them to continue. Otherwise, if they're attempting to access a restricted
 resource, we'll display a message and redirect them back to the **New Player**
 page.
 
@@ -523,6 +523,32 @@ Above the `index/2` function, add the following line of code:
 plug :authenticate when action in [:index]
 ```
 
+This is what the full `lib/platform_web/controllers/page_controller.ex` file
+should look like:
+
+```elixir
+defmodule PlatformWeb.PageController do
+  use PlatformWeb, :controller
+
+  plug :authenticate when action in [:index]
+
+  def index(conn, _params) do
+    render conn, "index.html"
+  end
+
+  defp authenticate(conn, _opts) do
+    if conn.assigns.current_user() do
+      conn
+    else
+      conn
+      |> put_flash(:error, "You must be signed in to access that page.")
+      |> redirect(to: player_path(conn, :new))
+      |> halt()
+    end
+  end
+end
+```
+
 ## Manual Testing
 
 If you're wondering if the updates above broke our tests, you're right. We
@@ -533,8 +559,8 @@ things out in the browser. Open up your browser and try visiting the
 ![Restricted Page Alert](images/phoenix_authentication/restricted_page.png)
 
 It looks like our changes worked, because the application redirected us back to
-the **New Player** page. We managed to restrict access to index page, and we
-see the flash alert ("You must be signed in to access that page.") that we
+the **New Player** page. We managed to restrict access to the index page, and
+we see the flash alert ("You must be signed in to access that page.") that we
 wrote in the `authenticate/2` function at the bottom of the `PageController`.
 
 ## Fixing Our Tests
