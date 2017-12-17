@@ -89,68 +89,15 @@ end
 
 ## Establishing Relationships
 
-We also want to establish a relationship from our `games` table to our
-`players` table. To accomplish this, we'll start with the migration that was
-created for us in the `priv/repo/migrations/20170826144626_create_games.exs`
-file (bearing in mind that your file will have a different name since the
-filenames have a datetime associated with them):
-
-```elixir
-defmodule Platform.Repo.Migrations.CreateGames do
-  use Ecto.Migration
-
-  def change do
-    create table(:games) do
-      add :description, :string
-      add :featured, :boolean, default: false, null: false
-      add :thumbnail, :string
-      add :title, :string
-
-      timestamps()
-    end
-
-  end
-end
-```
-
-We can see that we're creating a new table called `games` in our database
-with the `create table(:games)` syntax.
-
-We also want to form an association from our `players` table to our new `games`
-table. So we're going to create a new table called `gameplays` that will store
-a `game_id` as a reference to the `games` table, a `player_id` as a reference
-to the `players` table, and a `player_score` that will track a player's score
-for the current play through the game.
-
-Let's update the `change/0` function in our migration to include the following:
-
-```elixir
-defmodule Platform.Repo.Migrations.CreateGames do
-  use Ecto.Migration
-
-  def change do
-    create table(:games) do
-      add :description, :string
-      add :featured, :boolean, default: false, null: false
-      add :thumbnail, :string
-      add :title, :string
-
-      timestamps()
-    end
-
-    create table(:gameplays) do
-      add :game_id, references(:games, on_delete: :nothing), null: false
-      add :player_id, references(:players, on_delete: :nothing), null: false
-      add :player_score, :integer
-
-      timestamps()
-    end
-  end
-end
-```
+We generated a new migration for our `games` table above. But, we also want to
+form an association from our `players` table to our new `games` table. So we're
+going to create a new table called `gameplays` that will store a `game_id` as a
+reference to the `games` table, a `player_id` as a reference to the `players`
+table, and a `player_score` that will track a player's score for the current
+play through the game.
 
 Before we run our migration, let's take a look at the schema files for players
-and games. And we'll also create a new schema for our gameplays.
+and games. Then, we'll create a new schema for our gameplays.
 
 ## Updating the Schemas
 
@@ -296,17 +243,35 @@ defmodule Platform.Products.Gameplay do
 end
 ```
 
-Let's make a quick change to ensure that we're saving gameplay data in the
-correct format. First, we'll set a default player score of `0` in the `schema`
-block:
+We used `many_to_many` relationships in both our `Player` schema and our `Game`
+schema. For our `Gameplay` schema, let's use `belongs_to` to associate the
+records. We'll also add a few `alias` statements and add a `default: 0` value
+ for the `player_score` field so we don't end up with `nil` values.
 
 ```elixir
-schema "gameplays" do
-  field :game_id, :id
-  field :player_id, :id
-  field :player_score, :integer, default: 0
+defmodule Platform.Products.Gameplay do
+  use Ecto.Schema
+  import Ecto.Changeset
+  alias Platform.Products.Game
+  alias Platform.Products.Gameplay
+  alias Platform.Accounts.Player
 
-  timestamps()
+
+  schema "gameplays" do
+    belongs_to :game, Game
+    belongs_to :player, Player
+
+    field :player_score, :integer, default: 0
+
+    timestamps()
+  end
+
+  @doc false
+  def changeset(%Gameplay{} = gameplay, attrs) do
+    gameplay
+    |> cast(attrs, [:player_score])
+    |> validate_required([:player_score])
+  end
 end
 ```
 
@@ -461,8 +426,9 @@ resource:
 scope "/api", PlatformWeb do
   pipe_through :api
 
-  resources "/players", PlayerApiController, except: [:new, :edit]
   resources "/games", GameController, except: [:new, :edit]
+  resources "/gameplays", GameplayController, except: [:new, :edit]
+  resources "/players", PlayerApiController, except: [:new, :edit]
 end
 ```
 
@@ -516,8 +482,8 @@ haven't already done so since we've come a long way in this chapter.
 ## Summary
 
 We managed to accomplish our goal for this chapter of creating a JSON API for
-the games on our platform. And we also learned a lot about Ecto relationships
-as we connected our players, games, and gameplays together.
+the games on our platform. And we also learned about Ecto relationships as we
+connected our players, games, and gameplays together.
 
 In the next chapter, we'll get an introduction to the Elm language. And we'll
 start working towards using the Phoenix JSON API that we built here to supply
