@@ -18,7 +18,7 @@ this will be a good start.
 We'll run the Phoenix generator from the command line to get started:
 
 ```shell
-$ mix phx.gen.json Products Game games title:string description:string thumbnail:string featured:boolean
+$ mix phx.gen.json Products Game games description:string featured:boolean thumbnail:string title:string
 ```
 
 This is similar to the way we created our players resource, but this time we're
@@ -39,7 +39,7 @@ Here's what the output should look like when we run the generator for our new
 games resource:
 
 ```shell
-$ mix phx.gen.json Products Game games title:string description:string thumbnail:string featured:boolean
+$ mix phx.gen.json Products Game games description:string featured:boolean thumbnail:string title:string
 * creating lib/platform_web/controllers/game_controller.ex
 * creating lib/platform_web/views/game_view.ex
 * creating test/platform_web/controllers/game_controller_test.exs
@@ -101,10 +101,10 @@ defmodule Platform.Repo.Migrations.CreateGames do
 
   def change do
     create table(:games) do
-      add :title, :string
       add :description, :string
-      add :thumbnail, :string
       add :featured, :boolean, default: false, null: false
+      add :thumbnail, :string
+      add :title, :string
 
       timestamps()
     end
@@ -130,10 +130,10 @@ defmodule Platform.Repo.Migrations.CreateGames do
 
   def change do
     create table(:games) do
-      add :title, :string
       add :description, :string
-      add :thumbnail, :string
       add :featured, :boolean, default: false, null: false
+      add :thumbnail, :string
+      add :title, :string
 
       timestamps()
     end
@@ -150,7 +150,7 @@ end
 ```
 
 Before we run our migration, let's take a look at the schema files for players
-and games. And we'll manually create a new schema for our gameplays.
+and games. And we'll also create a new schema for our gameplays.
 
 ## Updating the Schemas
 
@@ -207,42 +207,108 @@ schema "games" do
 end
 ```
 
-## Creating a New Schema
+## Creating Gameplays
 
-Finally, we'll create a schema file for our new table. Create a new file called
-`gameplay.ex` inside the `lib/platform/products` folder.
+Now, we can create the `Gameplay` part of our application that connects our
+players and games. We're using the same `mix phx.gen.json` generator we used
+for our games, but this time we're using `references` to associate our
+`gameplay` records with `player_id` and `game_id` fields.
+
+```shell
+$ mix phx.gen.json Products Gameplay gameplays game_id:references:games player_id:references:players player_score:integer
+```
+
+Keep in mind that we could manually create many of these files and custom build
+these features into our application. But using these generators gives us a lot
+of scaffolding that allows us to move quickly, and it will save us a _ton_ of
+effort later in the book when we're ready to display our player scores.
+
+Here is what the output should look like for our generator command. We'll be
+prompted with a warning about overwriting some files, but we can just enter the
+`Y` character to continue since we just generated those files for games.
+
+```shell
+$ mix phx.gen.json Products Gameplay gameplays game_id:references:games player_id:references:players player_score:integer
+The following files conflict with new files to be generated:
+
+  * lib/platform_web/views/changeset_view.ex
+  * lib/platform_web/controllers/fallback_controller.ex
+
+See the --web option to namespace similarly named resources
+
+Proceed with interactive overwrite? [Yn] Y
+* creating lib/platform_web/controllers/gameplay_controller.ex
+* creating lib/platform_web/views/gameplay_view.ex
+* creating test/platform_web/controllers/gameplay_controller_test.exs
+* creating lib/platform/products/gameplay.ex
+* creating priv/repo/migrations/20171217194455_create_gameplays.exs
+* injecting lib/platform/products/products.ex
+* injecting test/platform/products/products_test.exs
+
+Add the resource to your :api scope in lib/platform_web/router.ex:
+
+    resources "/gameplays", GameplayController, except: [:new, :edit]
+
+
+Remember to update your repository by running migrations:
+    $ mix ecto.migrate
+```
+
+Next, we'll go ahead and add the `resources` line that we see in the output
+above to our `lib/platform_web/router.ex` file. Here is the `"/api"` scope for
+our router:
+
+```elixir
+scope "/api", PlatformWeb do
+  pipe_through :api
+
+  resources "/games", GameController, except: [:new, :edit]
+  resources "/gameplays", GameplayController, except: [:new, :edit]
+end
+```
+
+## Our New Gameplay Schema
+
+Let's open the `lib/platform/products/gameplay.ex` file to take a look at our
+new schema.
 
 ```elixir
 defmodule Platform.Products.Gameplay do
   use Ecto.Schema
   import Ecto.Changeset
   alias Platform.Products.Gameplay
-  alias Platform.Products.Game
-  alias Platform.Accounts.Player
+
 
   schema "gameplays" do
-    belongs_to :game, Game
-    belongs_to :player, Player
+    field :player_score, :integer
+    field :game_id, :id
+    field :player_id, :id
 
-    field :player_score, :integer, default: 0
+    timestamps()
   end
 
   @doc false
   def changeset(%Gameplay{} = gameplay, attrs) do
     gameplay
-    |> cast(attrs, [:game_id, :player_id, :player_score])
-    |> validate_required([:game_id, :player_id, :player_score])
+    |> cast(attrs, [:player_score])
+    |> validate_required([:player_score])
   end
 end
 ```
 
-Our new schema follows the same general structure as the other ones we were
-just working with, but has a couple of new items. We created our `alias` lines
-at the top just as we did previously. For our new `gameplays` schema, we're
-creating [`belongs_to`](https://hexdocs.pm/ecto/Ecto.Schema.html#belongs_to/3)
-relationships so that each gameplay will have just one `player` and one `game`.
-We also include a `default` value for our `player_score` field. In our
-`changeset/2` function, we also make sure to require all of these fields.
+Let's make a quick change to ensure that we're saving gameplay data in the
+correct format. First, we'll set a default player score of `0` in the `schema`
+block:
+
+```elixir
+schema "gameplays" do
+  field :game_id, :id
+  field :player_id, :id
+  field :player_score, :integer, default: 0
+
+  timestamps()
+end
+```
 
 ## Running Our Migration
 
@@ -251,25 +317,29 @@ This creates tables for both `games` and `gameplays`.
 
 ```shell
 $ mix ecto.migrate
-17:17:22.048 [info]  == Running Platform.Repo.Migrations.CreateGames.change/0 forward
-17:17:22.048 [info]  create table games
-17:17:22.053 [info]  create table gameplays
-17:17:22.059 [info]  == Migrated in 0.0s
+Compiling 21 files (.ex)
+Generated platform app
+[info] == Running Platform.Repo.Migrations.CreateGames.change/0 forward
+[info] create table games
+[info] == Migrated in 0.0s
+[info] == Running Platform.Repo.Migrations.CreateGameplays.change/0 forward
+[info] create table gameplays
+[info] create index gameplays_game_id_index
+[info] create index gameplays_player_id_index
+[info] == Migrated in 0.0s
 ```
 
 Lastly, we'll run our tests to make sure everything is still working:
 
 ```shell
 $ mix test
-..................................
+................................................
 
-Finished in 0.4 seconds
-34 tests, 0 failures
-
-Randomized with seed 724771
+Finished in 0.5 seconds
+48 tests, 0 failures
 ```
 
-It's great that we have 34 passing tests. Granted, these were created by the
+It's great that we have 48 passing tests. Granted, these were created by the
 Phoenix generators, but it gives us some level of confidence that our
 application is working when the tests are passing.
 
