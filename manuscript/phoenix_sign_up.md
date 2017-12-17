@@ -112,14 +112,15 @@ Let's add a couple of new fields for our player accounts:
 - `password_digest`
 
 We'll use a `display_name` field so players can display something other than
-their `username` inside a game. We'll also create a "virtual" field called
-`password` that users will enter on the sign up form. But we'll only use the
-`password_digest` field to store a secure hash for user passwords, so we're
-never storing the `password` field in plain text.
+their `username` on our game platform. We'll also create a "virtual" field
+called `password` that users will enter on the sign up form. But we'll only
+use the `password_digest` field to store a secure hash for user passwords, so
+we're never storing the `password` field in plain text.
 
 ## Updating the Player Schema
 
-Let's update the `lib/platform/accounts/player.ex` file with the following:
+To start adding our new fields, let's update the
+`lib/platform/accounts/player.ex` file with the following:
 
 ```elixir
 defmodule Platform.Accounts.Player do
