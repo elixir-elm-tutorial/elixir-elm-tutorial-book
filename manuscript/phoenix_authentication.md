@@ -168,11 +168,21 @@ bottom of our `put_pass_digest/1` function without any changes. This is a
 common pattern we can use for `case` statements where `_` is a useful default
 case if none of the branches above applied.
 
-Lastly, to get this working we'll need to adjust the `create_player/1` function
-in the `lib/platform/accounts/accounts.ex` file. In the other functions, we'll
-continue using the `changeset/2` function, but in this one we want to use the
-`registration_changeset/2` function so that both the `username` and `password`
-fields are required to create an account.
+There is admittedly some code duplication between the two changeset functions.
+This is primarily due to the fact that we're allowing users to sign up with a
+`username` and `password`, and we're also allowing them to change their
+`password` field when they edit an account. But the main idea is that we can
+have different changesets that apply to different situations. In our case, we
+wanted to use the `registration_changeset/2` for when players sign up, and use
+a separate `changeset` function for any other player changes.
+
+## Using Our New Changeset
+
+To get these features working, we'll need to adjust the `create_player/1`
+function in the `lib/platform/accounts/accounts.ex` file. In the other
+functions, we'll continue using the `changeset/2` function, but in this one we
+want to use the `registration_changeset/2` function so that both the `username`
+and `password` fields are required to create an account.
 
 Update the `create_player/1` function with the following:
 
@@ -223,7 +233,7 @@ made to our player schema:
 ```
 
 We want to ensure that our players can sign up with just a `username` and
-`password`, so we include those in our `@valid_attrs`. Then we can ensure that
+`password`, so we include those in our `@valid_attrs`. Then, we can ensure that
 our other fields work by including them in `@update_attrs`. Lastly, we ensure
 that `nil` values won't work to create new accounts by including them in
 `@invalid_attrs`.
@@ -305,7 +315,7 @@ def player_fixture(attrs \\ %{}) do
     |> Map.from_struct()
     |> Map.delete(:password)
 
-  %Platform.Accounts.Player{}
+  %Player{}
   |> Map.merge(player_attrs_map)
 end
 ```
@@ -316,8 +326,8 @@ deleting the `password` field with `Map.delete(:password)`. This gives us a map
 of all the player attributes except the `password` field.
 
 At the bottom of the function, we create a player struct with
-`%Platform.Accounts.Player{}` and then merge all of the fields in our map
-together using `Map.merge(player_attrs_map)`.
+`%Player{}` and then merge all of the fields in our map together using
+`Map.merge(player_attrs_map)`.
 
 Keep in mind that this is a lot to take in as we're dealing with new data
 structures and a lot of new functions, so don't worry if this seems slightly
@@ -328,7 +338,7 @@ fixing our test suite.
 
 ## Player Controller Tests
 
-We've updated our player `changeset/1` function and fixed the tests for our
+We've updated our player `changeset/2` function and fixed the tests for our
 player accounts, but we still have a few failing tests. Let's switch to the
 `test/platform_web/controllers/player_controller_test.exs` file and make some
 changes.
