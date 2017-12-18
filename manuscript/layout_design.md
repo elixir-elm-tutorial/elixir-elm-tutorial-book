@@ -34,34 +34,20 @@ $ mix phx.routes
 
 This can be useful to see the paths available, the HTTP requests associated
 with them, and the controller actions as well. Here's what the output should
-look like:
+look like (note that this output has been trimmed for readability):
 
 ```shell
 $ mix phx.routes
-          page_path  GET     /                  PlatformWeb.PageController :index
-        player_path  GET     /players           PlatformWeb.PlayerController :index
-        player_path  GET     /players/:id/edit  PlatformWeb.PlayerController :edit
-        player_path  GET     /players/new       PlatformWeb.PlayerController :new
-        player_path  GET     /players/:id       PlatformWeb.PlayerController :show
-        player_path  POST    /players           PlatformWeb.PlayerController :create
-        player_path  PATCH   /players/:id       PlatformWeb.PlayerController :update
-                     PUT     /players/:id       PlatformWeb.PlayerController :update
-        player_path  DELETE  /players/:id       PlatformWeb.PlayerController :delete
-player_session_path  GET     /sessions/new      PlatformWeb.PlayerSessionController :new
-player_session_path  POST    /sessions          PlatformWeb.PlayerSessionController :create
-player_session_path  DELETE  /sessions/:id      PlatformWeb.PlayerSessionController :delete
-    player_api_path  GET     /api/players       PlatformWeb.PlayerApiController :index
-    player_api_path  GET     /api/players/:id   PlatformWeb.PlayerApiController :show
-    player_api_path  POST    /api/players       PlatformWeb.PlayerApiController :create
-    player_api_path  PATCH   /api/players/:id   PlatformWeb.PlayerApiController :update
-                     PUT     /api/players/:id   PlatformWeb.PlayerApiController :update
-    player_api_path  DELETE  /api/players/:id   PlatformWeb.PlayerApiController :delete
-          game_path  GET     /api/games         PlatformWeb.GameController :index
-          game_path  GET     /api/games/:id     PlatformWeb.GameController :show
-          game_path  POST    /api/games         PlatformWeb.GameController :create
-          game_path  PATCH   /api/games/:id     PlatformWeb.GameController :update
-                     PUT     /api/games/:id     PlatformWeb.GameController :update
-          game_path  DELETE  /api/games/:id     PlatformWeb.GameController :delete
+    page_path  GET     /                  PlatformWeb.PageController :index
+  player_path  GET     /players           PlatformWeb.PlayerController :index
+  player_path  GET     /players/:id/edit  PlatformWeb.PlayerController :edit
+  player_path  GET     /players/new       PlatformWeb.PlayerController :new
+  player_path  GET     /players/:id       PlatformWeb.PlayerController :show
+  player_path  POST    /players           PlatformWeb.PlayerController :create
+  player_path  PATCH   /players/:id       PlatformWeb.PlayerController :update
+               PUT     /players/:id       PlatformWeb.PlayerController :update
+  player_path  DELETE  /players/:id       PlatformWeb.PlayerController :delete
+  # ...
 ```
 
 We can simplify the pages we need for our application now that we're using Elm
