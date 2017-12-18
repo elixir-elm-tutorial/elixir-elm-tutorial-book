@@ -806,9 +806,9 @@ playersListItem player =
             else
                 Maybe.withDefault "" player.displayName
     in
-        li [ class "player-item list-group-item" ]
+        li [ class "player-item" ]
             [ strong [] [ text displayName ]
-            , span [ class "badge" ] [ text (toString player.score) ]
+            , p [] [ text (toString player.score) ]
             ]
 ```
 
