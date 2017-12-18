@@ -66,7 +66,7 @@ changes in the next sections first.
 
 ## API Routing
 
-We'll need to follow the instructions that Phoenix provides for us. Open up the
+Let's follow the instructions that Phoenix provides for us. Open up the
 `lib/platform_web/router.ex` file. Instead of adding to the browser scope like
 we did previously, we're going to add this resource to the `/api` scope. This
 means our two scopes will look like this:
@@ -90,19 +90,17 @@ end
 ## Establishing Relationships
 
 We generated a new migration for our `games` table above. But, we also want to
-form an association from our `players` table to our new `games` table. So we're
+form an association from our `players` table to our new `games` table. We're
 going to create a new table called `gameplays` that will store a `game_id` as a
 reference to the `games` table, a `player_id` as a reference to the `players`
 table, and a `player_score` that will track a player's score for the current
 play through the game.
 
-Before we run our migration, let's take a look at the schema files for players
-and games. Then, we'll create a new schema for our gameplays.
+Let's take a look at the schema files for players and games. Then, we'll create
+a new schema for our gameplays.
 
-## Updating the Schemas
-
-First, open the `lib/platform/accounts/player.ex` file, and let's update our
-schema with the following:
+First, open the `lib/platform/accounts/player.ex` file, and update our schema
+with the following:
 
 ```elixir
 schema "players" do
@@ -111,14 +109,15 @@ schema "players" do
   field :display_name, :string
   field :password, :string, virtual: true
   field :password_digest, :string
-  field :score, :integer
-  field :username, :string
+  field :score, :integer, default: 0
+  field :username, :string, unique: true
 
   timestamps()
 end
 ```
 
-We'll also need to add two `alias` lines above:
+We'll also need to add two `alias` lines above for the `Game` and `Gameplay`
+modules to work:
 
 ```elixir
 alias Platform.Products.Game
@@ -131,7 +130,7 @@ relationship between our `players` and `games`, and that we're joining these
 through the `Gameplay` module that we'll be creating shortly.
 
 Next, we'll do something similar for the `lib/platform/products/game.ex` file.
-We'll add our two `alias` lines at the top:
+We'll add our two `alias` lines for `Gameplay` and `Player` at the top:
 
 ```elixir
 alias Platform.Products.Gameplay
@@ -244,9 +243,11 @@ end
 ```
 
 We used `many_to_many` relationships in both our `Player` schema and our `Game`
-schema. For our `Gameplay` schema, let's use `belongs_to` to associate the
-records. We'll also add a few `alias` statements and add a `default: 0` value
- for the `player_score` field so we don't end up with `nil` values.
+schema. For our `Gameplay` schema, we'll use
+[`belongs_to`](https://hexdocs.pm/ecto/Ecto.Schema.html#belongs_to/3) to
+form the association. We'll also add a few `alias` statements and add a
+`default: 0` value for the `player_score` field so we don't end up storing
+`nil` values in the database.
 
 ```elixir
 defmodule Platform.Products.Gameplay do
