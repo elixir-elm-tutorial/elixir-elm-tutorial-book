@@ -72,8 +72,18 @@ attempt to break down the topics and concepts covered within each chapter.
   - Reading JSON API data from Phoenix.
   - Decoding JSON and working with game data in Elm.
 
+- **Layout and Design**
+  - Viewing application routes.
+  - Working with CSS and working with Bootstrap classes.
+  - Authorizing actions for player account features.
+  - Styling for the lists of players and games.
+
+- **Game Setup**
+  - Creating a new Elm file for our first game.
+  - Configuring Phoenix to compile multiple Elm applications.
+  - Adding a slug field for working with games.
+
 - **Our First Game**
-  - Creating a space within Phoenix for an Elm game.
   - Working with SVG to create a small game canvas.
   - Adding a small game character and item.
   - Refactoring Elm code with let expressions and small functions.
