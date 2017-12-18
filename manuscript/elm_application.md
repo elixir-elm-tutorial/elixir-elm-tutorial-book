@@ -364,7 +364,7 @@ with trying to display a single game from our list because it introduces some
 interesting concepts in Elm.
 
 What if we want to find the first game in our list, and then pass that to the
-`gamesListItem` function instead of using the hardcoded string we currently
+`gamesListItem` function instead of using the hard-coded string we currently
 have there?
 
 Our first step would be to use the `model` list and find the first item. To do

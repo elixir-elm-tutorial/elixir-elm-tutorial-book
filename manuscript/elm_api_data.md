@@ -6,7 +6,7 @@ on reading the game data from our API and rendering it on the page.
 
 ## Where Were We?
 
-We currently have some hardcoded data in our Elm application that we're using
+We currently have some hard-coded data in our Elm application that we're using
 to display a list of games.
 
 ```elm
@@ -20,9 +20,9 @@ initialModel =
     }
 ```
 
-![Hardcoded Games List](images/elm_api_data/hardcoded_games_list.png)
+![Hard-coded Games List](images/elm_api_data/hard_coded_games_list.png)
 
-Our next goal is to remove this hardcoded data and fetch the game JSON data
+Our next goal is to remove this hard-coded data and fetch the game JSON data
 from our Phoenix API instead.
 
 ![JSON API Game Data](images/elm_api_data/json_api_game_data.png)
