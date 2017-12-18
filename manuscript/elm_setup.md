@@ -232,7 +232,7 @@ and replace everything with a single line:
 <div id="elm-container"></div>
 ```
 
-We can place our Elm application inside this container. Let's open the
+We can embed our Elm application inside this container. Let's open the
 `assets/js/app.js` file and add the following code at the bottom:
 
 ```javascript
@@ -241,9 +241,7 @@ import Elm from "./main"
 
 const elmContainer = document.querySelector("#elm-container");
 
-if (elmContainer) {
-  const elmApplication = Elm.Main.embed(elmContainer);
-}
+if (elmContainer) Elm.Main.embed(elmContainer);
 ```
 
 ## Working Elm application
