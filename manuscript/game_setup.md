@@ -314,8 +314,8 @@ Randomized with seed 444371
 Now that we have our new `slug` field to work with, we can refactor our game
 routing features.
 
-Let's go back to the `lib/platform_web/templates/show.html.eex` file and update
-the contents with the following code:
+Let's go back to the `lib/platform_web/templates/game/show.html.eex` file and
+update the contents with the following code:
 
 ```embedded_elixir
 <div id="<%= @game.slug %>"></div>
@@ -382,11 +382,11 @@ with the following:
 ```elixir
 def render("game.json", %{game: game}) do
   %{id: game.id,
-    title: game.title,
-    slug: game.slug,
     description: game.description,
+    featured: game.featured,
+    slug: game.slug,
     thumbnail: game.thumbnail,
-    featured: game.featured}
+    title: game.title}
 end
 ```
 
