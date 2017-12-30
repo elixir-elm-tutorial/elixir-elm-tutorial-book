@@ -65,7 +65,7 @@ use a single `require()` statement to pull in our compiled `elm.js` output.
 
 ```javascript
 // Elm
-const Elm = require("./elm.js");
+import Elm from "./elm";
 
 const elmContainer = document.querySelector("#elm-container");
 
@@ -79,7 +79,7 @@ new game.
 
 ```javascript
 // Elm
-const Elm = require("./elm.js");
+import Elm from "./elm";
 
 const elmContainer = document.querySelector("#elm-container");
 const platformer = document.querySelector("#platformer");
@@ -150,13 +150,13 @@ to use the `document.querySelector("#platformer")` line that we used in our
 `app.js` code above.
 
 At this point, we should now have everything working well enough to see the
-game being rendered in the browser!
-
-![Display Game](images/game_setup/display_game.png)
+"game" being rendered in the browser!
 
 When we visit `http://0.0.0.0:4000`, we see the Elm application we created in
 `Main.elm`. And when we visit `http://0.0.0.0:4000/games/1`, we see the new
 game we're going to create in `Platformer.elm`.
+
+![Display Game](images/game_setup/display_game.png)
 
 ## Working with Slugs
 
@@ -301,12 +301,12 @@ We should now be able to run our tests again and see them all passing!
 
 ```shell
 $ mix test
-..................................
+................................................
 
-Finished in 0.3 seconds
-34 tests, 0 failures
+Finished in 0.4 seconds
+48 tests, 0 failures
 
-Randomized with seed 455292
+Randomized with seed 444371
 ```
 
 ## Using Our New Slug Field
