@@ -1,9 +1,9 @@
 # Layout and Design
 
 Although this isn't a book about design, our application could certainly
-benefit from an effort to make it more usable and nicer to look at. The author
-is admittedly not a strong designer, but we'll do the best we can to improve
-the styling and usability for our platform application.
+benefit from an effort to make it more usable and nicer to look at. In this
+chapter, we'll do our best to improve the styling and usability for our
+platform application.
 
 ## Pages
 
@@ -24,7 +24,7 @@ application.
 - Sessions
   - Player Sign In Page (`/sessions/new`)
 
-Phoenix allows you to see a similar list of routes by running a mix command.
+Phoenix allows you to see a similar list of routes by running a `mix` command.
 Inside the root folder of our platform project, try running the following from
 the command line:
 
@@ -51,7 +51,7 @@ $ mix phx.routes
 ```
 
 We can simplify the pages we need for our application now that we're using Elm
-display our lists of players and games, but first we'll start with our default
+to display our lists of players and games, but we'll start with our default
 Phoenix layout and home page.
 
 ## Phoenix Layout
@@ -168,11 +168,11 @@ This gives us a working link we can use to reload the home page:
 
 ## app.css
 
-You've gotten a chance to look at some of the styles that Phoenix gives us in
-the `phoenix.css` file. For the rest of this chapter, let's work with the
-`app.css` file that's also located inside the `assets/css` folder. In fact,
-let's remove all the custom CSS declarations at the bottom of the `phoenix.css`
-file and migrate the few we'll need to `app.css`.
+We've looked at the default styles that Phoenix gives us in the `phoenix.css`
+file. For the rest of this chapter, let's work with the `app.css` file that's
+also located inside the `assets/css` folder. In fact, let's remove all the
+custom CSS declarations at the bottom of the `phoenix.css` file and migrate the
+few we'll need to `app.css`.
 
 In other words, we'll leave all the minified Bootstrap CSS code in our
 `phoenix.css` file. But we'll delete all the custom CSS declarations from the
@@ -377,8 +377,8 @@ and we'll display our "Signed in" text with a new class too:
 </header>
 ```
 
-We can add a quick and dirty CSS rule so that our nav elements at the top right
-of the window look okay and don't break our layout on small screens:
+We can add a quick CSS rule so our nav elements at the top right of the window
+look okay and don't break our layout on small screens:
 
 ```css
 .nav {
@@ -410,8 +410,8 @@ the `nav` element with the following:
 
 This adds a link for the current user to access their **Edit Player** page and
 change their account. Keep in mind that we still haven't restricted access to
-pages, so users can technically edit each other's accounts. We'll fix this in
-an upcoming chapter, but for now let's keep moving.
+pages, so users can technically edit each other's accounts. But we'll fix this
+issue soon.
 
 ![Current User Edit Feature](images/layout_design/current_user_edit_feature.png)
 
@@ -422,7 +422,7 @@ allow players to delete their accounts. Let's add a delete button to the **Edit
 Player** page.
 
 First, we'll open the `lib/platform_web/templates/player/index.html.eex` file
-and remove the delete button from that page. While we're here, let's remote the
+and remove the delete button from that page. While we're here, let's remove the
 edit button too since we only want players to edit their own accounts.
 
 Here's what the contents of the `<tbody>` tag should look like:
@@ -464,11 +464,10 @@ should be successful:
 ## Authorization
 
 You may have noticed a serious issue with our account deletion approach.
-Players can now delete their accounts, but technically players could delete the
-accounts of other players too. For example, the `chrismccord` account could
-sign in to the platform, and then use the
-`http://0.0.0.0:4000/players/4/edit` URL to delete the `newuser` example
-player we removed in the screenshots above.
+Players can now delete their accounts, but players could delete the accounts of
+other players too! For example, the `chrismccord` account could sign in to the
+platform, and then use the `http://0.0.0.0:4000/players/1/edit` URL to
+deviously delete José Valim's account.
 
 For player authorization, we're going to take a simple approach similar to the
 one we used to authenticate players on our platform. Let's open the
@@ -500,12 +499,12 @@ defp authorize(conn, _opts) do
 end
 ```
 
-What this function is going to do is to compare the player that's currently
-signed in with the player that is trying to be accessed. If a currently signed
-in player is trying to access their own account, we just return the `conn` and
-allow them to continue. If a player is trying to access an account that's not
-theirs, then we redirect back to the index page and provide the user a message
-telling them their account is not authorized.
+This function will compare the player that's currently signed in with the
+player account that is currently being accessed. If an authenticated player is
+trying to access their own account, we just return the `conn` and allow them to
+continue. If a player is trying to access an account that's not theirs, then we
+redirect back to the index page and provide the user a message telling them
+their account is not authorized.
 
 To get this working for the **Edit Player** page, add the following line above
 the `index/2` function in the `PlayerController` module:
@@ -542,8 +541,6 @@ authorization system, consider using an authorization library. A good approach
 for finding libraries is to use the search feature on [hex.pm](https://hex.pm).
 For example, you can search for "authorization" on hex.pm and find a list of
 popular options.
-
-![hex.pm Search](images/layout_design/hex_search.png)
 
 ## List of Games
 
