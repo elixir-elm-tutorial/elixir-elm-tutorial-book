@@ -604,8 +604,7 @@ can use to wrap around our player list. Then, we can use the
 to display each player along with their current score.
 
 Update the `playersList` function and `playersListItem` function with the
-following and Bootstrap will take care of the rest of the styling for us:
-
+following and Bootstrap will take care of the styling for us:
 
 ```elm
 playersList : List Player -> Html msg
@@ -618,14 +617,26 @@ playersList players =
 
 playersListItem : Player -> Html msg
 playersListItem player =
-    li [ class "player-item list-group-item" ]
-        [ strong [] [ text player.displayName ]
-        , span [ class "badge" ] [ text (toString player.score) ]
-        ]
+    let
+        displayName =
+            if player.displayName == Nothing then
+                player.username
+            else
+                Maybe.withDefault "" player.displayName
+
+        playerLink =
+            "players/" ++ (toString player.id)
+    in
+        li [ class "player-item list-group-item" ]
+            [ strong [] [ a [ href playerLink ] [ text displayName ] ]
+            , span [ class "badge" ] [ text (toString player.score) ]
+            ]
 ```
 
-Looks like this works well for us. We've got our sorted list of players
-displaying inside a leaderboard with their display names and scores.
+Looks like this works well for our purposes. We've got our sorted list of
+players displaying inside a leaderboard with their display names and scores.
+And we also added links to the individual player pages, which we can use to
+track more detailed score data later.
 
 ![Player Leaderboard](images/layout_design/player_leaderboard.png)
 
