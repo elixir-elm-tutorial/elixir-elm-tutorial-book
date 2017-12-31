@@ -11,36 +11,16 @@ Our player's score and the number of items collected are values that will
 change, and any time we're dealing with changing values it's a good sign that
 we want to track those values in our model.
 
-Let's get started by adding a `playerScore` to our model:
+Let's get started by adding a `playerScore` to our model. We start with an
+initial value of `0`, and the player will increase this value while collecting
+items. Now would also be a good time to add another field to track the number
+of items the character has collected. Let's go ahead and add `playerScore` and
+the `itemsCollected` field to our model:
 
 ```elm
 type alias Model =
-    { characterPositionX : Int
-    , characterPositionY : Int
-    , itemPositionX : Int
-    , itemPositionY : Int
-    , playerScore : Int
-    }
-
-
-initialModel : Model
-initialModel =
-    { characterPositionX = 50
-    , characterPositionY = 300
-    , itemPositionX = 500
-    , itemPositionY = 300
-    , playerScore = 0
-    }
-```
-
-We start with an initial value of `0`, and the player will increase this value
-while collecting items. In fact, now would be a good time to add another field
-to track the number of items the character has collected. Let's go ahead and
-add an `itemsCollected` field too:
-
-```elm
-type alias Model =
-    { characterPositionX : Int
+    { characterDirection : Direction
+    , characterPositionX : Int
     , characterPositionY : Int
     , itemPositionX : Int
     , itemPositionY : Int
@@ -51,7 +31,8 @@ type alias Model =
 
 initialModel : Model
 initialModel =
-    { characterPositionX = 50
+    { characterDirection = Right
+    , characterPositionX = 50
     , characterPositionY = 300
     , itemPositionX = 500
     , itemPositionY = 300
@@ -91,10 +72,10 @@ so our text will look nice. This function will allow us to move text around
 easily without having to duplicate all this code over and over again as we add
 new text indicators.
 
-The first thing we want to display is our player's score in the upper left area
-of the game window. To accomplish this, we'll create a new `viewGameScore`
-function that takes in the current `model` and return the SVG element with the
-text we want to display.
+We want to start by displaying our player's score in the upper left area of the
+game window. To accomplish this, we'll create a new `viewGameScore` function
+that takes in the current `model` and return the SVG element with the text we
+want to display.
 
 There may be a handful of unfamiliar things that we're not accustomed to seeing
 here, but what we're accomplishing is fairly straightforward. We want to start
@@ -211,7 +192,8 @@ and we'll call this one `timeRemaining`:
 
 ```elm
 type alias Model =
-    { characterPositionX : Int
+    { characterDirection : Direction
+    , characterPositionX : Int
     , characterPositionY : Int
     , itemPositionX : Int
     , itemPositionY : Int
@@ -223,7 +205,8 @@ type alias Model =
 
 initialModel : Model
 initialModel =
-    { characterPositionX = 50
+    { characterDirection = Right
+    , characterPositionX = 50
     , characterPositionY = 300
     , itemPositionX = 500
     , itemPositionY = 300
@@ -326,9 +309,9 @@ with the following:
 ```elm
 type Msg
     = NoOp
+    | CountdownTimer Time
     | KeyDown KeyCode
     | TimeUpdate Time
-    | CountdownTimer Time
     | SetNewItemPositionX Int
 ```
 
@@ -366,9 +349,8 @@ subscriptions model =
 
 Now that we're subscribing to time with every passing second, we can think
 think about how we want to add this to our game. Let's try thinking of our game
-as small levels where players have to collect ten coins in ten seconds to
-advance. We'll explore this further in upcoming sections, but for now let's
-just focus on setting up the timer.
+as having small levels where players have to collect ten coins in ten seconds
+to advance.
 
 We'll start by updating our `initialModel` so that the `timeRemaining` field
 starts with an initial value of `10`:
@@ -376,13 +358,14 @@ starts with an initial value of `10`:
 ```elm
 initialModel : Model
 initialModel =
-    { characterPositionX = 50
+    { characterDirection = Right
+    , characterPositionX = 50
     , characterPositionY = 300
     , itemPositionX = 500
     , itemPositionY = 300
     , itemsCollected = 0
     , playerScore = 0
-    , timeRemaining = 10
+    , timeRemaining = 0
     }
 ```
 
