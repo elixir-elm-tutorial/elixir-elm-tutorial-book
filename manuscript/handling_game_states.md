@@ -47,17 +47,11 @@ We'll initialize the state to the game's `StartScreen`, which we'll create
 soon.
 
 ```elm
-type GameState
-    = StartScreen
-    | Playing
-    | Success
-    | GameOver
-
-
 type alias Model =
-    { gameState : GameState
+    { characterDirection : Direction
     , characterPositionX : Int
     , characterPositionY : Int
+    , gameState : GameState
     , itemPositionX : Int
     , itemPositionY : Int
     , itemsCollected : Int
@@ -68,9 +62,10 @@ type alias Model =
 
 initialModel : Model
 initialModel =
-    { gameState = StartScreen
+    { characterDirection = Right
     , characterPositionX = 50
     , characterPositionY = 300
+    , gameState = StartScreen
     , itemPositionX = 500
     , itemPositionY = 300
     , itemsCollected = 0
@@ -180,21 +175,13 @@ viewGameState model =
             ]
 
         Playing ->
-            [ viewGameWindow
-            , viewGameSky
-            , viewGameGround
-            , viewCharacter model
-            , viewItem model
-            , viewGameScore model
-            , viewItemsCollected model
-            , viewGameTime model
-            ]
+            -- ...
 
         Success ->
-            []
+            -- ...
 
         GameOver ->
-            []
+            -- ...
 ```
 
 The structure should be getting a little clearer now. We're going to keep using
@@ -219,13 +206,27 @@ code. Update the contents of the `KeyDown` action with the following:
 KeyDown keyCode ->
     case keyCode of
         32 ->
-            ( { model | gameState = Playing }, Cmd.none )
+            ( { model
+                | gameState = Playing
+                }
+            , Cmd.none
+            )
 
         37 ->
-            ( { model | characterPositionX = model.characterPositionX - 15 }, Cmd.none )
+            ( { model
+                | characterDirection = Left
+                , characterPositionX = model.characterPositionX - 15
+                }
+            , Cmd.none
+            )
 
         39 ->
-            ( { model | characterPositionX = model.characterPositionX + 15 }, Cmd.none )
+            ( { model
+                | characterDirection = Right
+                , characterPositionX = model.characterPositionX + 15
+                }
+            , Cmd.none
+            )
 
         _ ->
             ( model, Cmd.none )
@@ -248,17 +249,31 @@ right arrow keys become usable.
 KeyDown keyCode ->
     case keyCode of
         32 ->
-            ( { model | gameState = Playing }, Cmd.none )
+            ( { model
+                | gameState = Playing
+                }
+            , Cmd.none
+            )
 
         37 ->
             if model.gameState == Playing then
-                ( { model | characterPositionX = model.characterPositionX - 15 }, Cmd.none )
+                ( { model
+                    | characterDirection = Left
+                    , characterPositionX = model.characterPositionX - 15
+                    }
+                , Cmd.none
+                )
             else
                 ( model, Cmd.none )
 
         39 ->
             if model.gameState == Playing then
-                ( { model | characterPositionX = model.characterPositionX + 15 }, Cmd.none )
+                ( { model
+                    | characterDirection = Right
+                    , characterPositionX = model.characterPositionX + 15
+                    }
+                , Cmd.none
+                )
             else
                 ( model, Cmd.none )
 
@@ -305,24 +320,10 @@ viewGameState : Model -> List (Svg Msg)
 viewGameState model =
     case model.gameState of
         StartScreen ->
-            [ viewGameWindow
-            , viewGameSky
-            , viewGameGround
-            , viewCharacter model
-            , viewItem model
-            , viewStartScreenText
-            ]
+            -- ...
 
         Playing ->
-            [ viewGameWindow
-            , viewGameSky
-            , viewGameGround
-            , viewCharacter model
-            , viewItem model
-            , viewGameScore model
-            , viewItemsCollected model
-            , viewGameTime model
-            ]
+            -- ...
 
         Success ->
             [ viewGameWindow
@@ -334,7 +335,7 @@ viewGameState model =
             ]
 
         GameOver ->
-            []
+            -- ...
 ```
 
 In order to trigger the success screen, we'll need to create another condition
@@ -383,10 +384,11 @@ KeyDown keyCode ->
         32 ->
             if model.gameState /= Playing then
                 ( { model
-                    | gameState = Playing
+                    | characterDirection = Right
                     , characterPositionX = 50
-                    , playerScore = 0
                     , itemsCollected = 0
+                    , gameState = Playing
+                    , playerScore = 0
                     , timeRemaining = 10
                     }
                 , Cmd.none
@@ -429,34 +431,7 @@ selectively displaying for each state.
 viewGameState : Model -> List (Svg Msg)
 viewGameState model =
     case model.gameState of
-        StartScreen ->
-            [ viewGameWindow
-            , viewGameSky
-            , viewGameGround
-            , viewCharacter model
-            , viewItem model
-            , viewStartScreenText
-            ]
-
-        Playing ->
-            [ viewGameWindow
-            , viewGameSky
-            , viewGameGround
-            , viewCharacter model
-            , viewItem model
-            , viewGameScore model
-            , viewItemsCollected model
-            , viewGameTime model
-            ]
-
-        Success ->
-            [ viewGameWindow
-            , viewGameSky
-            , viewGameGround
-            , viewCharacter model
-            , viewItem model
-            , viewSuccessScreenText
-            ]
+        -- ...
 
         GameOver ->
             [ viewGameWindow
@@ -479,7 +454,7 @@ TimeUpdate time ->
         ( { model
             | itemsCollected = model.itemsCollected + 1
             , playerScore = model.playerScore + 100
-            }
+          }
         , Random.generate SetNewItemPositionX (Random.int 50 500)
         )
     else if model.itemsCollected >= 10 then
