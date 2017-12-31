@@ -1,18 +1,18 @@
 # Adding Interaction
 
 In the last chapter, we managed to set up our first game. Now, we can start
-adding interactivity to our game to make it come to life. We're going to
-allow our players to interact with our character via keyboard input, and we'll
-learn about Elm subscriptions along the way.
+adding interactivity to make it come to life. We're going to allow our players
+to interact with our character via keyboard input, and we'll learn about Elm
+subscriptions along the way.
 
 ## Subscriptions
 
-When working with the Elm Architecture, subscriptions allow us to work with
-streams of data and subscribe to a sequence of events. Keyboard and mouse input
-from users are a great examples of how this works. For instance, we can
-"subscribe" to the user's mouse position, and it will allow to track the
-mouse location as it changes over time. Don't worry if it sounds a little
-confusing, we'll take a look at how we can subscribe to keyboard input now.
+When working with the Elm Architecture, subscriptions allow us to use streams
+of data and subscribe to a sequence of events. Keyboard and mouse input from
+users are a great examples of how this works. For instance, we can "subscribe"
+to the user's mouse position, and it will allow to track the mouse location as
+it changes over time. Don't worry if it sounds a little confusing, we'll take a
+look at how we can subscribe to keyboard input now.
 
 ## Importing the Keyboard Package
 
@@ -227,13 +227,138 @@ KeyDown keyCode ->
             ( model, Cmd.none )
 ```
 
+## Character Direction
+
 We now have the ability to move our character to the left and the right on the
-screen. It's great that we've already managed to add some interactivity to our
-game, but keep in mind that we're taking some shortcuts for now. As we
-continue, it will be nice to account for our character's acceleration instead
-of manually pushing the position around using pixel values. We'll work towards
-adding more complex behaviors, but for now let's continue adding some basic
-game elements.
+screen. Let's add a new `Direction` union type so that the character can face
+the correct direction when moving left and right.
+
+```elm
+type Direction
+    = Left
+    | Right
+```
+
+This allows us to set a direction with only two possible values. Similarly, the
+definition for `Bool` in Elm allows us to select only from `True` and `False`
+as values:
+
+```elm
+type Bool
+    = True
+    | False
+```
+
+Let's add a `characterDirection` field to our `Model`, and then set its initial
+value to `Right` in the `initialModel`.
+
+```elm
+type alias Model =
+    { characterDirection : Direction
+    , characterPositionX : Int
+    , characterPositionY : Int
+    , itemPositionX : Int
+    , itemPositionY : Int
+    }
+
+
+initialModel : Model
+initialModel =
+    { characterDirection = Right
+    , characterPositionX = 50
+    , characterPositionY = 300
+    , itemPositionX = 500
+    , itemPositionY = 300
+    }
+```
+
+Now, we can update the `KeyDown` case in our `update` function so that the
+character's direction will change when the left and right arrow keys are
+pressed.
+
+The format of the record update syntax may look a little different than what
+we've been used to seeing so far, but we're still doing the same thing. When
+players press the left arrow key (`37`), the character will move `15` pixels to
+the left and the `characterDirection` will be set to `Left`. Similarly, when
+players press the right arrow key (`39`), the character will move `15` pixels to
+the right and the `characterDirection` will be set to `Right`.
+
+```elm
+KeyDown keyCode ->
+    case keyCode of
+        37 ->
+            ( { model
+                | characterDirection = Left
+                , characterPositionX = model.characterPositionX - 15
+                }
+            , Cmd.none
+            )
+
+        39 ->
+            ( { model
+                | characterDirection = Right
+                , characterPositionX = model.characterPositionX + 15
+                }
+            , Cmd.none
+            )
+
+        _ ->
+            ( model, Cmd.none )
+```
+
+Now that we're going to have our character change direction, we'll also want
+to update the assets so that the character looks like he or she is facing in
+the correct direction too. Let's create two new copies of the `character.gif`
+file in the `/assets/static/images` folder. We'll create one called
+`character-right.gif` which will be exactly the same as `character.gif`. And
+we'll also create `character-left.gif`, which is the same image flipped along
+the horizontal axis. If you're using macOS, you can open the file in Preview
+and click the Tools > Flip Horizontal option.
+
+![character-left.gif](images/adding_interaction/character-left.gif)
+
+![character-right.gif](images/adding_interaction/character-right.gif)
+
+This assets are also available in the reposotiry for this book if you'd like
+to download them from GitHub.
+
+- [character-left.gif](https://github.com/elixir-elm-tutorial/elixir-elm-tutorial-book/tree/master/manuscript/images/adding_interaction/character-left.gif)
+- [character-right.gif](https://github.com/elixir-elm-tutorial/elixir-elm-tutorial-book/tree/master/manuscript/images/adding_interaction/character-right.gif)
+
+Once we have these two files available in our `assets/static/images` folder, we
+just need to update our `viewCharacter` function and everything should work as
+intended.
+
+We'll use a `let` expression to determine which image to load based on the
+value of `model.characterDirection`. Here's our updated `viewCharacter`
+function:
+
+```elm
+viewCharacter : Model -> Svg Msg
+viewCharacter model =
+    let
+        characterImage =
+            case model.characterDirection of
+                Left ->
+                    "/images/character-left.gif"
+
+                Right ->
+                    "/images/character-right.gif"
+    in
+        image
+            [ xlinkHref characterImage
+            , x (toString model.characterPositionX)
+            , y (toString model.characterPositionY)
+            , width "50"
+            , height "50"
+            ]
+            []
+```
+
+And with that change, we should be able to see our character changing direction
+successfully in the browser:
+
+![Working Direction Change](images/adding_interaction/working_direction_change.gif)
 
 ## Collecting Items
 
