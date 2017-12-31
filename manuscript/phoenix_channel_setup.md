@@ -1,4 +1,4 @@
-# Phoenix Channels
+# Phoenix Channel Setup
 
 We have our game platform up and running, where users can sign in and play a
 simple Elm game that tracks a score. Now, let's work towards syncing the Elm
@@ -68,8 +68,8 @@ end
 
 ## Joining the Channel
 
-Let's add a `join` function to the `score_channel.ex` file. This function will
-take three arguments:
+Let's add a `join/3` function to the `score_channel.ex` file. This function
+will take three arguments:
 
 - The Topic: We're joining `"score:platformer"` to track scores for our
 Platformer game.
@@ -88,9 +88,32 @@ defmodule PlatformWeb.ScoreChannel do
 end
 ```
 
-We haven't configured our front-end to work with the channel yet, and we're not
-handling any messages in our channel, but we've managed to take care of the
-initial channel setup on the back-end.
+Now, let's add another function that will allow us to handle incoming messages
+from the client. We'll use the `handle_in/3` function, and we'll listen for a
+`"save_score"` message to trigger it.
+
+```elixir
+defmodule PlatformWeb.ScoreChannel do
+  use PlatformWeb, :channel
+
+  def join("score:platformer", _payload, socket) do
+    {:ok, socket}
+  end
+
+  def handle_in("save_score", payload, socket) do
+    broadcast socket, "save_score", payload
+    {:noreply, socket}
+  end
+end
+```
+
+This will allow us to listen for a `"save_score"` message that we'll send from
+our Elm client. Inside the `handle_in/3` function, we use
+[`broadcast/3`](https://hexdocs.pm/phoenix/Phoenix.Channel.html#broadcast/3),
+which will relay the results to all players on the channel.
+
+We haven't configured our front-end to work with the channel yet, but we've
+managed to take care of the initial channel setup on the back-end.
 
 ## elm-phoenix-socket
 
@@ -262,7 +285,7 @@ restart your local Phoenix server to get things up and running, but if you
 load the page and wait a few moments, you should be able to see a "heartbeat"
 of WebSocket messages in the DevTools Console.
 
-![Working Channel](images/phoenix_channels/working_channel.png)
+![Working Channel](images/phoenix_channel_setup/working_channel.png)
 
 ## Using the DevTools
 
@@ -286,7 +309,7 @@ Phoenix message: { event = "phx_reply", topic = "phoenix", payload = { status = 
 Now that we have an initial setup, we can start sending data. We want to send
 the score that we already have available in the Elm model over the socket to
 the Phoenix back-end. We can start by adding a new message to our update
-section. Add `SendScoreRequest` to our `Msg` type:
+section. Add `SaveScoreRequest` to our `Msg` type:
 
 ```elm
 type Msg
@@ -294,7 +317,7 @@ type Msg
     | CountdownTimer Time
     | KeyDown KeyCode
     | PhoenixMsg (Phoenix.Socket.Msg Msg)
-    | SendScoreRequest
+    | SaveScoreRequest
     | SetNewItemPositionX Int
     | TimeUpdate Time
 ```
@@ -302,7 +325,7 @@ type Msg
 Then, let's add the following to our `update` function:
 
 ```elm
-SendScoreRequest ->
+SaveScoreRequest ->
     let
         payload =
             Encode.object [ ( "player_score", Encode.int model.playerScore ) ]
@@ -317,9 +340,9 @@ at the top of the file:
 import Json.Encode as Encode
 ```
 
-With `SendScoreRequest`, we're starting to construct a `payload` that we'll use
-to send our Elm data. We take the `playerScore` that's part of our Elm model
-and we encode is as a JSON integer with `Encode.int`. Then, we wrap that up in
+With `SaveScoreRequest`, we're starting to construct a `payload` that we'll use
+to send our Elm data. We take the `playerScore` that's part of our Elm model,
+and we encode it as a JSON integer with `Encode.int`. Then, we wrap that up in
 a JSON object that we can use to send it to the Phoenix back-end. Keep in mind
 that we're still using `(model, Cmd.none)` so far, so we're not actually
 pushing data over the socket yet.
@@ -327,28 +350,28 @@ pushing data over the socket yet.
 ## Phoenix.Push
 
 To continue, we'll use the `Phoenix.Push` module that we imported at the top of
-our file. We want to initialize using the `"score:lobby"` channel that we
+our file. We want to initialize using the `"score:platformer"` channel that we
 created on the Phoenix side, and we'll use the `payload` we constructed to send
 along the relevant data. We'll also use the pipe operator to pass data along
 and handle the success and failure cases.
 
 ```elm
-SendScoreRequest ->
+SaveScoreRequest ->
     let
         payload =
             Encode.object [ ( "player_score", Encode.int model.playerScore ) ]
 
         phxPush =
-            Phoenix.Push.init "shout" "score:lobby"
+            Phoenix.Push.init "save_score" "score:platformer"
                 |> Phoenix.Push.withPayload payload
-                |> Phoenix.Push.onOk SendScore
-                |> Phoenix.Push.onError SendScoreError
+                |> Phoenix.Push.onOk SaveScore
+                |> Phoenix.Push.onError SaveScoreError
     in
         ( model, Cmd.none )
 ```
 
-We'll need to scaffold out new messages for `SendScore` and
-`SendScoreError` for the success and failure cases, respectively. We can add
+We'll need to scaffold out new messages for `SaveScore` and
+`SaveScoreError` for the success and failure cases, respectively. We can add
 these to our `Msg` type first, and they'll both take an `Encode.Value` as an
 argument:
 
@@ -358,9 +381,9 @@ type Msg
     | CountdownTimer Time
     | KeyDown KeyCode
     | PhoenixMsg (Phoenix.Socket.Msg Msg)
-    | SendScore Encode.Value
-    | SendScoreError Encode.Value
-    | SendScoreRequest
+    | SaveScore Encode.Value
+    | SaveScoreError Encode.Value
+    | SaveScoreRequest
     | SetNewItemPositionX Int
     | TimeUpdate Time
 ```
@@ -370,30 +393,30 @@ back to a state with no errors, and we're one step closer to connecting our
 front-end with our back-end.
 
 ```elm
-SendScore value ->
+SaveScore value ->
     ( model, Cmd.none )
 
-SendScoreError message ->
+SaveScoreError message ->
     Debug.log "Error sending score over socket."
         ( model, Cmd.none )
 ```
 
 ## Executing the Push
 
-In our `SendScore` case, we're going to connect everything together by sending
+In our `SaveScore` case, we're going to connect everything together by sending
 data over the `phxSocket`.
 
 ```elm
-SendScoreRequest ->
+SaveScoreRequest ->
     let
         payload =
             Encode.object [ ( "player_score", Encode.int model.playerScore ) ]
 
         phxPush =
-            Phoenix.Push.init "shout" "score:lobby"
+            Phoenix.Push.init "save_score" "score:platformer"
                 |> Phoenix.Push.withPayload payload
-                |> Phoenix.Push.onOk SendScore
-                |> Phoenix.Push.onError SendScoreError
+                |> Phoenix.Push.onOk SaveScore
+                |> Phoenix.Push.onError SaveScoreError
 
         ( phxSocket, phxCmd ) =
             Phoenix.Socket.push phxPush model.phxSocket
@@ -403,16 +426,16 @@ SendScoreRequest ->
         )
 ```
 
-## Joining the Channel
+## Joining the Score Channel
 
-Now we can join the `"score:lobby"` channel and broadcast the player's score.
-Below our `initialSocket` function, let's create a new function called
+Now we can join the `"score:platformer"` channel and broadcast the player's
+score. Below our `initialSocket` function, let's create a new function called
 `initialChannel`.
 
 ```elm
 initialChannel : Phoenix.Channel.Channel msg
 initialChannel =
-    Phoenix.Channel.init "score:lobby"
+    Phoenix.Channel.init "score:platformer"
 ```
 
 We're going to adjust the `initialSocket` function so that it returns a tuple.
@@ -432,7 +455,7 @@ initialSocket =
     in
         Phoenix.Socket.init devSocketServer
             |> Phoenix.Socket.withDebug
-            |> Phoenix.Socket.on "shout" "score:lobby" SendScore
+            |> Phoenix.Socket.on "save_score" "score:platformer" SaveScore
             |> Phoenix.Socket.join initialChannel
 ```
 
@@ -457,13 +480,14 @@ Now, we can set the `phxSocket` field in our `initialModel` to
 ```elm
 initialModel : Model
 initialModel =
-    { gameState = StartScreen
+    { characterDirection = Right
     , characterPositionX = 50
     , characterPositionY = 300
-    , phxSocket = initialSocketJoin
-    , itemPositionX = 150
+    , gameState = StartScreen
+    , itemPositionX = 500
     , itemPositionY = 300
     , itemsCollected = 0
+    , phxSocket = initialSocketJoin
     , playerScore = 0
     , timeRemaining = 10
     }
@@ -482,13 +506,12 @@ This is a lot to process, but let's keep moving for now so we can get things
 working, and we'll work towards a deeper understanding as we gain more
 familiarity with the code we're working with.
 
-## Triggering SendScore
+## Triggering SaveScore
 
-Finally, we just need to trigger the `SendScoreRequest` message whenever we
-want to send our score over the socket. We'll find a good time to continuously
-update our score, but for now we want to set up a manual trigger so we can test
-things out. We'll set it up so that we can click a button, and then check the
-DevTools console to view the `payload` that's being sent over the socket.
+Finally, we just need to trigger the `SaveScoreRequest` message whenever we
+want to send our score over the socket. We'll set it up so that we can click a
+button, and then check the DevTools console to view the `payload` that's being
+sent over the socket.
 
 At the top of our file, let's import the `onClick` functionality from
 `Html.Events`. While we're here, we also want to make a quick change to the
@@ -501,26 +524,26 @@ import Html.Events exposing (onClick)
 
 ## Adding a Button to the View
 
-Now, we can create a new `viewSendScoreButton` function and add it to our main
-`view` to trigger the `SendScoreRequest` message.
+Now, we can create a new `viewSaveScoreButton` function and add it to our main
+`view` to trigger the `SaveScoreRequest` message.
 
 ```elm
 view : Model -> Html Msg
 view model =
     div []
         [ viewGame model
-        , viewSendScoreButton
+        , viewSaveScoreButton
         ]
 
 
-viewSendScoreButton : Html Msg
-viewSendScoreButton =
+viewSaveScoreButton : Html Msg
+viewSaveScoreButton =
     div []
         [ button
-            [ onClick SendScoreRequest
+            [ onClick SaveScoreRequest
             , class "btn btn-primary"
             ]
-            [ text "Send Score" ]
+            [ text "Save Score" ]
         ]
 ```
 
@@ -529,18 +552,18 @@ viewSendScoreButton =
 We've got everything configured, and we should be able to test out our working
 socket payload. Start the Phoenix server with `mix phx.server` and load the
 game in the browser. Collect a few coins to increment the player's score, and
-then click the new "Send Score" button.
+then click the new "Save Score" button.
 
 The DevTools console will show an initial message when the page loads, and this
-let's us know that our `"score:lobby"` topic was initialized with an `"ok"`
+let's us know that our `"score:platformer"` topic was initialized with an `"ok"`
 status.
 
 ```shell
-Phoenix message: { event = "phx_reply", topic = "score:lobby", payload = { status = "ok", response = {} }, ref = Just 0 }
+Phoenix message: { event = "phx_reply", topic = "score:platformer", payload = { status = "ok", response = {} }, ref = Just 0 }
 ```
 
 We also see a message triggered in the DevTools console when we click the score
-text. It shows that we triggered a `"shout"` event, which means we can
+text. It shows that we triggered a `"save_score"` event, which means we can
 broadcast the data over the socket. This is the behavior we want, because we'll
 want all the player scores to be visible and update in real-time on the Phoenix
 page where we list out all the players. In this example, you can see that we
@@ -548,10 +571,10 @@ collected three coins for a score of `300`, and that is reflected in the
 payload with `{ score = 300 }`.
 
 ```shell
-Phoenix message: { event = "shout", topic = "score:lobby", payload = { player_score = 300 }, ref = Nothing }
+Phoenix message: { event = "save_score", topic = "score:platformer", payload = { player_score = 300 }, ref = Nothing }
 ```
 
-![Working Socket Payload](images/syncing_score_data/working_socket_payload.png)
+![Working Socket Payload](images/phoenix_channel_setup/working_socket_payload.png)
 
 ## Summary
 
