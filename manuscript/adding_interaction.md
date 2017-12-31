@@ -358,7 +358,7 @@ viewCharacter model =
 And with that change, we should be able to see our character changing direction
 successfully in the browser:
 
-![Working Direction Change](images/adding_interaction/working_direction_change.gif)
+![Working Direction Change](images/adding_interaction/working_direction_change.png)
 
 ## Collecting Items
 
