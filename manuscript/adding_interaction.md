@@ -556,19 +556,7 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        NoOp ->
-            ( model, Cmd.none )
-
-        KeyDown keyCode ->
-            case keyCode of
-                37 ->
-                    ( { model | characterPositionX = model.characterPositionX - 15 }, Cmd.none )
-
-                39 ->
-                    ( { model | characterPositionX = model.characterPositionX + 15 }, Cmd.none )
-
-                _ ->
-                    ( model, Cmd.none )
+        -- ...
 
         TimeUpdate time ->
             ( model, Cmd.none )
@@ -650,26 +638,14 @@ types and full `update` function:
 type Msg
     = NoOp
     | KeyDown KeyCode
-    | TimeUpdate Time
     | SetNewItemPositionX Int
+    | TimeUpdate Time
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        NoOp ->
-            ( model, Cmd.none )
-
-        KeyDown keyCode ->
-            case keyCode of
-                37 ->
-                    ( { model | characterPositionX = model.characterPositionX - 15 }, Cmd.none )
-
-                39 ->
-                    ( { model | characterPositionX = model.characterPositionX + 15 }, Cmd.none )
-
-                _ ->
-                    ( model, Cmd.none )
+        -- ...
 
         TimeUpdate time ->
             if characterFoundItem model then
