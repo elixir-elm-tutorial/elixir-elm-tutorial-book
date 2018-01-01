@@ -101,7 +101,7 @@ defmodule PlatformWeb.ScoreChannel do
   end
 
   def handle_in("save_score", payload, socket) do
-    broadcast socket, "save_score", payload
+    broadcast(socket, "save_score", payload)
     {:noreply, socket}
   end
 end
