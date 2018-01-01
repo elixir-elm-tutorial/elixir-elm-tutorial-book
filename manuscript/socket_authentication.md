@@ -281,5 +281,6 @@ to each other. We're now able to identify the current users for our channel
 features. That means we could coneivably have dozens of users all playing a
 game at the same time, and the scores would all be tracked in real-time.
 
-In the next chapter, we're going to put some finishing touches on our platform
-application.
+In the next chapter, we'll go over some of the features that didn't make it
+into the v1 release for this book. Readers are encouraged to tinker with the
+foundation we've set, and there's plenty of room to create new features!
