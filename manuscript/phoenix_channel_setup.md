@@ -8,7 +8,7 @@ games back to a player's account in real-time.
 
 ## Channels
 
-In a nutshell, Phoenix channels give us a way to send and receive messages. A
+Essentially, Phoenix channels give us a way to send and receive messages. A
 chatroom application is a common example of how channels work. When users enter
 the chatroom, they "join" the channel. Then, we can "broadcast" the chat
 messages to all users that have joined the channel.
