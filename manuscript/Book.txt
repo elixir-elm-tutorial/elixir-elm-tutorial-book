@@ -19,7 +19,6 @@ handling_game_states.md
 phoenix_channel_setup.md
 syncing_score_data.md
 socket_authentication.md
-finishing_touches.md
 whats_next.md
 outline.md
 appendix.md
