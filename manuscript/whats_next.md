@@ -66,9 +66,14 @@ pursuing it further:
 The book's content currently covers the creation of a single minigame example,
 and the process of adding it to the platform could conceivably be much easier.
 
-If the process of contributing a game were straightforward, then it could be
-great to encourage all readers of this book to share their own creations and
-create a small library of games to try out.
+The Platformer game example could also be improved by extracting common game
+elements into a separate module. A global Game module could mean having a
+common game interface with player information, game information, and scores
+displayed, and the game itself could be imported within that structure.
+
+Additionally, if the process of contributing a game were straightforward, then
+it would be amazing to encourage all readers of this book to share their own
+creations and create a small library of games to try out.
 
 ## Chat
 
