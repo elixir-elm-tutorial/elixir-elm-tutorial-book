@@ -1,4 +1,4 @@
-# Phoenix Channels (Cont)
+# Syncing Score Data
 
 *This chapter is a work in progress!*
 
