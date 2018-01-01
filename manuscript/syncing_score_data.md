@@ -160,7 +160,227 @@ Phoenix message: { event = "save_score", topic = "score:platformer", payload = {
 ## Viewing Gameplay Records
 
 At this point, we should have a working button to save our player scores to the
-database. But we don't have any way of viewing them yet, and we're currently
-hard-coding the `player_id` value.
+database. But we don't have any way of viewing them yet. Let's add a list of
+all the existing `Gameplay` records below the game.
 
-...
+In our `Platformer.elm` file, we'll start out by adding a new type alias for
+our `Gameplay`s:
+
+```elm
+type alias Gameplay =
+    { gameId : Int
+    , playerId : Int
+    , playerScore : Int
+    }
+```
+
+Then, we can update our `Model` and `initialModel` to start out with an empty
+list of `Gameplay` records:
+
+```elm
+type alias Model =
+    { characterDirection : Direction
+    , characterPositionX : Int
+    , characterPositionY : Int
+    , gameplays : List Gameplay
+    , gameState : GameState
+    , itemPositionX : Int
+    , itemPositionY : Int
+    , itemsCollected : Int
+    , phxSocket : Phoenix.Socket.Socket Msg
+    , playerScore : Int
+    , timeRemaining : Int
+    }
+
+
+initialModel : Model
+initialModel =
+    { characterDirection = Right
+    , characterPositionX = 50
+    , characterPositionY = 300
+    , gameplays = []
+    , gameState = StartScreen
+    , itemPositionX = 500
+    , itemPositionY = 300
+    , itemsCollected = 0
+    , phxSocket = initialSocketJoin
+    , playerScore = 0
+    , timeRemaining = 10
+    }
+```
+
+Now, we can reuse some of the view functions we created in the `Main.elm` file
+to view the `Gameplay` records being shared over the socket.
+
+We'll start out by updating the `import` statements at the top of the file for
+the `Html` modules. Keep in mind that we have to be pretty specific with the
+way we refer to our `Html` functions, because we did a global import for `Svg`
+that could cause collisions. Update the imports at the top of the file with the
+following:
+
+```elm
+import Html exposing (Html, button, div, li, span, strong, ul)
+import Html.Attributes
+```
+
+We can now add our view functions below the `viewSaveScoreButton` we added
+previously. We'll start with a `viewGameplaysIndex` function that allows us
+to render our `model.gameplays` if any exist:
+
+```elm
+viewGameplaysIndex : Model -> Html Msg
+viewGameplaysIndex model =
+    if List.isEmpty model.gameplays then
+        div [] []
+    else
+        div [ Html.Attributes.class "players-index" ]
+            [ viewGameplaysList model.gameplays
+            ]
+```
+
+Next, we'll add a `viewGameplaysList` function that renders the panel component
+we got from Bootstrap. And we'll use this to display our list of player scores:
+
+```elm
+viewGameplaysList : List Gameplay -> Html Msg
+viewGameplaysList gameplays =
+    div [ Html.Attributes.class "players-list panel panel-info" ]
+        [ div [ Html.Attributes.class "panel-heading" ] [ text "Player Scores" ]
+        , ul [ Html.Attributes.class "list-group" ] (List.map viewGameplayItem gameplays)
+        ]
+```
+
+Then, we can add our inidividual gameplays as list items with a
+`viewGameplayItem` function. Each gameplay record will be displayed with the
+`playerId` field and the corresponding `playerScore`:
+
+```elm
+viewGameplayItem : Gameplay -> Html Msg
+viewGameplayItem gameplay =
+    li [ Html.Attributes.class "player-item list-group-item" ]
+        [ strong [] [ text (toString gameplay.playerId) ]
+        , span [ Html.Attributes.class "badge" ] [ text (toString gameplay.playerScore) ]
+        ]
+```
+
+Finally, we can add this to our main `view` function:
+
+```elm
+view : Model -> Html Msg
+view model =
+    div []
+        [ viewGame model
+        , viewSaveScoreButton
+        , viewGameplaysIndex model
+        ]
+```
+
+Our view is all set, but we won't see anything rendering in the browser yet,
+because we still need to decode the gameplays into our Elm application. In
+other words, we're successfully sending our gameplays over the socket when we
+click the "Save Score" button, but we're not receiving score changes yet.
+
+## Receiving and Rendering Score Changes
+
+To display gameplays, we'll start by adding a new case to our `update`
+function. First, we'll add the `ReceiveScoreChanges` type to our update
+messages:
+
+```elm
+type Msg
+    = NoOp
+    | CountdownTimer Time
+    | KeyDown KeyCode
+    | PhoenixMsg (Phoenix.Socket.Msg Msg)
+    | ReceiveScoreChanges Encode.Value
+    | SaveScore Encode.Value
+    | SaveScoreError Encode.Value
+    | SaveScoreRequest
+    | SetNewItemPositionX Int
+    | TimeUpdate Time
+```
+
+We can now add the following case to decode score changes and append them to
+the model. When a gameplay is successfully decoded (with an `Ok` response),
+we're taking that value and using the cons operator `::` to add it to the list
+of gameplays stored in `model.gameplays`.
+
+```elm
+ReceiveScoreChanges raw ->
+    case Decode.decodeValue gameplayDecoder raw of
+        Ok scoreChange ->
+            ( { model | gameplays = scoreChange :: model.gameplays }, Cmd.none )
+
+        Err message ->
+            Debug.log "Error receiving score changes."
+                ( model, Cmd.none )
+```
+
+Note that this will require us to add another `import` at the top of our file
+to go along with our JSON encoder:
+
+```elm
+import Json.Decode as Decode
+import Json.Encode as Encode
+```
+
+Just like we did with our decoders in the `Main.elm` file, we'll add a decoder
+for our `Gameplay` type:
+
+```elm
+gameplayDecoder : Decode.Decoder Gameplay
+gameplayDecoder =
+    Decode.map3 Gameplay
+        (Decode.field "game_id" Decode.int)
+        (Decode.field "player_id" Decode.int)
+        (Decode.field "player_score" Decode.int)
+```
+
+We were previously able to construct a payload that we were sending over the
+socket with our score data using `Json.Encode`. Now, we're also able to decode
+data that comes from the socket and add it to our Elm application.
+
+## Displaying the Results
+
+We now have everything we need to display the scores that are being saved. To
+get this working, let's update our `initialSocket` function with the
+`ReceiveScoreChanges` message so that we can start receiving score changes when
+the socket is initialized:
+
+```elm
+initialSocket : ( Phoenix.Socket.Socket Msg, Cmd (Phoenix.Socket.Msg Msg) )
+initialSocket =
+    let
+        devSocketServer =
+            "ws://localhost:4000/socket/websocket"
+    in
+        Phoenix.Socket.init devSocketServer
+            |> Phoenix.Socket.withDebug
+            |> Phoenix.Socket.on "save_score" "score:platformer" SaveScore
+            |> Phoenix.Socket.on "save_score" "score:platformer" ReceiveScoreChanges
+            |> Phoenix.Socket.join initialChannel
+```
+
+We should now be able to reload the game in the browser and try things out.
+We'll move the character around to collect a few coins, and then click the
+"Save Score" button to send the data over the channel. Not only will we be
+creating database records for our gameplays, we're also broadcasting the data
+over the socket and displaying it at the bottom of the page!
+
+![Successfully Rendering Channel Scores](images/syncing_score_data/successfully_rendering_channel_scores.png)
+
+In the screenshot above, we can see that the player was able to successfully
+collect ten coins, click the "Save Score" button, and then see the score
+rendered on the page with the `playerId` and `playerScore`.
+
+## Summary
+
+In the last two chapters, we've managed to successfully configure our Phoenix
+channel, save records to the database, send data over the socket, and render
+the results.
+
+But one of the key features for our games will be to track scores for
+individual players. Remember that we hard-coded the `player_id` value in our
+`ScoreChannel`, so we're storing all of our `Gameplay` records for a single
+player. In the next chapter, we'll tackle socket authentication, which will
+allow us to track scores for different players as they join the channel.
