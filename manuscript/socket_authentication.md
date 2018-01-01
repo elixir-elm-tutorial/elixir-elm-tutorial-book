@@ -237,3 +237,49 @@ initialSocket flags =
 We're done with the updates to our Elm application! Now, when players connect
 to the socket, the channel will be able to identify the current user by their
 token.
+
+## Finishing the Score Channel
+
+Let's go back to our `score_channel.ex` file in the `lib/platform_web/channels`
+folder, and we'll remove the hard-coded value for our `player_id`.
+
+Update the `handle_in/3` function with the following, which takes the
+`player_id` value from `socket.assigns.player_id`:
+
+```elixir
+def handle_in("save_score", %{"player_score" => player_score} = payload, socket) do
+  payload = %{
+    player_score: player_score,
+    game_id: socket.assigns.game_id,
+    player_id: socket.assigns.player_id
+  }
+
+  Platform.Products.create_gameplay(payload)
+  broadcast(socket, "save_score", payload)
+  {:noreply, socket}
+end
+```
+
+This means we are now successfully constructing the `payload` with all the data
+we need for our scores! We're tracking the `player_score` from our game, and
+the `player_id` and `game_id` are being assigned to the socket.
+
+We can finally reload our game in the browser and test things out. As a
+demonstration, we can open two separate incognito windows in Google Chrome, and
+authenticate with a different user in each window. In the screenshot below, we
+see that `chrismccord` is logged in on the left, and `evancz` is logged in on
+the right. Each player collects a few coins and saves their score, and the
+scores are displayed on each other's screens in real-time!
+
+![Multiplayer Score Syncing](images/socket_authentication/multiplayer_score_syncing.png)
+
+## Summary
+
+We've finally managed to accomplish our goal of syncing our player scores over
+Phoenix channels. Our Phoenix back-end and Elm front-end are now able to talk
+to each other. We're now able to identify the current users for our channel
+features. That means we could coneivably have dozens of users all playing a
+game at the same time, and the scores would all be tracked in real-time.
+
+In the next chapter, we're going to put some finishing touches on our platform
+application.
