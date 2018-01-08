@@ -284,7 +284,7 @@ end
 And we're going to update it with our new players resource:
 
 ```elixir
-scope "/", Platform.Web do
+scope "/", PlatformWeb do
   pipe_through :browser # Use the default browser stack
 
   get "/", PageController, :index
