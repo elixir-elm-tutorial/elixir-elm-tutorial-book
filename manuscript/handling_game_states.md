@@ -423,15 +423,21 @@ viewGameOverScreenText =
         ]
 ```
 
-Now we can finish up our `viewGameState` function. We're only updating the
-`GameOver` case, but the full code is posted here for a review of what we're
-selectively displaying for each state.
+Now we can finish up our `viewGameState` function by updating the
+`GameOver` case:
 
 ```elm
 viewGameState : Model -> List (Svg Msg)
 viewGameState model =
     case model.gameState of
-        -- ...
+        StartScreen ->
+            -- ...
+
+        Playing ->
+            -- ...
+
+        Success ->
+            -- ...
 
         GameOver ->
             [ viewGameWindow
