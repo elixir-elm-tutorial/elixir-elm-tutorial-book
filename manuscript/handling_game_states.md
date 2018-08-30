@@ -372,7 +372,7 @@ viewSuccessScreenText =
         ]
 ```
 
-And now we can update the space bar case in our `update` function` so that
+And now we can update the space bar case in our `update` function so that
 users can restart the game from the `Success` state. In fact, we can use this
 opportunity to reset the values in the model to their initial values when we
 restart the game. If the user isn't currently in the `Playing` state, they
@@ -423,15 +423,21 @@ viewGameOverScreenText =
         ]
 ```
 
-Now we can finish up our `viewGameState` function. We're only updating the
-`GameOver` case, but the full code is posted here for a review of what we're
-selectively displaying for each state.
+Now we can finish up our `viewGameState` function by updating the
+`GameOver` case:
 
 ```elm
 viewGameState : Model -> List (Svg Msg)
 viewGameState model =
     case model.gameState of
-        -- ...
+        StartScreen ->
+            -- ...
+
+        Playing ->
+            -- ...
+
+        Success ->
+            -- ...
 
         GameOver ->
             [ viewGameWindow

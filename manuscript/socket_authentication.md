@@ -5,7 +5,7 @@ now up and running. We're able to send data over the socket, but we currently
 don't have a way to differentiate between players.
 
 In this chapter, we're going to make some key changes to the way our Elixir and
-Elm applications are configured. It will be worth it at the end, becuase we'll
+Elm applications are configured. It will be worth it at the end, because we'll
 be able to have multiple players play a game at the same time, and they'll all
 be able to see score changes getting broadcast over the socket to each other!
 

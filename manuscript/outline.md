@@ -104,9 +104,21 @@ attempt to break down the topics and concepts covered within each chapter.
   - Rendering different elements depending on current game states.
   - Creating start, success, and game over states.
 
-- **Syncing Score Data**
+- **Phoenix Channel Setup**
   - Getting started with Phoenix channels.
+  - Creating and joining a channel.
   - Configuring elm-phoenix-socket.
+  - Sending data over the socket.
+
+- **Syncing Score Data**
+  - Sending and receiving data over the socket.
+  - Saving data from channels to the database.
+  - Displaying the results on the game page.
+
+- **Socket Authentication**
+  - Working with Phoenix user tokens for socket authentication.
+  - Using Elm flags to initialize the application with data from Phoenix.
+  - Enabling multiple players to track changes over the socket.
 
 - **What's Next?**
   - Additional features and game ideas that didn't make it into the v1.0 release.
