@@ -372,7 +372,7 @@ viewSuccessScreenText =
         ]
 ```
 
-And now we can update the space bar case in our `update` function` so that
+And now we can update the space bar case in our `update` function so that
 users can restart the game from the `Success` state. In fact, we can use this
 opportunity to reset the values in the model to their initial values when we
 restart the game. If the user isn't currently in the `Playing` state, they
