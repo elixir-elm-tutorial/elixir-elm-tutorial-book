@@ -365,7 +365,7 @@ initialModel =
     , itemPositionY = 300
     , itemsCollected = 0
     , playerScore = 0
-    , timeRemaining = 0
+    , timeRemaining = 10
     }
 ```
 
