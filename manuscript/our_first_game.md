@@ -337,7 +337,7 @@ was displayed on the default start page when we first started our Phoenix
 server). Let's move our `character.gif` file inside that folder. This will make
 our character image available at `/images/character.gif`.
 
-At the bottom of our `Game.elm` file, we can now add to the view to render our
+At the bottom of our `Platformer.elm` file, we can now add to the view to render our
 new game character:
 
 ```elm
