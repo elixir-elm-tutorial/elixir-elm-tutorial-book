@@ -81,10 +81,10 @@ building scalable and maintainable applications.
   across multiple cores so our programs can outperform our competitors. As an
   example, compare the latest
   [13-inch Macbook Pro models](http://www.apple.com/shop/buy-mac/macbook-pro/13-inch)
-  with dual-core processors with
+  with 2-core processors with
   [15-inch Macbook Pro models](http://www.apple.com/shop/buy-mac/macbook-pro/15-inch)
-  with quad-core processors. Then, see how many cores you'll have access to
-  when you deploy your application to a
+  with 6-core processors. Then, see how many cores (or "virtual CPUs") you'll
+  have access to when you deploy your application to a
   [multi-core web server](https://www.digitalocean.com/pricing/#droplet).
 - The Phoenix web framework provides us with the ability to create new projects
   quickly. For web developers that have worked with Ruby on Rails, the concepts
