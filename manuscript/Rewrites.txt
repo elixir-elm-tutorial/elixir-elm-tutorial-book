@@ -1,4 +1,4 @@
-- [ ] introduction.md
+- [x] introduction.md
 - [ ] diving_in.md
 - [ ] elixir_introduction.md
 - [ ] phoenix_testing_and_deployment.md
@@ -21,5 +21,5 @@
 - [ ] socket_authentication.md
 - [ ] whats_next.md
 - [ ] outline.md
-- [ ] appendix.md
+- [x] appendix.md
 - [ ] contact.md
