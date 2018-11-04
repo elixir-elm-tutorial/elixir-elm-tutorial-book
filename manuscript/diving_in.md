@@ -125,11 +125,12 @@ $ mix phx.server
 
 This will start a server and allow us to visit
 [`http://localhost:4000`](http://localhost:4000) in a browser to see our new
-application running. Here is what the output will look like:
+application running. Here is what the output will look like (ignoring the
+additional output from Webpack):
 
 ```shell
 $ mix phx.server
-[info] Running PlatformWeb.Endpoint with Cowboy using http://localhost:4000
+[info] Running PlatformWeb.Endpoint with cowboy using http://localhost:4000
 ```
 
 ![Phoenix Default Start Page](images/diving_in/phoenix_start.png)
@@ -149,7 +150,7 @@ look like as you stop the running web server:
 
 ```shell
 $ mix phx.server
-[info] Running Platform.Endpoint with Cowboy using http://localhost:4000
+[info] Running Platform.Endpoint with cowboy using http://localhost:4000
 [info] Compiled 6 files into 2 files, copied 3 in 2.1 sec
 [info] GET /
 [debug] Processing by PlatformWeb.PageController.index/2
