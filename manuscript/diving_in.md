@@ -254,7 +254,7 @@ defmodule PlatformWeb.Router do
   end
 
   scope "/", PlatformWeb do
-    pipe_through :browser # Use the default browser stack
+    pipe_through :browser
 
     get "/", PageController, :index
   end
@@ -276,7 +276,7 @@ of code is where we'll focus for now:
 
 ```elixir
 scope "/", PlatformWeb do
-  pipe_through :browser # Use the default browser stack
+  pipe_through :browser
 
   get "/", PageController, :index
 end
