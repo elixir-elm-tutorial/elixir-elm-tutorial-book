@@ -373,27 +373,21 @@ Let's open the `lib/platform_web/templates/page/index.html.eex` file and take a
 look (note that some of the HTML was trimmed for the sake of readability):
 
 ```embedded_elixir
-<div class="jumbotron">
-  <h2><%= gettext "Welcome to %{name}!", name: "Phoenix" %></h2>
-  <p class="lead">A productive web framework that<br />does not compromise speed
-  and maintainability.</p>
-</div>
+<section class="phx-hero">
+  <h1><%= gettext "Welcome to %{name}!", name: "Phoenix" %></h1>
+  <p>A productive web framework that<br/>does not compromise speed and maintainability.</p>
+</section>
 
-<div class="row marketing">
-  <div class="col-lg-6">
-    <h4>Resources</h4>
-    <ul>
-      <!-- ... -->
-    </ul>
-  </div>
-
-  <div class="col-lg-6">
-    <h4>Help</h4>
-    <ul>
-      <!-- ... -->
-    </ul>
-  </div>
-</div>
+<section class="row">
+  <article class="column">
+    <h2>Resources</h2>
+    <!-- ... -->
+  </article>
+  <article class="column">
+    <h2>Help</h2>
+    <!-- ... -->
+  </article>
+</section>
 ```
 
 This should look familiar in that it's mostly comprised of standard HTML code.
