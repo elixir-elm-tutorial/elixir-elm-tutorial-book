@@ -121,7 +121,7 @@ attempt to break down the topics and concepts covered within each chapter.
   - Enabling multiple players to track changes over the socket.
 
 - **What's Next?**
-  - Additional features and game ideas that didn't make it into the v1.0 release.
+  - Additional features and ideas that didn't make it into the book.
   - Planning for future versions of this book.
 
 - **Appendix**

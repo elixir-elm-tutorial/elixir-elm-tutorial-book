@@ -19,7 +19,7 @@
 - [ ] phoenix_channel_setup.md
 - [ ] syncing_score_data.md
 - [ ] socket_authentication.md
-- [ ] whats_next.md
-- [ ] outline.md
+- [x] whats_next.md
+- [x] outline.md
 - [x] appendix.md
-- [ ] contact.md
+- [x] contact.md
