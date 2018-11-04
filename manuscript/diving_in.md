@@ -17,7 +17,7 @@ Phoenix, and PostgreSQL, **check out the [Appendix](#appendix) in the back
 of the book for quick installation instructions**.
 
 Also note that we're working with the _latest_ version of Phoenix in this book.
-Make sure you have **Phoenix 1.3** installed, or the commands and files will
+Make sure you have **Phoenix 1.4** installed, or the commands and files will
 all look different as you work through the material.
 
 ## Creating the Platform
