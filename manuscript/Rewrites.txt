@@ -1,5 +1,5 @@
 - [x] introduction.md
-- [ ] diving_in.md
+- [x] diving_in.md
 - [ ] elixir_introduction.md
 - [ ] phoenix_testing_and_deployment.md
 - [ ] phoenix_sign_up.md
