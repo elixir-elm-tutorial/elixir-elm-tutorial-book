@@ -350,7 +350,7 @@ $ mix test
 ....
 
 Finished in 0.03 seconds
-4 tests, 0 failures
+1 doctest, 3 tests, 0 failures
 
 Randomized with seed 867380
 ```
@@ -389,7 +389,9 @@ iex(2)> Temporary.add(1.5, 1.5)
 ```
 
 Everything works as expected in the tests, and now we have an interactive way
-of checking our code too.
+of checking our code too. Feel free to tinker around with writing some Elixir
+code in the interactive environment, and then press `Control + C` twice on your
+keyboard when you're ready to exit.
 
 ## The Pipe Operator
 
