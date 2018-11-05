@@ -399,8 +399,8 @@ replace it with the following:
 
 ```html
 <div class="container">
-  <a class="btn btn-success" href="/players/new">Create Player Account</a>
-  <a class="btn btn-info" href="/players">List All Players</a>
+  <a class="button" href="/players/new">Create Player Account</a>
+  <a class="button" href="/players">List All Players</a>
 </div>
 ```
 
@@ -438,8 +438,8 @@ function, and we're passing it the string `"Hello World!"`:
 
 ```embedded_elixir
 <div class="container">
-  <a class="btn btn-success" href="/players/new">Create Player Account</a>
-  <a class="btn btn-info" href="/players">List All Players</a>
+  <a class="button" href="/players/new">Create Player Account</a>
+  <a class="button" href="/players">List All Players</a>
 
   <%= IO.inspect("Hello World!") %>
 </div>
@@ -453,13 +453,13 @@ We can do something similar to embed a link on our page. We won't need to
 explicitly mention the module (`Phoenix.HTML.Link`), because we already have
 access to some helpful Phoenix functions in this context. We can recreate
 our existing HTML links with the following code by passing the link text, the
-location, and some extra classes for Bootstrap (which comes preloaded with
-Phoenix by default) to make it look nice:
+location, and a `button` class to make it look nice (Phoenix comes with a small
+CSS framework preinstalled):
 
 ```embedded_elixir
 <div class="container">
-  <%= link("Create Player Account", to: "/players/new", class: "btn btn-success") %>
-  <%= link("List All Players", to: "/players", class: "btn btn-info") %>
+  <%= link("Create Player Account", to: "/players/new", class: "button") %>
+  <%= link("List All Players", to: "/players", class: "button") %>
 </div>
 ```
 
