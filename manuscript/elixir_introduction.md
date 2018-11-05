@@ -587,7 +587,9 @@ def add(0, y), do: y
 def add(x, y), do: x + y
 ```
 
-And we can do the same thing when the second argument is `0`:
+On the first line, we're basically just ignoring the `0` argument and returning
+the value of `y` for the result. Next, we can do the same thing when the second
+argument is `0`:
 
 ```elixir
 def add(0, y), do: y
@@ -595,7 +597,9 @@ def add(x, 0), do: x
 def add(x, y), do: x + y
 ```
 
-We can even add another clause that "matches" for when both arguments are `0`s:
+On the second line, we ignore the `0` argument again and just return the value
+of `x` for the result. Next, we can even add another clause that "matches" for
+when both arguments are `0`s:
 
 ```elixir
 def add(0, 0), do: 0
@@ -644,7 +648,7 @@ they're working with the right values.
 
 Our `add/2` function is only designed to work with numbers. They can be integers
 or floating point numbers, but we don't want to add strings together (string
-concetenation would actually require the use of the `<>` operator).
+concatenation would actually require the use of the `<>` operator).
 
 We can use the `when` keyword along with the `is_number/1` function we saw
 previously to make sure that our function is working with numerical values.
@@ -687,7 +691,6 @@ more Elixir experience before continuing:
 
 - [Elixir Getting Started Guide](http://elixir-lang.org/getting-started/introduction.html)
 - [Elixir School](https://elixirschool.com/en/lessons/basics/basics)
-- [Try Elixir Course](https://www.codeschool.com/courses/try-elixir)
 
 Feel free to delete the `temporary` project, and in the next chapter we'll
 continue working towards building our platform application.
