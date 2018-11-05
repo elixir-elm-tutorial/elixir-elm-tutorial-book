@@ -135,7 +135,7 @@ defmodule Temporary do
 
   ## Examples
 
-      iex> Temporary.hello
+      iex> Temporary.hello()
       :world
 
   """
@@ -198,7 +198,7 @@ defmodule Temporary do
 
   ## Examples
 
-      iex> Temporary.hello
+      iex> Temporary.hello()
       :world
 
   """
@@ -208,7 +208,7 @@ defmodule Temporary do
 end
 ```
 
-This tells us that we should be able to run `Temporary.hello` and it should
+This tells us that we should be able to run `Temporary.hello()` and it should
 return `:world`. This is where things get interesting, so let's run `mix test`
 again:
 
@@ -218,22 +218,14 @@ $ mix test
 
 Since we no longer have our `hello` function, it's not surprising that our
 tests failed. But we actually have _two_ test failures. One of them is from the
-test file located in the `test` folder, but the first failure is actually
+test file located in the `test` folder, but the other failure is actually
 coming from the example in our documentation (which is called a **doctest**).
 
 ```shell
 $ mix test
 Compiling 1 file (.ex)
 
-  1) test doc at Temporary.add/2 (1) (TemporaryTest)
-     test/temporary_test.exs:3
-     Doctest failed: got UndefinedFunctionError with message "function Temporary.hello/0 is undefined or private"
-     code: Temporary.hello
-     stacktrace:
-       (temporary) Temporary.hello()
-       (for doctest at) lib/temporary.ex:11: (test)
-
-  2) test greets the world (TemporaryTest)
+  1) test greets the world (TemporaryTest)
      test/temporary_test.exs:5
      ** (UndefinedFunctionError) function Temporary.hello/0 is undefined or private
      code: assert Temporary.hello() == :world
@@ -241,14 +233,22 @@ Compiling 1 file (.ex)
        (temporary) Temporary.hello()
        test/temporary_test.exs:6: (test)
 
+  2) doctest Temporary.add/2 (1) (TemporaryTest)
+     test/temporary_test.exs:3
+     Doctest failed: got UndefinedFunctionError with message "function Temporary.hello/0 is undefined or private"
+     code: Temporary.hello()
+     stacktrace:
+       (temporary) Temporary.hello()
+       (for doctest at) lib/temporary.ex:11: (test)
+
 Finished in 0.04 seconds
-2 tests, 2 failures
+1 doctest, 1 test, 2 failures
 
 Randomized with seed 520513
 ```
 
-Let's update the documentation so that it shows an example of how to use our
-new `add` function:
+Let's update the documentation so it shows an example of how to use our new
+`add` function:
 
 ```elixir
 defmodule Temporary do
@@ -289,7 +289,7 @@ Compiling 1 file (.ex)
        test/temporary_test.exs:6: (test)
 
 Finished in 0.03 seconds
-2 tests, 1 failure
+1 doctest, 1 test, 1 failure
 
 Randomized with seed 682227
 ```
