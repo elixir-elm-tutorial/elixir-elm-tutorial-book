@@ -437,7 +437,7 @@ example, let's inspect what value is getting passed to `assert` at the end:
 test "the add function returns a number" do
   Temporary.add(1.5, 3.5)
   |> is_number
-  |> IO.inspect
+  |> IO.inspect()
   |> assert
 end
 ```
@@ -446,11 +446,11 @@ We can run `mix test` from the command line to see the results:
 
 ```shell
 $ mix test
-...true
-.
+true
+....
 
 Finished in 0.03 seconds
-4 tests, 0 failures
+1 doctest, 3 tests, 0 failures
 
 Randomized with seed 312071
 ```
@@ -473,7 +473,7 @@ test "the add function returns a number" do
   1.5
   |> Temporary.add(3.5)
   |> is_number
-  |> IO.inspect
+  |> IO.inspect()
   |> assert
 end
 ```
