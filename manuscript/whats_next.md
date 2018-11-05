@@ -2,7 +2,7 @@
 
 The original plan for this book included additional features and more minigame
 ideas. However, the priority shifted to shipping a solid, stable release over
-an exhaustive resource. Rather than having many partially-implemented
+an exhaustive resource. Rather than having many partially implemented
 features, the hope is that this release will be a stable foundational resource.
 
 As you grow your skills and experience, here are some additional features and
