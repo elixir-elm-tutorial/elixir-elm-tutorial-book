@@ -22,6 +22,7 @@ output should look like when we create our project:
 ```shell
 $ mix new temporary
 * creating README.md
+* creating .formatter.exs
 * creating .gitignore
 * creating mix.exs
 * creating config
@@ -63,13 +64,13 @@ application is working as intended.
 ## Elixir Testing
 
 Depending on which programming languages you've worked with in the past, you
-might potentially have a lot of experience writing tests, or perhaps not.
+may have a lot of experience writing tests, or perhaps not.
 
 If you haven't written tests before, the basic idea is that tests give us a way
 to feel confidence that our code is actually working as expected. We write our
 expectations (or "assertions"), and they give us a quick way to check that the
 code we're writing works (and doesn't break other code). We'll delve deeper
-into testing with our Phoenix app, but for now let's just try it out.
+into testing with our Phoenix app later, but for now let's just try it out.
 
 Run the `mix test` command inside the `temporary` folder:
 
@@ -86,7 +87,7 @@ Generated temporary app
 ..
 
 Finished in 0.03 seconds
-2 tests, 0 failures
+1 doctest, 1 test, 0 failures
 
 Randomized with seed 670956
 ```
@@ -100,14 +101,15 @@ helpful because it means we'll catch errors early instead of having to debug our
 app while we're using it.
 
 In fact, if we run the `mix test` command again, we'll see that Elixir doesn't
-need to recompile the code because we haven't made any changes:
+need to recompile the code because we haven't made any changes (note the line
+about compiling files is now missing):
 
 ```shell
 $ mix test
 ..
 
 Finished in 0.03 seconds
-2 tests, 0 failures
+1 doctest, 1 test, 0 failures
 
 Randomized with seed 114557
 ```
