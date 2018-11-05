@@ -161,8 +161,8 @@ web frameworks, then you'll have a head start in being able to grasp the
 content and move smoothly through the book. Something to keep in mind is that
 Elixir and Elm are _functional_ languages. If you're coming from an
 _object-oriented_ background, you may find some of the concepts unfamiliar at
-first, but the initial discomfort will pay off in the long run as you learn to
-solve problems in an elegant functional manner.
+first, but the initial discomfort will pay off over time as you learn to solve
+problems in an elegant functional manner.
 
 ## Summary
 
