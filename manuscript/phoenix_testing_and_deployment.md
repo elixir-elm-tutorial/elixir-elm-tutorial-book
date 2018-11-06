@@ -193,12 +193,14 @@ Buildpack added. Next release on platform will use:
 Run git push heroku master to create a new release using these buildpacks.
 ```
 
-To set up the correct versions we need for our application, create a file
-called `elixir_buildpack.config` in the `platform` folder.
+To set up the correct versions and settings we need for our application, create
+a file called `elixir_buildpack.config` in the `platform` folder. Inside the
+file, add the following contents:
 
 ```config
 erlang_version=20.0
-elixir_version=1.5.2
+elixir_version=1.7.0
+always_rebuild=true
 ```
 
 Since we're using the latest versions of Erlang, Elixir, and Phoenix, these
@@ -291,27 +293,31 @@ explanatory comments:
 
 ```elixir
 config :platform, PlatformWeb.Endpoint,
-  load_from_system_env: true,
+  http: [:inet6, port: System.get_env("PORT") || 4000],
   url: [host: "example.com", port: 80],
   cache_static_manifest: "priv/static/cache_manifest.json"
 ```
 
-Let's make a couple of quick changes so it looks like this (replace the
-YOURAPPNAME with the app name you created on Heroku):
+Let's make a couple of changes so it looks like this (replace
+`YOUR-HEROKU-APP-NAME` with the app name you created on Heroku):
 
 ```elixir
 config :platform, PlatformWeb.Endpoint,
   load_from_system_env: true,
-  url: [host: "YOURAPPNAME.herokuapp.com", port: 80],
+  url: [scheme: "https", host: "YOUR-HEROKU-APP-NAME.herokuapp.com", port: 443],
+  force_ssl: [rewrite_on: [:x_forwarded_proto]],
   cache_static_manifest: "priv/static/cache_manifest.json",
-  secret_key_base: System.get_env("SECRET_KEY_BASE")
+  secret_key_base: Map.fetch!(System.get_env(), "SECRET_KEY_BASE")
 ```
 
-This is how Heroku knows to use the `SECRET_KEY_BASE` environment variable in
-the production environment. Below that, we also want to add a new block of code
-to configure our database:
+Note that we're loading the application with settings from the production
+Heroku environment. We're also enabling `https` and setting the host to our
+Heroku application name. Lastly, this is how Heroku knows to use the
+`SECRET_KEY_BASE` environment variable in the production environment. Below
+that code, we also want to add a new block of code to configure our database:
 
 ```elixir
+# Database configuration
 config :platform, Platform.Repo,
   adapter: Ecto.Adapters.Postgres,
   url: System.get_env("DATABASE_URL"),
@@ -341,7 +347,9 @@ Let's run our tests one more time to make sure we didn't break anything:
 $ mix test
 ```
 
-If everything is still passing, let's commit our latest changes:
+If everything is still passing, we'll commit our latest changes. If you ran
+into any issues, check out the Phoenix docs for a similar set of steps for
+[deploying an application to Heroku](https://hexdocs.pm/phoenix/heroku.html).
 
 ```shell
 $ git add .
@@ -362,20 +370,23 @@ $ git push heroku master
 
 We'll see _a lot_ of output when we deploy. If something goes wrong with the
 deployment, it will let us know. Don't worry too much if you run into an issue
-or two, because this process is admittedly tedious. There are Stack Overflow
-sections for both [Heroku](https://stackoverflow.com/questions/tagged/heroku)
+or two, because this process is admittedly tedious. The likelihood of
+forgetting a comma or confusing the application names is high, but it's usually
+just a matter of calmly working through any errors you come across. There are
+Stack Overflow sections for both
+[Heroku](https://stackoverflow.com/questions/tagged/heroku)
 and [Phoenix](https://stackoverflow.com/questions/tagged/phoenix-framework)
-that can be really useful if you run into any errors.
+that can be really useful if you run into issues.
 
 It's worth the trouble once we get to see our app up and running live in
 production!
 
 ## Up and Running
 
-Our app is finally up and running on Heroku! The `Procfile` we created
-automatically handles production database migrations. Inside the `platform`
-folder, let's run the following from the command line to see our application
-running on Heroku:
+Once the deploy finishes, our app is finally up and running on Heroku! The
+`Procfile` we created automatically handles production database migrations.
+Inside the `platform` folder, let's run the following from the command line to
+see our application running on Heroku:
 
 ```shell
 $ heroku open
