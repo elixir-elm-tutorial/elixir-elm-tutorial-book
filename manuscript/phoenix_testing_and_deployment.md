@@ -31,16 +31,17 @@ $ mix test
        test/platform_web/controllers/page_controller_test.exs:6: (test)
 
 Finished in 0.2 seconds
-20 tests, 1 failure
+19 tests, 1 failure
 
 Randomized with seed 905
 ```
 
-The good news is it looks like we already have 20 tests. Some of them came with
+The good news is it looks like we already have 19 tests. Some of them came with
 Phoenix by default when we ran `mix phx.new platform`. Other tests were created
 when we ran the `mix phx.gen.html` generator for our players resource.
 
-The bad news is one of our tests is no longer passing. Let's take a look at the
+The bad news is one of our tests is no longer passing due to the changes we
+made to our home page. Let's take a look at the
 `test/platform_web/controllers/page_controller_test.exs` file:
 
 ```elixir
@@ -55,7 +56,7 @@ end
 ```
 
 It looks like this test is making an HTTP `get` request to the default route
-(`"/"`). If we look at the `http://0.0.0.0:4000/` URL, you can think of that
+(`"/"`). If we look at the `http://localhost:4000/` URL, you can think of that
 trailing slash as the default `/` route.
 
 Our test is expecting the text `"Welcome to Phoenix!"` to appear somewhere on
@@ -88,8 +89,8 @@ We can run our tests again, and we should see all green:
 $ mix test
 ....................
 
-Finished in 0.4 seconds
-20 tests, 0 failures
+Finished in 0.3 seconds
+19 tests, 0 failures
 
 Randomized with seed 187055
 ```
