@@ -1,7 +1,7 @@
 - [x] introduction.md
 - [x] diving_in.md
 - [x] elixir_introduction.md
-- [ ] phoenix_testing_and_deployment.md
+- [x] phoenix_testing_and_deployment.md
 - [ ] phoenix_sign_up.md
 - [ ] phoenix_authentication.md
 - [ ] phoenix_api.md
