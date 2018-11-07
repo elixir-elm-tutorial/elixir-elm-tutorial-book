@@ -307,11 +307,9 @@ config :platform, PlatformWeb.Endpoint,
   secret_key_base: Map.fetch!(System.get_env(), "SECRET_KEY_BASE")
 ```
 
-Note that we're loading the application with settings from the production
-Heroku environment. We're also enabling `https` and setting the host to our
-Heroku application name. Lastly, this is how Heroku knows to use the
-`SECRET_KEY_BASE` environment variable in the production environment. Below
-that code, we also want to add a new block of code to configure our database:
+This allows us to set the `port`, the `host` name, and `secret_key_base`. We're
+also configuring our app to use `https`. Right below that configuration code,
+we also want to add a new block of code to configure our database:
 
 ```elixir
 # Database configuration
@@ -336,19 +334,35 @@ character at the beginning of the line:
 You can also delete the `prod.secret.exs` file if you'd like since we won't
 need it anymore.
 
-## Static Assets
+## Static Asset Compilation
 
-At the time of this writing, Phoenix has made a change from Brunch to Webpack.
-This requires some slight changes to the way that static assets are compiled
-when they get deployed to production.
+Phoenix uses [Webpack](https://webpack.js.org) to compile the static assets for
+the front-end. We already added the Heroku buildpack for Phoenix static assets,
+and now we just need to add configuration files to compile the assets as we
+deploy our application to the production environment.
 
-We'll need to add a new file called `phoenix_static_buildpack.config` similar
-to the `elixir_buildpack.config` file we added previously. There are quite a
-few [configuration options](https://github.com/gjaldon/heroku-buildpack-phoenix-static#configuration)
-available in the buildpack's README file, but we're just going to use the
-`compile` setting to create our own configuration file.
+The buildpack we're using is highly configurable, and we can take a look at the
+[configuration options](https://github.com/gjaldon/heroku-buildpack-phoenix-static#configuration)
+available in the README. We're going to stick with the default options, but
+we'll need to add a shell script file called `compile` (note that there's no
+file extension and the file is simply named `compile`).
 
-TODO ...
+Let's go ahead and create our `compile` file now at the root of our project and
+add the following contents:
+
+```shell
+npm run deploy
+cd $phoenix_dir
+mix "${phoenix_ex}.digest"
+```
+
+This allows our application to compile the front-end assets whenever we deploy
+to Heroku. It runs the `"deploy"` script from the `package.json` file that's
+located in the `assets` folder of our Phoenix project. That script runs the
+`webpack --mode production` command for our front-end assets. Then, the
+`compile` script changes back to the root Phoenix directory and runs the
+`mix phx.digest` command to compress all our static files for the production
+environment.
 
 ## Deployment
 
