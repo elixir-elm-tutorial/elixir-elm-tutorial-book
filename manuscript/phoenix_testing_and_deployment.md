@@ -406,15 +406,10 @@ that can be really useful if you run into issues.
 It's worth the trouble once we get to see our app up and running live in
 production!
 
-## Running Migrations
-
-TODO ...
-
 ## Up and Running
 
-Once the deploy finishes, our app is finally up and running on Heroku! The
-`Procfile` we created automatically handles production database migrations.
-Inside the `platform` folder, let's run the following from the command line to
+Once the deploy finishes, our app is finally up and running on Heroku! Inside
+the `platform` folder, let's run the following from the command line to
 see our application running on Heroku:
 
 ```shell
@@ -424,6 +419,26 @@ $ heroku open
 ![Working Heroku Deploy](images/phoenix_testing_and_deployment/working_heroku_deploy.png)
 
 Our application is working in production!
+
+## Running Migrations
+
+Now that we managed to successfully get our application up and running on
+Heroku, we can take one more step to automate our database migrations each time
+we deploy to production.
+
+Open up the `Procfile` we created before, and add a new `release` line at the
+top of the file:
+
+```shell
+release: MIX_ENV=prod mix ecto.migrate
+web: MIX_ENV=prod mix phoenix.server
+```
+
+This allows us to automate the database migrations before the Phoenix web
+server starts in the production environment. And our app should now be fully
+functional on Heroku with a working production database.
+
+![Working Production Players Index Page](images/phoenix_testing_and_deployment/working_players_page.png)
 
 ## Summary
 
