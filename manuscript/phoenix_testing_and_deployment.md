@@ -120,7 +120,7 @@ commands will allow us to push our local application to GitHub (you'll need to
 add your username on the first line):
 
 ```shell
-$ git remote add origin https://github.com/YOURUSERNAME/platform.git
+$ git remote add origin https://github.com/YOUR-GITHUB-USERNAME/platform.git
 $ git push -u origin master
 ```
 
@@ -153,7 +153,7 @@ to your account. Since we have an existing Git repository, we can use the
 following command to add our application to Heroku:
 
 ```shell
-$ heroku git:remote -a YOURAPPNAME
+$ heroku git:remote -a YOUR-HEROKU-APP-NAME
 ```
 
 Now inside our `platform` folder, we can run the `git remote` command and see
@@ -209,14 +209,11 @@ settings are necessary for the deployment to work.
 ## Heroku Configuration
 
 There are still a couple more steps we need to take to make sure our application
-is secured to be pushed live to Heroku. Let's create a `Procfile` to tell
-Heroku which command we want to run to start the Phoenix server. We'll also add
-a line to make sure that database migrations are successful before we start the
-server in the production environment. Create a file called `Procfile` inside
-the `platform` folder, and add the following code:
+is ready to be pushed live to Heroku. Let's create a `Procfile` to tell
+Heroku which command we want to run to start the Phoenix server. Create a file
+called `Procfile` inside the `platform` folder, and add the following code:
 
 ```Procfile
-release: MIX_ENV=prod mix ecto.migrate
 web: MIX_ENV=prod mix phx.server
 ```
 
@@ -303,7 +300,7 @@ Let's make a couple of changes so it looks like this (replace
 
 ```elixir
 config :platform, PlatformWeb.Endpoint,
-  load_from_system_env: true,
+  http: [:inet6, port: System.get_env("PORT") || 4000],
   url: [scheme: "https", host: "YOUR-HEROKU-APP-NAME.herokuapp.com", port: 443],
   force_ssl: [rewrite_on: [:x_forwarded_proto]],
   cache_static_manifest: "priv/static/cache_manifest.json",
@@ -338,6 +335,20 @@ character at the beginning of the line:
 
 You can also delete the `prod.secret.exs` file if you'd like since we won't
 need it anymore.
+
+## Static Assets
+
+At the time of this writing, Phoenix has made a change from Brunch to Webpack.
+This requires some slight changes to the way that static assets are compiled
+when they get deployed to production.
+
+We'll need to add a new file called `phoenix_static_buildpack.config` similar
+to the `elixir_buildpack.config` file we added previously. There are quite a
+few [configuration options](https://github.com/gjaldon/heroku-buildpack-phoenix-static#configuration)
+available in the buildpack's README file, but we're just going to use the
+`compile` setting to create our own configuration file.
+
+TODO ...
 
 ## Deployment
 
@@ -380,6 +391,10 @@ that can be really useful if you run into issues.
 
 It's worth the trouble once we get to see our app up and running live in
 production!
+
+## Running Migrations
+
+TODO ...
 
 ## Up and Running
 
