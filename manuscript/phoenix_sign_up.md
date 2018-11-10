@@ -369,38 +369,33 @@ Update the `lib/platform_web/templates/player/edit.html.eex` file to contain
 the following:
 
 ```embedded_elixir
-<h2>Edit Player</h2>
+<h1>Edit Player</h1>
 
-<%= form_for @changeset, player_path(@conn, :update, @player), fn f -> %>
+<%= form_for @changeset, Routes.player_path(@conn, :update, @player), fn f -> %>
   <%= if @changeset.action do %>
     <div class="alert alert-danger">
       <p>Oops, something went wrong! Please check the errors below.</p>
     </div>
   <% end %>
 
-  <div class="form-group">
-    <%= label f, :display_name, "Change Display Name", class: "control-label" %>
-    <%= text_input f, :display_name, placeholder: "Enter display name...", class: "form-control" %>
-    <%= error_tag f, :display_name %>
-  </div>
+  <%= label f, :display_name %>
+  <%= text_input f, :display_name %>
+  <%= error_tag f, :display_name %>
 
-  <div class="form-group">
-    <%= label f, :username, "Change Username", class: "control-label" %>
-    <%= text_input f, :username, placeholder: "Enter username...", class: "form-control" %>
-    <%= error_tag f, :username %>
-  </div>
+  <%= label f, :username %>
+  <%= text_input f, :username %>
+  <%= error_tag f, :username %>
 
-  <div class="form-group">
-    <%= label f, :password, "Change Password", class: "control-label" %>
-    <%= text_input f, :password, placeholder: "Enter password...", class: "form-control" %>
-    <%= error_tag f, :password %>
-  </div>
+  <%= label f, :password %>
+  <%= text_input f, :password %>
+  <%= error_tag f, :password %>
 
-  <div class="form-group">
-    <%= submit "Submit", class: "btn btn-primary" %>
-    <span><%= link "Back", to: page_path(@conn, :index), class: "btn btn-default" %></span>
+  <div>
+    <%= submit "Save" %>
   </div>
 <% end %>
+
+<span><%= link "Back", to: Routes.player_path(@conn, :index) %></span>
 ```
 
 After saving that file, we can go back to the **Edit Player** page and change
@@ -430,7 +425,7 @@ Compiling 2 files (.ex)
 ....................
 
 Finished in 0.2 seconds
-20 tests, 0 failures
+19 tests, 0 failures
 ```
 
 If everything is passing, let's go ahead and commit our changes:
