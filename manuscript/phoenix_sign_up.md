@@ -66,11 +66,11 @@ iex> Platform.Accounts.list_players()
 [debug] QUERY OK source="players" db=3.0ms decode=3.7ms
 SELECT a0."id", a0."score", a0."username", a0."inserted_at", a0."updated_at" FROM "players" AS a0 []
 [%Platform.Accounts.Player{__meta__: #Ecto.Schema.Metadata<:loaded, "players">,
-  id: 1, inserted_at: ~N[2017-04-08 14:55:28.674971], score: 1000,
-  updated_at: ~N[2017-04-08 14:55:28.681607], username: "josevalim"},
+  id: 1, inserted_at: ~N[2018-11-08 14:55:28.674971], score: 1000,
+  updated_at: ~N[2018-11-08 14:55:28.681607], username: "josevalim"},
  %Platform.Accounts.Player{__meta__: #Ecto.Schema.Metadata<:loaded, "players">,
-  id: 2, inserted_at: ~N[2017-04-08 14:55:34.139085], score: 2000,
-  updated_at: ~N[2017-04-08 14:55:34.139091], username: "evancz"}]
+  id: 2, inserted_at: ~N[2018-11-08 14:55:34.139085], score: 2000,
+  updated_at: ~N[2018-11-08 14:55:34.139091], username: "evancz"}]
 ```
 
 This function provides a good demonstration of how Phoenix uses well-named
@@ -127,7 +127,6 @@ defmodule Platform.Accounts.Player do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Platform.Accounts.Player
 
   schema "players" do
     field :display_name, :string
@@ -204,7 +203,7 @@ file, which we'll update next:
 ```shell
 $ mix ecto.gen.migration add_fields_to_player_accounts
 * creating priv/repo/migrations
-* creating priv/repo/migrations/20170812150719_add_fields_to_player_accounts.exs
+* creating priv/repo/migrations/20180812150719_add_fields_to_player_accounts.exs
 ```
 
 Let's update the migration file that we created in the `priv/repo/migrations`
