@@ -402,7 +402,7 @@ the amount of time our tests took to run (from 4.4 seconds to 0.2 seconds).
 ## Authentication Plug
 
 Players are currently able to create new accounts at
-`http://0.0.0.0:4000/players/new`. But we'll want to add features so that users
+`http://localhost:4000/players/new`. But we'll want to add features so that users
 can sign in and sign out.
 
 ![Player Sign Up Page](images/phoenix_sign_up/phoenix_updated_sign_up.png)
@@ -472,9 +472,9 @@ end
 
 This plug is going to allow us to restrict access to certain pages. Let's
 update our application so users will be redirected to the **New Player** page
-at `http://0.0.0.0:4000/players/new` if they haven't already signed in.
+at `http://localhost:4000/players/new` if they haven't already signed in.
 
-Currently, when we access `http://0.0.0.0:4000` in the browser, we see the
+Currently, when we access `http://localhost:4000` in the browser, we see the
 index page from our `PageController`. In the upcoming chapters, we'll be
 turning this into our Elm front-end application.
 
@@ -554,7 +554,7 @@ end
 If you're wondering if the updates above broke our tests, you're right. We
 usually run our test suite with `mix test`, but this time let's manually test
 things out in the browser. Open up your browser and try visiting the
-`PageController` index page at `http://0.0.0.0:4000`:
+`PageController` index page at `http://localhost:4000`:
 
 ![Restricted Page Alert](images/phoenix_authentication/restricted_page.png)
 
@@ -618,7 +618,7 @@ end
 ```
 
 Let's try it out. Go to the **New Player** page at
-`http://0.0.0.0:4000/players/new` and create a new user with both the
+`http://localhost:4000/players/new` and create a new user with both the
 `username` and `password` fields set to `chrismccord`:
 
 ![Creating a New User](images/phoenix_authentication/new_user_to_sign_in.png)
@@ -629,7 +629,7 @@ the **Show Player** page for the new user.
 ![Show Player Page](images/phoenix_authentication/show_player_page_after_sign_in.png)
 
 Now, let's try to access the `PageController` index page to verify that the
-user is authenticated. Go to the `http://0.0.0.0:4000` page in your browser:
+user is authenticated. Go to the `http://localhost:4000` page in your browser:
 
 ![Signed In Access to Index Page](images/diving_in/updated_home_page.png)
 
@@ -793,7 +793,7 @@ with `mix phx.server` at this point to get things up and running.
 
 We can test out the sign in process with the same account that we created in
 the previous sections. Go to the **Player Sign In** page at
-`http://0.0.0.0:4000/sessions/new` and try entering `chrismccord` for both the
+`http://localhost:4000/sessions/new` and try entering `chrismccord` for both the
 `username` and `password` fields.
 
 ![Player Sign In Page](images/phoenix_authentication/player_sign_in_page.png)
