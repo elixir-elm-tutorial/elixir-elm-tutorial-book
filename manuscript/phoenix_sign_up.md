@@ -62,7 +62,7 @@ $ iex -S mix phx.server
 Now we can query for our players with the following:
 
 ```elixir
-iex> Platform.Accounts.list_players
+iex> Platform.Accounts.list_players()
 [debug] QUERY OK source="players" db=3.0ms decode=3.7ms
 SELECT a0."id", a0."score", a0."username", a0."inserted_at", a0."updated_at" FROM "players" AS a0 []
 [%Platform.Accounts.Player{__meta__: #Ecto.Schema.Metadata<:loaded, "players">,
@@ -126,8 +126,8 @@ To start adding our new fields, let's update the
 defmodule Platform.Accounts.Player do
   use Ecto.Schema
   import Ecto.Changeset
-  alias Platform.Accounts.Player
 
+  alias Platform.Accounts.Player
 
   schema "players" do
     field :display_name, :string
@@ -140,7 +140,7 @@ defmodule Platform.Accounts.Player do
   end
 
   @doc false
-  def changeset(%Player{} = player, attrs) do
+  def changeset(player, attrs) do
     player
     |> cast(attrs, [:display_name, :password, :score, :username])
     |> validate_required([:username])
@@ -165,7 +165,7 @@ In the code example above, note that we didn't just change the player schema.
 We also updated the `changeset/2` function with the following:
 
 ```elixir
-def changeset(%Player{} = player, attrs) do
+def changeset(player, attrs) do
   player
   |> cast(attrs, [:display_name, :password, :score, :username])
   |> validate_required([:username])
