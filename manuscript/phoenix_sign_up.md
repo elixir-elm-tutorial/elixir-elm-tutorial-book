@@ -190,7 +190,7 @@ accounts with the same `username`.
 
 ## Generating a Migration
 
-Now we'll need to update the database so it knows about the new fields we we're
+Now we'll need to update the database so it knows about the new fields we are
 adding to our players. Let's run the following command to generate a migration
 file:
 
