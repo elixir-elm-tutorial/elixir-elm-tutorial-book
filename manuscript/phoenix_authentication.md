@@ -18,14 +18,16 @@ handful that Phoenix includes by default.
 ```elixir
 defp deps do
   [
-    {:phoenix, "~> 1.3.0"},
-    {:phoenix_pubsub, "~> 1.0"},
-    {:phoenix_ecto, "~> 3.2"},
+    {:phoenix, "~> 1.4.0"},
+    {:phoenix_pubsub, "~> 1.1"},
+    {:phoenix_ecto, "~> 4.0"},
+    {:ecto_sql, "~> 3.0"},
     {:postgrex, ">= 0.0.0"},
-    {:phoenix_html, "~> 2.10"},
-    {:phoenix_live_reload, "~> 1.0", only: :dev},
+    {:phoenix_html, "~> 2.11"},
+    {:phoenix_live_reload, "~> 1.2", only: :dev},
     {:gettext, "~> 0.11"},
-    {:cowboy, "~> 1.0"}
+    {:jason, "~> 1.0"},
+    {:plug_cowboy, "~> 2.0"}
   ]
 end
 ```
@@ -35,13 +37,13 @@ ironically) [comeonin](https://hex.pm/packages/comeonin). This is what the
 syntax looks like for adding a new dependency:
 
 ```elixir
-{:comeonin, "~> 4.0"}
+{:comeonin, "~> 4.1"}
 ```
 
 In Elixir, this syntax is called a **tuple**. It's commonly used as a way to
 reference keys and values. In this example, the first element of the tuple is
 an atom (`:comeonin`), and the second element is a string that indicates the
-version number (`"~> 4.0"`).
+version number (`"~> 4.1"`).
 
 Comeonin allows us to choose from different password hashing algorithms, so
 we'll also need to import another dependency called
@@ -51,16 +53,18 @@ working. Let's update our `deps/0` function with the following:
 ```elixir
 defp deps do
   [
-    {:phoenix, "~> 1.3.0"},
-    {:phoenix_pubsub, "~> 1.0"},
-    {:phoenix_ecto, "~> 3.2"},
+    {:phoenix, "~> 1.4.0"},
+    {:phoenix_pubsub, "~> 1.1"},
+    {:phoenix_ecto, "~> 4.0"},
+    {:ecto_sql, "~> 3.0"},
     {:postgrex, ">= 0.0.0"},
-    {:phoenix_html, "~> 2.10"},
-    {:phoenix_live_reload, "~> 1.0", only: :dev},
+    {:phoenix_html, "~> 2.11"},
+    {:phoenix_live_reload, "~> 1.2", only: :dev},
     {:gettext, "~> 0.11"},
-    {:cowboy, "~> 1.0"},
-    {:comeonin, "~> 4.0"},
-    {:bcrypt_elixir, "~> 1.0"},
+    {:jason, "~> 1.0"},
+    {:plug_cowboy, "~> 2.0"},
+    {:comeonin, "~> 4.1"},
+    {:bcrypt_elixir, "~> 1.1"}
   ]
 end
 ```
@@ -78,16 +82,13 @@ We should see the following results:
 $ mix deps.get
 Resolving Hex dependencies...
 Dependency resolution completed:
-  bcrypt_elixir 1.0.5
-  comeonin 4.0.3
+...
+New
+  bcrypt_elixir 1.1
+  comeonin 4.1
   ...
 * Getting comeonin (Hex package)
-  Checking package (https://repo.hex.pm/tarballs/comeonin-4.0.3.tar)
-  Fetched package
 * Getting bcrypt_elixir (Hex package)
-  Checking package (https://repo.hex.pm/tarballs/bcrypt_elixir-1.0.5.tar)
-  Fetched package
-  ...
 ```
 
 ## Player Changesets
