@@ -312,9 +312,10 @@ Let's start by updating our `new.html.eex` file:
 ```
 
 We're basically moving some of the content from the `form.html.eex` file into
-our `new.html.eex` file along with some minor changes. On a successful
-submission, we're using the `create` action from our player controller. This is
-what it should look like in the browser:
+our `new.html.eex` file along with some minor changes to support our `password`
+field instead of a `score` field. On a successful submission, we're using the
+`create` action from our player controller. This is what the **New Player**
+page should look like in the browser:
 
 ![Updated New Player Page](images/phoenix_sign_up/phoenix_updated_sign_up.png)
 
@@ -334,7 +335,7 @@ Let's update the `lib/platform_web/templates/player/show.html.eex` file with
 the following:
 
 ```embedded_elixir
-<h2>Show Player</h2>
+<h1>Show Player</h1>
 
 <ul>
   <li><strong>ID: </strong><%= @player.id %></li>
@@ -343,14 +344,14 @@ the following:
   <li><strong>Score: </strong><%= @player.score %></li>
 </ul>
 
-<span><%= link "Edit", to: player_path(@conn, :edit, @player), class: "btn btn-default" %></span>
-<span><%= link "Back", to: page_path(@conn, :index), class: "btn btn-default" %></span>
+<span><%= link "Edit", to: Routes.player_path(@conn, :edit, @player) %></span>
+<span><%= link "Back", to: Routes.player_path(@conn, :index) %></span>
 ```
 
-We display all the relevant data on the page, and added a few classes to the
-buttons at the bottom to make things look nicer. Users can choose to **Edit**
-their accounts from here, and if they click the **Back** button they can
-navigate back to the home page.
+Here we're displaying all the relevant player data (`id`, `display_name`,
+`username`, and `score`) on the page. Users can choose to **Edit** their
+accounts from here, and if they click the **Back** button they can navigate
+back to the home page.
 
 ![Show Player Page](images/phoenix_sign_up/phoenix_show_player_page.png)
 
