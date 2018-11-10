@@ -254,11 +254,11 @@ We'll start with what we want our users to do when they first sign up. Open up
 the `lib/platform_web/templates/player/new.html.eex` file:
 
 ```embedded_elixir
-<h2>New Player</h2>
+<h1>New Player</h1>
 
-<%= render "form.html", Map.put(assigns, :action, player_path(@conn, :create)) %>
+<%= render "form.html", Map.put(assigns, :action, Routes.player_path(@conn, :create)) %>
 
-<span><%= link "Back", to: player_path(@conn, :index) %></span>
+<span><%= link "Back", to: Routes.player_path(@conn, :index) %></span>
 ```
 
 From the looks of the code here, the page is rendering a `"form.html"` file,
@@ -286,31 +286,29 @@ be able to delete the shared `form.html.eex` file as a result.
 Let's start by updating our `new.html.eex` file:
 
 ```embedded_elixir
-<h2>New Player</h2>
+<h1>New Player</h1>
 
-<%= form_for @changeset, player_path(@conn, :create), fn f -> %>
+<%= form_for @changeset, Routes.player_path(@conn, :create), fn f -> %>
   <%= if @changeset.action do %>
     <div class="alert alert-danger">
       <p>Oops, something went wrong! Please check the errors below.</p>
     </div>
   <% end %>
 
-  <div class="form-group">
-    <%= label f, :username, "Player Username", class: "control-label" %>
-    <%= text_input f, :username, placeholder: "Enter username...", class: "form-control" %>
-    <%= error_tag f, :username %>
-  </div>
+  <%= label f, :username %>
+  <%= text_input f, :username %>
+  <%= error_tag f, :username %>
 
-  <div class="form-group">
-    <%= label f, :password, "Player Password", class: "control-label" %>
-    <%= password_input f, :password, placeholder: "Enter password...", class: "form-control" %>
-    <%= error_tag f, :password %>
-  </div>
+  <%= label f, :password %>
+  <%= text_input f, :password %>
+  <%= error_tag f, :password %>
 
-  <div class="form-group">
-    <%= submit "Submit", class: "btn btn-primary" %>
+  <div>
+    <%= submit "Save" %>
   </div>
 <% end %>
+
+<span><%= link "Back", to: Routes.player_path(@conn, :index) %></span>
 ```
 
 We're basically moving some of the content from the `form.html.eex` file into
