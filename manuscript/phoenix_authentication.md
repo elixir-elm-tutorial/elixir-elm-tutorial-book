@@ -639,9 +639,9 @@ authenticated the new player at the same time.
 ## Sessions
 
 To complete our authentication features, we'll need to handle user sessions. We
-were able to handle sign ins in the previous section because we took care of it
-while creating an account, but now we'll also want to allow users to sign out
-and sign back in whenever they'd like.
+were able to handle the sign in feature in the previous section because we took
+care of it while creating an account, but now we'll also want to allow users to
+sign out and sign back in whenever they'd like.
 
 Let's start by creating a `PlayerSessionController`. Create a new file called
 `lib/platform_web/controllers/player_session_controller.ex`, and add the
@@ -660,7 +660,7 @@ defmodule PlatformWeb.PlayerSessionController do
       {:ok, conn} ->
         conn
         |> put_flash(:info, "Welcome back!")
-        |> redirect(to: page_path(conn, :index))
+        |> redirect(to: Routes.page_path(conn, :index))
       {:error, _reason, conn} ->
         conn
         |> put_flash(:error, "Invalid username/password combination.")
@@ -671,7 +671,7 @@ defmodule PlatformWeb.PlayerSessionController do
   def delete(conn, _) do
     conn
     |> PlatformWeb.PlayerAuthController.sign_out()
-    |> redirect(to: player_session_path(conn, :new))
+    |> redirect(to: Routes.player_session_path(conn, :new))
   end
 end
 ```
@@ -702,23 +702,19 @@ We'll also need to create the corresponding template. Create a
 `new.html.eex` file inside with the following content:
 
 ```embedded_elixir
-<h2>Player Sign In</h2>
+<h1>Player Sign In</h1>
 
-<%= form_for @conn, player_session_path(@conn, :create), [as: :session], fn f -> %>
-  <div class="form-group">
-    <%= label f, :username, "Player Username", class: "control-label" %>
-    <%= text_input f, :username, placeholder: "Enter username...", class: "form-control" %>
-    <%= error_tag f, :username %>
-  </div>
+<%= form_for @conn, Routes.player_session_path(@conn, :create), [as: :session], fn f -> %>
+  <%= label f, :username %>
+  <%= text_input f, :username %>
+  <%= error_tag f, :username %>
 
-  <div class="form-group">
-    <%= label f, :password, "Player Password", class: "control-label" %>
-    <%= password_input f, :password, placeholder: "Enter password...", class: "form-control" %>
-    <%= error_tag f, :password %>
-  </div>
+  <%= label f, :password %>
+  <%= password_input f, :password %>
+  <%= error_tag f, :password %>
 
-  <div class="form-group">
-    <%= submit "Sign In", class: "btn btn-primary" %>
+  <div>
+    <%= submit "Sign In" %>
   </div>
 <% end %>
 ```
