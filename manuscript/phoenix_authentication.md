@@ -97,7 +97,7 @@ Now that we've included our new dependencies, let's take a look at the existing
 `changeset/2` function inside the `lib/platform/accounts/player.ex` file.
 
 ```elixir
-def changeset(%Player{} = player, attrs) do
+def changeset(player, attrs) do
   player
   |> cast(attrs, [:display_name, :password, :score, :username])
   |> validate_required([:username])
@@ -107,7 +107,7 @@ end
 
 This is where we can add additional validations for our data and ensure that it
 conforms to our expectations. This function will remain our default player
-changeset, but we'll also add a separate one called `registration_changeset/2`
+changeset, and we'll also add a separate one called `registration_changeset/2`
 for when players create a new account.
 
 Let's add some validations and a new function that will allow us to encrypt
@@ -116,24 +116,24 @@ and add the following code:
 
 ```elixir
 @doc false
-def changeset(%Player{} = player, attrs) do
+def changeset(player, attrs) do
   player
   |> cast(attrs, [:display_name, :password, :score, :username])
   |> validate_required([:username])
   |> unique_constraint(:username)
   |> validate_length(:username, min: 2, max: 100)
-  |> validate_length(:password, min: 6, max: 100)
+  |> validate_length(:password, min: 2, max: 100)
   |> put_pass_digest()
 end
 
 @doc false
-def registration_changeset(%Player{} = player, attrs) do
+def registration_changeset(player, attrs) do
   player
   |> cast(attrs, [:password, :username])
   |> validate_required([:password, :username])
   |> unique_constraint(:username)
   |> validate_length(:username, min: 2, max: 100)
-  |> validate_length(:password, min: 6, max: 100)
+  |> validate_length(:password, min: 2, max: 100)
   |> put_pass_digest()
 end
 
@@ -175,7 +175,7 @@ This is primarily due to the fact that we're allowing users to sign up with a
 `password` field when they edit an account. But the main idea is that we can
 have different changesets that apply to different situations. In our case, we
 wanted to use the `registration_changeset/2` for when players sign up, and use
-a separate `changeset` function for any other player changes.
+a separate `changeset/2` function for any other player changes.
 
 ## Using Our New Changeset
 
@@ -316,8 +316,7 @@ def player_fixture(attrs \\ %{}) do
     |> Map.from_struct()
     |> Map.delete(:password)
 
-  %Player{}
-  |> Map.merge(player_attrs_map)
+  Map.merge(%Player{}, player_attrs_map)
 end
 ```
 
@@ -326,9 +325,9 @@ we're converting the struct to a map using `Map.from_struct()` and then
 deleting the `password` field with `Map.delete(:password)`. This gives us a map
 of all the player attributes except the `password` field.
 
-At the bottom of the function, we create a player struct with
-`%Player{}` and then merge all of the fields in our map together using
-`Map.merge(player_attrs_map)`.
+At the bottom of the function, we use `Map.merge(%Player{}, player_attrs_map)`
+to merge all the fields together and convert the results back into a player
+struct, which we return as our player fixture.
 
 Keep in mind that this is a lot to take in as we're dealing with new data
 structures and a lot of new functions, so don't worry if this seems slightly
@@ -362,7 +361,7 @@ $ mix test
 ....................
 
 Finished in 4.4 seconds
-20 tests, 0 failures
+19 tests, 0 failures
 
 Randomized with seed 77808
 ```
