@@ -229,7 +229,12 @@ made to our player schema:
 
 ```elixir
 @valid_attrs %{password: "some password", username: "some username"}
-@update_attrs %{display_name: "some updated display name", password: "some updated password", score: 43, username: "some updated username"}
+@update_attrs %{
+  display_name: "some updated display name",
+  password: "some updated password",
+  score: 43,
+  username: "some updated username"
+}
 @invalid_attrs %{password: nil, username: nil}
 ```
 
@@ -349,7 +354,12 @@ following:
 
 ```elixir
 @create_attrs %{password: "some password", username: "some username"}
-@update_attrs %{display_name: "some updated display name", password: "some updated password", score: 43, username: "some updated username"}
+@update_attrs %{
+  display_name: "some updated display name",
+  password: "some updated password",
+  score: 43,
+  username: "some updated username"
+}
 @invalid_attrs %{password: nil, username: nil}
 ```
 
@@ -573,7 +583,7 @@ defmodule PlatformWeb.PageControllerTest do
   use PlatformWeb.ConnCase
 
   test "redirects unauthenticated users away from index page", %{conn: conn} do
-    conn = get conn, "/"
+    conn = get(conn, "/")
     assert html_response(conn, 302) =~ "redirect"
   end
 end
@@ -652,15 +662,21 @@ defmodule PlatformWeb.PlayerSessionController do
   use PlatformWeb, :controller
 
   def new(conn, _) do
-    render conn, "new.html"
+    render(conn, "new.html")
   end
 
   def create(conn, %{"session" => %{"username" => user, "password" => pass}}) do
-    case PlatformWeb.PlayerAuthController.sign_in_with_username_and_password(conn, user, pass, repo: Platform.Repo) do
+    case PlatformWeb.PlayerAuthController.sign_in_with_username_and_password(
+           conn,
+           user,
+           pass,
+           repo: Platform.Repo
+         ) do
       {:ok, conn} ->
         conn
         |> put_flash(:info, "Welcome back!")
         |> redirect(to: Routes.page_path(conn, :index))
+
       {:error, _reason, conn} ->
         conn
         |> put_flash(:error, "Invalid username/password combination.")
