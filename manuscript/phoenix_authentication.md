@@ -499,7 +499,7 @@ defp authenticate(conn, _opts) do
   else
     conn
     |> put_flash(:error, "You must be signed in to access that page.")
-    |> redirect(to: player_path(conn, :new))
+    |> redirect(to: Routes.player_path(conn, :new))
     |> halt()
   end
 end
@@ -541,7 +541,7 @@ defmodule PlatformWeb.PageController do
     else
       conn
       |> put_flash(:error, "You must be signed in to access that page.")
-      |> redirect(to: player_path(conn, :new))
+      |> redirect(to: Routes.player_path(conn, :new))
       |> halt()
     end
   end
