@@ -564,9 +564,9 @@ wrote in the `authenticate/2` function at the bottom of the `PageController`.
 
 ## Fixing Our Tests
 
-Let's push a quick fix for our tests. Open the `test/platform_web/controllers/page_controller_test.exs` file and replace it
-with the following code that tests our default route and the redirect that
-we created:
+Let's push a quick fix for our tests. Open the
+`test/platform_web/controllers/page_controller_test.exs` file and replace it
+with the following code that tests our default route and our new redirect:
 
 ```elixir
 defmodule PlatformWeb.PageControllerTest do
