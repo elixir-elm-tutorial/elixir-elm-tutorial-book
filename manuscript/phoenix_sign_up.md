@@ -300,7 +300,7 @@ Let's start by updating our `new.html.eex` file:
   <%= error_tag f, :username %>
 
   <%= label f, :password %>
-  <%= text_input f, :password %>
+  <%= password_input f, :password %>
   <%= error_tag f, :password %>
 
   <div>
@@ -387,7 +387,7 @@ the following:
   <%= error_tag f, :username %>
 
   <%= label f, :password %>
-  <%= text_input f, :password %>
+  <%= password_input f, :password %>
   <%= error_tag f, :password %>
 
   <div>
