@@ -747,7 +747,7 @@ sessions to sign in and out of the platform.
 
 Lastly, we'll create the functions in our `PlayerAuthController` that tie
 everything together. Add the `sign_in_with_username_and_password/4` function and
-the `sign_out/1` functions below the `sign_in/2` function at the bottom of the
+the `sign_out/1` function below the `sign_in/2` function at the bottom of the
 `lib/platform_web/controllers/player_auth_controller.ex` file.
 
 ```elixir
@@ -787,8 +787,8 @@ you're using Google Chrome on macOS, you can create a new incognito window with
 `Command + Shift + N`. It's also a good idea to restart your Phoenix server
 with `mix phx.server` at this point to get things up and running.
 
-We can test out the sign in process with the same account that we created in
-the previous sections. Go to the **Player Sign In** page at
+We can test out the sign in process with the same account we created in the
+previous sections. Go to the **Player Sign In** page at
 `http://localhost:4000/sessions/new` and try entering `chrismccord` for both the
 `username` and `password` fields.
 
@@ -812,14 +812,18 @@ remove the default Phoenix header.
 Update the contents of the `<header>` tag with the following:
 
 ```embedded_elixir
-<header class="header">
-  <nav role="navigation">
-    <ul class="nav nav-pills pull-right">
-      <%= link "Sign Up", to: player_path(@conn, :new), class: "btn btn-sm btn-success" %>
-      <%= link "Sign In", to: player_session_path(@conn, :new), class: "btn btn-sm btn-primary" %>
-    </ul>
-  </nav>
-  <span class="logo"></span>
+<header>
+  <section class="container">
+    <nav role="navigation">
+      <ul>
+        <%= link "Sign Up", to: Routes.player_path(@conn, :new), class: "button" %>
+        <%= link "Sign In", to: Routes.player_session_path(@conn, :new), class: "button" %>
+      </ul>
+    </nav>
+    <a href="http://phoenixframework.org/" class="phx-logo">
+      <img src="<%= Routes.static_path(@conn, "/images/phoenix.png") %>" alt="Phoenix Framework Logo"/>
+    </a>
+  </section>
 </header>
 ```
 
@@ -835,19 +839,23 @@ want to show them their `username` in the header along with a sign out button.
 Let's update our `<header>` tag again with the following:
 
 ```embedded_elixir
-<header class="header">
-  <nav role="navigation">
-    <ul class="nav nav-pills pull-right">
-      <%= if @current_user do %>
-        <p class="small">Signed in as <strong><%= @current_user.username %></strong></p>
-        <%= link "Sign Out", to: player_session_path(@conn, :delete, @current_user), method: "delete", class: "btn btn-sm btn-danger" %>
-      <% else %>
-        <%= link "Sign Up", to: player_path(@conn, :new), class: "btn btn-sm btn-success" %>
-        <%= link "Sign In", to: player_session_path(@conn, :new), class: "btn btn-sm btn-primary" %>
-      <% end %>
-    </ul>
-  </nav>
-  <span class="logo"></span>
+<header>
+  <section class="container">
+    <nav role="navigation">
+      <ul>
+        <%= if @current_user do %>
+          <p>Signed in as <strong><%= @current_user.username %></strong></p>
+          <%= link "Sign Out", to: Routes.player_session_path(@conn, :delete, @current_user), method: "delete", class: "button" %>
+        <% else %>
+          <%= link "Sign Up", to: Routes.player_path(@conn, :new), class: "button" %>
+          <%= link "Sign In", to: Routes.player_session_path(@conn, :new), class: "button" %>
+        <% end %>
+      </ul>
+    </nav>
+    <a href="http://phoenixframework.org/" class="phx-logo">
+      <img src="<%= Routes.static_path(@conn, "/images/phoenix.png") %>" alt="Phoenix Framework Logo"/>
+    </a>
+  </section>
 </header>
 ```
 
