@@ -380,8 +380,7 @@ Let's add a configuration setting at the bottom of our `config/test.exs` file:
 config :bcrypt_elixir, :log_rounds, 4
 ```
 
-Save the file, and then let's try running our tests again to see if there's a
-difference:
+Let's save the file and run our tests again to see if there's a difference:
 
 ```shell
 $ mix test
