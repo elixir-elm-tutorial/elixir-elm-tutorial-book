@@ -127,7 +127,6 @@ defmodule Platform.Accounts.Player do
   use Ecto.Schema
   import Ecto.Changeset
 
-
   schema "players" do
     field :display_name, :string
     field :password, :string, virtual: true

@@ -758,8 +758,10 @@ def sign_in_with_username_and_password(conn, username, given_pass, opts) do
   cond do
     player && Comeonin.Bcrypt.checkpw(given_pass, player.password_digest) ->
       {:ok, sign_in(conn, player)}
+
     player ->
       {:error, :unauthorized, conn}
+
     true ->
       Comeonin.Bcrypt.dummy_checkpw()
       {:error, :not_found, conn}
