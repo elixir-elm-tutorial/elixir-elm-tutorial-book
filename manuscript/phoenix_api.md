@@ -46,7 +46,7 @@ $ mix phx.gen.json Products Game games description:string featured:boolean thumb
 * creating lib/platform_web/views/changeset_view.ex
 * creating lib/platform_web/controllers/fallback_controller.ex
 * creating lib/platform/products/game.ex
-* creating priv/repo/migrations/20170826154100_create_games.exs
+* creating priv/repo/migrations/20181112124229_create_games.exs
 * creating lib/platform/products/products.ex
 * injecting lib/platform/products/products.ex
 * creating test/platform/products/products_test.exs
@@ -187,7 +187,7 @@ Proceed with interactive overwrite? [Yn] Y
 * creating lib/platform_web/views/gameplay_view.ex
 * creating test/platform_web/controllers/gameplay_controller_test.exs
 * creating lib/platform/products/gameplay.ex
-* creating priv/repo/migrations/20171217194455_create_gameplays.exs
+* creating priv/repo/migrations/20181112124950_create_gameplays.exs
 * injecting lib/platform/products/products.ex
 * injecting test/platform/products/products_test.exs
 
@@ -222,8 +222,8 @@ new schema.
 defmodule Platform.Products.Gameplay do
   use Ecto.Schema
   import Ecto.Changeset
-  alias Platform.Products.Gameplay
 
+  alias Platform.Products.Gameplay
 
   schema "gameplays" do
     field :player_score, :integer
@@ -234,7 +234,7 @@ defmodule Platform.Products.Gameplay do
   end
 
   @doc false
-  def changeset(%Gameplay{} = gameplay, attrs) do
+  def changeset(gameplay, attrs) do
     gameplay
     |> cast(attrs, [:player_score])
     |> validate_required([:player_score])
@@ -253,10 +253,9 @@ form the association. We'll also add a few `alias` statements and add a
 defmodule Platform.Products.Gameplay do
   use Ecto.Schema
   import Ecto.Changeset
-  alias Platform.Products.Game
-  alias Platform.Products.Gameplay
-  alias Platform.Accounts.Player
 
+  alias Platform.Products.Game
+  alias Platform.Accounts.Player
 
   schema "gameplays" do
     belongs_to :game, Game
@@ -268,7 +267,7 @@ defmodule Platform.Products.Gameplay do
   end
 
   @doc false
-  def changeset(%Gameplay{} = gameplay, attrs) do
+  def changeset(gameplay, attrs) do
     gameplay
     |> cast(attrs, [:player_score])
     |> validate_required([:player_score])
@@ -302,10 +301,10 @@ $ mix test
 ................................................
 
 Finished in 0.5 seconds
-48 tests, 0 failures
+47 tests, 0 failures
 ```
 
-It's great that we have 48 passing tests. Granted, these were created by the
+It's great that we have 47 passing tests. Granted, these were created by the
 Phoenix generators, but it gives us some level of confidence that our
 application is working when the tests are passing.
 
