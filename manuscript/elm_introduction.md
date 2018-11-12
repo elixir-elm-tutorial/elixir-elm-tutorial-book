@@ -18,8 +18,8 @@ simply can't. Not only does it enable developers to write code that is free
 from errors, but also results in code that is easier to refactor and more
 maintainable.
 
-I could go on for months about how great Elm is (and I do that at the local Elm
-meetup that I help organize), but let's dive into some basic examples.
+I could go on for months about how great Elm is (and I've done that at my local
+Elm meetup), but let's dive into some basic examples.
 
 ## Hello.elm
 
@@ -49,9 +49,10 @@ The first line is Elm boilerplate for defining our module. Since this is a
 functional language, everything we do is essentially going to be modules and
 functions. Functions will be _everything_ to us, and modules will help us
 gather and organize all those functions. What we're saying with the first line
-of code is that we're creating the `Hello` module, and "exposing" everything
-(`..`) from it. So if someone wanted to use our application, they would just
-need to import it and they could use any function they'd like.
+of code is that we're creating the `Hello` module, and "exposing" every
+function (`..`) from it. So if someone wanted to use our application, they
+would just need to import it and they could use any function they'd like (in
+this case we only have a `main` function).
 
 ## Modules, Functions, and Types
 
@@ -68,16 +69,16 @@ documentation for the `text` function, we can see the Elm type syntax:
 text : String -> Html msg
 ```
 
-That means when we added `Html.text "Hello World"` to our program, the `"Hello
-World"` string was our only argument. And `Html msg` was the return type. Don't
-worry too much about typing yet, but it's helpful to think about a couple of
-quick things for now:
+That means when we added `Html.text "Hello World"` to our program, the
+`"Hello World"` string was our only argument. And `Html msg` was the return
+type. Don't worry too much about typing yet, but it's helpful to think about a
+couple of quick things for now:
 
 - How many arguments does a function take?
 - What is the type of each argument?
 - What is the type of the return value?
 
-In our case, `text` is the name of the function. Then we use a `:` symbol
+In our case, `text` is the name of the function. Then, we use a `:` symbol
 before the list of arguments. This function only takes a single argument, and
 it's a `String`. Then, we use the arrow symbol `->` after the argument. Lastly,
 we indicate the return type, which is an `Html msg`. The `msg` part isn't
@@ -87,14 +88,14 @@ in the browser.
 
 ## Main Function
 
-The `main` function is basically the starting point for our application. When
-we run it, the Elm runtime is going to look for `main`. But Elm is _way_ more
-fun to play with than it is to read about, so let's finally run our example.
+The `main` function is the starting point for our application. When we run it,
+the Elm runtime is going to look for `main`. But Elm is _way_ more fun to play
+with than it is to read about, so let's finally run our example.
 
 Before we can run Elm code, we'll need to install Elm. There are different
 ways of doing it, but the easiest way is to use `npm` since most web developers
-have [Node.js](https://nodejs.org/en/) installed already. Alternatively, there
-are also installers available on the [Elm home page](http://elm-lang.org/).
+have [Node.js](https://nodejs.org/en) installed already. Alternatively, there
+are also installers available on the [Elm home page](http://elm-lang.org).
 
 ```shell
 $ npm install -g elm
@@ -102,69 +103,69 @@ $ npm install -g elm
 
 That should be all you need. It globally installs the `elm` command on your
 machine, so you can run it from the command line. In fact, type `elm` now and
-take a look at the output:
+take a look at the output (some output has been trimmed for readability):
 
 ```shell
 $ elm
-Elm Platform 0.18.0 - a way to run all Elm tools
+Hi, thank you for trying out Elm 0.19.0. I hope you like it!
 
-Usage: elm <command> [<args>]
+The most common commands are:
 
-Available commands include:
+    elm repl
+        Open up an interactive programming session. Type in Elm expressions like
+        (2 + 2) or (String.length "test") and see if they equal four!
 
-  make      Compile an Elm file or project into JS or HTML
-  package   Manage packages from <http://package.elm-lang.org>
-  reactor   Develop with compile-on-refresh and time-travel debugging
-  repl      A REPL for running individual expressions
+    elm init
+        Start an Elm project. It creates a starter elm.json file and provides a
+        link explaining what to do from there.
 
-You can learn more about a specific command by running things like:
+    elm reactor
+        Compile code with a click. It opens a file viewer in your browser, and
+        when you click on an Elm file, it compiles and you see the result.
 
-  elm make --help
-  elm package --help
-  elm <command> --help
+...
 
-In all these cases we are simply running 'elm-<command>' so if you create an
-executable named 'elm-foobar' you will be able to run it as 'elm foobar' as
-long as it appears on your PATH.
+Be sure to ask on the Elm slack if you run into trouble! Folks are friendly and
+happy to help out. They hang out there because it is fun, so be kind to get the
+best results!
 ```
 
-We'll use all these features eventually, but for now let's focus on two of
-them. First, let's create a temporary directory called `elm` that we'll use to
-hold our Elm files, and then we'll use the `elm-package` command we see above
-to fetch the libraries we need. Also note that we don't necessarily need to
-place this folder inside our existing Phoenix application yet, and that we'll
-take care of integrating Phoenix and Elm in the next chapter.
+We'll use several of these command line features eventually, but for now let's
+focus on two of them. First, let's create a temporary directory called `elm`
+that we'll use to hold our Elm files, and then we'll use the `elm init` command
+we see above to fetch the libraries we need. Also note we don't necessarily
+need to place this folder inside our existing Phoenix application yet, and that
+we'll take care of integrating Phoenix and Elm in the next chapter.
 
 ```shell
 $ mkdir elm
 $ cd elm
-$ elm-package install
+$ elm init
 ```
 
-We're creating an empty `elm` folder, and then when we run `elm-package install`
-it's going to create all the files we need:
+We're creating an empty `elm` folder, and then when we run `elm init` it's
+going to create all the `elm.json` we need (note again that this output has
+been trimmed a bit for readability):
 
 ```shell
-$ elm-package install
-Some new packages are needed. Here is the upgrade plan.
+$ elm init
+Hello! Elm projects always start with an elm.json file. I can create them!
 
-  Install:
-    elm-lang/core 5.1.1
-    elm-lang/html 2.0.0
-    elm-lang/virtual-dom 2.0.4
+...
 
-Do you approve of this plan? [Y/n] Y
-Starting downloads...
-
-  ● elm-lang/virtual-dom 2.0.4
-  ● elm-lang/html 2.0.0
-  ● elm-lang/core 5.1.1
-
-Packages configured successfully!
+Would you like me to create an elm.json file now? [Y/n]: Y
+Okay, I created it. Now read that link!
 ```
 
-This is everything we need. Let's create the simple `Hello.elm` file for our
-"Hello World" program:
+You might have noticed how friendly the Elm compiler is. The messaging has a
+conversational tone that can help for beginners and experience developers
+alike. Feel free to check out the
+[introductory documentation](https://elm-lang.org/0.19.0/init) mentioned in the
+output for more information about setting up Elm projects.
+
+We have everything we need for now: an `elm.json` file for our project
+configuration, and `src` folder to put our `.elm` files. Let's create the
+simple `Hello.elm` file inside the `src` folder for our "Hello World" program:
 
 ```elm
 module Hello exposing (..)
