@@ -28,7 +28,7 @@ it can be to get Elm up and running. Here's what a simple Elm program (with a
 filename of `Hello.elm`) looks like:
 
 ```elm
-module Hello exposing (..)
+module Hello exposing (main)
 
 import Html
 
@@ -49,10 +49,10 @@ The first line is Elm boilerplate for defining our module. Since this is a
 functional language, everything we do is essentially going to be modules and
 functions. Functions will be _everything_ to us, and modules will help us
 gather and organize all those functions. What we're saying with the first line
-of code is that we're creating the `Hello` module, and "exposing" every
-function (`..`) from it. So if someone wanted to use our application, they
-would just need to import it and they could use any function they'd like (in
-this case we only have a `main` function).
+of code is that we're creating the `Hello` module, and "exposing" the only
+function (`main`) from it. So if someone wanted to use our application, they
+would just need to import it and they could use whatever functionality we
+provided in that `main` function.
 
 ## Modules, Functions, and Types
 
@@ -158,7 +158,7 @@ Okay, I created it. Now read that link!
 ```
 
 You might have noticed how friendly the Elm compiler is. The messaging has a
-conversational tone that can help for beginners and experience developers
+conversational tone that can help both beginners and experienced developers
 alike. Feel free to check out the
 [introductory documentation](https://elm-lang.org/0.19.0/init) mentioned in the
 output for more information about setting up Elm projects.
@@ -168,7 +168,7 @@ configuration, and `src` folder to put our `.elm` files. Let's create the
 simple `Hello.elm` file inside the `src` folder for our "Hello World" program:
 
 ```elm
-module Hello exposing (..)
+module Hello exposing (main)
 
 import Html
 
@@ -178,20 +178,21 @@ main =
 ```
 
 All that's left is to run our program. Elm comes with a utility called
-`elm-reactor` that we can use to serve our program locally and then access
+`elm reactor` that we can use to serve our program locally and then access
 it in our browser. Go ahead and run it from the command line:
 
 ```shell
-$ elm-reactor
-elm-reactor 0.18.0
-Listening on http://localhost:8000
+$ elm reactor
+Go to <http://localhost:8000> to see your project dashboard.
 ```
 
 Now you can visit `http://localhost:8000` in your browser and see the files
-and dependencies for our project. We only have a single Elm file (`Hello.elm`),
-so let's click it to compile and see the results.
+and dependencies for our project.
 
-![elm-reactor](images/elm_introduction/elm_reactor.png)
+![elm reactor](images/elm_introduction/elm_reactor.png)
+
+We only have a single Elm file (`Hello.elm`), so let's click the link in the
+`src` folder to compile it and see the results.
 
 ![Elm Hello World Example](images/elm_introduction/elm_hello_world.png)
 
