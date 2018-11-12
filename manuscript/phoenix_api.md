@@ -332,8 +332,10 @@ line. First, enter the following at the command line to get started:
 $ iex -S mix phx.server
 ```
 
-Now we can create a new game called "Platformer" manually by using the
-`create_game/1` function from the `Platform.Products` module.
+From the Terminal, we can create a new game called "Platformer" manually by
+using the `create_game/1` function from the `Platform.Products` module. If you
+can't see the `iex>` prompt, you can press the ENTER key in the Terminal to
+see a new prompt.
 
 ```elixir
 iex> Platform.Products.create_game(%{title: "Platformer", description: "Platform game example.", thumbnail: "http://via.placeholder.com/300x200", featured: true})
@@ -348,14 +350,14 @@ iex> Platform.Products.create_game(%{title: "Platformer", description: "Platform
 {:ok,
  %Platform.Products.Game{__meta__: #Ecto.Schema.Metadata<:loaded, "games">,
   description: "Platform game example.", featured: true, id: 1,
-  inserted_at: ~N[2017-12-04 15:16:16.957673],
+  inserted_at: ~N[2018-12-04 15:16:16.957673],
   players: #Ecto.Association.NotLoaded<association :players is not loaded>,
   thumbnail: "http://via.placeholder.com/300x200",
-  title: "Platformer", updated_at: ~N[2017-12-04 15:16:16.967729]}}
+  title: "Platformer", updated_at: ~N[2018-12-04 15:16:16.967729]}}
 ```
 
-Now that we have some data, we should be able to restart the server and reload
-the `http://localhost:4000/api/games` URL in our browser to see the results:
+Now that we have some data, we should be able to reload the
+`http://localhost:4000/api/games` URL in our browser to see the results:
 
 ![Games API with Data](images/phoenix_api/games_api_with_data.png)
 
@@ -384,10 +386,10 @@ defmodule PlatformWeb.PlayerApiController do
   end
 
   def create(conn, %{"player" => player_params}) do
-    with {:ok, %Player{} = player} <- Accounts.create_player(player_params) do
+    with {:ok, player} <- Accounts.create_player(player_params) do
       conn
       |> put_status(:created)
-      |> put_resp_header("location", player_path(conn, :show, player))
+      |> put_resp_header("location", Routes.player_path(conn, :show, player))
       |> render("show.json", player: player)
     end
   end
@@ -400,7 +402,7 @@ defmodule PlatformWeb.PlayerApiController do
   def update(conn, %{"id" => id, "player" => player_params}) do
     player = Accounts.get_player!(id)
 
-    with {:ok, %Player{} = player} <- Accounts.update_player(player, player_params) do
+    with {:ok, player} <- Accounts.update_player(player, player_params) do
       render(conn, "show.json", player: player)
     end
   end
@@ -439,6 +441,7 @@ folder and add the following content:
 ```elixir
 defmodule PlatformWeb.PlayerApiView do
   use PlatformWeb, :view
+
   alias PlatformWeb.PlayerApiView
 
   def render("index.json", %{players: players}) do
@@ -476,14 +479,14 @@ JSON.
 
 ![Player Data in API Scope](images/phoenix_api/player_data_api_scope.png)
 
-Now would be a good time to commit changes to your Git repository if you
-haven't already done so since we've come a long way in this chapter.
+Now would be a good time to commit changes to your Git repository since we've
+come a long way in this chapter.
 
 ## Summary
 
-We managed to accomplish our goal for this chapter of creating a JSON API for
-the games on our platform. And we also learned about Ecto relationships as we
-connected our players, games, and gameplays together.
+We managed to accomplish our goal of creating a JSON API for the games on our
+platform. And we also learned about Ecto relationships as we connected our
+players, games, and gameplays together.
 
 In the next chapter, we'll get an introduction to the Elm language. And we'll
 start working towards using the Phoenix JSON API that we built here to supply

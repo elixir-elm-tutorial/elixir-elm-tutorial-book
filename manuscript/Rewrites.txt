@@ -4,7 +4,7 @@
 - [x] phoenix_testing_and_deployment.md
 - [x] phoenix_sign_up.md
 - [x] phoenix_authentication.md
-- [ ] phoenix_api.md
+- [x] phoenix_api.md
 - [ ] elm_introduction.md
 - [ ] elm_setup.md
 - [ ] elm_application.md
