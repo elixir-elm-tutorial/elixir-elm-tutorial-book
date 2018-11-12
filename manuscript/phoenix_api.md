@@ -312,9 +312,9 @@ application is working when the tests are passing.
 
 Let's start up our Phoenix server with `mix phx.server`.
 
-For our players resource, we were using URLs like `http://0.0.0.0:4000/players`
+For our players resource, we were using URLs like `http://localhost:4000/players`
 to access the templates. But now that we added a JSON resource, we'll need to
-use `/api` in our URLs. Try to access `http://0.0.0.0:4000/api/games` in the
+use `/api` in our URLs. Try to access `http://localhost:4000/api/games` in the
 browser. We shouldn't see an error, but we also don't have any game data to
 display yet (note that your browser might display JSON data differently):
 
@@ -355,7 +355,7 @@ iex> Platform.Products.create_game(%{title: "Platformer", description: "Platform
 ```
 
 Now that we have some data, we should be able to restart the server and reload
-the `http://0.0.0.0:4000/api/games` URL in our browser to see the results:
+the `http://localhost:4000/api/games` URL in our browser to see the results:
 
 ![Games API with Data](images/phoenix_api/games_api_with_data.png)
 
@@ -459,17 +459,17 @@ end
 ```
 
 Our `PlayerApiView` module is similar to what we have in the `GameView` module.
-When we load the `http://0.0.0.0:4000/api/players` URL, we're using
+When we load the `http://localhost:4000/api/players` URL, we're using
 `render_many/3` to list all the players. When we only want to show a single
-player, we can use a URL like `http://0.0.0.0:4000/api/players/1` that will use
+player, we can use a URL like `http://localhost:4000/api/players/1` that will use
 `render_one/3` to only display a single user's JSON data. At the bottom, we're
 creating a function that returns a map with all our player data. We can add or
 remove fields here whenever we want to adjust the fields that are accessible
 via the JSON API.
 
 This is all great news because it means we can still use the
-`http://0.0.0.0:4000/players` URL to access our list of players in the browser,
-and we can use `http://0.0.0.0:4000/api/players` to see our player data as
+`http://localhost:4000/players` URL to access our list of players in the browser,
+and we can use `http://localhost:4000/api/players` to see our player data as
 JSON.
 
 ![Player Data in Browser Scope](images/phoenix_api/player_data_browser_scope.png)
