@@ -222,7 +222,7 @@ indicate the filename at the top:
 
 ```elm
 -- Hello.elm
-module Hello exposing (..)
+module Hello exposing (main)
 
 import Html
 
@@ -236,7 +236,7 @@ about which functions we want to import from the `Html` module:
 
 ```elm
 -- Hello.elm
-module Hello exposing (..)
+module Hello exposing (main)
 
 import Html exposing (Html, text)
 
@@ -249,7 +249,7 @@ We can also add a type signature for our `main` function:
 
 ```elm
 -- Hello.elm
-module Hello exposing (..)
+module Hello exposing (main)
 
 import Html exposing (Html, text)
 
@@ -270,7 +270,7 @@ rewrite our "Hello World" text in all uppercase letters with the following:
 
 ```elm
 -- Hello.elm
-module Hello exposing (..)
+module Hello exposing (main)
 
 import Html exposing (Html, text)
 
