@@ -5,7 +5,7 @@
 - [x] phoenix_sign_up.md
 - [x] phoenix_authentication.md
 - [x] phoenix_api.md
-- [ ] elm_introduction.md
+- [x] elm_introduction.md
 - [ ] elm_setup.md
 - [ ] elm_application.md
 - [ ] elm_architecture.md
