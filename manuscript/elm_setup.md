@@ -5,61 +5,80 @@ look at the Elm language. Now, let's figure out how we can write Elm code for
 the front-end of our Phoenix application.
 
 We already installed Elm globally in the last chapter, and now we can take a
-look at configuring Elm with Phoenix using a tool called Brunch.
+look at configuring Elm with Phoenix using Webpack.
 
 ## Configuring Elm within Phoenix
 
 Phoenix front-end files are located in the `assets` folder. Let's begin by
-checking out the existing `package.json` file that Phoenix gives us by default:
+looking at the existing `package.json` file Phoenix gives us by default:
 
 ```javascript
 {
   "repository": {},
   "license": "MIT",
   "scripts": {
-    "deploy": "brunch build --production",
-    "watch": "brunch watch --stdin"
+    "deploy": "webpack --mode production",
+    "watch": "webpack --mode development --watch"
   },
   "dependencies": {
     "phoenix": "file:../deps/phoenix",
     "phoenix_html": "file:../deps/phoenix_html"
   },
   "devDependencies": {
-    "babel-brunch": "6.1.1",
-    "brunch": "2.10.9",
-    "clean-css-brunch": "2.10.0",
-    "uglify-js-brunch": "2.10.0"
+    "@babel/core": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "babel-loader": "^8.0.0",
+    "copy-webpack-plugin": "^4.5.0",
+    "css-loader": "^0.28.10",
+    "mini-css-extract-plugin": "^0.4.0",
+    "optimize-css-assets-webpack-plugin": "^4.0.0",
+    "uglifyjs-webpack-plugin": "^1.2.4",
+    "webpack": "4.4.0",
+    "webpack-cli": "^2.0.10"
   }
 }
 ```
 
-We can use any front-end build tool we prefer, but Phoenix comes with a
-minimalist tool called [`brunch`](http://brunch.io), which we can see listed in
-the `devDependencies`. You're welcome to try other options, but Brunch tends to
-work well for our purposes. The initial configuration takes some work, but
-afterward we'll be able to focus on development with Elixir and Elm.
+Phoenix comes preloaded with Webpack as the front-end build tool, which we can
+see listed in the `devDependencies` above. Our initial configuration will take
+some work, but afterward we'll be able to narrow our focus to developing
+features with Elixir and Elm.
 
 Let's navigate to the `assets` folder from the command line and run the
-following command to ensure our project works with the `elm` language and the
-`elm-brunch` tool:
+following command to ensure our project includes the `elm` compiler and the
+`elm-webpack-loader` tool:
 
 ```shell
-$ npm install --save-dev elm elm-brunch
+$ npm install --save elm elm-webpack-loader
 ```
 
-This will add two new lines to the `devDependencies` section of our
+This will add two new lines to the `dependencies` section of our
 `package.json` file.
 
 ```javascript
-"devDependencies": {
-  "babel-brunch": "6.1.1",
-  "brunch": "2.10.9",
-  "clean-css-brunch": "2.10.0",
-  "elm": "^0.18.0",
-  "elm-brunch": "^0.9.0",
-  "uglify-js-brunch": "2.10.0"
-}
+"dependencies": {
+  "elm": "^0.19.0",
+  "elm-webpack-loader": "^5.0.0",
+  "phoenix": "file:../deps/phoenix",
+  "phoenix_html": "file:../deps/phoenix_html"
+},
 ```
+
+## Elm Folder
+
+We'll need a place to put our Elm code inside our Phoenix application. So let's
+create a new folder called `elm` inside our `assets` folder. We'll use this
+folder to store all of our Elm source code. This also allows us to co-locate
+our Elm front-end code with the rest of our front-end code.
+
+```shell
+$ cd assets
+$ mkdir elm
+```
+
+The Elm source code we write will be committed to our repository, but our
+Phoenix application will use Webpack and elm-webpack-loader to automatically
+compile it to a JavaScript output file so we don't have to do it manually.
 
 ## Updating .gitignore
 
@@ -78,68 +97,28 @@ code to the bottom:
 
 ```gitignore
 # Elm
-/assets/elm-stuff
-/assets/js/main.js
+/assets/elm/elm-stuff
 ```
 
-Now, run the following command from inside the `assets` folder of our Phoenix
-project to install Elm packages:
+## elm init
+
+Now, run the following command from inside the `assets/elm` folder to set up
+our new Elm project within Phoenix:
 
 ```shell
-$ elm-package install
+$ elm init
 ```
 
-It should show similar output to what we saw in the previous chapter:
-
-```shell
-$ elm-package install
-Some new packages are needed. Here is the upgrade plan.
-
-  Install:
-    elm-lang/core 5.1.1
-    elm-lang/html 2.0.0
-    elm-lang/virtual-dom 2.0.4
-
-Do you approve of this plan? [Y/n] Y
-Starting downloads...
-
-  ● elm-lang/html 2.0.0
-  ● elm-lang/virtual-dom 2.0.4
-  ● elm-lang/core 5.1.1
-
-Packages configured successfully!
-```
-
-This command creates a new `elm-package.json` file that we need inside our
-`assets` folder. And it also creates the `elm-stuff` folder that won't need to
-be tracked by our repository.
-
-This is a great location for our files, because it means we'll have collocated
-our front-end files with `package.json` for any Node libraries and
-`elm-package.json` for any Elm libraries we want to include.
-
-## Elm Folder
-
-We'll need a place to put our Elm code inside our Phoenix application. So let's
-create a new folder called `elm` inside our `assets` folder. We'll use this
-folder to store all of our Elm source code.
-
-This allows us to collocate our Elm front-end code with the rest of our
-front-end code. It also means that we won't need to put all of our Elm files
-inside the `lib` directory, which is good because we don't want to make Phoenix
-scan all these files when it recompiles our Elixir code.
-
-The Elm source code we write will be committed to our repository, but we want
-our Phoenix application to compile it to JavaScript automatically (we won't
-have to work with those JavaScript output files directly).
+It should show similar output to what we saw in the previous chapter and
+generate both the `elm.json` file and a new `src` folder.
 
 ## Main.elm
 
-Inside our new `assets/elm` folder, let's create a new file called `Main.elm`
+Inside our new `assets/elm/src` folder, let's create a file called `Main.elm`
 and add the following content:
 
 ```elm
-module Main exposing (..)
+module Main exposing (main)
 
 import Html exposing (Html, text)
 
@@ -150,11 +129,11 @@ main =
 ```
 
 This is a simple Elm program that will print "Hello from Elm!" in the browser
-once we get everything wired together. The way it will work is that the Brunch
+once we get everything wired together. The way it will work is that the Webpack
 build tool will watch for changes to our Elm source code, and then compile the
-results to a JavaScript file. So the changes we make to the
-`assets/elm/Main.elm` file will be compiled to `assets/js/main.js`. To get this
-up and running, we'll need to configure Brunch.
+results to a JavaScript file. First, we'll need to configure Webpack so the
+changes we make to the `assets/elm/src/Main.elm` file will be compiled
+automatically.
 
 ## Brunch Configuration
 
@@ -237,7 +216,7 @@ We can embed our Elm application inside this container. Let's open the
 
 ```javascript
 // Elm
-import Elm from "./main"
+import Elm from "./main";
 
 const elmContainer = document.querySelector("#elm-container");
 
