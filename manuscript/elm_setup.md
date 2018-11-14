@@ -155,9 +155,7 @@ module: {
       use: {
         loader: 'elm-webpack-loader',
         options: {
-          cwd: path.resolve(__dirname, 'elm'),
-          debug: true
-          // optimize: true
+          cwd: path.resolve(__dirname, 'elm')
         }
       }
     }
@@ -166,17 +164,15 @@ module: {
 // ...
 ```
 
-There are quite a few options we're setting here, but this gives us a good
-configuration that will serve us well as we develop our Elm front-end. This
-code is basically telling Webpack to look for files that end in a `.elm`
-extension in the `elm` folder, and then handle them with `elm-webpack-loader`.
+This code is basically telling Webpack how to handle files that have a `.elm`
+extension. We're using `elm-webpack-loader` and the `cwd` option (which is
+short for "change working directory") to look in our `assets/elm` folder.
 
-We're also setting an additional option at the bottom to enable the Elm
-debugger by setting `debug` to `true`. I also included a commented out setting
-to `optimize` assets for now. We'll want to keep the debugger available while
-we work in the development environment, and then when we want to ship to
-production we should remove the debugger and enable to the optimization
-settings for the Elm compiler.
+Check out the README in the
+[elm-webpack-loader](https://github.com/elm-community/elm-webpack-loader)
+repository for additional options too. We can use this later to enable the Elm
+debugger in the development environment and optimize assets when we deploy to
+production.
 
 ## Displaying Our Elm Application
 
@@ -216,24 +212,23 @@ Elm.Main.init({
 
 With our configuration finished, we now have the ability to write Elm code in
 our Phoenix application! The code in our `Main.elm` file is being automatically
-compiled to JavaScript using our minimal Brunch configuration, and then the
-resulting Elm application is inserted into our Phoenix application.
+compiled to JavaScript using our Webpack configuration, and then the resulting
+Elm application is inserted into our Phoenix application.
+
+Try loading the `http://localhost:4000` route and logging in to see the working
+Elm output:
 
 ![Working Elm Application Inside Phoenix](images/elm_setup/working_elm_application.png)
-
-Also note that we have our Elm debugger available to explore the history of
-changes, and this will be useful as we start tracking state changes in our
-application with the Elm Architecture.
 
 ## Live Reload
 
 One of the great features is that we can keep working with Elm, and the live
-reload feature will allow us to see changes without needing to restart the
-server or refresh the page in the browser. Try making a small change to the
-string in our `Main.elm` file:
+reload feature from Phoenix allows us to see changes without needing to restart
+the server or refresh the page in the browser. With with the Phoenix server
+running, try making a small change to the string in our `Main.elm` file:
 
 ```elm
-module Main exposing (..)
+module Main exposing (main)
 
 import Html exposing (Html, text)
 
@@ -243,8 +238,7 @@ main =
     text "Hello from Elm inside Phoenix!"
 ```
 
-The content should be reloaded in the browser without needing a refresh (after
-waiting a second or two for our code to compile).
+The content should be reloaded in the browser without needing a refresh.
 
 ![Working Live Reload for Elm](images/elm_setup/elm_live_reload.png)
 
