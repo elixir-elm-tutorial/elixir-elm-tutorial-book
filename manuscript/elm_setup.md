@@ -137,15 +137,18 @@ automatically.
 
 ## Webpack Configuration
 
-Inside the `assets` folder, open the `webpack.config.js` file and replace the
-`rules` section with the following:
+Inside the `assets` folder, open the `webpack.config.js` file and add to the
+`rules` section. It already has rules to handle `.js` files and `.css` files,
+and we'll be adding another block below those to handle `.elm` files. Here is
+what the `rules` should look like (note that the `.js` and `.css` sections
+have been trimmed so you can focus on the `.elm` section):
 
 ```javascript
 // ...
 module: {
   rules: [
-    /* { test: /\.js$/ }, */
-    /* { test: /\.css$/ }, */
+    { test: /\.js$/ /* ... */ },
+    { test: /\.css$/ /* ... */ },
     {
       test: /\.elm$/,
       exclude: [/elm-stuff/, /node_modules/],
@@ -205,8 +208,8 @@ Now, we can embed our Elm application inside this `div` element. Let's open the
 import { Elm } from "../elm/src/Main.elm"
 
 Elm.Main.init({
-  node: document.getElementById("elm-container");
-});
+  node: document.getElementById("elm-container")
+})
 ```
 
 ## Working Elm application
