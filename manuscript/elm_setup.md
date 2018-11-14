@@ -135,73 +135,59 @@ results to a JavaScript file. First, we'll need to configure Webpack so the
 changes we make to the `assets/elm/src/Main.elm` file will be compiled
 automatically.
 
-## Brunch Configuration
+## Webpack Configuration
 
-Inside the `assets` folder, open the `brunch-config.js` file and replace the
-contents with the code below (note that the default file contains _a lot_ of
-comments, but we're removing them here for brevity):
+Inside the `assets` folder, open the `webpack.config.js` file and replace the
+`rules` section with the following:
 
 ```javascript
-exports.config = {
-  files: {
-    javascripts: { joinTo: "js/app.js" },
-    stylesheets: { joinTo: "css/app.css" },
-    templates: { joinTo: "js/app.js" }
-  },
-  conventions: { assets: /^(static)/ },
-  paths: {
-    watched: ["static", "css", "js", "vendor", "elm"],
-    public: "../priv/static"
-  },
-  plugins: {
-    babel: { ignore: [/vendor/] },
-    elmBrunch: {
-      mainModules: ["elm/Main.elm"],
-      makeParameters: ["--debug"],
-      outputFolder: "../assets/js"
+// ...
+module: {
+  rules: [
+    /* { test: /\.js$/ }, */
+    /* { test: /\.css$/ }, */
+    {
+      test: /\.elm$/,
+      exclude: [/elm-stuff/, /node_modules/],
+      use: {
+        loader: 'elm-webpack-loader',
+        options: {
+          cwd: path.resolve(__dirname, 'elm'),
+          debug: true
+          // optimize: true
+        }
+      }
     }
-  },
-  modules: {
-    autoRequire: { "js/app.js": ["js/app"] }
-  },
-  npm: { enabled: true }
-};
+  ]
+},
+// ...
 ```
 
-This file has been condensed quite a bit to keep it short, but the main things
-to note are the `watched` paths section, and the `elmBrunch` plugin. These
-configuration options are basically telling the Phoenix application where to
-look for our Elm source code (`"elm/Main.elm"`), and where we'll output the
-results (`"../assets/js"`). We also add a `--debug` parameter that will allow
-us to use the Elm debugger while we develop our application.
+There are quite a few options we're setting here, but this gives us a good
+configuration that will serve us well as we develop our Elm front-end. This
+code is basically telling Webpack to look for files that end in a `.elm`
+extension in the `elm` folder, and then handle them with `elm-webpack-loader`.
 
-## Compiling with Phoenix
-
-We'll still need to take a few additional steps before we can render our Elm
-application in the browser, but at this point we should be able to get Phoenix
-to compile our Elm source code when we run the server.
-
-Let's start up our Phoenix server with `mix phx.server`, and we should see
-a message in the Terminal about how the `elm/Main.elm` file was compiled to the
-`../assets/js/main.js` file.
-
-```shell
-$ mix phx.server
-[info] Running PlatformWeb.Endpoint with Cowboy using http://0.0.0.0:4000
-16:02:47 - info: compiled 7 files into 2 files, copied 3 in 801 ms
-Elm compile: elm/Main.elm, to ../assets/js/main.js
-```
+We're also setting an additional option at the bottom to enable the Elm
+debugger by setting `debug` to `true`. I also included a commented out setting
+to `optimize` assets for now. We'll want to keep the debugger available while
+we work in the development environment, and then when we want to ship to
+production we should remove the debugger and enable to the optimization
+settings for the Elm compiler.
 
 ## Displaying Our Elm Application
 
-Now that Brunch is automatically compiling our Elm code in `Main.elm` to
-JavaScript in `main.js`, we can find a place to display our front-end
-application within Phoenix.
+We'll still need to take a few additional steps before we can render our Elm
+application in the browser, but at this point we should be able to get Phoenix
+to compile our Elm source code when we run the server with `mix phx.server`.
+
+Now that Webpack is automatically compiling our Elm code in `Main.elm`, we can
+find a place to display our front-end application within Phoenix.
 
 We'll use the same `index.html.eex` page we worked with previously. Here's
 what our existing application looks like with a user signed in.
 
-![Existing Phoenix Application](images/elm_setup/existing_phoenix_application.png)
+![Existing Phoenix Application](images/phoenix_authentication/signed_in_header.png)
 
 Let's replace everything below the header with our new Elm front-end. To do
 this, we'll open the `lib/platform_web/templates/page/index.html.eex` and
@@ -211,16 +197,16 @@ and replace everything with a single line:
 <div id="elm-container"></div>
 ```
 
-We can embed our Elm application inside this container. Let's open the
+Now, we can embed our Elm application inside this `div` element. Let's open the
 `assets/js/app.js` file and add the following code at the bottom:
 
 ```javascript
 // Elm
-import Elm from "./main";
+import { Elm } from "../elm/src/Main.elm"
 
-const elmContainer = document.querySelector("#elm-container");
-
-if (elmContainer) Elm.Main.embed(elmContainer);
+Elm.Main.init({
+  node: document.getElementById("elm-container");
+});
 ```
 
 ## Working Elm application
