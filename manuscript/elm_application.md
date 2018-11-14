@@ -29,7 +29,7 @@ mistakes and make Elm code easier to write.
 Let's take a look at our existing Elm application:
 
 ```elm
-module Main exposing (..)
+module Main exposing (main)
 
 import Html exposing (Html, text)
 
@@ -62,7 +62,7 @@ create our games list in the `main` function. We'll start with an empty `div`
 element:
 
 ```elm
-module Main exposing (..)
+module Main exposing (main)
 
 import Html exposing (Html, text, div)
 
@@ -84,7 +84,7 @@ will be the contents of our `div` (our unordered list).
 In order to use the `class` attribute, we'll need to import that too:
 
 ```elm
-module Main exposing (..)
+module Main exposing (main)
 
 import Html exposing (Html, text, div)
 import Html.Attributes exposing (class)
@@ -104,7 +104,7 @@ while we're in development mode and we can go back later and refactor to import
 only what we need. Let's adjust our import declarations with the following:
 
 ```elm
-module Main exposing (..)
+module Main exposing (main)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -155,7 +155,7 @@ inside an unordered list, which is nested inside our `div`. But let's finish
 adding our current example by adding our list items:
 
 ```elm
-module Main exposing (..)
+module Main exposing (main)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -186,7 +186,7 @@ assigning everything directly to our `main` function, let's split things up
 into a games index container, a list, and individual list items.
 
 ```elm
-module Main exposing (..)
+module Main exposing (main)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -257,7 +257,7 @@ With our `main` function, we can create a `div` that will display a header and
 our `gamesIndex` to render our new structure to the page with a single game:
 
 ```elm
-module Main exposing (..)
+module Main exposing (main)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -297,7 +297,7 @@ things to go. In this example, we're going to start our `model` as an empty
 list:
 
 ```elm
-module Main exposing (..)
+module Main exposing (main)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -598,7 +598,7 @@ we removed our `firstGameMaybe` and `firstGameTitle` functions now that we're
 mapping through all the titles):
 
 ```elm
-module Main exposing (..)
+module Main exposing (main)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
