@@ -58,8 +58,13 @@ start with something like this:
 ## Elm View
 
 Instead of displaying our `"Hello from Elm inside Phoenix!"` text, let's
-create our games list in the `main` function. We'll start with an empty `div`
-element:
+create our games list in the `main` function.
+
+We'll start by importing the
+[`div`](http://package.elm-lang.org/packages/elm-lang/html/latest/Html#div)
+function from Elm's
+[`Html`](http://package.elm-lang.org/packages/elm-lang/html/latest/Html)
+module. Then, we'll render a `div` element in our `main` function:
 
 ```elm
 module Main exposing (main)
@@ -72,11 +77,7 @@ main =
     div [] []
 ```
 
-Note that the first step is to import the
-[`div`](http://package.elm-lang.org/packages/elm-lang/html/latest/Html#div)
-function from Elm's
-[`Html`](http://package.elm-lang.org/packages/elm-lang/html/latest/Html)
-module. Then, we replace our original text with `div [] []`. Those empty square
+Note that we replaced our original text with `div [] []`. Those empty square
 brackets indicate that we're passing two empty lists to the `div` function. The
 first one will be a list of attributes (like our class name), and the second
 will be the contents of our `div` (our unordered list).
@@ -120,7 +121,7 @@ still only have an empty `div` on the page, so let's start adding our list.
 
 ## Creating a List of Games
 
-Remember that we are passing two lists to our `div` function:
+Remember that we are passing two lists as arguments to our `div` function:
 
 ```elm
 div [ class "games-index" ] []
@@ -235,7 +236,8 @@ gamesListItem =
 
 And now we can fill out our functions with the existing example we created in
 our `main` function. Note that we're only going to add a single list item for
-now, and then we're going to extract our data into a separate list:
+now, and then we're going to extract our data (the data currently consists of
+the game titles like `"Platform Game"`) into a separate list:
 
 ```elm
 gamesIndex : Html msg
