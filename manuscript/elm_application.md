@@ -355,9 +355,9 @@ model =
 ```
 
 Having the comma characters at the beginning of the line might seem foreign if
-you're coming from other languages, but it's easy to get used to. And if you're
-using elm-format then we're able to focus less on syntax and more on the
-overall concepts we're learning here.
+you're coming from other languages, but it's easy to get used to. Another
+benefit to using elm-format is that we're able to focus less on syntax and more
+on the overall concepts we're learning.
 
 ## Passing Data to the View
 
@@ -365,12 +365,12 @@ We're going to work towards displaying our full list of games, but we'll start
 with trying to display a single game from our list because it introduces some
 interesting concepts in Elm.
 
-What if we want to find the first game in our list, and then pass that to the
+What if we want to find the first game in our list and then pass that to the
 `gamesListItem` function instead of using the hard-coded string we currently
 have there?
 
 Our first step would be to use the `model` list and find the first item. To do
-that, we'd head to the Elm documentation for the `List` module, and try to find
+that, we'll go to the Elm documentation for the `List` module, and try to find
 a function that would give us the results we're looking for. Take a look at the
 [`List`](http://package.elm-lang.org/packages/elm-lang/core/latest/List)
 module documentation and find the `head` function.
@@ -392,30 +392,31 @@ firstGame =
 
 You might think that `firstGame` would be set to `"Platform Game"`, but in
 actuality we're working with something called a "Maybe" in Elm. The `List.head`
-function doesn't return the result itself, it returns a `Maybe`. The reason for
-this is that our list of data _could_ be empty.
+function doesn't return the result itself, it returns a `Maybe`. This happens
+because our list of data _could_ be empty.
 
 To illustrate what's happening, we can take a quick look in the interactive
-Elm REPL. From the command line, type `elm-repl` to get started:
+Elm REPL. From the command line, type `elm repl` to get started:
 
 ```shell
-$ elm-repl
+$ elm repl
 ```
 
 This will display an interactive prompt where we can type in some Elm code and
-view the output. Here's an example where we're accessing the `head` from a
-list that contains a couple of strings and another example where we're trying
-to access the `head` from an empty list.
+view the output. It's similar to the `iex` environment we saw previously for
+Elixir. Here's an example where we're accessing the `head` from a list that
+contains a couple of strings and another example where we're trying to access
+the `head` from an empty list.
 
 ```elm
-$ elm-repl
----- elm-repl 0.18.0 -----------------------------------------------------------
- :help for help, :exit to exit, more at <https://github.com/elm-lang/elm-repl>
+$ elm repl
+---- Elm 0.19.0 ----------------------------------------------------------------
+Read <https://elm-lang.org/0.19.0/repl> to learn more: exit, help, imports, etc.
 --------------------------------------------------------------------------------
 > List.head [ "Platform Game", "Adventure Game" ]
-Just "Platform Game"
+Just ("Platform Game") : Maybe String
 > List.head []
-Nothing
+Nothing : Maybe a
 ```
 
 ## Elm Maybe
