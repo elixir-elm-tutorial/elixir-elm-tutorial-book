@@ -35,22 +35,20 @@ everything work by tying them together in the `main` function.
 
 We're going to be breaking our original Elm application with all the changes
 we make in this chapter. But we don't want elm-format to keep warning us of
-errors while we're working. Let's comment out our original `main` function so
-we can keep working and using elm-format without it trying to build our full
-application for us:
+errors while we're working. Let's adjust our original `main` function to simply
+return an empty `div` element for now:
 
 ```elm
 -- MAIN
--- main : Html msg
--- main =
---     div []
---         [ h1 [] [ text "Games" ]
---         , gamesIndex model
---         ]
+
+
+main : Html msg
+main =
+     div [] []
 ```
 
-At the end of this chapter, we'll create a new version of the `main` function
-that will pull everything together for us.
+At the end of this chapter, we'll change our `main` function so it can pull
+everything together for us.
 
 ## Starting with the Model
 
@@ -140,19 +138,20 @@ Since we commented out our `main` function, we can also remove our original
 reference:
 
 ```elm
-module Main exposing (..)
+module Main exposing (main)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
 
 
 -- MAIN
--- main : Html msg
--- main =
---     div []
---         [ h1 [] [ text "Games" ]
---         , gamesIndex model
---         ]
+
+
+main : Html msg
+main =
+     div [] []
+
+
 -- MODEL
 
 
@@ -176,9 +175,9 @@ initialModel =
     }
 ```
 
-When we add our new `main` function later, we'll want to initialize our model
-into an `init` function. But for now let's move on to the update section so we
-can introduce the necessary concepts as they arise.
+When we set up our `main` function later, we'll want to initialize our model
+into an `init` function. For now, let's move on to the update section so we can
+introduce the necessary concepts as they arise.
 
 ## Update
 
