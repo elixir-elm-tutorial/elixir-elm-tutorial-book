@@ -81,23 +81,23 @@ type alias Model =
 
 
 type alias Game =
-    { gameTitle : String
-    , gameDescription : String
+    { title : String
+    , description : String
     }
 
 
 initialModel : Model
 initialModel =
-    [ { gameTitle = "Platform Game", gameDescription = "Platform game example." }
-    , { gameTitle = "Adventure Game", gameDescription = "Adventure game example." }
+    [ { title = "Platform Game", description = "Platform game example." }
+    , { title = "Adventure Game", description = "Adventure game example." }
     ]
 ```
 
 This is our first look at creating type aliases. We're creating one type alias
 for our overall `Model`, which is a list of games. Then, we define the type of
-our `Game` records. Each game is a record that will contain a `gameTitle` field
-and a `gameDescription` field, both of which are `String` types. We also add a
-type annotation for our `initialModel` function to ensure that it follows the
+our `Game` records. Each game is a record that will contain a `title` field and
+a `description` field, both of which are `String` types. We also add a type
+annotation for our `initialModel` function to ensure that it follows the
 `Model` type alias structure that we created above.
 
 Let's make a slight change to help further our understanding of what we're
@@ -111,16 +111,16 @@ type alias Model =
 
 
 type alias Game =
-    { gameTitle : String
-    , gameDescription : String
+    { title : String
+    , description : String
     }
 
 
 initialModel : Model
 initialModel =
     { gamesList =
-        [ { gameTitle = "Platform Game", gameDescription = "Platform game example." }
-        , { gameTitle = "Adventure Game", gameDescription = "Adventure game example." }
+        [ { title = "Platform Game", description = "Platform game example." }
+        , { title = "Adventure Game", description = "Adventure game example." }
         ]
     }
 ```
@@ -161,16 +161,16 @@ type alias Model =
 
 
 type alias Game =
-    { gameTitle : String
-    , gameDescription : String
+    { title : String
+    , description : String
     }
 
 
 initialModel : Model
 initialModel =
     { gamesList =
-        [ { gameTitle = "Platform Game", gameDescription = "Platform game example." }
-        , { gameTitle = "Adventure Game", gameDescription = "Adventure game example." }
+        [ { title = "Platform Game", description = "Platform game example." }
+        , { title = "Adventure Game", description = "Adventure game example." }
         ]
     }
 ```
@@ -278,16 +278,16 @@ type alias Model =
 
 
 type alias Game =
-    { gameTitle : String
-    , gameDescription : String
+    { title : String
+    , description : String
     }
 
 
 initialModel : Model
 initialModel =
     { gamesList =
-        [ { gameTitle = "Platform Game", gameDescription = "Platform game example." }
-        , { gameTitle = "Adventure Game", gameDescription = "Adventure game example." }
+        [ { title = "Platform Game", description = "Platform game example." }
+        , { title = "Adventure Game", description = "Adventure game example." }
         ]
     , displayGamesList = False
     }
@@ -466,15 +466,15 @@ gamesList games =
 gamesListItem : Game -> Html msg
 gamesListItem game =
     li [ class "game-item" ]
-        [ strong [] [ text game.gameTitle ]
-        , p [] [ text game.gameDescription ]
+        [ strong [] [ text game.title ]
+        , p [] [ text game.description ]
         ]
 ```
 
 We start by passing our full `model` to the `gamesIndex`, which passes the
 `gamesList` from the model along to the `gamesList` function. Then we pass
 those individual games to the `gamesListItem` function. For each `game`, we
-display both the `gameTitle` (in a `strong` element) and the `gameDescription`
+display both the `title` (in a `strong` element) and the `description`
 (in a `p` element).
 
 ![Displaying the List of Games](images/elm_architecture/rendering_the_games_list.png)
@@ -545,8 +545,8 @@ gamesList games =
 gamesListItem : Game -> Html msg
 gamesListItem game =
     li [ class "game-item" ]
-        [ strong [] [ text game.gameTitle ]
-        , p [] [ text game.gameDescription ]
+        [ strong [] [ text game.title ]
+        , p [] [ text game.description ]
         ]
 ```
 
