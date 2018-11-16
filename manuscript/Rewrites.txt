@@ -7,7 +7,7 @@
 - [x] phoenix_api.md
 - [x] elm_introduction.md
 - [x] elm_setup.md
-- [ ] elm_application.md
+- [x] elm_application.md
 - [ ] elm_architecture.md
 - [ ] elm_api_data.md
 - [ ] layout_design.md

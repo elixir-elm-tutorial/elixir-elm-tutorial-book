@@ -467,9 +467,9 @@ firstGameTitle =
             ""
 ```
 
-If this is overwhelming or confusing, don't worry too much. Sometimes it just
-takes repeated exposure to these concepts before they become obvious. The
-naming in our example should help with our understanding.
+If this is overwhelming or confusing, try not to worry. Sometimes it just takes
+repeated exposure to these concepts before they become more obvious. The naming
+in our example should help with our understanding.
 
 We're trying to get the first game title from our `model`. So we start by using
 `List.head`, which returns a `Maybe` type, and we assign that to
@@ -567,7 +567,8 @@ gamesList gameTitles =
 There's a lot going on here. We're accepting a list of strings as the argument
 to our `gamesList` function. Then, we're going to iterate through those game
 titles one at a time using `List.map`. Take a look at the documentation for the
-[`List.map`](http://package.elm-lang.org/packages/elm-lang/core/latest/List#map) function, and we see that it takes two arguments: a function and a list.
+[`List.map`](http://package.elm-lang.org/packages/elm-lang/core/latest/List#map)
+function. `List.map` takes two arguments: a function `(a -> b)` and a list.
 
 We're passing the list of all our game titles to the `List.map` function, and
 it's splitting them apart and sending the titles one at a time to the
