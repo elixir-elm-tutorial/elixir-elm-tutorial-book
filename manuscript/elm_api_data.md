@@ -115,27 +115,16 @@ import the libraries we'll need to use:
 - [Http](http://package.elm-lang.org/packages/elm-lang/http/latest)
 - [Json.Decode](http://package.elm-lang.org/packages/elm-lang/core/latest/Json-Decode)
 
-From the command line, we'll type the following command from inside the
+From the command line, we'll type the following commands from inside the
 `assets/elm` folder where our `elm.json` file lives:
 
 ```shell
 $ elm install elm/http
+$ elm install elm/json
 ```
 
-This should install the `Http` package for us, and here's what the output
-should look like (note that some output has been trimmed below):
-
-```shell
-$ elm install elm/http
-Here is my plan:
-
-  Add:
-    elm/http    1.0.0
-
-Would you like me to update your elm.json accordingly? [Y/n]: Y
-...
-Dependencies ready!
-```
+We should see some output to let us know that we're installing the `Http`
+package and the `Json` decoder functions that we'll need.
 
 With that completed, we can now add the `import` declarations to the top of our
 `Main.elm` file. Here's what the top of the file should look like:
@@ -143,6 +132,7 @@ With that completed, we can now add the `import` declarations to the top of our
 ```elm
 module Main exposing (main)
 
+import Browser
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
@@ -158,14 +148,15 @@ and giving it an alias of `Decode` to make things a little easier on ourselves.
 
 Now that we have our libraries imported, the first step we need to take is to
 make an HTTP GET request to our endpoint. If we take a look at the
-[documentation for `Http.get`](http://package.elm-lang.org/packages/elm-lang/http/latest/Http#get),
-we see that this function takes a string value for the URL as the first
+documentation for the
+[`Http.get`](http://package.elm-lang.org/packages/elm-lang/http/latest/Http#get)
+function, we see that this function takes a string value for the URL as the first
 argument and a JSON decoder as the second argument.
 
-Keep in mind that the order of your functions doesn't matter, but I like to add
-a new section for API functions below the model section. Here we'll create a
-`fetchGamesList` function that make our `Http.get` request to our
-`"/api/games"` route (and we'll get to the decoding soon).
+Keep in mind that the order of your function declarations doesn't matter in
+Elm, but I like to add a new section for API functions below the model section.
+Here we'll create a `fetchGamesList` function that make our `Http.get` request
+to our `"/api/games"` route (and we'll get to the decoding soon).
 
 ```elm
 fetchGamesList =
@@ -174,8 +165,17 @@ fetchGamesList =
 
 We also want to trigger this request using the
 [`Http.send`](http://package.elm-lang.org/packages/elm-lang/http/latest/Http#send)
-function. So we'll pipe the results along with a new action we're going to
-create.
+function, so we'll pipe the results of our `Http.get` request to `Http.send`
+and use `FetchGamesList` in our `update` function. We also added a type
+annotation to indicate that we're creating a command, which we'll later use
+in our `initialCommand` function when our application starts.
+
+```elm
+fetchGamesList : Cmd Msg
+fetchGamesList =
+    Http.get "/api/games" decodeGamesList
+        |> Http.send FetchGamesList
+```
 
 There's a lot going on here, so don't worry if it's getting a little bit
 confusing. It will all make more sense as we finish up with this initial
@@ -265,12 +265,10 @@ decodeGame =
 
 ## FetchGamesList
 
-Now we can handle the results of our HTTP request in our update section. The
-type annotation may look a bit strange at first, but essentially we're creating
-our `FetchGamesList` action and the result will either be successful or an
-error. When the API fetch is successful, we'll get back our list of games. When
-it's not successful, we'll get back and `Http.Error` that we can ignore for
-now.
+Now we can handle the results of our HTTP request in our update section. We'll
+set up `FetchGamesList` to attempt to fetch data from our API. It will either
+successfully return a list of games of type `List Game` or return an error with
+`Http.Error`.
 
 ```elm
 type Msg
@@ -281,7 +279,10 @@ Inside the `update` function, we'll add a `result` argument to our
 `FetchGamesList` action. And we'll add a `case` expression to handle the
 result. When we get an `Ok` response, we update the `gamesList` in our model to
 contain the list of games from our API. Otherwise, we'll just leave the model
-unchanged if we get back and error.
+unchanged if we get back and error. We could also handle errors here in more
+detail, but for now we'll just add
+[`Debug.log`](https://package.elm-lang.org/packages/elm-lang/core/latest/Debug)
+to print a message to the browser console when the API fetch fails.
 
 ```elm
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -293,7 +294,8 @@ update msg model =
                     ( { model | gamesList = games }, Cmd.none )
 
                 Err _ ->
-                    ( model, Cmd.none )
+                    Debug.log "Error fetching games from API."
+                        ( model, Cmd.none )
 ```
 
 ## Performing the Fetch
