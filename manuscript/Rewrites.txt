@@ -8,7 +8,7 @@
 - [x] elm_introduction.md
 - [x] elm_setup.md
 - [x] elm_application.md
-- [ ] elm_architecture.md
+- [x] elm_architecture.md
 - [ ] elm_api_data.md
 - [ ] layout_design.md
 - [ ] game_setup.md
