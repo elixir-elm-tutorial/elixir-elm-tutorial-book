@@ -268,7 +268,7 @@ or not we're going to display our list of game data.
 
 Let's add a `displayGamesList` field that will be set to either `True` or
 `False`. We'll update the type alias for our `Model` and also set an initial
-value of `False` in our `initialModel`:
+value of `True` in our `initialModel`:
 
 ```elm
 type alias Model =
@@ -289,7 +289,7 @@ initialModel =
         [ { title = "Platform Game", description = "Platform game example." }
         , { title = "Adventure Game", description = "Adventure game example." }
         ]
-    , displayGamesList = False
+    , displayGamesList = True
     }
 ```
 

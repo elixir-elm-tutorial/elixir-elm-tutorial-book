@@ -13,19 +13,19 @@ to display a list of games.
 initialModel : Model
 initialModel =
     { gamesList =
-        [ { gameTitle = "Platform Game", gameDescription = "Platform game example." }
-        , { gameTitle = "Adventure Game", gameDescription = "Adventure game example." }
+        [ { title = "Platform Game", description = "Platform game example." }
+        , { title = "Adventure Game", description = "Adventure game example." }
         ]
-    , displayGamesList = False
+    , displayGamesList = True
     }
 ```
 
-![Hard-coded Games List](images/elm_api_data/hard_coded_games_list.png)
+![Hard-coded Games List](images/elm_architecture/rendering_the_games_list.png)
 
 Our next goal is to remove this hard-coded data and fetch the game JSON data
 from our Phoenix API instead.
 
-![JSON API Game Data](images/elm_api_data/json_api_game_data.png)
+![JSON API Game Data](images/phoenix_api/games_api_with_data.png)
 
 ## Updating Our Initial Model
 
@@ -214,15 +214,15 @@ our endpoint.
 
 ```javascript
 {
-    data: [
-        {
-            title: "Platformer",
-            thumbnail: "http://via.placeholder.com/300x200",
-            id: 1,
-            featured: true,
-            description: "Platform game example."
-        }
-    ]
+  data: [
+    {
+      title: "Platformer",
+      thumbnail: "http://via.placeholder.com/300x200",
+      id: 1,
+      featured: true,
+      description: "Platform game example."
+    }
+  ];
 }
 ```
 
