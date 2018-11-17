@@ -388,7 +388,7 @@ API:
 
 ```elm
 type alias Player =
-    { displayName : String
+    { displayName : Maybe String
     , id : Int
     , score : Int
     , username : String
@@ -525,7 +525,12 @@ playersList players =
 playersListItem : Player -> Html msg
 playersListItem player =
     li [ class "player-item" ]
-        [ strong [] [ text player.displayName ]
+        [ case player.displayName of
+              Just displayName ->
+                  strong [] [ text displayName ]
+
+              Nothing ->
+                  strong [] [ text player.username ]
         , p [] [ text (String.fromInt player.score) ]
         ]
 ```
