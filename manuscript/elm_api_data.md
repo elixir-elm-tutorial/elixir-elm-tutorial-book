@@ -481,8 +481,21 @@ view model =
         ]
 ```
 
-Next, we can update our `gamesIndex` function and add a new `playersIndex`
-function.
+Next, we can update our `gamesIndex` function with the following:
+
+```elm
+gamesIndex : Model -> Html msg
+gamesIndex model =
+    if List.isEmpty model.gamesList then
+        div [] []
+    else
+        div [ class "games-index" ]
+            [ h2 [] [ text "Games" ]
+            , gamesList model.gamesList
+            ]
+```
+
+And we'll use a similar approach for our new `playersIndex` function:
 
 ```elm
 playersIndex : Model -> Html msg
@@ -491,7 +504,7 @@ playersIndex model =
         div [] []
     else
         div [ class "players-index" ]
-            [ h1 [ class "players-section" ] [ text "Players" ]
+            [ h2 [] [ text "Players" ]
             , playersList model.playersList
             ]
 ```
@@ -499,7 +512,9 @@ playersIndex model =
 Then, we can go ahead and take the same approach we did for our games by adding
 two new functions for the `playersList` and `playersListItem`. For now, we're
 going to use the player's `displayName` and `score` fields to render the data
-on the page:
+on the page. Note that `player.score` is an `Int` value and not a `String`, so
+we're using the `String.fromInt` function to convert it before we display the
+player score on the page.
 
 ```elm
 playersList : List Player -> Html msg
@@ -511,7 +526,7 @@ playersListItem : Player -> Html msg
 playersListItem player =
     li [ class "player-item" ]
         [ strong [] [ text player.displayName ]
-        , p [] [ text (toString player.score) ]
+        , p [] [ text (String.fromInt player.score) ]
         ]
 ```
 
