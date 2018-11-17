@@ -365,7 +365,7 @@ fields we want to display as needed.
 We managed to get our list of games from the API. Let's get some additional
 experience as we do the same for our list of players.
 
-![JSON API Player Data](images/elm_api_data/json_api_player_data.png)
+![JSON API Player Data](images/phoenix_api/player_data_api_scope.png)
 
 We can start by adding to our `Model` type alias and `initialModel`:
 
@@ -374,6 +374,7 @@ type alias Model =
     { gamesList : List Game
     , playersList : List Player
     }
+
 
 initialModel : Model
 initialModel =
@@ -429,9 +430,9 @@ decodePlayer =
         (Decode.field "username" Decode.string)
 ```
 
-For our update section, we'll add a new `FetchPlayersList` action, and take the
-same approach we did for our games. We add our type first, and then we fill out
-the `case` expression inside the `update` function with the following:
+For our `Msg` type, we'll add `FetchPlayersList` and take the same approach we
+did for our games. We add to the `Msg` type, and then fill out the `case`
+expression inside the `update` function with the following:
 
 ```elm
 type Msg
@@ -448,7 +449,8 @@ update msg model =
                     ( { model | gamesList = games }, Cmd.none )
 
                 Err _ ->
-                    ( model, Cmd.none )
+                    Debug.log "Error fetching games from API."
+                        ( model, Cmd.none )
 
         FetchPlayersList result ->
             case result of
@@ -456,7 +458,8 @@ update msg model =
                     ( { model | playersList = players }, Cmd.none )
 
                 Err _ ->
-                    ( model, Cmd.none )
+                    Debug.log "Error fetching players from API."
+                        ( model, Cmd.none )
 ```
 
 ## Refactoring Our View
