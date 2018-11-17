@@ -34,11 +34,8 @@ list of games. We can also remove our buttons that display and hide the games
 since we're going to show them by default. So we're removing the
 `displayGamesList` field, and we're also going to add a new function called
 `initialCommand` that we're going to use soon to fetch our data from the API.
-Let's also go ahead and simplify our `Game` type by changing the field names
-to `title` and `description`, which will help the fields match to the same
-names that we have in our API.
 
-Here is the full updated code for the model section:
+Here is the full updated code for the model and init sections:
 
 ```elm
 type alias Model =
@@ -108,65 +105,43 @@ view model =
             ]
 ```
 
-We'll also need to make a slight change to our `gamesListItem` function since
-we changed the field names in our `Game` type.
-
-```elm
-gamesListItem : Game -> Html msg
-gamesListItem game =
-    li [ class "game-item" ]
-        [ strong [] [ text game.title ]
-        , p [] [ text game.description ]
-        ]
-```
-
 ## Importing Packages
 
-Our goal for the rest of the chapter is going to be to make an HTTP request to
-our Phoenix back-end for our JSON game data (`http://0.0.0.0:4000/api/games`),
+Our goal for the rest of the chapter will be to make an HTTP request to our
+Phoenix back-end for the JSON game data (`http://localhost:4000/api/games`),
 and then to decode that JSON into our Elm application. To get started, let's
 import the libraries we'll need to use:
 
 - [Http](http://package.elm-lang.org/packages/elm-lang/http/latest)
 - [Json.Decode](http://package.elm-lang.org/packages/elm-lang/core/latest/Json-Decode)
 
-From the command line inside the `assets` folder where our `elm-package.json`
-file lives, type the following command:
+From the command line, we'll type the following command from inside the
+`assets/elm` folder where our `elm.json` file lives:
 
 ```shell
-$ elm-package install elm-lang/http
+$ elm install elm/http
 ```
 
 This should install the `Http` package for us, and here's what the output
-should look like:
+should look like (note that some output has been trimmed below):
 
 ```shell
-$ elm-package install elm-lang/http
-To install elm-lang/http I would like to add the following
-dependency to elm-package.json:
+$ elm install elm/http
+Here is my plan:
 
-    "elm-lang/http": "1.0.0 <= v < 2.0.0"
+  Add:
+    elm/http    1.0.0
 
-May I add that to elm-package.json for you? [Y/n] Y
-
-Some new packages are needed. Here is the upgrade plan.
-
-  Install:
-    elm-lang/http 1.0.0
-
-Do you approve of this plan? [Y/n] Y
-Starting downloads...
-
-  ● elm-lang/http 1.0.0
-
-Packages configured successfully!
+Would you like me to update your elm.json accordingly? [Y/n]: Y
+...
+Dependencies ready!
 ```
 
 With that completed, we can now add the `import` declarations to the top of our
 `Main.elm` file. Here's what the top of the file should look like:
 
 ```elm
-module Main exposing (..)
+module Main exposing (main)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
