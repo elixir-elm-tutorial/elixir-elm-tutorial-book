@@ -22,7 +22,7 @@ initialModel =
 
 ![Hard-coded Games List](images/elm_architecture/rendering_the_games_list.png)
 
-Our next goal is to remove this hard-coded data and fetch the game JSON data
+Our next goal is to remove this hard-coded data and fetch the JSON game data
 from our Phoenix API instead.
 
 ![JSON API Game Data](images/phoenix_api/games_api_with_data.png)
@@ -98,6 +98,7 @@ view : Model -> Html Msg
 view model =
     if List.isEmpty model.gamesList then
         div [] []
+
     else
         div []
             [ h1 [ class "games-section" ] [ text "Games" ]
@@ -123,8 +124,8 @@ $ elm install elm/http
 $ elm install elm/json
 ```
 
-We should see some output to let us know that we're installing the `Http`
-package and the `Json` decoder functions that we'll need.
+We should see output to let us know that we're installing the `Http` package
+and the `Json` package that contains the decoder functions we'll need.
 
 With that completed, we can now add the `import` declarations to the top of our
 `Main.elm` file. Here's what the top of the file should look like:
@@ -142,7 +143,7 @@ import Json.Decode as Decode
 
 Note that we're importing our new `Http` library to make the HTTP request to
 our endpoint, and we're also importing the `Json.Decode` library from the core
-and giving it an alias of `Decode` to make things a little easier on ourselves.
+and giving it an alias of `Decode` to make things a little easier to type.
 
 ## Fetching Games
 
@@ -159,6 +160,8 @@ Here we'll create a `fetchGamesList` function that make our `Http.get` request
 to our `"/api/games"` route (and we'll get to the decoding soon).
 
 ```elm
+-- API
+
 fetchGamesList =
     Http.get "/api/games" decodeGamesList
 ```
@@ -166,7 +169,7 @@ fetchGamesList =
 We also want to trigger this request using the
 [`Http.send`](http://package.elm-lang.org/packages/elm-lang/http/latest/Http#send)
 function, so we'll pipe the results of our `Http.get` request to `Http.send`
-and use `FetchGamesList` in our `update` function. We also added a type
+and use `FetchGamesList` in our `update` function. We'll also add a type
 annotation to indicate that we're creating a command, which we'll later use
 in our `initialCommand` function when our application starts.
 
@@ -395,17 +398,35 @@ type alias Player =
     }
 ```
 
-You might have noticed a slight discrepancy here. Elixir and Phoenix
-tend to use underscores in field names (`display_name`) by convention, and Elm
-tends to use camel case in field names (`displayName`). I like to stick to these
-conventions, and as long as we're consistent everything will still work as
-intended.
+There are a couple of interesting notes to be aware of here. First, you might
+have noticed that the JSON API data in the image above has a `display_name`
+field, whereas our Elm field has a `displayName` field. Elixir and Phoenix tend
+to use underscores in field names by convention, and Elm tends to use camel
+case in field names. I like to stick to these conventions, and as long as we're
+consistent everything will still work as intended.
+
+Another thing to note is the `display_name` field coming from our API may or
+may not have a value. If a player hasn't entered a value for that field, it
+will be `null`. We can use `Int` as the type for our player `id` fields because
+we know that all players will have an `id`, but we'll have to use a
+`Maybe String` so we can handle cases where players may or may not have a
+`display_name` value.
+
+## Decoding Player Data
 
 Now we can add functions for making the HTTP request to the `"/api/players"`
 endpoint and decoding the JSON response. Essentially, we have the same functions
 that we created before with some slight alterations to work with players instead
 of games. These functions work the same way, but we're going to decode the
 player fields so we can render those in our Elm application.
+
+The only major difference between the way we decode games and players is the
+`Decode.maybe` we're using for the optional `display_name` field. We're using
+the same `Decode.field` approach we saw previously, but this time we're
+wrapping it in a `Decode.maybe`. There are also more advanced ways to handle
+JSON decoding in Elm, and there's a great book called
+[The JSON Survival Kit](https://www.brianthicks.com/json-survival-kit)
+you can check out!
 
 ```elm
 fetchPlayersList : Cmd Msg
@@ -424,7 +445,7 @@ decodePlayersList =
 decodePlayer : Decode.Decoder Player
 decodePlayer =
     Decode.map4 Player
-        (Decode.field "display_name" Decode.string)
+        (Decode.maybe (Decode.field "display_name" Decode.string))
         (Decode.field "id" Decode.int)
         (Decode.field "score" Decode.int)
         (Decode.field "username" Decode.string)
@@ -464,9 +485,8 @@ update msg model =
 
 ## Refactoring Our View
 
-Our Elm application is currently in working order without any compiler errors.
-But let's refactor our `view` function a little bit so that we can render both
-our games and our list of players.
+Let's refactor our `view` function so we can render both our games and our list
+of players.
 
 We can start by simplifying our `view` function to simply render our
 `gamesIndex` and `playersIndex`, and we'll offload the conditional to check
@@ -488,6 +508,7 @@ gamesIndex : Model -> Html msg
 gamesIndex model =
     if List.isEmpty model.gamesList then
         div [] []
+
     else
         div [ class "games-index" ]
             [ h2 [] [ text "Games" ]
@@ -502,6 +523,7 @@ playersIndex : Model -> Html msg
 playersIndex model =
     if List.isEmpty model.playersList then
         div [] []
+
     else
         div [ class "players-index" ]
             [ h2 [] [ text "Players" ]
@@ -510,11 +532,13 @@ playersIndex model =
 ```
 
 Then, we can go ahead and take the same approach we did for our games by adding
-two new functions for the `playersList` and `playersListItem`. For now, we're
-going to use the player's `displayName` and `score` fields to render the data
-on the page. Note that `player.score` is an `Int` value and not a `String`, so
-we're using the `String.fromInt` function to convert it before we display the
-player score on the page.
+two new functions for the `playersList` and `playersListItem`.
+
+We're adding a `case` expression for the player's `displayName` field. If the
+player has entered a `displayName`, then we'll show that on the page.
+Otherwise, we'll show their `username` instead. Also note that `player.score`
+is an `Int` value and not a `String`, so we're using the `String.fromInt`
+function to convert it before we display the player score on the page.
 
 ```elm
 playersList : List Player -> Html msg
