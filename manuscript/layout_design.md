@@ -20,7 +20,7 @@ application.
   - Edit Player Page (`/players/:id/edit`)
 - Games
   - Games Index JSON Page (`/api/games`)
-  - Games Index Page (`/api/games`)
+  - Show Game JSON Page (`/api/games/:id`)
 - Sessions
   - Player Sign In Page (`/sessions/new`)
 
@@ -67,36 +67,30 @@ contents (note that the content has been trimmed for readability):
 <html lang="en">
   <head>
     <!-- ... -->
-    <title>Platform</title>
-    <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
+    <title>Platform · Phoenix Framework</title>
+    <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>">
   </head>
 
   <body>
-    <div class="container">
-      <header class="header"><!-- ... --></header>
-      <!-- ... -->
-      <main role="main"><!-- ... --></main>
-    </div> <!-- /container -->
-    <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
+    <header><!-- ... --></header>
+    <main role="main" class="container"><!-- ... --></main>
+    <script src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
   </body>
 </html>
 ```
 
-We can see that our `<title>` and stylesheets (`"/css/app.css"`) are loaded in
-the `<head>` section. For the purposes of this book, I'm going to continue
-using the generic name "Platform" for our application, but feel free to get
-creative and change the `<title>` tag as you see fit.
+For the purposes of this book, we'll continue using the generic name "Platform"
+for our application, but feel free to get creative and change the `<title>` tag
+as you see fit.
 
-```html
-<title>Platform</title>
-```
+Phoenix will bundle any CSS styles we write in the `/assets/css` folder and
+include the `app.css` file here with the `<link>` tag.
 
-You can see the change in the browser tab if you adjust the title and load the
-page:
+Towards the bottom of the page, we can also see that any JavaScript code we
+write in the `assets/js` folder will be bundled and included via the `app.js`
+file in the `<script>` tag.
 
-![Platform Title](images/layout_design/platform_title.png)
-
-## Bootstrap
+## Styling
 
 Inside our `<body>` tag, we create a `<div>` element with the `container`
 class. Phoenix comes preloaded with [Bootstrap](http://getbootstrap.com) by
@@ -107,9 +101,7 @@ the page.
 
 ```html
 <body>
-  <div class="container-fluid">
-    <!-- ... -->
-  </div>
+  <div class="container-fluid"><!-- ... --></div>
 </body>
 ```
 
@@ -182,7 +174,9 @@ bottom, and our `app.css` file should just look like this:
 /* This file is for your main application css. */
 
 /* Phoenix flash messages */
-.alert:empty { display: none; }
+.alert:empty {
+  display: none;
+}
 
 /* Custom page header */
 .logo {
