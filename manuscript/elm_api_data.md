@@ -597,9 +597,10 @@ playersIndex : Model -> Html msg
 playersIndex model =
     if List.isEmpty model.playersList then
         div [] []
+
     else
         div [ class "players-index" ]
-            [ h1 [ class "players-section" ] [ text "Players" ]
+            [ h2 [] [ text "Players" ]
             , playersList model.playersList
             ]
 ```
@@ -616,9 +617,10 @@ playersIndex : Model -> Html msg
 playersIndex model =
     if List.isEmpty model.playersList then
         div [] []
+
     else
         div [ class "players-index" ]
-            [ h1 [ class "players-section" ] [ text "Players" ]
+            [ h2 [] [ text "Players" ]
             , model.playersList
                 |> List.sortBy .score
                 |> List.reverse
@@ -641,32 +643,34 @@ playersIndex model =
                 |> List.sortBy .score
                 |> List.reverse
     in
-        if List.isEmpty model.playersList then
-            div [] []
-        else
-            div [ class "players-index" ]
-                [ h1 [ class "players-section" ] [ text "Players" ]
-                , playersList playersSortedByScore
-                ]
+    if List.isEmpty model.playersList then
+        div [] []
+
+    else
+        div [ class "players-index" ]
+            [ h2 [] [ text "Players" ]
+            , playersList playersSortedByScore
+            ]
 ```
 
 This is a little more readable in the sense that the `playersSortedByScore`
 name is obvious. Instead of using a `let` expression, we could extract this
-into a separate function altogether. With this code, we're still passing data
-to the `playersList` view function. But we're passing the player data from
-our model through the `playersSortedByScore` function first and then piping
-that backwards to `playersList`.
+into a separate function altogether. With this approach, we're passing the
+player data from our model through the `playersSortedByScore` function first
+and then piping that to the `playersList` view function.
 
 ```elm
 playersIndex : Model -> Html msg
 playersIndex model =
     if List.isEmpty model.playersList then
         div [] []
+
     else
         div [ class "players-index" ]
-            [ h1 [ class "players-section" ] [ text "Players" ]
-            , playersList <|
-                playersSortedByScore model.playersList
+            [ h2 [] [ text "Players" ]
+            , model.playersList
+                |> playersSortedByScore
+                |> playersList
             ]
 
 
@@ -682,10 +686,8 @@ a good example of how simple it is to refactor with Elm when we have type
 safety. And it's a common approach to extract small pieces of functionality
 into separate functions to keep things simple and easy to work with.
 
-Either way, we managed to successfully sort our list of players and show the
-top scorer at the top:
-
-![Sorted List of Players](images/elm_api_data/sorted_list_of_players.png)
+Either way, we've managed to successfully sort our list of players so the top
+scorer will be shown at the top.
 
 ## Handling Errors
 
