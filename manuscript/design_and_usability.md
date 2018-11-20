@@ -114,8 +114,9 @@ section and main content area are centered on the page.
 Instead of displaying the Phoenix logo in our header, let's display a simple
 link that we can use to navigate back to our home page.
 
-Here are the lines that are currently being used to apply a `.phx-logo` class
-and render the default Phoenix logo:
+Here are the lines in the `app.html.eex` file that are currently used to apply
+a `.phx-logo` class (from the `assets/css/phoenix.css` file) and render the
+default Phoenix logo:
 
 ```html
 <a href="http://phoenixframework.org/" class="phx-logo">
@@ -149,42 +150,6 @@ link at the top of every page in our application that will allow users to
 navigate back to the home page.
 
 ![Phoenix Logo Replaced with Link](images/design_and_usability/phoenix_logo_replaced.png)
-
-## app.css
-
-We've looked at the default styles that Phoenix gives us in the `phoenix.css`
-file. For the rest of this chapter, let's work with the `app.css` file that's
-also located inside the `assets/css` folder. In fact, let's remove all the
-custom CSS declarations at the bottom of the `phoenix.css` file and migrate the
-few we'll need to `app.css`.
-
-In other words, we'll leave all the minified Bootstrap CSS code in our
-`phoenix.css` file. But we'll delete all the custom CSS declarations from the
-bottom, and our `app.css` file should just look like this:
-
-```css
-/* This file is for your main application css. */
-
-/* Phoenix flash messages */
-.alert:empty {
-  display: none;
-}
-
-/* Custom page header */
-.logo {
-  text-decoration: none;
-  font-weight: bold;
-  font-size: 3em;
-  color: #333;
-}
-
-.logo:hover {
-  text-decoration: none;
-}
-```
-
-This will allow us to add all of our styles to the `app.css` file and we won't
-have to bounce between files.
 
 ## Featured Section
 
