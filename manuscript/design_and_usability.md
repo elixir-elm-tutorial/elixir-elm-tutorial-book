@@ -90,73 +90,65 @@ Towards the bottom of the page, we can also see that any JavaScript code we
 write in the `assets/js` folder will be bundled and included via the `app.js`
 file in the `<script>` tag.
 
-## Styling
+## Styling and Classes
 
-Inside our `<body>` tag, we create a `<div>` element with the `container`
-class. Phoenix comes preloaded with [Bootstrap](http://getbootstrap.com) by
-default, and this class is the reason our application is centered on the page.
+Phoenix comes preloaded with a minimalist CSS framework called
+[Milligram](https://milligram.io). We can use this to style our pages quickly
+by adding classes to our HTML elements.
 
-Let's change this class to `container-fluid` so we can use the full width of
-the page.
+For example, in our `app.html.eex` file, we can see the `<section>` element and
+`<main>` element both have a `.container` class, which explains why our header
+section and main content area are centered on the page.
 
 ```html
 <body>
-  <div class="container-fluid"><!-- ... --></div>
+  <header>
+    <section class="container"><!-- ... --></section>
+  </header>
+  <main role="main" class="container"><!-- ... --></main>
 </body>
 ```
 
-Notice how the layout of our application changes as we switch to a fluid
-container:
-
-![Fluid Container](images/layout_design/fluid_container.png)
-
-## Logo
+## Writing New Styles
 
 Instead of displaying the Phoenix logo in our header, let's display a simple
 link that we can use to navigate back to our home page.
 
-Here's the line that's currently being used to apply a `logo` class and render
-the default Phoenix logo:
+Here are the lines that are currently being used to apply a `.phx-logo` class
+and render the default Phoenix logo:
 
 ```html
-<span class="logo"></span>
+<a href="http://phoenixframework.org/" class="phx-logo">
+  <img src="<%= Routes.static_path(@conn, "/images/phoenix.png") %>"
+  alt="Phoenix Framework Logo"/>
+</a>
 ```
 
-We can replace this with a Phoenix
+Let's replace those lines with a Phoenix
 [`link`](https://hexdocs.pm/phoenix_html/Phoenix.HTML.Link.html#link/2) that
-routes back to our home page with `page_path(@conn, :index)`. We'll keep it
-simple with the `"Platform"` text, and we're still going to apply the `logo`
-class so we can adjust the styles.
+routes back to our home page with `Routes.page_path(@conn, :index)`. We'll keep
+it simple with the `"Platform"` text, and we'll add a `.logo` class so we can
+adjust the styles with our own custom CSS.
 
 ```embdedded_elixir
-<%= link "Platform", to: page_path(@conn, :index), class: "logo" %>
+<h1><%= link "Platform", to: Routes.page_path(@conn, :index), class: "logo" %></h1>
 ```
 
-Next, open up the `phoenix.css` file inside the `assets/css` folder and we'll
-scroll down to find the `/* Custom page header */` section.
-
-Let's remove the `.header` CSS declaration that's adding a thin line beneath
-our header section. Then, we'll adjust the `.logo` CSS declaration so we can
-remove our Phoenix background image and style the `"Platform"` text in our
-link:
+Next, open up the `assets/css/app.css` file that will contain all of our custom
+CSS declarations. Below the `@import` line, add the following:
 
 ```css
-/* Custom page header */
 .logo {
-  text-decoration: none;
   font-weight: bold;
-  font-size: 3em;
-  color: #333;
-}
-
-.logo:hover {
-  text-decoration: none;
 }
 ```
 
-This gives us a working link we can use to reload the home page:
+This is a minor change, but it's a good demonstration of how we can write a mix
+of HTML, CSS, and Elixir to add features to our application. And we now have a
+link at the top of every page in our application that will allow users to
+navigate back to the home page.
 
-![Phoenix Logo Replaced with Link](images/layout_design/phoenix_logo_replaced.png)
+![Phoenix Logo Replaced with Link](images/design_and_usability/phoenix_logo_replaced.png)
 
 ## app.css
 
@@ -345,7 +337,7 @@ section on smaller screens.
 These aren't the fanciest of styles, but our featured game section works well
 for now:
 
-![Featured Section](images/layout_design/featured-section.png)
+![Featured Section](images/design_and_usability/featured-section.png)
 
 ## Authentication Section
 
@@ -407,7 +399,7 @@ change their account. Keep in mind that we still haven't restricted access to
 pages, so users can technically edit each other's accounts. But we'll fix this
 issue soon.
 
-![Current User Edit Feature](images/layout_design/current_user_edit_feature.png)
+![Current User Edit Feature](images/design_and_usability/current_user_edit_feature.png)
 
 ## User Deletion
 
@@ -448,12 +440,12 @@ delete button to the list of buttons at the bottom of our **Edit Player** page.
 In the screenshot below, we created a `newuser` account to test that the delete
 button works.
 
-![Delete Account Button](images/layout_design/delete_account_button.png)
+![Delete Account Button](images/design_and_usability/delete_account_button.png)
 
 After verifying that a player wants to delete their account, the deletion
 should be successful:
 
-![Successful Player Deletion](images/layout_design/successful_deletion.png)
+![Successful Player Deletion](images/design_and_usability/successful_deletion.png)
 
 ## Authorization
 
@@ -521,13 +513,13 @@ they are redirected).
 Here's an example of how the currently signed in user (`chrismccord`) can view
 the **Edit Player** page for their own account:
 
-![Authorized Player](images/layout_design/authorized_player.png)
+![Authorized Player](images/design_and_usability/authorized_player.png)
 
 But if the player tries to access an account that does not belong to them
 (`http://0.0.0.0:4000/players/1/edit`), they should be redirected back to the
 home page and see a flash message:
 
-![Unauthorized Player](images/layout_design/unauthorized_player.png)
+![Unauthorized Player](images/design_and_usability/unauthorized_player.png)
 
 ## Fixing Our Tests
 
@@ -666,7 +658,7 @@ players displaying inside a leaderboard with their display names and scores.
 And we also added links to the individual player pages, which we can use to
 track more detailed score data later.
 
-![Player Leaderboard](images/layout_design/player_leaderboard.png)
+![Player Leaderboard](images/design_and_usability/player_leaderboard.png)
 
 ## Summary
 
