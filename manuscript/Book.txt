@@ -10,7 +10,7 @@ elm_setup.md
 elm_application.md
 elm_architecture.md
 elm_api_data.md
-layout_design.md
+design_and_ux.md
 game_setup.md
 our_first_game.md
 adding_interaction.md

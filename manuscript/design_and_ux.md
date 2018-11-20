@@ -1,4 +1,4 @@
-# Layout and Design
+# Design and UX
 
 Although this isn't a book about design, our application could certainly
 benefit from an effort to make it more usable and nicer to look at. In this
