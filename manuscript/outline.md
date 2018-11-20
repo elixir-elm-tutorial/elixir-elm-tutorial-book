@@ -84,7 +84,7 @@ attempt to break down the topics and concepts covered within each chapter.
   - Reading JSON API data from Phoenix.
   - Decoding JSON and working with game data in Elm.
 
-- **Design and UX**
+- **Design and Usability**
 
   - Viewing application routes.
   - Working with CSS and working with Bootstrap classes.
