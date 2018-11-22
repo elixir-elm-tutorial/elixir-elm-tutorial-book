@@ -109,6 +109,21 @@ section and main content area are centered on the page.
 </body>
 ```
 
+Let's remove the `.container` class from our `<main>` element so our content
+can stretch the full width of the page.
+
+```html
+<body>
+  <header>
+    <section class="container"><!-- ... --></section>
+  </header>
+  <main role="main"><!-- ... --></main>
+</body>
+```
+
+This allows our header to stay centered on the page, but enables us to control
+where we want to put all of our player and game data below.
+
 ## Writing New Styles
 
 Instead of displaying the Phoenix logo in our header, let's display a simple
@@ -158,8 +173,8 @@ our Elm application where we handle our game data. Beneath the header, we're
 going to add a "featured" section where we can feature a game that stands out
 from the rest of the content.
 
-Let's open up our `Main.elm` file in the `assets/elm` folder, and we'll update
-the `view` function while adding a new `featured` function just below it:
+Let's open up our `assets/elm/src/Main.elm` file, and we'll update the `view`
+function while adding a new `featured` function just below it:
 
 ```elm
 view : Model -> Html Msg
@@ -174,16 +189,17 @@ view model =
 featured : Model -> Html msg
 featured model =
     div [ class "row featured" ]
-        [ h1 [] [ text "Featured" ] ]
+        [ h2 [] [ text "Featured" ] ]
 ```
 
-Note that we added a `featured` class so we can use CSS to style this section.
-The `row` class comes from Bootstrap, and allows this section to stretch to the
-full width of the window. Open up the `app.css` file where we can add custom
-CSS for our application, and add the following:
+Note that we added a `.featured` class so we can use CSS to style this section.
+The `.row` class comes from our preloaded CSS framework, and allows this
+section to stretch the full width of the window.
+
+Open up the `assets/css/app.css` file where we can add our custom CSS and add
+the following:
 
 ```css
-/* Featured section */
 .featured {
   height: 360px;
   background-color: black;
@@ -251,10 +267,10 @@ featured model =
                     [ div [ class "featured-img" ]
                         [ img [ class "featured-thumbnail", src game.thumbnail ] [] ]
                     , div [ class "featured-data" ]
-                        [ h1 [] [ text "Featured" ]
-                        , h2 [] [ text game.title ]
+                        [ h2 [] [ text "Featured" ]
+                        , h3 [] [ text game.title ]
                         , p [] [ text game.description ]
-                        , button [ class "btn btn-lg btn-primary" ] [ text "Play Now!" ]
+                        , button [ class "button" ] [ text "Play Now!" ]
                         ]
                     ]
                 ]
@@ -271,7 +287,6 @@ Let's add a couple of CSS declarations to clean things up. Open the `app.css`
 file and we'll add the following to our featured CSS declarations:
 
 ```css
-/* Featured section */
 .featured {
   height: 360px;
   background-color: black;
