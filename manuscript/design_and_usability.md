@@ -440,8 +440,7 @@ access the page. Add the following private function at the bottom of the
 
 ```elixir
 defp authorize(conn, _opts) do
-  current_player_id =
-    conn.assigns.current_user().id
+  current_player_id = conn.assigns.current_user().id
 
   requested_player_id =
     conn.path_params["id"]
@@ -452,7 +451,7 @@ defp authorize(conn, _opts) do
   else
     conn
     |> put_flash(:error, "Your account is not authorized to access that page.")
-    |> redirect(to: page_path(conn, :index))
+    |> redirect(to: Routes.page_path(conn, :index))
     |> halt()
   end
 end
@@ -465,16 +464,27 @@ continue. If a player is trying to access an account that's not theirs, then we
 redirect back to the index page and provide the user a message telling them
 their account is not authorized.
 
-To get this working for the **Edit Player** page, add the following line above
-the `index/2` function in the `PlayerController` module:
+To get this working for the **Edit Player** page, we'll add our `authorize`
+function as a `plug` at the top of the `PlayerController` module (between the
+aliases and the `index` function).
 
 ```elixir
-plug :authorize when action in [:edit]
+defmodule PlatformWeb.PlayerController do
+  # ...
+
+  plug(:authorize when action in [:edit])
+
+  def index(conn, _params) do
+    # ...
+  end
+
+  # ...
+end
 ```
 
-This is the same simple approach we took in the `PageController` when
-authenticating users. Now, when players try to access the **Edit Player** page,
-it'll pipe them through the `authorize/2` function.
+This is the same approach we took in the `PageController` when authenticating
+users. Now, when players try to access the **Edit Player** page, it'll pipe
+them through the `authorize/2` function.
 
 To make the comparison, we get the currently signed in player's `id` from the
 `current_user()`, and we also get the requested player's `id` from the
