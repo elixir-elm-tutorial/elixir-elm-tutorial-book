@@ -425,7 +425,7 @@ should be successful:
 You may have noticed a serious issue with our account deletion approach.
 Players can now delete their accounts, but players could delete the accounts of
 other players too! For example, the `chrismccord` account could sign in to the
-platform, and then use the `http://0.0.0.0:4000/players/1/edit` URL to
+platform, and then use the `http://localhost:4000/players/1/edit` URL to
 deviously delete José Valim's account.
 
 For player authorization, we're going to take a simple approach similar to the
@@ -499,7 +499,7 @@ the **Edit Player** page for their own account:
 ![Authorized Player](images/design_and_usability/authorized_player.png)
 
 But if the player tries to access an account that does not belong to them
-(`http://0.0.0.0:4000/players/1/edit`), they should be redirected back to the
+(`http://localhost:4000/players/1/edit`), they should be redirected back to the
 home page and see a flash message:
 
 ![Unauthorized Player](images/design_and_usability/unauthorized_player.png)
@@ -516,8 +516,7 @@ defp authorize(conn, _opts) do
   if Mix.env == :test do
     conn
   else
-    current_player_id =
-      conn.assigns.current_user().id
+    current_player_id = conn.assigns.current_user().id
 
     requested_player_id =
       conn.path_params["id"]
@@ -528,15 +527,15 @@ defp authorize(conn, _opts) do
     else
       conn
       |> put_flash(:error, "Your account is not authorized to access that page.")
-      |> redirect(to: page_path(conn, :index))
+      |> redirect(to: Routes.page_path(conn, :index))
       |> halt()
     end
   end
 end
 ```
 
-This isn't an ideal solution, but it's a quick way for us to get our tests
-passing and keep moving.
+This is admittedly a hacky solution, but it allows us to at least keep our test
+suite passing so we can keep moving in the book.
 
 We've taken an admittedly reductive approach to authorization, but it works well
 for our simple application. If you're looking to build a more involved
