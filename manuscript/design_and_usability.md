@@ -121,8 +121,8 @@ can stretch the full width of the page.
 </body>
 ```
 
-This allows our header to stay centered on the page, but enables us to control
-where we want to put all of our player and game data below.
+This will allow our header content to stay centered in a container while our
+player and game content stretches the full width of the page.
 
 ## Writing New Styles
 
@@ -154,15 +154,20 @@ Next, open up the `assets/css/app.css` file that will contain all of our custom
 CSS declarations. Below the `@import` line, add the following:
 
 ```css
+header {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
 .logo {
   font-weight: bold;
 }
 ```
 
-This is a minor change, but it's a good demonstration of how we can write a mix
-of HTML, CSS, and Elixir to add features to our application. And we now have a
-link at the top of every page in our application that will allow users to
-navigate back to the home page.
+These are minor style changes, but it's a good demonstration of how we can
+write a mix of HTML, CSS, and Elixir to add features to our application. And we
+now have a link at the top of every page in our application that will allow
+users to navigate back to the home page.
 
 ![Phoenix Logo Replaced with Link](images/design_and_usability/phoenix_logo_replaced.png)
 
@@ -323,55 +328,35 @@ for now:
 
 You may have noticed that our authentication information at the top right of
 the window doesn't look great. Let's open our `app.html.eex` file and we'll
-make a few more changes. We'll change the classes we're using for our buttons,
-and we'll display our "Signed in" text with a new class too:
+make a few more changes.
 
-```embedded_elixir
-<header class="header">
-  <nav role="navigation">
-    <ul class="nav nav-pills pull-right">
-    <%= if @current_user do %>
-        <p class="navbar-text">Signed in as <strong><%= @current_user.username %></strong></p>
-        <%= link "Sign Out", to: player_session_path(@conn, :delete, @current_user), method: "delete", class: "btn navbar-btn btn-danger" %>
-    <% else %>
-        <%= link "Sign Up", to: player_path(@conn, :new), class: "btn navbar-btn btn-success" %>
-        <%= link "Sign In", to: player_session_path(@conn, :new), class: "btn navbar-btn btn-primary" %>
-    <% end %>
-    </ul>
-  </nav>
-  <%= link "Platform", to: page_path(@conn, :index), class: "logo" %>
-</header>
-```
-
-We can add a quick CSS rule so our nav elements at the top right of the window
-look okay and don't break our layout on small screens:
-
-```css
-.nav {
-  margin-top: 6px;
-  max-height: 50px;
-  overflow: hidden;
-}
-```
-
-Next, let's allow the currently signed in player to edit their account. Update
-the `nav` element with the following:
+Let's allow the currently signed in player to edit their account. Update the
+`nav` element with the following:
 
 ```embedded_elixir
 <nav role="navigation">
-  <ul class="nav nav-pills pull-right">
+  <ul>
     <%= if @current_user do %>
-      <p class="navbar-text">
-        Signed in as
-        <strong><%= link @current_user.username, to: player_path(@conn, :edit, @current_user) %></strong>
+      <p class="nav-text">
+        Signed in as&nbsp;
+        <strong><%= link @current_user.username, to: Routes.player_path(@conn, :edit, @current_user) %></strong>
       </p>
-      <span><%= link "Sign Out", to: player_session_path(@conn, :delete, @current_user), method: "delete", class: "btn navbar-btn btn-danger" %></span>
+      <%= link "Sign Out", to: Routes.player_session_path(@conn, :delete, @current_user), method: "delete", class: "button" %>
     <% else %>
-      <%= link "Sign Up", to: player_path(@conn, :new), class: "btn navbar-btn btn-success" %>
-      <%= link "Sign In", to: player_session_path(@conn, :new), class: "btn navbar-btn btn-primary" %>
+      <%= ...  %>
     <% end %>
   </ul>
 </nav>
+```
+
+In the `assets/css/app.css` file, we'll add some CSS to the bottom of the file
+and make our signed in player info look a little nicer:
+
+```css
+.nav-text {
+  display: inline-flex;
+  margin-right: 5px;
+}
 ```
 
 This adds a link for the current user to access their **Edit Player** page and
