@@ -6,18 +6,18 @@ game, nothing happens yet because we haven't wired up the game routes and
 configuration.
 
 In this chapter, we'll configure our application so we can create new games
-inside our `assets/elm` folder, and then load them in the browser through our
-platform.
+inside our `assets/elm/src` folder, and then load them in the browser through
+our platform.
 
 ## Creating a Game File
 
 Let's start by creating a new file for our "Platformer" game in the
-`assets/elm` folder. We can use the game's title as our Elm module name, so
+`assets/elm/src` folder. We can use the game's title as our Elm module name, so
 let's call the file `Platformer.elm` and initialize it with the following code
 so we have something to display on the page:
 
 ```elm
-module Platformer exposing (..)
+module Platformer exposing (main)
 
 import Html exposing (..)
 
