@@ -597,10 +597,6 @@ games.
   margin-top: 2rem;
 }
 
-.games-list {
-  list-style-type: none;
-}
-
 .game-item {
   display: flex;
 }
@@ -620,46 +616,62 @@ but feel free to add games and get creative with the styles.
 
 ## List of Players
 
-Lastly, let's style our list of players into a leaderboard. Bootstrap has a
-[panel component](https://getbootstrap.com/docs/3.3/components/#panels) that we
-can use to wrap around our player list. Then, we can use the
-[list group component](https://getbootstrap.com/docs/3.3/components/#list-group)
-to display each player along with their current score.
+Lastly, let's style our list of players into a leaderboard.
 
-Update the `playersList` function and `playersListItem` function with the
-following and Bootstrap will take care of the styling for us:
+We'll start by updating our `playersIndex` function to center the players on
+the page like we did above for the list of games.
 
 ```elm
-playersList : List Player -> Html msg
-playersList players =
-    div [ class "players-list panel panel-info" ]
-        [ div [ class "panel-heading" ] [ text "Leaderboard" ]
-        , ul [ class "list-group" ] (List.map playersListItem players)
-        ]
-
-
-playersListItem : Player -> Html msg
-playersListItem player =
-    let
-        displayName =
-            if player.displayName == Nothing then
-                player.username
-            else
-                Maybe.withDefault "" player.displayName
-
-        playerLink =
-            "players/" ++ (toString player.id)
-    in
-        li [ class "player-item list-group-item" ]
-            [ strong [] [ a [ href playerLink ] [ text displayName ] ]
-            , span [ class "badge" ] [ text (toString player.score) ]
+playersIndex : Model -> Html msg
+playersIndex model =
+    -- ...
+        div [ class "players-index container" ]
+            [ h2 [] [ text "Players" ]
+            , model.playersList
+                |> playersSortedByScore
+                |> playersList
             ]
 ```
 
-Looks like this works well for our purposes. We've got our sorted list of
-players displaying inside a leaderboard with their display names and scores.
-And we also added links to the individual player pages, which we can use to
-track more detailed score data later.
+Next, we'll update the `playersListItem` function to display each player's name
+and score information. We're also adding links to the individual player pages,
+which we can use to track more detailed score data later.
+
+```elm
+playersListItem : Player -> Html msg
+playersListItem player =
+    let
+        playerLink name =
+            a [ href ("players/" ++ String.fromInt player.id) ]
+                [ strong [ class "player-name" ] [ text name ] ]
+    in
+    li [ class "player-item" ]
+        [ p [ class "player-score" ] [ text (String.fromInt player.score) ]
+        , case player.displayName of
+            Just displayName ->
+                playerLink displayName
+
+            Nothing ->
+                playerLink player.username
+        ]
+```
+
+To finish up with styling our list of players, let's switch back over to the
+`app.css` file and add the following:
+
+```css
+.player-item {
+  display: flex;
+}
+
+.player-score {
+  margin-bottom: 0;
+}
+
+.player-name {
+  margin-left: 1em;
+}
+```
 
 ![Player Leaderboard](images/design_and_usability/player_leaderboard.png)
 
@@ -667,7 +679,11 @@ track more detailed score data later.
 
 This book is primarily focused on working with Elixir and Elm, but this chapter
 was a fun aside into seeing how we can still use a familiar approach to styling
-with CSS and Bootstrap within the context of a Phoenix application.
+with CSS within the context of a Phoenix application.
+
+We used the default CSS framework that comes bundled with Phoenix by default,
+but it's worth noting that it's relatively trivial to drop in a CSS file for
+any other CSS framework that you like to use.
 
 We have our Phoenix API up and running, and our Elm application is pulling in
 all the sample data. Let's move on to creating a game with Elm and pulling
