@@ -384,22 +384,30 @@ Here's what the contents of the `<tbody>` tag should look like:
       <td><%= player.username %></td>
       <td><%= player.score %></td>
 
-      <td class="text-right">
-        <span><%= link "Show", to: player_path(@conn, :show, player), class: "btn btn-default btn-xs" %></span>
+      <td>
+        <%= link "Show", to: Routes.player_path(@conn, :show, player) %>
       </td>
     </tr>
 <% end %>
 ```
 
 In the `lib/platform_web/templates/player/edit.html.eex` file, we'll add the
-delete button to the list of buttons at the bottom of our **Edit Player** page.
+delete button at the bottom of our **Edit Player** page. Note that we're also
+adding `.button` classes so that all the buttons at the bottom of the page look
+consistent.
 
 ```embedded_elixir
-<div class="form-group">
-  <%= submit "Submit", class: "btn btn-primary" %>
-  <span><%= link "Delete Account", to: player_path(@conn, :delete, @player), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger" %></span>
-  <span><%= link "Back", to: page_path(@conn, :index), class: "btn btn-default" %></span>
-</div>
+<h1>Edit Player</h1>
+
+<%= form_for @changeset, Routes.player_path(@conn, :update, @player), fn f -> %>
+  <%= ... %>
+
+  <div>
+    <%= submit "Save" %>
+    <%= link "Delete Account", to: Routes.player_path(@conn, :delete, @player), method: :delete, data: [confirm: "Are you sure?"], class: "button" %>
+    <%= link "Back", to: Routes.player_path(@conn, :index), class: "button" %>
+  </div>
+<% end %>
 ```
 
 In the screenshot below, we created a `newuser` account to test that the delete
