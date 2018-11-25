@@ -546,56 +546,77 @@ popular options.
 
 ## List of Games
 
-For our list of games, it looks like Bootstrap has a
-[media object component](https://getbootstrap.com/docs/3.3/components/#media)
-that will work well for our needs.
+For our list of games, let's display the game's `thumbnail` image along with
+the game's `title` and `description` information.
 
-We'll add a `media-list` class to our list of games, and then we'll use
-`media-left` for the thumbnail and `media-body` for the text information. Feel
-free to take a look at the examples in the Bootstrap documentation if you're
-interested in tinkering around with the styles for our application.
-
-We also want to wrap the each game in a link tag so that the clickable area is
-large for users to click on and access the game. We don't have a game to send
-users to yet, so we're just adding `href "#"` for now.
+In our `assets/elm/src/Main.elm` file, we already have view functions for our
+`gamesIndex`, `gamesList`, and `gamesListItem`. Let's start by adding a
+`.container` class so our games will be centered on the page under the featured
+section that spans the full width of the page.
 
 ```elm
-gamesList : List Game -> Html msg
-gamesList games =
-    ul [ class "games-list media-list" ] (List.map gamesListItem games)
+gamesIndex : Model -> Html msg
+gamesIndex model =
+    -- ...
+        div [ class "games-index container" ]
+            [ h2 [] [ text "Games" ]
+            , gamesList model.gamesList
+            ]
+```
 
+Next, we'll update our `gamesListItem` function so that each game is displayed
+as a large, clickable link that users can click on to access the game. We don't
+have a game to send users to yet, so we're just adding `a [ href "#" ]` for
+now. Inside the `li` element for each game, we're splitting the game's data
+into two sections. The first section will render the thumnail image for the
+game, which we'll style with the `.game-image` class. The second section will
+display the game's `title` and `description`, which we'll style with the
+`.game-info` class.
 
+```elm
 gamesListItem : Game -> Html msg
 gamesListItem game =
     a [ href "#" ]
-        [ li [ class "game-item media" ]
-            [ div [ class "media-left" ]
-                [ img [ class "media-object", src game.thumbnail ] []
+        [ li [ class "game-item" ]
+            [ div [ class "game-image" ]
+                [ img [ src game.thumbnail ] []
                 ]
-            , div [ class "media-body media-middle" ]
-                [ h4 [ class "media-heading" ] [ text game.title ]
+            , div [ class "game-info" ]
+                [ h3 [] [ text game.title ]
                 , p [] [ text game.description ]
                 ]
             ]
         ]
 ```
 
-Bootstrap takes care of most of the heavy lifting for us, but let's add a
-couple of custom styles to the `app.css` file. Add the following CSS code to
-style our list of games:
+Next, we can switch over to our `app.css` file to add styling for our list of
+games.
 
 ```css
-/* Games section */
-.game-item {
-  margin-bottom: 15px;
-  border: 2px solid black;
-  border-radius: 10px;
+.games-index {
+  margin-top: 2rem;
 }
 
-.media-object {
-  height: 120px;
+.games-list {
+  list-style-type: none;
+}
+
+.game-item {
+  display: flex;
+}
+
+.game-info {
+  margin-left: 2em;
 }
 ```
+
+This is a great start! We added CSS classes so we're able to style the parts
+of our UI as we see fit. Instead of displaying a bulleted list of games, we're
+iterating through all of our games and displaying them as links. It's
+admittedly not much to look at since we only have a single sample game so far,
+but feel free to add games and get creative with the styles.
+
+![Games List](images/design_and_usability/games_list.png)
 
 ## List of Players
 
