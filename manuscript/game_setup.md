@@ -186,8 +186,7 @@ migration file will look slightly different on your machine):
 
 ```shell
 $ mix ecto.gen.migration add_slug_to_games
-* creating priv/repo/migrations
-* creating priv/repo/migrations/20170913215145_add_slug_to_games.exs
+* creating priv/repo/migrations/20181202152647_add_slug_to_games.exs
 ```
 
 Now, open the migration file that was generated in the `priv/repo/migrations`
@@ -211,8 +210,8 @@ end
 
 ## Updating the Schema
 
-We can also this field to our games schema. Open the `lib/products/game.ex`
-file and update the schema with the following:
+We can also add this field to our games schema. Open the
+`lib/platform/products/game.ex` file and update the schema with the following:
 
 ```elixir
 schema "games" do
@@ -228,9 +227,9 @@ schema "games" do
 end
 ```
 
-At the bottom of that same `lib/products/game.ex` file, we'll want to add our
-new field to the `cast/2` and `validated_required/1` functions (note that I
-tend to alphabetize fields, but it's not entirely necessary). We'll also add a
+At the bottom of that same `lib/platform/products/game.ex` file, we'll want to
+add our new field to the `cast/2` and `validated_required/1` functions (note
+that I tend to alphabetize fields, but it's not necessary). We'll also add a
 `unique_constraint/1` function to verify that our `slug` fields are unique.
 
 ```elixir
@@ -259,31 +258,36 @@ $ iex -S mix phx.server
 ```
 
 Now that we have an interactive console available, let's find our existing
-game record:
+game record (if you can't see the `iex>` prompt in the terminal you can press
+the ENTER key on your keyboard to make it more visible):
 
 ```elixir
-iex(1)> Platform.Products.get_game!(1)
+iex> Platform.Products.get_game!(1)
 ```
 
 We can pipe this to the `update_game/2` function to add a `slug` to our
 existing game record:
 
 ```elixir
-iex(2)> Platform.Products.get_game!(1) |> Platform.Products.update_game(%{slug: "platformer"})
+iex> Platform.Products.get_game!(1) |> Platform.Products.update_game(%{slug: "platformer"})
 ```
 
 We should be able to see the results with the updated game record containing a
 `slug` field:
 
 ```elixir
-iex(2)> Platform.Products.get_game!(1) |> Platform.Products.update_game(%{slug: "platformer"})
+iex> Platform.Products.get_game!(1) |> Platform.Products.update_game(%{slug: "platformer"})
 {:ok,
  %Platform.Products.Game{__meta__: #Ecto.Schema.Metadata<:loaded, "games">,
-  description: "Platform game example.", featured: true, id: 1,
-  inserted_at: ~N[2017-12-08 20:37:44.080271],
+  description: "Platform game example.",
+  featured: true,
+  id: 1,
+  inserted_at: ~N[2018-12-08 20:37:44.080271],
   players: #Ecto.Association.NotLoaded<association :players is not loaded>,
-  slug: "platformer", thumbnail: "http://via.placeholder.com/300x200",
-  title: "Platformer", updated_at: ~N[2017-12-08 20:37:44.080277]}}
+  slug: "platformer",
+  thumbnail: "http://via.placeholder.com/300x200",
+  title: "Platformer",
+  updated_at: ~N[2018-12-08 20:37:44.080277]}}
 ```
 
 ## Fixing the Tests
@@ -293,18 +297,54 @@ of the `test/platform/products/products_test.exs` file, we can add our new
 `slug` field to the attributes with the following:
 
 ```elixir
-@valid_attrs %{description: "some description", featured: true, thumbnail: "some thumbnail", title: "some title", slug: "some-slug"}
-@update_attrs %{description: "some updated description", featured: false, thumbnail: "some updated thumbnail", title: "some updated title", slug: "some-slug"}
-@invalid_attrs %{description: nil, featured: nil, thumbnail: nil, title: nil, slug: nil}
+@valid_attrs %{
+  description: "some description",
+  featured: true,
+  slug: "some slug",
+  thumbnail: "some thumbnail",
+  title: "some title"
+}
+@update_attrs %{
+  description: "some updated description",
+  featured: false,
+  slug: "some updated slug",
+  thumbnail: "some updated thumbnail",
+  title: "some updated title"
+}
+@invalid_attrs %{
+  description: nil,
+  featured: nil,
+  slug: nil,
+  thumbnail: nil,
+  title: nil
+}
 ```
 
 Similarly, we can update
 `test/platform_web/controllers/game_controller_test.exs` with the following:
 
 ```elixir
-@create_attrs %{description: "some description", featured: true, thumbnail: "some thumbnail", title: "some title", slug: "some-slug"}
-@update_attrs %{description: "some updated description", featured: false, thumbnail: "some updated thumbnail", title: "some updated title", slug: "some-slug"}
-@invalid_attrs %{description: nil, featured: nil, thumbnail: nil, title: nil, slug: nil}
+@create_attrs %{
+  description: "some description",
+  featured: true,
+  slug: "some slug",
+  thumbnail: "some thumbnail",
+  title: "some title"
+}
+@update_attrs %{
+  description: "some updated description",
+  featured: false,
+  slug: "some updated slug",
+  thumbnail: "some updated thumbnail",
+  title: "some updated title"
+}
+@invalid_attrs %{
+  description: nil,
+  featured: nil,
+  slug: nil,
+  thumbnail: nil,
+  title: nil
+}
 ```
 
 We should now be able to run our tests again and see them all passing!
@@ -313,8 +353,8 @@ We should now be able to run our tests again and see them all passing!
 $ mix test
 ................................................
 
-Finished in 0.4 seconds
-48 tests, 0 failures
+Finished in 0.6 seconds
+47 tests, 0 failures
 
 Randomized with seed 444371
 ```
