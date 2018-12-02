@@ -401,11 +401,11 @@ Lastly, we'll update our `lib/platform_web/router.ex` file with the following:
 ```elixir
 scope "/", PlatformWeb do
   pipe_through :browser
+  # ...
 
-  get "/", PageController, :index
   get "/games/:slug", GameController, :play
-  resources "/players", PlayerController
-  resources "/sessions", PlayerSessionController, only: [:new, :create, :delete]
+
+  # ...
 end
 ```
 
@@ -426,8 +426,8 @@ the beginning of the chapter. Most of the hard work is taken care of, and now
 we can make a few more changes on the front-end to get things running smoothly.
 
 We can start by adding our new `slug` field to the JSON response for games. In
-the `lib/platform_web/game_view.ex` file, update the function at the bottom
-with the following:
+the `lib/platform_web/views/game_view.ex` file, update the function at the
+bottom with the following:
 
 ```elixir
 def render("game.json", %{game: game}) do
@@ -442,61 +442,54 @@ end
 
 This update to the JSON response will require some quick updates to our tests
 again. Open the `test/platform_web/controllers/game_controller_test.exs` file
-and update the `describe` blocks for `"create game"` and `"update game"`. We
-only need to add keys and values for our new `slug` field to the JSON
-responses, but here are the full blocks of code for context:
+and update the `describe` blocks for `"create game"` and `"update game"` with
+the code below (note that we only need to add keys and values for our new
+`slug` field, so some of the code has been trimmed to make it slightly more
+readable):
 
 ```elixir
 describe "create game" do
   test "renders game when data is valid", %{conn: conn} do
-    conn = post conn, game_path(conn, :create), game: @create_attrs
-    assert %{"id" => id} = json_response(conn, 201)["data"]
+    # ...
 
-    conn = get conn, game_path(conn, :show, id)
-    assert json_response(conn, 200)["data"] == %{
-    "id" => id,
-    "description" => "some description",
-    "featured" => true,
-    "thumbnail" => "some thumbnail",
-    "title" => "some title",
-    "slug" => "some-slug"}
+    assert %{
+              "id" => id,
+              "description" => "some description",
+              "featured" => true,
+              "slug" => "some slug",
+              "thumbnail" => "some thumbnail",
+              "title" => "some title"
+            } = json_response(conn, 200)["data"]
   end
 
-  test "renders errors when data is invalid", %{conn: conn} do
-    conn = post conn, game_path(conn, :create), game: @invalid_attrs
-    assert json_response(conn, 422)["errors"] != %{}
-  end
+  # ...
 end
 
 describe "update game" do
   setup [:create_game]
 
   test "renders game when data is valid", %{conn: conn, game: %Game{id: id} = game} do
-    conn = put conn, game_path(conn, :update, game), game: @update_attrs
-    assert %{"id" => ^id} = json_response(conn, 200)["data"]
+    # ...
 
-    conn = get conn, game_path(conn, :show, id)
-    assert json_response(conn, 200)["data"] == %{
-    "id" => id,
-    "description" => "some updated description",
-    "featured" => false,
-    "thumbnail" => "some updated thumbnail",
-    "title" => "some updated title",
-    "slug" => "some-slug"}
+    assert %{
+              "id" => id,
+              "description" => "some updated description",
+              "featured" => false,
+              "slug" => "some updated slug",
+              "thumbnail" => "some updated thumbnail",
+              "title" => "some updated title"
+            } = json_response(conn, 200)["data"]
   end
 
-  test "renders errors when data is invalid", %{conn: conn, game: game} do
-    conn = put conn, game_path(conn, :update, game), game: @invalid_attrs
-    assert json_response(conn, 422)["errors"] != %{}
-  end
+  # ...
 end
 ```
 
 ## Decoding Slug Data in Elm
 
 Now, we can go back to our main Elm front-end application in
-`assets/elm/Main.elm` and decode this JSON. First, we'll add to our `Game` type
-at the top:
+`assets/elm/src/Main.elm` and decode this JSON. First, we'll add to our `Game`
+type at the top:
 
 ```elm
 type alias Game =
@@ -524,23 +517,15 @@ decodeGame =
         (Decode.field "title" Decode.string)
 ```
 
-Lastly, we can finally update our `gamesListItem` function that contains the
+Lastly, we can update our `gamesListItem` function that contains the
 link to our game. All we need to update in this function is our `href`
 attribute.
 
 ```elm
 gamesListItem : Game -> Html msg
 gamesListItem game =
-    a [ href <| "games/" ++ game.slug ]
-        [ li [ class "game-item media" ]
-            [ div [ class "media-left" ]
-                [ img [ class "media-object", src game.thumbnail ] []
-                ]
-            , div [ class "media-body media-middle" ]
-                [ h4 [ class "media-heading" ] [ text game.title ]
-                , p [] [ text game.description ]
-                ]
-            ]
+    a [ href ("games/" ++ game.slug) ]
+        [ -- ...
         ]
 ```
 
