@@ -496,7 +496,7 @@ type alias Game =
     { description : String
     , featured : Bool
     , id : Int
-    , slug: String
+    , slug : String
     , thumbnail : String
     , title : String
     }
@@ -538,9 +538,9 @@ the slug.
 ## Featured Game Link
 
 While we're here, let's go ahead and update the `featured` function in our Elm
-application so that the link to our featured game works as well. This is just a
-one line change to conver the `button` element to a link with an `href`
-attribute, but here's the full `featured` function for context:
+application so the link to our featured game works as well. This is a simple
+change to convert the `button` element to a link with an `href` attribute,
+but here's the full `featured` function for context:
 
 ```elm
 featured : Model -> Html msg
@@ -552,10 +552,14 @@ featured model =
                     [ div [ class "featured-img" ]
                         [ img [ class "featured-thumbnail", src game.thumbnail ] [] ]
                     , div [ class "featured-data" ]
-                        [ h1 [] [ text "Featured" ]
-                        , h2 [] [ text game.title ]
+                        [ h2 [] [ text "Featured" ]
+                        , h3 [] [ text game.title ]
                         , p [] [ text game.description ]
-                        , a [ class "btn btn-lg btn-primary", href <| "games/" ++ game.slug ] [ text "Play Now!" ]
+                        , a
+                            [ class "button"
+                            , href ("games/" ++ game.slug)
+                            ]
+                            [ text "Play Now!" ]
                         ]
                     ]
                 ]
@@ -573,9 +577,10 @@ This was a relatively long chapter to set up the games on our platform, but we
 managed to make a ton of progress. And the good news is that now we can create
 games and add them to our platform with a relatively flexible approach.
 
-When creating new games, we'll add a new Elm file that contains the source
-code. Then, we update the brunch configuration to compile it. Then, we embed
-the game in the `app.js` file, and the rest should be taken care of for us.
+When creating new games, we'll add a new Elm file in the `assets/elm/src/Games`
+folder that contains the source code. Then, we update the Webpack configuration
+to compile it. Then, we embed the game in the `app.js` file, and the rest
+should be taken care of for us.
 
 Now that we have our platform running and a working configuration for games,
 we can finally dive into creating our first game in the next chapter!
