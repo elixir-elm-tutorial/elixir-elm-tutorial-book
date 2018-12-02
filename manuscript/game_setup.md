@@ -5,19 +5,22 @@ sample "Platformer" game title to work with. But if we click the link to this
 game, nothing happens yet because we haven't wired up the game routes and
 configuration.
 
-In this chapter, we'll configure our application so we can create new games
-inside our `assets/elm/src` folder and then load them in the browser through
-our platform.
+In this chapter, we'll configure our application so we can create games inside
+a new `Games` folder within our `assets/elm/src` folder and then load them in
+the browser through our platform.
 
-## Creating a Game File
+## Creating a Games Folder and a New Game
 
-Let's start by creating a new file for our "Platformer" game in the
-`assets/elm/src` folder. We can use the game's title as our Elm module name, so
-let's call the file `Platformer.elm` and initialize it with the following code
-so we have something to display on the page:
+Let's start by creating a new folder called `Games` inside `assets/elm/src`.
+We'll create the file for our "Platformer" game inside this folder.
+
+We can use the game's title as our Elm module name, so let's call the file
+`Platformer.elm` and initialize it with the following code so we have something
+to display on the page:
 
 ```elm
-module Platformer exposing (main)
+-- assets/elm/src/Games/Platformer.elm
+module Games.Platformer exposing (main)
 
 import Html exposing (..)
 
@@ -27,34 +30,74 @@ main =
     text "Platformer Game"
 ```
 
+## Configuring Webpack
+
+Now that we have mutiple Elm source code files, we'll need to update our
+Webpack configuration. This is what our existing Elm configuration looks like
+in the `assets/webpack.config.js` file:
+
+```javascript
+{
+  test: /\.elm$/,
+  exclude: [/elm-stuff/, /node_modules/],
+  use: {
+    loader: 'elm-webpack-loader',
+    options: {
+      cwd: path.resolve(__dirname, 'elm')
+    }
+  }
+}
+```
+
+Let's add to our `options` section to ensure that we're handling both of our
+Elm files (`elm/src/Main.elm` and `elm/src/Games/Platformer.elm`):
+
+```javascript
+{
+  test: /\.elm$/,
+  exclude: [/elm-stuff/, /node_modules/],
+  use: {
+    loader: 'elm-webpack-loader',
+    options: {
+      cwd: path.resolve(__dirname, 'elm'),
+      files: [
+        path.resolve(__dirname, "elm/src/Main.elm"),
+        path.resolve(__dirname, "elm/src/Games/Platformer.elm")
+      ]
+    }
+  }
+}
+```
+
+This approach will allow us to have a single `Elm` import, which we can then
+use for our main application with `Elm.Main` and for our game with
+`Elm.Games.Platformer`.
+
 ## Updating app.js
 
 Now that we have multiple Elm applications (one for our game platform
 front-end and one for our new game), we'll need to refactor our
-`assets/js/app.js` file.
+`assets/js/app.js` file too.
 
-We'll start with the `import` statements for both `Main.elm` and our new
-`Platformer.elm` game.
+We can start with the same `import` statement at the top to import `Elm`.
 
 Next, we'll use `querySelector` to find the `id` on the page where we want to
-inject our applications.
-
-Then, if we find one of those `id`s on the page, we'll initialize our Elm
-application.
+inject our applications (we'll set up a new element for our game later in this
+chapter). If we find one of those `id`s on the page, we'll use it to initialize
+our Elm application.
 
 ```javascript
 // Elm
 import { Elm } from "../elm/src/Main.elm";
-import { Platformer } from "../elm/src/Platformer.elm";
 
 const elmContainer = document.querySelector("#elm-container");
-const platformerGame = document.querySelector("#platformer");
+const platformer = document.querySelector("#platformer");
 
 if (elmContainer) {
   Elm.Main.init({ node: elmContainer });
 }
-if (platformerGame) {
-  Platformer.Main.init({ node: platformer });
+if (platformer) {
+  Elm.Games.Platformer.init({ node: platformer });
 }
 ```
 
