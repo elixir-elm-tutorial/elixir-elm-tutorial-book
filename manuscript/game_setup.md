@@ -6,7 +6,7 @@ game, nothing happens yet because we haven't wired up the game routes and
 configuration.
 
 In this chapter, we'll configure our application so we can create new games
-inside our `assets/elm/src` folder, and then load them in the browser through
+inside our `assets/elm/src` folder and then load them in the browser through
 our platform.
 
 ## Creating a Game File
@@ -27,75 +27,43 @@ main =
     text "Platformer Game"
 ```
 
-## Configuring Elm Brunch
+## Updating app.js
 
-Now that we have mutiple Elm source code files, we'll need to update the
-`elmBrunch` section of our `brunch-config.js` file. First, we'll add
-`"elm/Platformer.elm"` to the list of `mainModules`. Then, we'll add an
-`outputFile` property to compile all of our Elm source code into a single
-`elm.js` file.
+Now that we have multiple Elm applications (one for our game platform
+front-end and one for our new game), we'll need to refactor our
+`assets/js/app.js` file.
+
+We'll start with the `import` statements for both `Main.elm` and our new
+`Platformer.elm` game.
+
+Next, we'll use `querySelector` to find the `id` on the page where we want to
+inject our applications.
+
+Then, if we find one of those `id`s on the page, we'll initialize our Elm
+application.
 
 ```javascript
-elmBrunch: {
-  mainModules: ["elm/Main.elm", "elm/Platformer.elm"],
-  makeParameters: ["--debug"],
-  outputFile: "elm.js",
-  outputFolder: "../assets/js"
+// Elm
+import { Elm } from "../elm/src/Main.elm";
+import { Platformer } from "../elm/src/Platformer.elm";
+
+const elmContainer = document.querySelector("#elm-container");
+const platformerGame = document.querySelector("#platformer");
+
+if (elmContainer) {
+  Elm.Main.init({ node: elmContainer });
+}
+if (platformerGame) {
+  Platformer.Main.init({ node: platformer });
 }
 ```
 
-When we run our Phoenix server, our application will compile all the Elm
-source code and output it to the new `elm.js` file.
-
-We can also include our new output file in the `.gitignore` file at the root of
-our project.
-
-```gitignore
-# Elm
-/assets/elm-stuff
-/assets/js/elm.js
-```
-
-Feel free to delete the existing `main.js` file that's no longer needed.
-
-## Updating app.js
-
-With our new approach, we can now refactor our `assets/js/app.js` file. We'll
-use a single `require()` statement to pull in our compiled `elm.js` output.
-
-```javascript
-// Elm
-import Elm from "./elm";
-
-const elmContainer = document.querySelector("#elm-container");
-
-if (elmContainer) Elm.Main.embed(elmContainer);
-```
-
-With the way we configured our application, we can now use `Elm` as a top-level
-namespace, and then embed our code using our module names. In the code above,
-we're using `Elm.Main`, and we can also use `Elm.Platformer` to work with our
-new game.
-
-```javascript
-// Elm
-import Elm from "./elm";
-
-const elmContainer = document.querySelector("#elm-container");
-const platformer = document.querySelector("#platformer");
-
-if (elmContainer) Elm.Main.embed(elmContainer);
-if (platformer) Elm.Platformer.embed(platformer);
-```
-
 Keep in mind we haven't created the `div` element with a `#platformer` id yet.
-Once we create that element, we'll be able to embed our game using
-`Elm.Platformer.embed(platformer)`.
+Once we create that element, we'll be able to embed our game on the page.
 
 ## Extending Our GameController
 
-We've taken care of most of the tedious configuration steps. Now, let's take a
-look at our `PlatformWeb.GameController` module in the
+Now, let's take a look at the `game_controller.ex` file in the
 `lib/platform_web/controllers` folder. This file currently contains functions
 that we use for our JSON API. What we want to do now is to basically add a new
 version of the "show" function that allows us to display a page in the browser
@@ -107,8 +75,7 @@ but this time we'll use `"show.html"` instead.
 
 ```elixir
 def show(conn, %{"id" => id}) do
-  game = Products.get_game!(id)
-  render(conn, "show.json", game: game)
+  # ...
 end
 
 def play(conn, %{"id" => id}) do
@@ -141,19 +108,19 @@ We also need to add a new template file for our games. Inside the
 create a file called `show.html.eex` with the following line:
 
 ```embedded_elixir
-<div id="<%= @game.title |> String.downcase %>"></div>
+<div id="<%= @game.title |> String.downcase() %>"></div>
 ```
 
 What we're doing here is using the game's `title` field to dynamically create
-a new `div` element with an ID that matches that game's title. That allows us
+a new `div` element with an `id` that matches that game's title. That allows us
 to use the `document.querySelector("#platformer")` line that we used in our
 `app.js` code above.
 
 At this point, we should now have everything working well enough to see the
 "game" being rendered in the browser!
 
-When we visit `http://0.0.0.0:4000`, we see the Elm application we created in
-`Main.elm`. And when we visit `http://0.0.0.0:4000/games/1`, we see the new
+When we visit `http://localhost:4000`, we see the Elm application we created in
+`Main.elm`. And when we visit `http://localhost:4000/games/1`, we see the new
 game we're going to create in `Platformer.elm`.
 
 ![Display Game](images/game_setup/display_game.png)
