@@ -8,9 +8,9 @@ Our initial game should be small, self-contained, interactive, and fun. And
 we'll also want to add a simple scoring mechanism so we can work towards
 tracking player scores and sending that data to our back-end platform.
 
-We have our platform running with a sample game file to work with, now we can
-finally focus on writing the actual game. In the next sections, we're going to
-set up our Elm application, add SVG for our game's background, create a little
+We have our platform running with a sample game file to work with, and now we
+can focus on writing the actual game. In the next sections, we're going to set
+up our Elm application, add SVG for our game's background, create a little
 character, and wire up the keyboard for interaction.
 
 ## Base Application for Our Game
@@ -21,49 +21,38 @@ we're going to start by pasting in the following code, which will give us some
 starter code to work with. Add the following to the `Platformer.elm` file:
 
 ```elm
-module Platformer exposing (..)
+module Games.Platformer exposing (main)
 
+import Browser
 import Html exposing (Html, div, text)
-
 
 -- MAIN
 
-
-main : Program Never Model Msg
 main =
-    Html.program
+    Browser.element
         { init = init
-        , view = view
         , update = update
         , subscriptions = subscriptions
+        , view = view
         }
-
-
 
 -- MODEL
 
-
 type alias Model =
     {}
-
 
 initialModel : Model
 initialModel =
     {}
 
-
-init : ( Model, Cmd Msg )
-init =
+init : () -> ( Model, Cmd Msg )
+init _ =
     ( initialModel, Cmd.none )
-
-
 
 -- UPDATE
 
-
 type Msg
     = NoOp
-
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -71,23 +60,18 @@ update msg model =
         NoOp ->
             ( model, Cmd.none )
 
-
-
 -- SUBSCRIPTIONS
-
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.none
 
-
-
 -- VIEW
-
 
 view : Model -> Html Msg
 view model =
-    div [] [ text "Elm Game Base" ]
+    div []
+        [ text "Elm Game Base" ]
 ```
 
 There are different conventions for setting up Elm applications, but this is a
@@ -113,47 +97,48 @@ Before we can add our game character, we need to create a window where our hero
 In order to work with Elm's SVG library, we'll need to install the package and
 import it into our project.
 
-From the command line, let's switch to the `assets` folder and
+From the command line, let's switch to the `assets/elm` folder and
 run the following command:
 
 ```shell
-$ elm-package install elm-lang/svg
+$ elm install elm/svg
 ```
 
 After agreeing to install the package by entering the `Y` key, here's the
 output we should see:
 
 ```shell
-$ elm elm-package install elm-lang/svg
-To install elm-lang/svg I would like to add the following
-dependency to elm-package.json:
+$ elm install elm/svg
+Here is my plan:
 
-    "elm-lang/svg": "2.0.0 <= v < 3.0.0"
+  Add:
+    elm/svg    1.0.1
 
-May I add that to elm-package.json for you? [Y/n] Y
-
-Some new packages are needed. Here is the upgrade plan.
-
-  Install:
-    elm-lang/svg 2.0.0
-
-Do you approve of this plan? [Y/n] Y
+Would you like me to update your elm.json accordingly? [Y/n]: Y
 Starting downloads...
 
-  ● elm-lang/svg 2.0.0
+  ● elm/svg 1.0.1
 
-Packages configured successfully!
+Dependencies ready!
 ```
 
 Now that we have the package installed, let's import it at the top of our
-`Platformer.elm` file. We'll import all the `Svg` functions along with all the
-`Svg.Attributes` functions since we'll be using many of them. Update the top of
-your `Platformer.elm` file with the following code (also note that we're
-removing the `text` import from the `Html` package to avoid ambiguity):
+`Platformer.elm` file. We'll import all the `Svg` functions (with
+`exposing (..)`) along with all the `Svg.Attributes` functions since we'll be
+using so many of them to create our game. We'd normally be more selective about
+which functions we want to import into our application, but it turns out we're
+going to need a lot of SVG elements and attributes for a game, so we're
+simplifying things in this book to avoid having to import new functions one at
+a time. Also, keep in mind that many of the functions from the `Html` and `Svg`
+modules share a name. We're limiting our `Html` imports significantly (to just
+`Html` and `div`) so we don't run into naming issues.
+
+Update the top of your `Platformer.elm` file with the following import code:
 
 ```elm
-module Platformer exposing (..)
+module Games.Platformer exposing (main)
 
+import Browser
 import Html exposing (Html, div)
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
@@ -173,7 +158,8 @@ might help conceptualize how we'll lay out the elements on our page:
   <body>
     <div>
       <svg>
-        <rect /> <!-- We'll create our game inside this rectangle. -->
+        <!-- We'll create our game inside this rectangle. -->
+        <rect>
       </svg>
     </div>
   </body>
@@ -193,21 +179,23 @@ to take a look online, though, because there are some great SVG learning
 materials and courses available. The
 [SVG documentation from MDN](https://developer.mozilla.org/en-US/docs/Web/SVG)
 is always helpful as a searchable reference, and the
-[package documentation](http://package.elm-lang.org/packages/elm-lang/svg/latest/Svg)
-for `elm-lang/svg` is also helpful.
+[package documentation](https://package.elm-lang.org/packages/elm/svg/latest)
+for `elm/svg` is also helpful.
 
-Let's add our SVG code to our Elm view, and we'll walk through how it all fits
+Let's add our SVG code to the Elm view, and we'll walk through how it all fits
 together. At the bottom of the `Platformer.elm` file, add the following:
 
 ```elm
 view : Model -> Html Msg
 view model =
-    div [] [ viewGame ]
+    div []
+        [ viewGame ]
 
 
 viewGame : Svg Msg
 viewGame =
-    svg [ version "1.1", width "600", height "400" ] [ viewGameWindow ]
+    svg [ version "1.1", width "600", height "400" ]
+        [ viewGameWindow ]
 
 
 viewGameWindow : Svg Msg
