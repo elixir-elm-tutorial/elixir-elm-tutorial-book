@@ -227,9 +227,16 @@ for our game world. Just like we did for our game window rectangle, we'll use
 two more `rect` elements to represent a beautiful blue sky and some green
 grass for the ground.
 
-Add the following code to see our game world start taking shape:
+Adjust the view code for `Platformer.elm` with the following to see our game
+world start taking shape:
 
 ```elm
+view : Model -> Html Msg
+view model =
+    div []
+        [ viewGame ]
+
+
 viewGame : Svg Msg
 viewGame =
     svg [ version "1.1", width "600", height "400" ]
