@@ -12,7 +12,7 @@
 - [x] elm_api_data.md
 - [x] design_and_usability.md
 - [x] game_setup.md
-- [ ] our_first_game.md
+- [x] our_first_game.md
 - [ ] adding_interaction.md
 - [ ] displaying_game_data.md
 - [ ] handling_game_states.md

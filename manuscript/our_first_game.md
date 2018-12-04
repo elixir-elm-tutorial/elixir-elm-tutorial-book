@@ -330,7 +330,8 @@ Phoenix, we can add images to the `assets/static/images` folder and they'll be
 available from anywhere in our application (this is how the `phoenix.png` image
 was displayed on the default start page when we first started our Phoenix
 server). Let's move our `character.gif` file inside that folder. This will make
-our character image available at `/images/character.gif`.
+our character image available at `/images/character.gif` when we reference it
+in our application.
 
 At the bottom of our `Platformer.elm` file, we can now add to the view to render our
 new game character:
@@ -377,8 +378,8 @@ character position. The SVG attributes need to work with strings as values, but
 for our purposes it's more helpful to think of the character's position in
 number values. We can use Elm's `let` expressions to refactor.
 
-Instead of manually setting the `x` attribute to a value of `"1"`, let's hoist
-that value up to a `let` expression assignment:
+Instead of manually setting the `x` attribute to a value of `"1"`, let's move
+that value up to a `let` expression:
 
 ```elm
 viewCharacter : Svg Msg
@@ -389,7 +390,7 @@ viewCharacter =
     in
         image
             [ xlinkHref "/images/character.gif"
-            , x (toString characterPositionX)
+            , x (String.fromInt characterPositionX)
             , y "300"
             , width "50"
             , height "50"
@@ -411,14 +412,14 @@ viewCharacter =
         characterPositionY =
             300
     in
-        image
-            [ xlinkHref "/images/character.gif"
-            , x (toString characterPositionX)
-            , y (toString characterPositionY)
-            , width "50"
-            , height "50"
-            ]
-            []
+    image
+        [ xlinkHref "/images/character.gif"
+        , x (String.fromInt characterPositionX)
+        , y (String.fromInt characterPositionY)
+        , width "50"
+        , height "50"
+        ]
+        []
 ```
 
 Our code is still working the same way, we're just moving things around to
@@ -453,7 +454,8 @@ as an argument, so we can pass that along to the `viewGame` function like this:
 ```elm
 view : Model -> Html Msg
 view model =
-    div [] [ viewGame model ]
+    div []
+        [ viewGame model ]
 ```
 
 Then, we'll update both the type annotation and function declaration for
@@ -485,8 +487,8 @@ viewCharacter : Model -> Svg Msg
 viewCharacter model =
     image
         [ xlinkHref "/images/character.gif"
-        , x (toString model.characterPositionX)
-        , y (toString model.characterPositionY)
+        , x (String.fromInt model.characterPositionX)
+        , y (String.fromInt model.characterPositionY)
         , width "50"
         , height "50"
         ]
@@ -509,9 +511,9 @@ initialModel =
 
 ## Adding an Item
 
-Our character is looking pretty lonely in our minigame world. Let's add an item
-to our world, and then we'll work towards having our character be able to pick
-up the item in the next chapter.
+Our character is looking pretty lonely in our minigame world. Let's add an
+item, and then we'll work towards having our character be able to pick up the
+item in the next chapter.
 
 We're going to follow many of the same steps we did for our character image, so
 we'll move quickly in this section. First, let's add a `coin.svg` image to our
@@ -569,8 +571,8 @@ viewItem : Model -> Svg Msg
 viewItem model =
     image
         [ xlinkHref "/images/coin.svg"
-        , x (toString model.itemPositionX)
-        , y (toString model.itemPositionY)
+        , x (String.fromInt model.itemPositionX)
+        , y (String.fromInt model.itemPositionY)
         , width "20"
         , height "20"
         ]

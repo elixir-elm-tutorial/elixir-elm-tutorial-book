@@ -14,51 +14,14 @@ to the user's mouse position, and it will allow to track the mouse location as
 it changes over time. Don't worry if it sounds a little confusing, we'll take a
 look at how we can subscribe to keyboard input now.
 
-## Importing the Keyboard Package
+## Subscribing to Keyboard Input
 
-In order to work with keyboard input, we'll need to start by importing the Elm
-[`Keyboard`](http://package.elm-lang.org/packages/elm-lang/keyboard/latest/Keyboard)
-package.
-
-From the command line, let's switch to the `assets` folder and
-run the following command:
-
-```shell
-$ elm-package install elm-lang/keyboard
-```
-
-After agreeing to install the package by entering the `Y` key, here's the
-output we should see:
-
-```shell
-$ elm-package install elm-lang/keyboard
-To install elm-lang/keyboard I would like to add the following
-dependency to elm-package.json:
-
-    "elm-lang/keyboard": "1.0.1 <= v < 2.0.0"
-
-May I add that to elm-package.json for you? [Y/n] Y
-
-Some new packages are needed. Here is the upgrade plan.
-
-  Install:
-    elm-lang/dom 1.1.1
-    elm-lang/keyboard 1.0.1
-
-Do you approve of this plan? [Y/n] Y
-Starting downloads...
-
-  ● elm-lang/keyboard 1.0.1
-  ● elm-lang/dom 1.1.1
-
-Packages configured successfully!
-```
-
-Now that we have the package installed, let's import it at the top of our
-`Platformer.elm` file. We'll need to import `KeyCode`s along with the `downs`
-function. Each key on your keyboard is represented by an integer. The Elm core
-library comes with functions called `fromCode` and `toCode` to convert back and
-forth between keyboard keys and their related integer representations.
+In order to work with user keyboard input, we'll need to work with the
+[`Browser.Events`](https://package.elm-lang.org/packages/elm/browser/latest/Browser-Events)
+module. We'll subscribe to "key down" events for when players press the arrow
+keys on their keyboard. And we'll also need to use `Json.Decode` to decode the
+"key code" responses, since each key on your keyboard is represented by an
+integer key code.
 
 As an example, we're going to want our character to move right when we press
 the right arrow key on the keyboard. That key is represented by the integer
@@ -68,22 +31,26 @@ so we don't need to memorize them). In our application, we'll be able to
 determine that users are pressing the right arrow key, and adjust our
 character's position accordingly.
 
-Let's update the top of our `Platformer.elm` file with the following:
+Let's update the top of our `Platformer.elm` file with the following for the
+`Browser.Events` and `Json.Decode` features:
 
 ```elm
-module Platformer exposing (..)
+module Games.Platformer exposing (main)
 
+import Browser
+import Browser.Events
 import Html exposing (Html, div)
-import Keyboard exposing (KeyCode, downs)
+import Json.Decode as Decode
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
 ```
 
 ## Tracking Key Presses
 
-In order to track key presses, we'll need to make two changes:
+In order to track key presses, we'll need to make three changes:
 
 - subscribe to key presses in our `subscriptions` function
+- decode the key presses with a new `keyDecoder` function
 - handle the key presses in our `update` function
 
 Let's start with the `subscriptions` function. Instead of `Sub.none`, let's
@@ -92,30 +59,45 @@ subscribe to key presses with the following code:
 ```elm
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.batch [ downs KeyDown ]
+    Sub.batch
+        [ Browser.Events.onKeyDown (Decode.map KeyDown keyDecoder)
+        ]
 ```
 
 One thing to keep in mind is that this code won't work until we add `KeyDown`
 to our `update` function. The `Sub.batch` function allows us to batch together
 different subscriptions, so we could also subscribe to mouse input if we needed
 to. For now, all we need to know is that we're using the Elm Architecture to
-subscribe to keyboard input via the `downs` function, and we're going to
+subscribe to keyboard input via the `onKeyDown` function, and we're going to
 handle these presses with the `KeyDown` message in the `update` function.
 
+Below the `subscriptions` function, let's also add a decoder to handle the
+keys. We touched briefly on JSON decoding earlier in the book, but here we're
+just decoding a single field for string values like `"ArrowUp"` for arrow keys
+and strings like `"a"` for letters that are pressed on the keyboard. In other
+words, `onKeyDown` creates the subscription for us using the `keyDecoder`, and
+we'll handle the response in the `KeyDown` update.
+
+```elm
+keyDecoder : Decode.Decoder String
+keyDecoder =
+    Decode.field "key" Decode.string
+```
+
 As an initial way to get keyboard input working, we're going to set things up
-so that any key press will move the character slightly to the right on the
-screen (towards the coin item). To accomplish this, we'll start by creating our
-new `KeyDown` update message, that takes a `KeyCode` as an argument:
+so that _any_ key press will move the character slightly to the right on the
+screen (towards the coin item). To accomplish this, we'll start by adding
+`KeyDown` (which takes the key as a `String` argument) to our `Msg` type:
 
 ```elm
 type Msg
-    = NoOp
-    | KeyDown KeyCode
+    = KeyDown String
+    | NoOp
 ```
 
-We have two update actions, the first is to perform no operation with `NoOp`,
-and the second will perform an update to the model based on `KeyDown` actions
-from the user.
+We have two possibilities in our `Msg` type. One is to perform no operation
+with `NoOp`, and the second will perform an update to the model based on
+`KeyDown` actions from the user.
 
 Let's finish getting things working again with a big change to our `update`
 function:
@@ -124,11 +106,11 @@ function:
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        KeyDown key ->
+            ( { model | characterPositionX = model.characterPositionX + 15 }, Cmd.none )
+
         NoOp ->
             ( model, Cmd.none )
-
-        KeyDown keyCode ->
-            ( { model | characterPositionX = model.characterPositionX + 15 }, Cmd.none )
 ```
 
 There's a lot going on here, so don't worry if it seems a little overwhelming
