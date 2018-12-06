@@ -126,7 +126,7 @@ attempt to break down the topics and concepts covered within each chapter.
 
   - Getting started with Phoenix channels.
   - Creating and joining a channel.
-  - Configuring elm-phoenix-socket.
+  - Configuring Elm and Phoenix channels.
   - Sending data over the socket.
 
 - **Syncing Score Data**

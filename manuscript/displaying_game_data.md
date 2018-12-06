@@ -303,7 +303,8 @@ We have our player score and item counter working. Let's take a look at how we
 can add a countdown timer to our game. This part will involve updating several
 pieces of our application, but thankfully they're all simple changes.
 
-We'll start by installing the `elm/time` package with the following:
+We'll start by installing the `elm/time` package from the `assets/elm` folder
+with the following:
 
 ```shell
 $ elm install elm/time

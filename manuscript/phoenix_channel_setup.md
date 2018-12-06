@@ -1,5 +1,10 @@
 # Phoenix Channel Setup
 
+## TODO
+
+- Enable longpolling in `lib/platform_web/endpoint.ex`?
+- Pipe to `.withLongPoll` after socket init?
+
 We have our game platform up and running, where users can sign in and play a
 simple Elm game that tracks a score. Now, let's work towards syncing the Elm
 front-end of our application with the Phoenix back-end. We'll learn about
@@ -115,66 +120,47 @@ function, which will relay the results to all players on the channel.
 We haven't configured our front-end to work with the channel yet, but we've
 managed to take care of the initial channel setup on the back-end.
 
-## elm-phoenix-socket
+## Elm and Phoenix Channels
 
-While channel features come bundled with the Phoenix framework, but we'll need
-to import a new library on the Elm side. To enable communication between the
-front-end and back-end, let's use
-[elm-phoenix-socket](https://github.com/fbonetti/elm-phoenix-socket).
+While channel features come bundled with the Phoenix framework, we'll still
+need to import a new package on the Elm side to enable communication between
+the front-end and back-end.
 
-To get started, let's move to the `assets` folder in our project, and run the
-following command to install the package:
-
-```shell
-$ elm-package install fbonetti/elm-phoenix-socket
-```
-
-This will also import the `elm-lang/websocket` package, and we should see the
-following output:
+To get started, let's move to the `assets/elm` folder in our project and run
+the following command to install the
+[`slashmili/phoenix-socket`](https://package.elm-lang.org/packages/slashmili/phoenix-socket/latest)
+package:
 
 ```shell
-$ elm-package install fbonetti/elm-phoenix-socket
-To install fbonetti/elm-phoenix-socket I would like to add the following
-dependency to elm-package.json:
-
-    "fbonetti/elm-phoenix-socket": "2.2.0 <= v < 3.0.0"
-
-May I add that to elm-package.json for you? [Y/n] Y
-
-  Install:
-    elm-lang/websocket 1.0.2
-    fbonetti/elm-phoenix-socket 2.2.0
-
-Do you approve of this plan? [Y/n] Y
-Starting downloads...
-
-  ● elm-lang/websocket 1.0.2
-  ● fbonetti/elm-phoenix-socket 2.2.0
-
-Packages configured successfully!
+$ elm install slashmili/phoenix-socket
 ```
 
-## Configuring elm-phoenix-socket
+This package will give us a way to update our Elm front-end application to send
+messages over the channel to the Phoenix back-end.
 
-Now, we can work through the elm-phoenix-socket
-[README](https://github.com/fbonetti/elm-phoenix-socket/blob/master/README.md)
-to configure everything on the Elm side of our application. We'll start by
-importing the necessary modules. Let's update the imports at the top of our
-`Platformer.elm` file to include three new `Phoenix` modules:
+## Configuring Elm with Phoenix Channels
+
+We've already imported a handful of great packages at the top of our
+`Platformer.elm` file, and now we'll need to import a handful of new ones to
+work with Phoenix channels. Let's update the top of `Platformer.elm` with the
+following:
 
 ```elm
-module Platformer exposing (..)
+module Games.Platformer exposing (main)
 
-import AnimationFrame exposing (diffs)
+import Browser
+import Browser.Events
 import Html exposing (Html, div)
-import Keyboard exposing (KeyCode, downs)
+import Json.Decode as Decode
+import Phoenix
 import Phoenix.Channel
+import Phoenix.Message
 import Phoenix.Push
 import Phoenix.Socket
 import Random
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
-import Time exposing (Time, every, second)
+import Time
 ```
 
 Next, we can add a `phxSocket` field to our model. We'll update our `Model`
@@ -223,41 +209,42 @@ initialSocket =
         devSocketServer =
             "ws://localhost:4000/socket/websocket"
     in
-        Phoenix.Socket.init devSocketServer
-            |> Phoenix.Socket.withDebug
+    Phoenix.Socket.init devSocketServer
 ```
-
-We also pipe the results to `Phoenix.Socket.withDebug` so we can take a look at
-the DevTools Console and inspect the data once we get things up and running.
 
 ## The Update Function
 
 Before we have a working socket connection, we'll need to add a new message
-to our update section. Still following along with the elm-phoenix-socket README
-file, we see that we can create a new message type at the bottom to handle
-Phoenix socket messages with `PhoenixMsg`.
+to our update section. Let's update our `Msg` type first to handle Phoenix
+socket messages with `PhoenixMsg`.
 
 ```elm
 type Msg
-    = NoOp
-    | CountdownTimer Time
-    | KeyDown KeyCode
-    | PhoenixMsg (Phoenix.Socket.Msg Msg)
+    = CountdownTimer Time.Posix
+    | GameLoop Float
+    | KeyDown String
+    | NoOp
+    | PhoenixMsg (Phoenix.Message.Msg Msg)
     | SetNewItemPositionX Int
-    | TimeUpdate Time
 ```
 
 And we can add the following inside the `case` expression of our `update`
 function:
 
 ```elm
-PhoenixMsg msg ->
-  let
-    ( phxSocket, phxCmd ) = Phoenix.Socket.update msg model.phxSocket
-  in
-    ( { model | phxSocket = phxSocket }
-    , Cmd.map PhoenixMsg phxCmd
-    )
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+    case msg of
+        -- ...
+
+        PhoenixMsg phxMsg ->
+            let
+                ( phxSocket, phxCmd ) =
+                    Phoenix.update PhoenixMsg phxMsg model.phxSocket
+            in
+            ( { model | phxSocket = phxSocket }, phxCmd )
+
+        -- ...
 ```
 
 This enables us to track changes in state using the `phxSocket` field in our
@@ -272,15 +259,15 @@ time.
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        [ downs KeyDown
-        , diffs TimeUpdate
-        , every second CountdownTimer
-        , Phoenix.Socket.listen model.phxSocket PhoenixMsg
+        [ Browser.Events.onKeyDown (Decode.map KeyDown keyDecoder)
+        , Browser.Events.onAnimationFrameDelta GameLoop
+        , Time.every 1000 CountdownTimer
+        , Phoenix.listen PhoenixMsg model.phxSocket
         ]
 ```
 
-At this point, we should have a working socket connection when we visit the
-`http://0.0.0.0:4000/games/platformer` route in our application. You may need to
+At this point, we should have a working socket connection when we visit
+`http://localhost:4000/games/platformer` in our browser. You may need to
 restart your local Phoenix server to get things up and running, but if you
 load the page and wait a few moments, you should be able to see a "heartbeat"
 of WebSocket messages in the DevTools Console.
