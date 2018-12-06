@@ -72,11 +72,11 @@ Let's add a `join/3` function to the `score_channel.ex` file. This function
 will take three arguments:
 
 - The Topic: We're joining `"score:platformer"` to track scores for our
-Platformer game.
+  Platformer game.
 - The Payload: We're using `_payload` to ignore this for now, but this will
-contain the data that we pass over the socket.
+  contain the data that we pass over the socket.
 - The Socket: This is the WebSocket connection that we return in the body of
-the function.
+  the function.
 
 ```elixir
 defmodule PlatformWeb.ScoreChannel do
@@ -108,9 +108,9 @@ end
 ```
 
 This will allow us to listen for a `"save_score"` message that we'll send from
-our Elm client. Inside the `handle_in/3` function, we use
-[`broadcast/3`](https://hexdocs.pm/phoenix/Phoenix.Channel.html#broadcast/3),
-which will relay the results to all players on the channel.
+our Elm client. Inside the `handle_in/3` function, we use the
+[`broadcast/3`](https://hexdocs.pm/phoenix/Phoenix.Channel.html#broadcast/3)
+function, which will relay the results to all players on the channel.
 
 We haven't configured our front-end to work with the channel yet, but we've
 managed to take care of the initial channel setup on the back-end.
