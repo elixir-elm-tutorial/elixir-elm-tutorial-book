@@ -318,11 +318,11 @@ viewGameState model =
 ```
 
 In order to trigger the success screen, we'll need to create another condition
-in our `TimeUpdate` for when the user's score arrives at a value of `10`.
+in our `GameLoop` for when the user's score arrives at a value of `10`.
 Inside the `update` function, adapt the code with the following:
 
 ```elm
-TimeUpdate time ->
+GameLoop time ->
     if characterFoundItem model then
         ( { model
             | itemsCollected = model.itemsCollected + 1
@@ -330,8 +330,10 @@ TimeUpdate time ->
             }
         , Random.generate SetNewItemPositionX (Random.int 50 500)
         )
+
     else if model.itemsCollected >= 10 then
         ( { model | gameState = Success }, Cmd.none )
+
     else
         ( model, Cmd.none )
 ```
@@ -358,9 +360,11 @@ restart the game. If the user isn't currently in the `Playing` state, they
 can use the space bar to start the game from a clean state:
 
 ```elm
-KeyDown keyCode ->
-    case keyCode of
-        32 ->
+KeyDown key ->
+    case key of
+        -- ...
+
+        " " ->
             if model.gameState /= Playing then
                 ( { model
                     | characterDirection = Right
@@ -372,6 +376,7 @@ KeyDown keyCode ->
                     }
                 , Cmd.none
                 )
+
             else
                 ( model, Cmd.none )
 
@@ -429,12 +434,12 @@ viewGameState model =
 ```
 
 We'll also need to add another condition for when the timer reaches `0` and the
-player has collected less than `10` coins. Let's update the `TimeUpdate`
+player has collected less than `10` coins. Let's update the `GameLoop`
 message to set the `gameState` to `GameOver` when those conditions arise during
 gameplay:
 
 ```elm
-TimeUpdate time ->
+GameLoop time ->
     if characterFoundItem model then
         ( { model
             | itemsCollected = model.itemsCollected + 1
@@ -442,10 +447,13 @@ TimeUpdate time ->
           }
         , Random.generate SetNewItemPositionX (Random.int 50 500)
         )
+
     else if model.itemsCollected >= 10 then
         ( { model | gameState = Success }, Cmd.none )
+
     else if model.itemsCollected < 10 && model.timeRemaining == 0 then
         ( { model | gameState = GameOver }, Cmd.none )
+
     else
         ( model, Cmd.none )
 ```
