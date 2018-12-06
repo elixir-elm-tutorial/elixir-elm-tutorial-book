@@ -56,8 +56,8 @@ display:
 viewGameText : Int -> Int -> String -> Svg Msg
 viewGameText positionX positionY str =
     Svg.text_
-        [ x (toString positionX)
-        , y (toString positionY)
+        [ x (String.fromInt positionX)
+        , y (String.fromInt positionY)
         , fontFamily "Courier"
         , fontWeight "bold"
         , fontSize "16"
@@ -81,13 +81,13 @@ There may be a handful of unfamiliar things that we're not accustomed to seeing
 here, but what we're accomplishing is fairly straightforward. We want to start
 with the `playerScore` integer value from the model (which starts out with a
 value of `0`). We use a `let` expression to convert this into a string with the
-`toString` function since we need to display it as text in our game window.
-Then, we use the `String.padLeft` function from the `String` module to display
-leading zero characters in our score. This isn't strictly necessary, but helps
-make our score display look a little nicer. Lastly, we take the `currentScore`
-value from our `let` expression, and we put that inside a group of
-`viewGameText` functions that we'll use to display everything. As for how the
-position values were determined, it was mainly just tinkering with those
+`String.fromInt` function since we need to display it as text in our game
+window. Then, we use the `String.padLeft` function from the `String` module to
+display leading zero characters in our score. This isn't strictly necessary,
+but helps make our score display look a little nicer. Lastly, we take the
+`currentScore` value from our `let` expression, and we put that inside a group
+of `viewGameText` functions that we'll use to display everything. As for how
+the position values were determined, it was mainly just tinkering with those
 numbers after adding this to the page and experimenting with what looks good.
 Here's the `viewGameScore` function:
 
@@ -97,13 +97,13 @@ viewGameScore model =
     let
         currentScore =
             model.playerScore
-                |> toString
+                |> String.fromInt
                 |> String.padLeft 5 '0'
     in
-        Svg.svg []
-            [ viewGameText 25 25 "SCORE"
-            , viewGameText 25 40 currentScore
-            ]
+    Svg.svg []
+        [ viewGameText 25 25 "SCORE"
+        , viewGameText 25 40 currentScore
+        ]
 ```
 
 We can call this new function at the bottom of the `viewGame` function, and we
@@ -145,20 +145,20 @@ viewItemsCollected model =
     let
         currentItemCount =
             model.itemsCollected
-                |> toString
+                |> String.fromInt
                 |> String.padLeft 3 '0'
     in
-        Svg.svg []
-            [ image
-                [ xlinkHref "/images/coin.svg"
-                , x "275"
-                , y "18"
-                , width "15"
-                , height "15"
-                ]
-                []
-            , viewGameText 300 30 ("x " ++ currentItemCount)
+    Svg.svg []
+        [ image
+            [ xlinkHref "/images/coin.svg"
+            , x "275"
+            , y "18"
+            , width "15"
+            , height "15"
             ]
+            []
+        , viewGameText 300 30 ("x " ++ currentItemCount)
+        ]
 ```
 
 Now we can add this to our `viewGame` function to see it rendered to the game
@@ -225,13 +225,13 @@ viewGameTime model =
     let
         currentTime =
             model.timeRemaining
-                |> toString
+                |> String.fromInt
                 |> String.padLeft 4 '0'
     in
-        Svg.svg []
-            [ viewGameText 525 25 "TIME"
-            , viewGameText 525 40 currentTime
-            ]
+    Svg.svg []
+        [ viewGameText 525 25 "TIME"
+        , viewGameText 525 40 currentTime
+        ]
 ```
 
 Lastly, we can add it to the bottom of our `viewGame` function to see it
@@ -265,7 +265,7 @@ Thankfully our game mechanics are simple, and we've already laid the foundation
 for how we'll handle incrementing the player's item count and score. In the
 current version of our game, we're using the `characterFoundItem` function to
 determine when the character has stumbled upon a coin. And that gets triggered
-in our `TimeUpdate` message so we can spawn a new coin. We can use this
+in our `GameLoop` message so we can spawn a new coin. We can use this
 existing feature to start updating our model.
 
 When the character arrives at a coin, we want to increment our
@@ -273,12 +273,12 @@ When the character arrives at a coin, we want to increment our
 `playerScore` field at the same time. The scoring is arbitrary, but in the
 future we could always add items with different scoring values.
 
-Let's adjust the code in our `TimeUpdate` message. The syntax here will look a
+Let's adjust the code in our `GameLoop` message. The syntax here will look a
 little unfamiliar since it's broken up on different lines, but it's the same
 record update syntax we've been using to update fields in the model.
 
 ```elm
-TimeUpdate time ->
+GameLoop time ->
     if characterFoundItem model then
         ( { model
             | itemsCollected = model.itemsCollected + 1
@@ -303,45 +303,63 @@ We have our player score and item counter working. Let's take a look at how we
 can add a countdown timer to our game. This part will involve updating several
 pieces of our application, but thankfully they're all simple changes.
 
-Below our `TimeUpdate` message, let's add a new one called `CountdownTimer`
-with the following:
+We'll start by installing the `elm/time` package with the following:
+
+```shell
+$ elm install elm/time
+```
+
+Then, we can update our list of imports at the top of the `Platformer.elm`
+file to include
+[`Time`](https://package.elm-lang.org/packages/elm/time/latest/Time):
+
+```elm
+import Browser
+import Browser.Events
+import Html exposing (Html, div)
+import Json.Decode as Decode
+import Random
+import Svg exposing (..)
+import Svg.Attributes exposing (..)
+import Time
+```
+
+Next, let's add to our `Msg` type to account for our timer with
+`CountdownTimer`, which takes `Time.Posix` as an argument. You can read more
+about the concept of Posix time in the
+[documentation for the `Time` package](https://package.elm-lang.org/packages/elm/time/latest), but for what we're
+building all you need to know is that we'll be subscribing to every second of
+time as it passes and then using that to update our `timeRemaining` field in
+the model. Here's our updated `Msg` type:
 
 ```elm
 type Msg
-    = NoOp
-    | CountdownTimer Time
-    | KeyDown KeyCode
-    | TimeUpdate Time
+    = CountdownTimer Time.Posix
+    | GameLoop Float
+    | NoOp
     | SetNewItemPositionX Int
 ```
 
-Then, in the `update` function, we'll set up a new case below the `TimeUpdate`
-with the following code (we're not changing the model yet, we're just setting
-up our message for now so we can use it momentarily).
+In the `update` function, we'll set up a new case below the `GameLoop` with the
+following code (we're not changing the model yet, we're just setting up our
+message for now so we can use it momentarily).
 
 ```elm
 CountdownTimer time ->
     ( model, Cmd.none )
 ```
 
-Now let's go ahead and import a few new functions from the `Time` library that
-we'll want to use so we can subscribe to time and track each passing second.
-Change the `Time` import at the top of the file to look like this:
-
-```elm
-import Time exposing (Time, every, second)
-```
-
 And now we can update our `subscriptions` function to trigger the
-`CountdownTimer` message that we created for every second that passes:
+`CountdownTimer` message that we created for every second (`1000` milliseconds)
+that passes:
 
 ```elm
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        [ downs KeyDown
-        , diffs TimeUpdate
-        , every second CountdownTimer
+        [ Browser.Events.onKeyDown (Decode.map KeyDown keyDecoder)
+        , Browser.Events.onAnimationFrameDelta GameLoop
+        , Time.every 1000 CountdownTimer
         ]
 ```
 
@@ -376,6 +394,7 @@ as long as the `timeRemaining` field has a value of more than zero:
 CountdownTimer time ->
     if model.timeRemaining > 0 then
         ( { model | timeRemaining = model.timeRemaining - 1 }, Cmd.none )
+
     else
         ( model, Cmd.none )
 ```
@@ -393,4 +412,4 @@ game is inching its way closer to being fun to play, but we haven't created
 much structure for our game yet.
 
 In the next chapter, we'll start handling different states for our game and
-working towards improving gameplay.
+we'll work towards improving gameplay.

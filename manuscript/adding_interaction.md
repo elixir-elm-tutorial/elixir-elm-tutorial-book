@@ -533,10 +533,17 @@ location `100` pixels to the left.
 ## Working with Randomness
 
 Instead of manually moving the coin to the left, let's take a look at the
-`Random` library to move it to a random new location on the x-axis.
+[`Random`](https://package.elm-lang.org/packages/elm/random/latest) package to
+move it to a random new location on the x-axis.
 
-First, we'll need to import the `Random` module at the top of `Platformer.elm`.
-Here is our full list of imports:
+First, let's install the `elm/random` package with the following:
+
+```shell
+$ elm install elm/random
+```
+
+Next, we can import the `Random` module at the top of `Platformer.elm`. Here is
+our full list of imports:
 
 ```elm
 import Browser
@@ -581,8 +588,8 @@ types and full `update` function:
 
 ```elm
 type Msg
-    = GameLoop Time
-    | KeyDown KeyCode
+    = GameLoop Float
+    | KeyDown String
     | NoOp
     | SetNewItemPositionX Int
 

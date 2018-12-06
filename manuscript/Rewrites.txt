@@ -13,8 +13,8 @@
 - [x] design_and_usability.md
 - [x] game_setup.md
 - [x] our_first_game.md
-- [ ] adding_interaction.md
-- [ ] displaying_game_data.md
+- [x] adding_interaction.md
+- [x] displaying_game_data.md
 - [ ] handling_game_states.md
 - [ ] phoenix_channel_setup.md
 - [ ] syncing_score_data.md
