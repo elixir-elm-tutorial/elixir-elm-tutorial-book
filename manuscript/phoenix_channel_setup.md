@@ -44,10 +44,10 @@ configured earlier in the book.
 ## Socket Connections
 
 A helpful way to think about Phoenix channels is to think of data being sent
-back and forth over the socket. We saw something very similar in this book
-while working with the Phoenix framework. Clients make a _request_ and the
-server returns a _response_, and Phoenix uses a `conn` to store all the data
-that gets communicated back and forth.
+back and forth over the socket. We saw something similar in this book while
+working with the Phoenix framework. Clients make a _request_ and the server
+returns a _response_, and Phoenix uses a `conn` to store all the data that gets
+communicated back and forth.
 
 Channels use the same idea, but instead of a `conn` we use a `socket`
 connection. We can assign data to the socket, and then it's available on both
@@ -469,86 +469,63 @@ SaveScore ->
 
 Now that we have everything in place to push our data over the socket, we'll
 just need to join the `"score:platformer"` channel and broadcast the player's
-score. Below our `initialSocket` function, let's create a new function called
-`initialChannel`.
+score. We'll accomplish this in two steps. First, we'll create a button that
+allows players to join the channel. Then, we'll add another button that enables
+us to save scores.
+
+Below our `initialSocket` function, let's start by creating a new function
+called `initialChannel`.
 
 ```elm
-initialChannel : Phoenix.Channel.Channel msg
+initialChannel : Phoenix.Channel.Channel Msg
 initialChannel =
-    Phoenix.Channel.init "score:platformer"
+    "score:platformer"
+        |> Phoenix.Channel.init
+        |> Phoenix.Channel.on "save_score" SaveScoreSuccess
 ```
 
-We're going to adjust the `initialSocket` function so that it returns a tuple.
-The first item in that tuple is what we'll use for the `phxSocket` field in our
-`initialModel`, and then second item in the tuple will be used as the initial
-command in our `init` function.
-
-Here is the full code for our `initialModel`, `initPhxSocket`, and `init`
-functions:
+Next, we'll update our `Msg` type with a new `JoinChannel` message:
 
 ```elm
-initialSocket : ( Phoenix.Socket.Socket Msg, Cmd (Phoenix.Message.Msg Msg) )
-initialSocket =
-    let
-        devSocketServer =
-            "ws://localhost:4000/socket/websocket"
-    in
-    devSocketServer
-        |> Phoenix.Socket.init
-        -- |> Phoenix.Socket.on "save_score" "score:platformer" SaveScore
-        |> Phoenix.Socket.join initialChannel
+type Msg
+    = CountdownTimer Time.Posix
+    | GameLoop Float
+    | JoinChannel
+    | KeyDown String
+    | NoOp
+    | SaveScoreSuccess Encode.Value
+    | SaveScoreError Encode.Value
+    | SaveScore
+    | PhoenixMsg (Phoenix.Message.Msg Msg)
+    | SetNewItemPositionX Int
 ```
 
-We can create two new functions to identify which parts of the tuple we need:
+With our `initialChannel` and `JoinChannel` code in place, we can set up our
+`update` function. For the `JoinChannel` case, we're taking the existing socket
+connection with `model.phxSocket` and using `Phoenix.join` with our
+`initialChannel` function to join the channel and update it in the model.
 
 ```elm
-initialSocketJoin : Phoenix.Socket.Socket Msg
-initialSocketJoin =
-    Tuple.first initialSocket
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+    case msg of
+        -- ...
 
+        JoinChannel ->
+            let
+                ( updatedSocket, updatedCommand ) =
+                    Phoenix.join PhoenixMsg initialChannel model.phxSocket
+            in
+            ( { model | phxSocket = updatedSocket }, updatedCommand )
 
-initialSocketCommand : Cmd (Phoenix.Message.Msg Msg)
-initialSocketCommand =
-    Tuple.second initialSocket
+        -- ...
 ```
 
-Now, we can set the `phxSocket` field in our `initialModel` to
-`initialSocketJoin`:
+## Triggering JoinChannel and SaveScore
 
-```elm
-initialModel : Model
-initialModel =
-    { characterDirection = Right
-    , characterPositionX = 50
-    , characterPositionY = 300
-    , gameState = StartScreen
-    , itemPositionX = 500
-    , itemPositionY = 300
-    , itemsCollected = 0
-    , phxSocket = initialSocketJoin
-    , playerScore = 0
-    , timeRemaining = 10
-    }
-```
-
-And we can update our `init` function with the `initialSocketCommand` to get
-things up and running:
-
-```elm
-init : () -> ( Model, Cmd Msg )
-init _ =
-    ( initialModel, Cmd.map PhoenixMsg initialSocketCommand )
-```
-
-This is a lot to process, but let's keep moving for now so we can get things
-working, and we'll work towards a deeper understanding as we gain more
-familiarity with the code we're working with.
-
-## Triggering SaveScore
-
-Finally, we just need to trigger the `SaveScoreRequest` message whenever we
-want to send our score over the socket. We'll set it up so that we can click a
-button and then check the DevTools console to view the `payload` that's being
+Finally, we just need to trigger the `JoinChannel` and `SaveScore` messages
+to send our score over the socket. We'll set it up so that we can click a
+button and then check the server console to view the `payload` that's being
 sent over the socket.
 
 At the top of our file, let's import the `onClick` functionality from
@@ -562,63 +539,84 @@ import Html.Events exposing (onClick)
 
 ## Adding a Button to the View
 
-Now, we can create a new `viewSaveScoreButton` function and add it to our main
-`view` to trigger the `SaveScoreRequest` message.
+Now, we can create new `viewJoinChannelButton` and `viewSaveScoreButton`
+functions and add them to our main `view` to trigger the `JoinChannel` and
+`SaveScore` messages.
 
 ```elm
 view : Model -> Html Msg
 view model =
     div []
         [ viewGame model
+        , viewJoinChannelButton
         , viewSaveScoreButton
+        ]
+
+
+viewJoinChannelButton : Html Msg
+viewJoinChannelButton =
+    div []
+        [ button [ onClick JoinChannel, class "button" ]
+            [ text "Join Channel" ]
         ]
 
 
 viewSaveScoreButton : Html Msg
 viewSaveScoreButton =
     div []
-        [ button [ onClick SaveScoreRequest, class "button" ]
+        [ button [ onClick SaveScore, class "button" ]
             [ text "Save Score" ]
         ]
 ```
 
-Add `Debug.log` to `SaveScoreRequest`?
-
 ## Testing Out the Socket
 
 We've got everything configured, and we should be able to test out our working
-socket payload. Start the Phoenix server with `mix phx.server` and load the
-game in the browser. Collect a few coins to increment the player's score, and
-then click the new "Save Score" button.
+socket payload. Here are the steps to try it:
 
-The DevTools console will show an initial message when the page loads, and this
-let's us know that our `"score:platformer"` topic was initialized with an `"ok"`
-status.
+- Start the server with `mix phx.server` and load the game in the browser.
+- Play the game and collect a few coins to increment the player's score.
+- Click the "Join Channel" button.
+- Click the "Save Score" button.
+
+Although we won't see any changes in the UI, we should be able to check the
+server console and see things working.
+
+When the game loads on the page we see that we connect to the socket:
 
 ```shell
-SaveScoreRequest: ({ event = "save_score", topic = "score:platformer", playerScore = 500, timeRemaining = 5 })
+[info] GET /games/platformer
+[info] CONNECT PlatformWeb.UserSocket
+[info] Replied PlatformWeb.UserSocket :ok
 ```
 
-We also see a message triggered in the DevTools console when we click the score
-text. It shows that we triggered a `"save_score"` event, which means we can
-broadcast the data over the socket. This is the behavior we want, because we'll
-want all the player scores to be visible and update in real-time on the Phoenix
-page where we list out all the players. In this example, you can see that we
+Then, when we click the "Join Channel" button we see the successful join
+message:
+
+```shell
+[info] JOIN "score:platformer" to PlatformWeb.ScoreChannel
+[info] Replied score:platformer :ok
+```
+
+Lastly, when we click the "Save Score" button we see the data being sent over
+the socket:
+
+```shell
+[debug] INCOMING "save_score" on "score:platformer" to PlatformWeb.ScoreChannel
+  Parameters: %{"player_score" => 300}
+```
+
+When we trigger the `"save_score"` event, we're broadcasting the data over the
+socket. The broadcast allows us to send the data in real-time to any other
+players connected to the socket. In the example above, you can see that we
 collected three coins for a score of `300`, and that is reflected in the
-payload with `{ score = 300 }`.
-
-```shell
-Phoenix message: { event = "save_score", topic = "score:platformer", payload = { player_score = 300 }, ref = Nothing }
-```
-
-![Working Socket Payload](images/phoenix_channel_setup/working_socket_payload.png)
+payload with `%{"player_score" => 300}`.
 
 ## Summary
 
-We made it a _long_ way in this chapter, but we still haven't accomplished our
-goal of syncing data between the Elm front-end and Phoenix back-end.
-
-We created a new Phoenix channel, we installed elm-phoenix-socket, and we
-configured our game to send a payload. But we still need to handle the data
-that's being sent from the front-end. Let's take a look at these topics in the
-next chapter.
+We made it a _long_ way in this chapter. We managed to take care of most of the
+hard work, and we're successfully sending data from the Elm front-end to the
+Phoenix back-end. We created a new Phoenix channel, installed a package, and
+configured our game to send a payload. But we're not displaying the player
+scores in our application or persisting the data anywhere yet. We'll take a
+look at these topics in the next chapter.

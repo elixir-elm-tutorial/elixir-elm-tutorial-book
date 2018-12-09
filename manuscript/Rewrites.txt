@@ -16,7 +16,7 @@
 - [x] adding_interaction.md
 - [x] displaying_game_data.md
 - [x] handling_game_states.md
-- [ ] phoenix_channel_setup.md
+- [x] phoenix_channel_setup.md
 - [ ] syncing_score_data.md
 - [ ] socket_authentication.md
 - [x] whats_next.md
@@ -24,3 +24,7 @@
 - [x] appendix.md
 - [x] contact.md
 - [x] run proselint
+- [ ] update Elm API chapter for new Http module API
+- [ ] test all content from beginning for new sample
+- [ ] replace old sample app on GitHub with new one
+- [ ] deploy new version of sample app to Heroku
