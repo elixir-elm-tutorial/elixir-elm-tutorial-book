@@ -8,7 +8,7 @@ front-end game, and find a good way to handle it with our Phoenix back-end.
 ## Planning Out Our Approach
 
 Our game is tracking a `playerScore` field on the Elm side as the character
-collects items. And we managed to configure elm-phoenix-socket in the last
+collects items. And we managed to configure our Elm application in the last
 chapter, so we have the score being sent over the `ScoreChannel` as the
 `payload` value. But we'd like to display player score updates in real-time,
 and be able to save scores to the database as `Gameplay` records.
@@ -140,23 +140,22 @@ end
 ```
 
 When we load our game in the browser, we should now be able to click the "Save
-Score" button and create records in the database.
+Score" button after joining the channel and create records in the database.
 
-For the output and screenshot below, we collected a few coins and then clicked
-the "Save Score" button. We can see that the `"save_score"` message was
-triggered for the `"score:platformer"` topic. And the `payload` contains the
-data we set up in the `handle_in/3` function from our `ScoreChannel`.
-
-We have the `player_score` field being tracked from the game, and we're taking
-the `game_id` from the value we grabbed in the `join/3` function. We can also
-see the hard-coded value of `3` that we set for the `player_id` field, and
-we'll take care of socket authentication soon.
+For the output below, we collected a few coins, joined the channel, and then
+clicked the "Save Score" button. We can see that the `"save_score"` message was
+triggered for the `"score:platformer"` topic on the `ScoreChannel`. And the
+`payload` contains the `player_score` field with a value of `300` tracked from
+the game.
 
 ```shell
-Phoenix message: { event = "save_score", topic = "score:platformer", payload = { player_score = 300, player_id = 3, game_id = 1 }, ref = Nothing }
+[info] JOIN "score:platformer" to PlatformWeb.ScoreChannel
+[info] Replied score:platformer :ok
+[debug] INCOMING "save_score" on "score:platformer" to PlatformWeb.ScoreChannel
+  Parameters: %{"player_score" => 300}
+[debug] QUERY OK db=43.4ms queue=1.6ms
+INSERT INTO "gameplays" ("player_score","inserted_at","updated_at") VALUES ($1,$2,$3) RETURNING "id" [300, ~N[2018-12-09 14:30:54], ~N[2018-12-09 14:30:54]]
 ```
-
-![Working Channel Payload](images/syncing_score_data/working_channel_payload.png)
 
 ## Viewing Gameplay Records
 
@@ -220,7 +219,7 @@ that could cause collisions. Update the imports at the top of the file with the
 following:
 
 ```elm
-import Html exposing (Html, button, div, li, span, strong, ul)
+import Html exposing (Html, button, div, h3, li, span, strong, ul)
 import Html.Attributes
 ```
 
@@ -234,8 +233,9 @@ viewGameplaysIndex model =
     if List.isEmpty model.gameplays then
         div [] []
     else
-        div [ Html.Attributes.class "players-index" ]
-            [ viewGameplaysList model.gameplays
+        div [ Html.Attributes.class "players-index container" ]
+            [ h3 [] [ text "Player Scores" ]
+            , viewGameplaysList model.gameplays
             ]
 ```
 
@@ -245,10 +245,8 @@ we got from Bootstrap. And we'll use this to display our list of player scores:
 ```elm
 viewGameplaysList : List Gameplay -> Html Msg
 viewGameplaysList gameplays =
-    div [ Html.Attributes.class "players-list panel panel-info" ]
-        [ div [ Html.Attributes.class "panel-heading" ] [ text "Player Scores" ]
-        , ul [ Html.Attributes.class "list-group" ] (List.map viewGameplayItem gameplays)
-        ]
+    ul [ Html.Attributes.class "players-list" ]
+        (List.map viewGameplayItem gameplays)
 ```
 
 Then, we can add our inidividual gameplays as list items with a
@@ -258,9 +256,9 @@ Then, we can add our inidividual gameplays as list items with a
 ```elm
 viewGameplayItem : Gameplay -> Html Msg
 viewGameplayItem gameplay =
-    li [ Html.Attributes.class "player-item list-group-item" ]
-        [ strong [] [ text (toString gameplay.playerId) ]
-        , span [ Html.Attributes.class "badge" ] [ text (toString gameplay.playerScore) ]
+    li [ Html.Attributes.class "player-item" ]
+        [ strong [] [ text (String.fromInt gameplay.playerId) ]
+        , span [] [ text (String.fromInt gameplay.playerScore) ]
         ]
 ```
 
@@ -271,6 +269,7 @@ view : Model -> Html Msg
 view model =
     div []
         [ viewGame model
+        , viewJoinChannelButton
         , viewSaveScoreButton
         , viewGameplaysIndex model
         ]
@@ -289,22 +288,23 @@ messages:
 
 ```elm
 type Msg
-    = NoOp
-    | CountdownTimer Time
-    | KeyDown KeyCode
-    | PhoenixMsg (Phoenix.Socket.Msg Msg)
+    = CountdownTimer Time.Posix
+    | GameLoop Float
+    | JoinChannel
+    | KeyDown String
+    | NoOp
     | ReceiveScoreChanges Encode.Value
-    | SaveScore Encode.Value
+    | SaveScoreSuccess Encode.Value
     | SaveScoreError Encode.Value
-    | SaveScoreRequest
+    | SaveScore
+    | PhoenixMsg (Phoenix.Message.Msg Msg)
     | SetNewItemPositionX Int
-    | TimeUpdate Time
 ```
 
-We can now add the following case to decode score changes and append them to
-the model. When a gameplay is successfully decoded (with an `Ok` response),
-we're taking that value and using the cons operator `::` to add it to the list
-of gameplays stored in `model.gameplays`.
+We can now add the following case to the `update` function to decode score
+changes and append them to the model. When a gameplay is successfully decoded
+(with an `Ok` response), we're taking that value and using the cons operator
+`::` to add it to the list of gameplays stored in `model.gameplays`.
 
 ```elm
 ReceiveScoreChanges raw ->
@@ -315,14 +315,6 @@ ReceiveScoreChanges raw ->
         Err message ->
             Debug.log "Error receiving score changes."
                 ( model, Cmd.none )
-```
-
-Note that this will require us to add another `import` at the top of our file
-to go along with our JSON encoder:
-
-```elm
-import Json.Decode as Decode
-import Json.Encode as Encode
 ```
 
 Just like we did with our decoders in the `Main.elm` file, we'll add a decoder
