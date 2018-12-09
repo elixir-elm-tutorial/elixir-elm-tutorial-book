@@ -1,6 +1,6 @@
 # Syncing Score Data
 
-We created our `ScoreChannel` and set up elm-phoenix-socket in the last
+We created our `ScoreChannel` and set up our socket connection in the last
 chapter, but we haven't really worked with Phoenix channels much outside of the
 initial configuration. In this chapter, we'll take that data from our Elm
 front-end game, and find a good way to handle it with our Phoenix back-end.
@@ -91,7 +91,7 @@ In order to save our score records to the database, we'll also need to grab the
 in our `handle_in/3` function.
 
 ```elixir
-def handle_in("save_score", %{"player_score" => player_score} = payload, socket) do
+def handle_in("save_score", %{"player_score" => player_score}, socket) do
   broadcast(socket, "save_score", payload)
   {:noreply, socket}
 end
@@ -126,9 +126,10 @@ end
 ## Creating Gameplays
 
 Our channel features should now work using the `create_gameplay/1` function
-from our `lib/platform/products.ex` file. To save new records in our
-`"gameplays"` table, we'll be passing a `game_id`, a `player_id`, and a
-`player_score` to `create_gameplay/1`.
+from our `lib/platform/products/products.ex` file (the function is shown below
+for context, but we don't need to make any changes to the file). To save new
+records in our `"gameplays"` table, we'll be passing a `game_id`, a
+`player_id`, and a `player_score` to `create_gameplay/1`.
 
 ```elixir
 def create_gameplay(attrs \\ %{}) do
