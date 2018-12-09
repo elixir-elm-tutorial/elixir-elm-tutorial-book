@@ -349,7 +349,7 @@ initialSocket =
     in
         Phoenix.Socket.init devSocketServer
             |> Phoenix.Socket.withDebug
-            |> Phoenix.Socket.on "save_score" "score:platformer" SaveScore
+            |> Phoenix.Socket.on "save_score" "score:platformer" SaveScoreSuccess
             |> Phoenix.Socket.on "save_score" "score:platformer" ReceiveScoreChanges
             |> Phoenix.Socket.join initialChannel
 ```

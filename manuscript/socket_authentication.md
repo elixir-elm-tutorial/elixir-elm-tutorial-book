@@ -65,7 +65,6 @@ add a new `<script>` tag **above** the existing one in the `<body>`.
 
 ```embedded_elixir
     <!-- ... -->
-    </div> <!-- /container -->
     <script>window.userToken = encodeURIComponent("<%= assigns[:user_token] %>");</script>
     <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
   </body>
@@ -130,58 +129,60 @@ along the `window.userToken`:
 
 ```javascript
 // Elm
-import Elm from "./elm";
+import { Elm } from "../elm/src/Main.elm";
 
 const elmContainer = document.querySelector("#elm-container");
 const platformer = document.querySelector("#platformer");
 
-if (elmContainer) Elm.Main.embed(elmContainer);
+if (elmContainer) {
+  Elm.Main.init({ node: elmContainer });
+}
+if (platformer) {
+  Elm.Games.Platformer.init({
+    node: platformer,
+    flags: { token: window.userToken }
+  });
+}
+
 if (platformer) Elm.Platformer.embed(platformer, { token: window.userToken });
 ```
 
 If you're still running the Phoenix server, you'll notice that the Elm
-application for our game no longer works. Let's open our
-`assets/elm/Platformer.elm` file and fix things up.
+application for our game no longer works. Let's open our `Platformer.elm` file
+and fix things up.
 
-## ProgramWithFlags
+## Working with Flags
 
-At the top of our `Platformer.elm` file, we've been using `Html.program` in our
-`main` function. We're going to make a slight change to our application by
-converting it to `programWithFlags` and adding a new type alias above:
+Flags allow us to send data from JavaScript to Elm when we initialize our
+application. When we embed our Elm application on the page with JavaScript,
+we're passing along some data that we'll need to use. In this case, we're
+sending our `window.userToken` value to the Elm application, where we'll be
+able to access it as a `token` string.
+
+In our `Platformer.elm` file, we've previously been ignoring any incoming data
+that's passed as an argument to our `init` function:
+
+```elm
+init : () -> ( Model, Cmd Msg )
+init _ =
+    ( initialModel, Cmd.none )
+```
+
+Let's create a new `Flags` type and update our `init` function to handle the
+incoming data:
 
 ```elm
 type alias Flags =
     { token : String
     }
 
-
-main : Program Flags Model Msg
-main =
-    Html.programWithFlags
-        { init = init
-        , view = view
-        , update = update
-        , subscriptions = subscriptions
-        }
-```
-
-Flags allow JavaScript and Elm to communicate. When we're embedding our Elm
-application on the page with JavaScript, we're passing along some data that
-we'll need to use. In this case, we're sending our `window.userToken` value
-to the Elm application, where we'll be able to access it as a `token` string.
-
-## Configuring Flags
-
-Now, we just need to update our existing functions to work with our `Flags`.
-We'll start by updating our `init` function with the following:
-
-```elm
 init : Flags -> ( Model, Cmd Msg )
 init flags =
-    ( initialModel flags, Cmd.map PhoenixMsg (initialSocketCommand flags) )
+    ( initialModel flags, Cmd.none )
 ```
 
-We'll also need to pass our flags through the `initialModel` as well:
+Now that we're using flags to initialize our application with external data,
+we can update our `initialModel` to pass the data along to our socket:
 
 ```elm
 initialModel : Flags -> Model
@@ -194,49 +195,33 @@ initialModel flags =
     , itemPositionX = 500
     , itemPositionY = 300
     , itemsCollected = 0
-    , phxSocket = initialSocketJoin flags
+    , phxSocket = initialSocket flags
     , playerScore = 0
     , timeRemaining = 10
     }
 ```
 
-Then, we can update our `initialSocketJoin` and `initialSocketCommand`
-function:
+And we'll update our `initialSocket` function so we can hit a different
+endpoint when we have a user token stored in `flags.token`.
 
 ```elm
-initialSocketJoin : Flags -> Phoenix.Socket.Socket Msg
-initialSocketJoin flags =
-    initialSocket flags
-        |> Tuple.first
-
-
-initialSocketCommand : Flags -> Cmd (Phoenix.Socket.Msg Msg)
-initialSocketCommand flags =
-    initialSocket flags
-        |> Tuple.second
-```
-
-Lastly, we update our `initialSocket` function with the key changes. We're
-going to take the value from `flags.token`, and append it to the URL for the
-WebSocket server.
-
-```elm
-initialSocket : Flags -> ( Phoenix.Socket.Socket Msg, Cmd (Phoenix.Socket.Msg Msg) )
+initialSocket : Flags -> Phoenix.Socket.Socket Msg
 initialSocket flags =
     let
         devSocketServer =
-            "ws://localhost:4000/socket/websocket?token=" ++ flags.token
+            if String.isEmpty flags.token then
+                "ws://localhost:4000/socket/websocket"
+
+            else
+                "ws://localhost:4000/socket/websocket"
+                    ++ "?token="
+                    ++ flags.token
     in
-        Phoenix.Socket.init devSocketServer
-            |> Phoenix.Socket.withDebug
-            |> Phoenix.Socket.on "save_score" "score:platformer" SaveScore
-            |> Phoenix.Socket.on "save_score" "score:platformer" ReceiveScoreChanges
-            |> Phoenix.Socket.join initialChannel
+    Phoenix.Socket.init devSocketServer
 ```
 
-We're done with the updates to our Elm application! Now, when players connect
-to the socket, the channel will be able to identify the current user by their
-token.
+Now, when players connect to the socket, the channel will be able to identify
+the current user by their token.
 
 ## Finishing the Score Channel
 
@@ -247,7 +232,7 @@ Update the `handle_in/3` function with the following, which takes the
 `player_id` value from `socket.assigns.player_id`:
 
 ```elixir
-def handle_in("save_score", %{"player_score" => player_score} = payload, socket) do
+def handle_in("save_score", %{"player_score" => player_score}, socket) do
   payload = %{
     player_score: player_score,
     game_id: socket.assigns.game_id,
