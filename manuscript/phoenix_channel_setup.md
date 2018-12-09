@@ -20,7 +20,12 @@ we'll approach the topics:
 
 Now that we're working at the intersection of Elm and Phoenix, it's good to
 keep in mind that things are still rapidly changing in the community. There's
-no "official" client to hook up Elm and Phoenix yet.
+no "official" client to hook up Elm and Phoenix yet. Although the libraries
+and techniques tend to change, it's also good to keep in mind that the overall
+concepts in Elixir and Elm both tend to stay the same. In other words, the
+material in this chapter is subject to change as new integration techniques
+become standard practice, but the concepts we're using to build our application
+will still be useful even as things change.
 
 ## Channels
 
@@ -180,8 +185,16 @@ package:
 $ elm install slashmili/phoenix-socket
 ```
 
-This package will give us a way to update our Elm front-end application to send
-messages over the channel to the Phoenix back-end.
+In the near future, we'll likely have different options for how we want to
+connect Elm and Phoenix. And it's also likely that a standard approach will
+develop over time. We're using `slashmili/phoenix-socket` in this book because
+it works well with the latest version of Elm, but if you're interested in
+pursuing your own approach and pushing the boundaries, be sure to check out the
+prior art that's available in packages like `fbonetti/elm-phoenix-socket` and
+`saschatimme/elm-phoenix`.
+
+With this package installed, we can move on and update our Elm front-end
+application to send messages over the channel to the Phoenix back-end.
 
 ## Configuring Elm with Phoenix Channels
 
