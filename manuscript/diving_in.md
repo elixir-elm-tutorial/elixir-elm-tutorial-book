@@ -50,7 +50,7 @@ $ mix phx.new platform
 Fetch and install dependencies? [Yn] Y
 * running mix deps.get
 * running mix deps.compile
-* running cd assets && npm install && node node_modules/brunch/bin/brunch build
+* running cd assets && npm install && node node_modules/webpack/bin/webpack.js --mode development
 
 We are all set! Go into your application by running:
 
