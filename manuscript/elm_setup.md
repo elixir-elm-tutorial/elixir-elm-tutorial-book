@@ -49,6 +49,7 @@ following command to ensure our project includes the `elm` compiler and the
 `elm-webpack-loader` tool:
 
 ```shell
+$ cd assets
 $ npm install --save elm elm-webpack-loader
 ```
 
@@ -68,8 +69,8 @@ This will add two new lines to the `dependencies` section of our
 
 We'll need a place to put our Elm code inside our Phoenix application. So let's
 create a new folder called `elm` inside our `assets` folder. We'll use this
-folder to store all of our Elm source code. This also allows us to co-locate
-our Elm front-end code with the rest of our front-end code.
+folder to store all of our Elm source code. This also allows us to write our
+Elm front-end code with the rest of our front-end code.
 
 ```shell
 $ cd assets
@@ -78,7 +79,7 @@ $ mkdir elm
 
 The Elm source code we write will be committed to our repository, but our
 Phoenix application will use Webpack and elm-webpack-loader to automatically
-compile it to a JavaScript output file so we don't have to do it manually.
+compile it to JavaScript so we don't have to do it manually.
 
 ## Updating .gitignore
 
