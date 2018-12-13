@@ -60,8 +60,8 @@ initialCommand =
     Cmd.none
 
 
-init : ( Model, Cmd Msg )
-init =
+init : () -> ( Model, Cmd Msg )
+init _ =
     ( initialModel, initialCommand )
 ```
 
@@ -150,9 +150,18 @@ and giving it an alias of `Decode` to make things a little easier to type.
 Now that we have our libraries imported, the first step we need to take is to
 make an HTTP GET request to our endpoint. If we take a look at the
 documentation for the
-[`Http.get`](http://package.elm-lang.org/packages/elm-lang/http/latest/Http#get)
-function, we see that this function takes a string value for the URL as the first
-argument and a JSON decoder as the second argument.
+[`Http.get`](https://package.elm-lang.org/packages/elm/http/latest/Http#get)
+function, we see that we can use it with a `url` value and an `expect` value.
+
+The `url` will be a string value like `http://localhost:4000/api/games` to hit
+our Phoenix JSON endpoint, or you could fetch data from a public API like the
+Star Wars API at `https://swapi.co/api/films/1`. The `expect` value allows us
+to use things like `expectString` if we're fetching a text file or we can use
+`expectJson` since we're fetching JSON data.
+
+In other words, we're going to use `Http.get` to hit our JSON endpoint, we'll
+handle the response using `FetchGamesList` in our `update` function, and we'll
+create a new JSON decoder to decode the game data.
 
 Keep in mind that the order of your function declarations doesn't matter in
 Elm, but I like to add a new section for API functions below the model section.
@@ -162,23 +171,17 @@ to our `"/api/games"` route (and we'll get to the decoding soon).
 ```elm
 -- API
 
-fetchGamesList =
-    Http.get "/api/games" decodeGamesList
-```
-
-We also want to trigger this request using the
-[`Http.send`](http://package.elm-lang.org/packages/elm-lang/http/latest/Http#send)
-function, so we'll pipe the results of our `Http.get` request to `Http.send`
-and use `FetchGamesList` in our `update` function. We'll also add a type
-annotation to indicate that we're creating a command, which we'll later use
-in our `initialCommand` function when our application starts.
-
-```elm
 fetchGamesList : Cmd Msg
 fetchGamesList =
-    Http.get "/api/games" decodeGamesList
-        |> Http.send FetchGamesList
+    Http.get
+        { url = "/api/games"
+        , expect = Http.expectJson FetchGamesList decodeGamesList
+        }
 ```
+
+Note the return value for this function is a `Cmd Msg`, which we'll later use
+in our `initialCommand` function so that our application fetches the data as it
+initializes.
 
 There's a lot going on here, so don't worry if it's getting a little bit
 confusing. It will all make more sense as we finish up with this initial
@@ -248,8 +251,10 @@ request to our JSON endpoint and decode the response:
 ```elm
 fetchGamesList : Cmd Msg
 fetchGamesList =
-    Http.get "/api/games" decodeGamesList
-        |> Http.send FetchGamesList
+    Http.get
+        { url = "/api/games"
+        , expect = Http.expectJson FetchGamesList decodeGamesList
+        }
 
 
 decodeGamesList : Decode.Decoder (List Game)
@@ -370,15 +375,19 @@ experience as we do the same for our list of players.
 
 ![JSON API Player Data](images/phoenix_api/player_data_api_scope.png)
 
-We can start by adding to our `Model` type alias and `initialModel`:
+We can start by adding to our `Model` type alias:
 
 ```elm
 type alias Model =
     { gamesList : List Game
     , playersList : List Player
     }
+```
 
+And we'll also update our `initialModel` to use an empty list for the initial
+`playersList` value:
 
+```elm
 initialModel : Model
 initialModel =
     { gamesList = []
@@ -431,8 +440,10 @@ you can check out!
 ```elm
 fetchPlayersList : Cmd Msg
 fetchPlayersList =
-    Http.get "/api/players" decodePlayersList
-        |> Http.send FetchPlayersList
+    Http.get
+        { url = "/api/players"
+        , expect = Http.expectJson FetchPlayersList decodePlayersList
+        }
 
 
 decodePlayersList : Decode.Decoder (List Player)
