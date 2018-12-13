@@ -233,7 +233,7 @@ that I tend to alphabetize fields, but it's not necessary). We'll also add a
 `unique_constraint/1` function to verify that our `slug` fields are unique.
 
 ```elixir
-def changeset(%Game{} = game, attrs) do
+def changeset(game, attrs) do
   game
   |> cast(attrs, [:description, :featured, :slug, :thumbnail, :title])
   |> validate_required([:description, :featured, :slug, :thumbnail, :title])
@@ -396,16 +396,17 @@ def play(conn, %{"slug" => slug}) do
 end
 ```
 
-Lastly, we'll update our `lib/platform_web/router.ex` file with the following:
+Lastly, we'll update our `lib/platform_web/router.ex` file with the following
+so we can use the `slug` in the URL instead of the game's `id`.
 
 ```elixir
 scope "/", PlatformWeb do
   pipe_through :browser
-  # ...
 
+  get "/", PageController, :index
   get "/games/:slug", GameController, :play
-
-  # ...
+  resources "/players", PlayerController
+  resources "/sessions", PlayerSessionController, only: [:new, :create, :delete]
 end
 ```
 
