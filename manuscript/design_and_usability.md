@@ -343,7 +343,8 @@ Let's allow the currently signed in player to edit their account. Update the
       </p>
       <%= link "Sign Out", to: Routes.player_session_path(@conn, :delete, @current_user), method: "delete", class: "button" %>
     <% else %>
-      <%= ...  %>
+      <%= link "Sign Up", to: Routes.player_path(@conn, :new), class: "button" %>
+      <%= link "Sign In", to: Routes.player_session_path(@conn, :new), class: "button" %>
     <% end %>
   </ul>
 </nav>
