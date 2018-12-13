@@ -431,12 +431,14 @@ bottom with the following:
 
 ```elixir
 def render("game.json", %{game: game}) do
-  %{id: game.id,
+  %{
+    id: game.id,
     description: game.description,
     featured: game.featured,
     slug: game.slug,
     thumbnail: game.thumbnail,
-    title: game.title}
+    title: game.title
+  }
 end
 ```
 

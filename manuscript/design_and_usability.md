@@ -514,7 +514,7 @@ to return the `conn` when we're in the `Mix.env` test environment.
 
 ```elixir
 defp authorize(conn, _opts) do
-  if Mix.env == :test do
+  if Mix.env() == :test do
     conn
   else
     current_player_id = conn.assigns.current_user().id

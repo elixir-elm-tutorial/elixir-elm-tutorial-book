@@ -409,6 +409,7 @@ defmodule PlatformWeb.PlayerApiController do
 
   def delete(conn, %{"id" => id}) do
     player = Accounts.get_player!(id)
+
     with {:ok, %Player{}} <- Accounts.delete_player(player) do
       send_resp(conn, :no_content, "")
     end
@@ -453,10 +454,12 @@ defmodule PlatformWeb.PlayerApiView do
   end
 
   def render("player.json", %{player_api: player_api}) do
-    %{id: player_api.id,
+    %{
+      id: player_api.id,
       username: player_api.username,
       display_name: player_api.display_name,
-      score: player_api.score}
+      score: player_api.score
+    }
   end
 end
 ```
