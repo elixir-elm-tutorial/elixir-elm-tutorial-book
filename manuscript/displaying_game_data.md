@@ -337,6 +337,7 @@ the model. Here's our updated `Msg` type:
 type Msg
     = CountdownTimer Time.Posix
     | GameLoop Float
+    | KeyDown String
     | NoOp
     | SetNewItemPositionX Int
 ```
