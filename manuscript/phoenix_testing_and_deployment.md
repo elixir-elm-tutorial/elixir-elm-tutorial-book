@@ -25,7 +25,7 @@ $ mix test
      test/platform_web/controllers/page_controller_test.exs:4
      Assertion with =~ failed
      code:  assert html_response(conn, 200) =~ "Welcome to Phoenix!"
-     left:  "<!DOCTYPE html><html lang=\"en\"><body><div class=\"container\"><main role=\"main\">\n<a class=\"btn btn-success\" href=\"/players/new\">Create Player Account</a>\n<a class=\"btn btn-info\" href=\"/players\">List All Players</a></main></div></body></html>"
+     left:  "<!DOCTYPE html><html lang=\"en\"><body><div class=\"container\"><main role=\"main\">\n<a href=\"/players/new\">Create Player Account</a>\n<a href=\"/players\">List All Players</a></main></div></body></html>"
      right: "Welcome to Phoenix!"
      stacktrace:
        test/platform_web/controllers/page_controller_test.exs:6: (test)
