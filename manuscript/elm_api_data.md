@@ -13,19 +13,19 @@ to display a list of games.
 initialModel : Model
 initialModel =
     { gamesList =
-        [ { gameTitle = "Platform Game", gameDescription = "Platform game example." }
-        , { gameTitle = "Adventure Game", gameDescription = "Adventure game example." }
+        [ { title = "Platform Game", description = "Platform game example." }
+        , { title = "Adventure Game", description = "Adventure game example." }
         ]
-    , displayGamesList = False
+    , displayGamesList = True
     }
 ```
 
-![Hard-coded Games List](images/elm_api_data/hard_coded_games_list.png)
+![Hard-coded Games List](images/elm_architecture/rendering_the_games_list.png)
 
-Our next goal is to remove this hard-coded data and fetch the game JSON data
+Our next goal is to remove this hard-coded data and fetch the JSON game data
 from our Phoenix API instead.
 
-![JSON API Game Data](images/elm_api_data/json_api_game_data.png)
+![JSON API Game Data](images/phoenix_api/games_api_with_data.png)
 
 ## Updating Our Initial Model
 
@@ -34,11 +34,8 @@ list of games. We can also remove our buttons that display and hide the games
 since we're going to show them by default. So we're removing the
 `displayGamesList` field, and we're also going to add a new function called
 `initialCommand` that we're going to use soon to fetch our data from the API.
-Let's also go ahead and simplify our `Game` type by changing the field names
-to `title` and `description`, which will help the fields match to the same
-names that we have in our API.
 
-Here is the full updated code for the model section:
+Here is the full updated code for the model and init sections:
 
 ```elm
 type alias Model =
@@ -63,8 +60,8 @@ initialCommand =
     Cmd.none
 
 
-init : ( Model, Cmd Msg )
-init =
+init : () -> ( Model, Cmd Msg )
+init _ =
     ( initialModel, initialCommand )
 ```
 
@@ -101,6 +98,7 @@ view : Model -> Html Msg
 view model =
     if List.isEmpty model.gamesList then
         div [] []
+
     else
         div []
             [ h1 [ class "games-section" ] [ text "Games" ]
@@ -108,66 +106,34 @@ view model =
             ]
 ```
 
-We'll also need to make a slight change to our `gamesListItem` function since
-we changed the field names in our `Game` type.
-
-```elm
-gamesListItem : Game -> Html msg
-gamesListItem game =
-    li [ class "game-item" ]
-        [ strong [] [ text game.title ]
-        , p [] [ text game.description ]
-        ]
-```
-
 ## Importing Packages
 
-Our goal for the rest of the chapter is going to be to make an HTTP request to
-our Phoenix back-end for our JSON game data (`http://0.0.0.0:4000/api/games`),
+Our goal for the rest of the chapter will be to make an HTTP request to our
+Phoenix back-end for the JSON game data (`http://localhost:4000/api/games`),
 and then to decode that JSON into our Elm application. To get started, let's
 import the libraries we'll need to use:
 
 - [Http](http://package.elm-lang.org/packages/elm-lang/http/latest)
 - [Json.Decode](http://package.elm-lang.org/packages/elm-lang/core/latest/Json-Decode)
 
-From the command line inside the `assets` folder where our `elm-package.json`
-file lives, type the following command:
+From the command line, we'll type the following commands from inside the
+`assets/elm` folder where our `elm.json` file lives:
 
 ```shell
-$ elm-package install elm-lang/http
+$ elm install elm/http
+$ elm install elm/json
 ```
 
-This should install the `Http` package for us, and here's what the output
-should look like:
-
-```shell
-$ elm-package install elm-lang/http
-To install elm-lang/http I would like to add the following
-dependency to elm-package.json:
-
-    "elm-lang/http": "1.0.0 <= v < 2.0.0"
-
-May I add that to elm-package.json for you? [Y/n] Y
-
-Some new packages are needed. Here is the upgrade plan.
-
-  Install:
-    elm-lang/http 1.0.0
-
-Do you approve of this plan? [Y/n] Y
-Starting downloads...
-
-  ● elm-lang/http 1.0.0
-
-Packages configured successfully!
-```
+We should see output to let us know that we're installing the `Http` package
+and the `Json` package that contains the decoder functions we'll need.
 
 With that completed, we can now add the `import` declarations to the top of our
 `Main.elm` file. Here's what the top of the file should look like:
 
 ```elm
-module Main exposing (..)
+module Main exposing (main)
 
+import Browser
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
@@ -177,30 +143,45 @@ import Json.Decode as Decode
 
 Note that we're importing our new `Http` library to make the HTTP request to
 our endpoint, and we're also importing the `Json.Decode` library from the core
-and giving it an alias of `Decode` to make things a little easier on ourselves.
+and giving it an alias of `Decode` to make things a little easier to type.
 
 ## Fetching Games
 
 Now that we have our libraries imported, the first step we need to take is to
 make an HTTP GET request to our endpoint. If we take a look at the
-[documentation for `Http.get`](http://package.elm-lang.org/packages/elm-lang/http/latest/Http#get),
-we see that this function takes a string value for the URL as the first
-argument and a JSON decoder as the second argument.
+documentation for the
+[`Http.get`](https://package.elm-lang.org/packages/elm/http/latest/Http#get)
+function, we see that we can use it with a `url` value and an `expect` value.
 
-Keep in mind that the order of your functions doesn't matter, but I like to add
-a new section for API functions below the model section. Here we'll create a
-`fetchGamesList` function that make our `Http.get` request to our
-`"/api/games"` route (and we'll get to the decoding soon).
+The `url` will be a string value like `http://localhost:4000/api/games` to hit
+our Phoenix JSON endpoint, or you could fetch data from a public API like the
+Star Wars API at `https://swapi.co/api/films/1`. The `expect` value allows us
+to use things like `expectString` if we're fetching a text file or we can use
+`expectJson` since we're fetching JSON data.
+
+In other words, we're going to use `Http.get` to hit our JSON endpoint, we'll
+handle the response using `FetchGamesList` in our `update` function, and we'll
+create a new JSON decoder to decode the game data.
+
+Keep in mind that the order of your function declarations doesn't matter in
+Elm, but I like to add a new section for API functions below the model section.
+Here we'll create a `fetchGamesList` function that make our `Http.get` request
+to our `"/api/games"` route (and we'll get to the decoding soon).
 
 ```elm
+-- API
+
+fetchGamesList : Cmd Msg
 fetchGamesList =
-    Http.get "/api/games" decodeGamesList
+    Http.get
+        { url = "/api/games"
+        , expect = Http.expectJson FetchGamesList decodeGamesList
+        }
 ```
 
-We also want to trigger this request using the
-[`Http.send`](http://package.elm-lang.org/packages/elm-lang/http/latest/Http#send)
-function. So we'll pipe the results along with a new action we're going to
-create.
+Note the return value for this function is a `Cmd Msg`, which we'll later use
+in our `initialCommand` function so that our application fetches the data as it
+initializes.
 
 There's a lot going on here, so don't worry if it's getting a little bit
 confusing. It will all make more sense as we finish up with this initial
@@ -214,15 +195,15 @@ our endpoint.
 
 ```javascript
 {
-    data: [
-        {
-            title: "Platformer",
-            thumbnail: "http://via.placeholder.com/300x200",
-            id: 1,
-            featured: true,
-            description: "Platform game example."
-        }
-    ]
+  data: [
+    {
+      title: "Platformer",
+      thumbnail: "http://via.placeholder.com/300x200",
+      id: 1,
+      featured: true,
+      description: "Platform game example."
+    }
+  ];
 }
 ```
 
@@ -270,8 +251,10 @@ request to our JSON endpoint and decode the response:
 ```elm
 fetchGamesList : Cmd Msg
 fetchGamesList =
-    Http.get "/api/games" decodeGamesList
-        |> Http.send FetchGamesList
+    Http.get
+        { url = "/api/games"
+        , expect = Http.expectJson FetchGamesList decodeGamesList
+        }
 
 
 decodeGamesList : Decode.Decoder (List Game)
@@ -290,12 +273,10 @@ decodeGame =
 
 ## FetchGamesList
 
-Now we can handle the results of our HTTP request in our update section. The
-type annotation may look a bit strange at first, but essentially we're creating
-our `FetchGamesList` action and the result will either be successful or an
-error. When the API fetch is successful, we'll get back our list of games. When
-it's not successful, we'll get back and `Http.Error` that we can ignore for
-now.
+Now we can handle the results of our HTTP request in our update section. We'll
+set up `FetchGamesList` to attempt to fetch data from our API. It will either
+successfully return a list of games of type `List Game` or return an error with
+`Http.Error`.
 
 ```elm
 type Msg
@@ -306,7 +287,10 @@ Inside the `update` function, we'll add a `result` argument to our
 `FetchGamesList` action. And we'll add a `case` expression to handle the
 result. When we get an `Ok` response, we update the `gamesList` in our model to
 contain the list of games from our API. Otherwise, we'll just leave the model
-unchanged if we get back and error.
+unchanged if we get back and error. We could also handle errors here in more
+detail, but for now we'll just add
+[`Debug.log`](https://package.elm-lang.org/packages/elm-lang/core/latest/Debug)
+to print a message to the browser console when the API fetch fails.
 
 ```elm
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -318,7 +302,8 @@ update msg model =
                     ( { model | gamesList = games }, Cmd.none )
 
                 Err _ ->
-                    ( model, Cmd.none )
+                    Debug.log "Error fetching games from API."
+                        ( model, Cmd.none )
 ```
 
 ## Performing the Fetch
@@ -388,16 +373,21 @@ fields we want to display as needed.
 We managed to get our list of games from the API. Let's get some additional
 experience as we do the same for our list of players.
 
-![JSON API Player Data](images/elm_api_data/json_api_player_data.png)
+![JSON API Player Data](images/phoenix_api/player_data_api_scope.png)
 
-We can start by adding to our `Model` type alias and `initialModel`:
+We can start by adding to our `Model` type alias:
 
 ```elm
 type alias Model =
     { gamesList : List Game
     , playersList : List Player
     }
+```
 
+And we'll also update our `initialModel` to use an empty list for the initial
+`playersList` value:
+
+```elm
 initialModel : Model
 initialModel =
     { gamesList = []
@@ -410,18 +400,28 @@ API:
 
 ```elm
 type alias Player =
-    { displayName : String
+    { displayName : Maybe String
     , id : Int
     , score : Int
     , username : String
     }
 ```
 
-You might have noticed a slight discrepancy here. Elixir and Phoenix
-tend to use underscores in field names (`display_name`) by convention, and Elm
-tends to use camel case in field names (`displayName`). I like to stick to these
-conventions, and as long as we're consistent everything will still work as
-intended.
+There are a couple of interesting notes to be aware of here. First, you might
+have noticed that the JSON API data in the image above has a `display_name`
+field, whereas our Elm field has a `displayName` field. Elixir and Phoenix tend
+to use underscores in field names by convention, and Elm tends to use camel
+case in field names. I like to stick to these conventions, and as long as we're
+consistent everything will still work as intended.
+
+Another thing to note is the `display_name` field coming from our API may or
+may not have a value. If a player hasn't entered a value for that field, it
+will be `null`. We can use `Int` as the type for our player `id` fields because
+we know that all players will have an `id`, but we'll have to use a
+`Maybe String` so we can handle cases where players may or may not have a
+`display_name` value.
+
+## Decoding Player Data
 
 Now we can add functions for making the HTTP request to the `"/api/players"`
 endpoint and decoding the JSON response. Essentially, we have the same functions
@@ -429,11 +429,21 @@ that we created before with some slight alterations to work with players instead
 of games. These functions work the same way, but we're going to decode the
 player fields so we can render those in our Elm application.
 
+The only major difference between the way we decode games and players is the
+`Decode.maybe` we're using for the optional `display_name` field. We're using
+the same `Decode.field` approach we saw previously, but this time we're
+wrapping it in a `Decode.maybe`. There are also more advanced ways to handle
+JSON decoding in Elm, and there's a great book called
+[The JSON Survival Kit](https://www.brianthicks.com/json-survival-kit)
+you can check out!
+
 ```elm
 fetchPlayersList : Cmd Msg
 fetchPlayersList =
-    Http.get "/api/players" decodePlayersList
-        |> Http.send FetchPlayersList
+    Http.get
+        { url = "/api/players"
+        , expect = Http.expectJson FetchPlayersList decodePlayersList
+        }
 
 
 decodePlayersList : Decode.Decoder (List Player)
@@ -446,15 +456,15 @@ decodePlayersList =
 decodePlayer : Decode.Decoder Player
 decodePlayer =
     Decode.map4 Player
-        (Decode.field "display_name" Decode.string)
+        (Decode.maybe (Decode.field "display_name" Decode.string))
         (Decode.field "id" Decode.int)
         (Decode.field "score" Decode.int)
         (Decode.field "username" Decode.string)
 ```
 
-For our update section, we'll add a new `FetchPlayersList` action, and take the
-same approach we did for our games. We add our type first, and then we fill out
-the `case` expression inside the `update` function with the following:
+For our `Msg` type, we'll add `FetchPlayersList` and take the same approach we
+did for our games. We add to the `Msg` type, and then fill out the `case`
+expression inside the `update` function with the following:
 
 ```elm
 type Msg
@@ -471,7 +481,8 @@ update msg model =
                     ( { model | gamesList = games }, Cmd.none )
 
                 Err _ ->
-                    ( model, Cmd.none )
+                    Debug.log "Error fetching games from API."
+                        ( model, Cmd.none )
 
         FetchPlayersList result ->
             case result of
@@ -479,14 +490,14 @@ update msg model =
                     ( { model | playersList = players }, Cmd.none )
 
                 Err _ ->
-                    ( model, Cmd.none )
+                    Debug.log "Error fetching players from API."
+                        ( model, Cmd.none )
 ```
 
 ## Refactoring Our View
 
-Our Elm application is currently in working order without any compiler errors.
-But let's refactor our `view` function a little bit so that we can render both
-our games and our list of players.
+Let's refactor our `view` function so we can render both our games and our list
+of players.
 
 We can start by simplifying our `view` function to simply render our
 `gamesIndex` and `playersIndex`, and we'll offload the conditional to check
@@ -501,25 +512,44 @@ view model =
         ]
 ```
 
-Next, we can update our `gamesIndex` function and add a new `playersIndex`
-function.
+Next, we can update our `gamesIndex` function with the following:
+
+```elm
+gamesIndex : Model -> Html msg
+gamesIndex model =
+    if List.isEmpty model.gamesList then
+        div [] []
+
+    else
+        div [ class "games-index" ]
+            [ h2 [] [ text "Games" ]
+            , gamesList model.gamesList
+            ]
+```
+
+And we'll use a similar approach for our new `playersIndex` function:
 
 ```elm
 playersIndex : Model -> Html msg
 playersIndex model =
     if List.isEmpty model.playersList then
         div [] []
+
     else
         div [ class "players-index" ]
-            [ h1 [ class "players-section" ] [ text "Players" ]
+            [ h2 [] [ text "Players" ]
             , playersList model.playersList
             ]
 ```
 
 Then, we can go ahead and take the same approach we did for our games by adding
-two new functions for the `playersList` and `playersListItem`. For now, we're
-going to use the player's `displayName` and `score` fields to render the data
-on the page:
+two new functions for the `playersList` and `playersListItem`.
+
+We're adding a `case` expression for the player's `displayName` field. If the
+player has entered a `displayName`, then we'll show that on the page.
+Otherwise, we'll show their `username` instead. Also note that `player.score`
+is an `Int` value and not a `String`, so we're using the `String.fromInt`
+function to convert it before we display the player score on the page.
 
 ```elm
 playersList : List Player -> Html msg
@@ -530,8 +560,13 @@ playersList players =
 playersListItem : Player -> Html msg
 playersListItem player =
     li [ class "player-item" ]
-        [ strong [] [ text player.displayName ]
-        , p [] [ text (toString player.score) ]
+        [ case player.displayName of
+              Just displayName ->
+                  strong [] [ text displayName ]
+
+              Nothing ->
+                  strong [] [ text player.username ]
+        , p [] [ text (String.fromInt player.score) ]
         ]
 ```
 
@@ -573,9 +608,10 @@ playersIndex : Model -> Html msg
 playersIndex model =
     if List.isEmpty model.playersList then
         div [] []
+
     else
         div [ class "players-index" ]
-            [ h1 [ class "players-section" ] [ text "Players" ]
+            [ h2 [] [ text "Players" ]
             , playersList model.playersList
             ]
 ```
@@ -592,9 +628,10 @@ playersIndex : Model -> Html msg
 playersIndex model =
     if List.isEmpty model.playersList then
         div [] []
+
     else
         div [ class "players-index" ]
-            [ h1 [ class "players-section" ] [ text "Players" ]
+            [ h2 [] [ text "Players" ]
             , model.playersList
                 |> List.sortBy .score
                 |> List.reverse
@@ -617,32 +654,34 @@ playersIndex model =
                 |> List.sortBy .score
                 |> List.reverse
     in
-        if List.isEmpty model.playersList then
-            div [] []
-        else
-            div [ class "players-index" ]
-                [ h1 [ class "players-section" ] [ text "Players" ]
-                , playersList playersSortedByScore
-                ]
+    if List.isEmpty model.playersList then
+        div [] []
+
+    else
+        div [ class "players-index" ]
+            [ h2 [] [ text "Players" ]
+            , playersList playersSortedByScore
+            ]
 ```
 
 This is a little more readable in the sense that the `playersSortedByScore`
 name is obvious. Instead of using a `let` expression, we could extract this
-into a separate function altogether. With this code, we're still passing data
-to the `playersList` view function. But we're passing the player data from
-our model through the `playersSortedByScore` function first and then piping
-that backwards to `playersList`.
+into a separate function altogether. With this approach, we're passing the
+player data from our model through the `playersSortedByScore` function first
+and then piping that to the `playersList` view function.
 
 ```elm
 playersIndex : Model -> Html msg
 playersIndex model =
     if List.isEmpty model.playersList then
         div [] []
+
     else
         div [ class "players-index" ]
-            [ h1 [ class "players-section" ] [ text "Players" ]
-            , playersList <|
-                playersSortedByScore model.playersList
+            [ h2 [] [ text "Players" ]
+            , model.playersList
+                |> playersSortedByScore
+                |> playersList
             ]
 
 
@@ -658,159 +697,8 @@ a good example of how simple it is to refactor with Elm when we have type
 safety. And it's a common approach to extract small pieces of functionality
 into separate functions to keep things simple and easy to work with.
 
-Either way, we managed to successfully sort our list of players and show the
-top scorer at the top:
-
-![Sorted List of Players](images/elm_api_data/sorted_list_of_players.png)
-
-## Handling Errors
-
-If a problem arises when we fetch data from our API (perhaps due to
-inconsistent JSON data), we're currently suppressing errors with the approach
-we took. Let's make sure we have a way to view errors when something goes wrong
-with our API fetch functions.
-
-The first step will be to add a new `errors` field to our existing `Model`:
-
-```elm
-type alias Model =
-    { gamesList : List Game
-    , playersList : List Player
-    , errors : String
-    }
-```
-
-Then, we can set a default value by setting `errors` to an empty string:
-
-```elm
-initialModel : Model
-initialModel =
-    { gamesList = []
-    , playersList = []
-    , errors = ""
-    }
-```
-
-Inside our `update` function, we'll need to make a few changes so that we're
-not ignoring errors in our `FetchGamesList` and `FetchPlayersList` cases. Let's
-take a look at what our error case looks like so far:
-
-```elm
-Err _ ->
-    ( model, Cmd.none )
-```
-
-This means that any time we get _any_ error from our HTTP request, we're just
-ignoring it and not making any changes to our model. Instead of ignoring these
-errors, we'll convert the error message to a string and make it viewable in the
-new `errors` field we added to our model.
-
-```elm
-Err message ->
-    ( { model | errors = toString message }, Cmd.none )
-```
-
-We'll need to make these changes in both the `FetchGamesList` and
-`FetchPlayersList` cases. Here's the full `update` function for reference:
-
-```elm
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
-    case msg of
-        FetchGamesList result ->
-            case result of
-                Ok games ->
-                    ( { model | gamesList = games }, Cmd.none )
-
-                Err message ->
-                    ( { model | errors = toString message }, Cmd.none )
-
-        FetchPlayersList result ->
-            case result of
-                Ok players ->
-                    ( { model | playersList = players }, Cmd.none )
-
-                Err message ->
-                    ( { model | errors = toString message }, Cmd.none )
-```
-
-## Handling Potentially Missing Data
-
-Before we finish up with this chapter, let's make sure we're handling our data
-gracefully when dealing with values that may or may not be there. For example,
-we know that our players and games will all have `id` fields because Phoenix
-creates those fields for us and they won't ever have a `nil` value (or `null`
-value in the JSON response). The players on our platform are able to create
-accounts with a required `username` field, but they _may or may not_ have a
-`display_name` field.
-
-In other words, when we decode our player data from the API, we'll need to
-consider the possibility that not all users will have a `display_name` string.
-
-Let's start by taking a look at our `Player` type alias:
-
-```elm
-type alias Player =
-    { displayName : String
-    , id : Int
-    , score : Int
-    , username : String
-    }
-```
-
-Instead of assuming that `displayName` is a `String`, we'll use `Maybe` to
-indicate that the value could be a `String` or a `Nothing`.
-
-```elm
-type alias Player =
-    { displayName : Maybe String
-    , id : Int
-    , score : Int
-    , username : String
-    }
-```
-
-Now, we just need to account for this in our `decodePlayer` function. Instead
-of just using the `Decode.field` function for the `"display_name"` field in our
-JSON API data, let's use the `Decode.maybe` function.
-
-```elm
-decodePlayer : Decode.Decoder Player
-decodePlayer =
-    Decode.map4 Player
-        (Decode.maybe (Decode.field "display_name" Decode.string))
-        (Decode.field "id" Decode.int)
-        (Decode.field "score" Decode.int)
-        (Decode.field "username" Decode.string)
-```
-
-This allows us to extract the string value from the API if it's there. If
-the API is giving us a `null` value, we'll know that it's set to `Nothing` in
-our Elm application and we can handle it accordingly.
-
-We'll add a `let` expression to our `playersListItem` function to account for
-the different conditions. If the player's `displayName` is set to `Nothing`,
-then we'll fall back to displaying the player's `username`. If we're successful
-in fetching a player's `displayName`, then that's what we'll display in our
-list of players.
-
-Here's the updated `playersListItem` function:
-
-```elm
-playersListItem : Player -> Html msg
-playersListItem player =
-    let
-        displayName =
-            if player.displayName == Nothing then
-                player.username
-            else
-                Maybe.withDefault "" player.displayName
-    in
-        li [ class "player-item" ]
-            [ strong [] [ text displayName ]
-            , p [] [ text (toString player.score) ]
-            ]
-```
+Either way, we've managed to successfully sort our list of players so the top
+scorer will be shown at the top.
 
 ## Summary
 

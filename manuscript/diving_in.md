@@ -17,7 +17,7 @@ Phoenix, and PostgreSQL, **check out the [Appendix](#appendix) in the back
 of the book for quick installation instructions**.
 
 Also note that we're working with the _latest_ version of Phoenix in this book.
-Make sure you have **Phoenix 1.3** installed, or the commands and files will
+Make sure you have **Phoenix 1.4** installed, or the commands and files will
 all look different as you work through the material.
 
 ## Creating the Platform
@@ -50,7 +50,7 @@ $ mix phx.new platform
 Fetch and install dependencies? [Yn] Y
 * running mix deps.get
 * running mix deps.compile
-* running cd assets && npm install && node node_modules/brunch/bin/brunch build
+* running cd assets && npm install && node node_modules/webpack/bin/webpack.js --mode development
 
 We are all set! Go into your application by running:
 
@@ -124,12 +124,13 @@ $ mix phx.server
 ```
 
 This will start a server and allow us to visit
-[`http://0.0.0.0:4000`](http://0.0.0.0:4000) in a browser to see our new
-application running. Here is what the output will look like:
+[`http://localhost:4000`](http://localhost:4000) in a browser to see our new
+application running. Here is what the output will look like (ignoring the
+additional output from Webpack):
 
 ```shell
 $ mix phx.server
-[info] Running PlatformWeb.Endpoint with Cowboy using http://0.0.0.0:4000
+[info] Running PlatformWeb.Endpoint with cowboy using http://localhost:4000
 ```
 
 ![Phoenix Default Start Page](images/diving_in/phoenix_start.png)
@@ -149,7 +150,7 @@ look like as you stop the running web server:
 
 ```shell
 $ mix phx.server
-[info] Running Platform.Endpoint with Cowboy using http://0.0.0.0:4000
+[info] Running Platform.Endpoint with cowboy using http://localhost:4000
 [info] Compiled 6 files into 2 files, copied 3 in 2.1 sec
 [info] GET /
 [debug] Processing by PlatformWeb.PageController.index/2
@@ -253,7 +254,7 @@ defmodule PlatformWeb.Router do
   end
 
   scope "/", PlatformWeb do
-    pipe_through :browser # Use the default browser stack
+    pipe_through :browser
 
     get "/", PageController, :index
   end
@@ -269,13 +270,13 @@ The Phoenix router comes with two separate "pipelines" by default. One of them
 is for HTML (which we're going to use now), and the other one is for JSON
 (which we'll also use later). And we can even see that the `scope` is already
 set up for us to access the HTML with our browser. That's how we were able to
-load the `http://0.0.0.0:4000` URL and see the initial starter page. Don't
+load the `http://localhost:4000` URL and see the initial starter page. Don't
 worry if it seems confusing at first. All you need to know is that this block
 of code is where we'll focus for now:
 
 ```elixir
 scope "/", PlatformWeb do
-  pipe_through :browser # Use the default browser stack
+  pipe_through :browser
 
   get "/", PageController, :index
 end
@@ -293,7 +294,7 @@ end
 ```
 
 That means when we access
-[`http://0.0.0.0:4000/players`](http://0.0.0.0:4000/players), we'll
+[`http://localhost:4000/players`](http://localhost:4000/players), we'll
 soon be able to start creating the players for our game platform.
 
 ## Running a Migration
@@ -329,14 +330,14 @@ $ mix phx.server
 ```
 
 Now we can access
-[http://0.0.0.0:4000/players](http://0.0.0.0:4000/players) and we should
+[http://localhost:4000/players](http://localhost:4000/players) and we should
 see the following:
 
 ![Empty List of Players on Player Index Page](images/diving_in/empty_players_list.png)
 
 This is excellent. We can now add players to our platform using a web browser.
 Click the **New Player** link at the bottom and try creating a player on the
-[`http://0.0.0.0:4000/players/new`](http://0.0.0.0:4000/players/new) page.
+[`http://localhost:4000/players/new`](http://localhost:4000/players/new) page.
 
 ![New Player Page](images/diving_in/new_player.png)
 
@@ -356,7 +357,7 @@ our players page:
 We have a working players resource with an index of all the players, a show
 page to view a single player, an edit page to update a single player, and the
 ability to delete players. But when we go back to our home page at
-[`http://0.0.0.0:4000`](http://0.0.0.0:4000), these pages aren't accessible.
+[`http://localhost:4000`](http://localhost:4000), these pages aren't accessible.
 Our users wouldn't know that they need to visit the `/players/new` page to
 create their account. At some point, we will only want our users to be able to
 create their accounts without being able to edit or delete others. To get
@@ -372,46 +373,40 @@ Let's open the `lib/platform_web/templates/page/index.html.eex` file and take a
 look (note that some of the HTML was trimmed for the sake of readability):
 
 ```embedded_elixir
-<div class="jumbotron">
-  <h2><%= gettext "Welcome to %{name}!", name: "Phoenix" %></h2>
-  <p class="lead">A productive web framework that<br />does not compromise speed
-  and maintainability.</p>
-</div>
+<section class="phx-hero">
+  <h1><%= gettext "Welcome to %{name}!", name: "Phoenix" %></h1>
+  <p>A productive web framework that<br/>does not compromise speed and maintainability.</p>
+</section>
 
-<div class="row marketing">
-  <div class="col-lg-6">
-    <h4>Resources</h4>
-    <ul>
-      <!-- ... -->
-    </ul>
-  </div>
-
-  <div class="col-lg-6">
-    <h4>Help</h4>
-    <ul>
-      <!-- ... -->
-    </ul>
-  </div>
-</div>
+<section class="row">
+  <article class="column">
+    <h2>Resources</h2>
+    <!-- ... -->
+  </article>
+  <article class="column">
+    <h2>Help</h2>
+    <!-- ... -->
+  </article>
+</section>
 ```
 
 This should look familiar in that it's mostly comprised of standard HTML code.
 It's the HTML that we're seeing when we load
-[`http://0.0.0.0:4000`](http://0.0.0.0:4000). Let's delete this code and create
+[`http://localhost:4000`](http://localhost:4000). Let's delete this code and create
 a couple of simple links to our player pages. First, remove _all_ the existing
 code in the `lib/platform_web/templates/page/index.html.eex` file. Then,
 replace it with the following:
 
 ```html
 <div class="container">
-  <a class="btn btn-success" href="/players/new">Create Player Account</a>
-  <a class="btn btn-info" href="/players">List All Players</a>
+  <a class="button" href="/players/new">Create Player Account</a>
+  <a class="button" href="/players">List All Players</a>
 </div>
 ```
 
 Save the file and go back to the browser to see the changes (make sure the
 Phoenix web server is still running or restart the server with
-`mix phx.server`) at [`http://0.0.0.0:4000`](http://0.0.0.0:4000):
+`mix phx.server`) at [`http://localhost:4000`](http://localhost:4000):
 
 ![Home Page with List Players Link](images/diving_in/updated_home_page.png)
 
@@ -443,8 +438,8 @@ function, and we're passing it the string `"Hello World!"`:
 
 ```embedded_elixir
 <div class="container">
-  <a class="btn btn-success" href="/players/new">Create Player Account</a>
-  <a class="btn btn-info" href="/players">List All Players</a>
+  <a class="button" href="/players/new">Create Player Account</a>
+  <a class="button" href="/players">List All Players</a>
 
   <%= IO.inspect("Hello World!") %>
 </div>
@@ -458,13 +453,13 @@ We can do something similar to embed a link on our page. We won't need to
 explicitly mention the module (`Phoenix.HTML.Link`), because we already have
 access to some helpful Phoenix functions in this context. We can recreate
 our existing HTML links with the following code by passing the link text, the
-location, and some extra classes for Bootstrap (which comes preloaded with
-Phoenix by default) to make it look nice:
+location, and a `button` class to make it look nice (Phoenix comes with a small
+CSS framework preinstalled):
 
 ```embedded_elixir
 <div class="container">
-  <%= link("Create Player Account", to: "/players/new", class: "btn btn-success") %>
-  <%= link("List All Players", to: "/players", class: "btn btn-info") %>
+  <%= link("Create Player Account", to: "/players/new", class: "button") %>
+  <%= link("List All Players", to: "/players", class: "button") %>
 </div>
 ```
 

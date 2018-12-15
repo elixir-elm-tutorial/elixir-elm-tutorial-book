@@ -8,9 +8,9 @@ Our initial game should be small, self-contained, interactive, and fun. And
 we'll also want to add a simple scoring mechanism so we can work towards
 tracking player scores and sending that data to our back-end platform.
 
-We have our platform running with a sample game file to work with, now we can
-finally focus on writing the actual game. In the next sections, we're going to
-set up our Elm application, add SVG for our game's background, create a little
+We have our platform running with a sample game file to work with, and now we
+can focus on writing the actual game. In the next sections, we're going to set
+up our Elm application, add SVG for our game's background, create a little
 character, and wire up the keyboard for interaction.
 
 ## Base Application for Our Game
@@ -21,49 +21,38 @@ we're going to start by pasting in the following code, which will give us some
 starter code to work with. Add the following to the `Platformer.elm` file:
 
 ```elm
-module Platformer exposing (..)
+module Games.Platformer exposing (main)
 
+import Browser
 import Html exposing (Html, div, text)
-
 
 -- MAIN
 
-
-main : Program Never Model Msg
 main =
-    Html.program
+    Browser.element
         { init = init
-        , view = view
         , update = update
         , subscriptions = subscriptions
+        , view = view
         }
-
-
 
 -- MODEL
 
-
 type alias Model =
     {}
-
 
 initialModel : Model
 initialModel =
     {}
 
-
-init : ( Model, Cmd Msg )
-init =
+init : () -> ( Model, Cmd Msg )
+init _ =
     ( initialModel, Cmd.none )
-
-
 
 -- UPDATE
 
-
 type Msg
     = NoOp
-
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -71,23 +60,18 @@ update msg model =
         NoOp ->
             ( model, Cmd.none )
 
-
-
 -- SUBSCRIPTIONS
-
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.none
 
-
-
 -- VIEW
-
 
 view : Model -> Html Msg
 view model =
-    div [] [ text "Elm Game Base" ]
+    div []
+        [ text "Elm Game Base" ]
 ```
 
 There are different conventions for setting up Elm applications, but this is a
@@ -113,47 +97,48 @@ Before we can add our game character, we need to create a window where our hero
 In order to work with Elm's SVG library, we'll need to install the package and
 import it into our project.
 
-From the command line, let's switch to the `assets` folder and
+From the command line, let's switch to the `assets/elm` folder and
 run the following command:
 
 ```shell
-$ elm-package install elm-lang/svg
+$ elm install elm/svg
 ```
 
 After agreeing to install the package by entering the `Y` key, here's the
 output we should see:
 
 ```shell
-$ elm elm-package install elm-lang/svg
-To install elm-lang/svg I would like to add the following
-dependency to elm-package.json:
+$ elm install elm/svg
+Here is my plan:
 
-    "elm-lang/svg": "2.0.0 <= v < 3.0.0"
+  Add:
+    elm/svg    1.0.1
 
-May I add that to elm-package.json for you? [Y/n] Y
-
-Some new packages are needed. Here is the upgrade plan.
-
-  Install:
-    elm-lang/svg 2.0.0
-
-Do you approve of this plan? [Y/n] Y
+Would you like me to update your elm.json accordingly? [Y/n]: Y
 Starting downloads...
 
-  ● elm-lang/svg 2.0.0
+  ● elm/svg 1.0.1
 
-Packages configured successfully!
+Dependencies ready!
 ```
 
 Now that we have the package installed, let's import it at the top of our
-`Platformer.elm` file. We'll import all the `Svg` functions along with all the
-`Svg.Attributes` functions since we'll be using many of them. Update the top of
-your `Platformer.elm` file with the following code (also note that we're
-removing the `text` import from the `Html` package to avoid ambiguity):
+`Platformer.elm` file. We'll import all the `Svg` functions (with
+`exposing (..)`) along with all the `Svg.Attributes` functions since we'll be
+using so many of them to create our game. We'd normally be more selective about
+which functions we want to import into our application, but it turns out we're
+going to need a lot of SVG elements and attributes for a game, so we're
+simplifying things in this book to avoid having to import new functions one at
+a time. Also, keep in mind that many of the functions from the `Html` and `Svg`
+modules share a name. We're limiting our `Html` imports significantly (to just
+`Html` and `div`) so we don't run into naming issues.
+
+Update the top of your `Platformer.elm` file with the following import code:
 
 ```elm
-module Platformer exposing (..)
+module Games.Platformer exposing (main)
 
+import Browser
 import Html exposing (Html, div)
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
@@ -173,7 +158,8 @@ might help conceptualize how we'll lay out the elements on our page:
   <body>
     <div>
       <svg>
-        <rect /> <!-- We'll create our game inside this rectangle. -->
+        <!-- We'll create our game inside this rectangle. -->
+        <rect>
       </svg>
     </div>
   </body>
@@ -193,21 +179,23 @@ to take a look online, though, because there are some great SVG learning
 materials and courses available. The
 [SVG documentation from MDN](https://developer.mozilla.org/en-US/docs/Web/SVG)
 is always helpful as a searchable reference, and the
-[package documentation](http://package.elm-lang.org/packages/elm-lang/svg/latest/Svg)
-for `elm-lang/svg` is also helpful.
+[package documentation](https://package.elm-lang.org/packages/elm/svg/latest)
+for `elm/svg` is also helpful.
 
-Let's add our SVG code to our Elm view, and we'll walk through how it all fits
+Let's add our SVG code to the Elm view, and we'll walk through how it all fits
 together. At the bottom of the `Platformer.elm` file, add the following:
 
 ```elm
 view : Model -> Html Msg
 view model =
-    div [] [ viewGame ]
+    div []
+        [ viewGame ]
 
 
 viewGame : Svg Msg
 viewGame =
-    svg [ version "1.1", width "600", height "400" ] [ viewGameWindow ]
+    svg [ version "1.1", width "600", height "400" ]
+        [ viewGameWindow ]
 
 
 viewGameWindow : Svg Msg
@@ -239,9 +227,16 @@ for our game world. Just like we did for our game window rectangle, we'll use
 two more `rect` elements to represent a beautiful blue sky and some green
 grass for the ground.
 
-Add the following code to see our game world start taking shape:
+Adjust the view code for `Platformer.elm` with the following to see our game
+world start taking shape:
 
 ```elm
+view : Model -> Html Msg
+view model =
+    div []
+        [ viewGame ]
+
+
 viewGame : Svg Msg
 viewGame =
     svg [ version "1.1", width "600", height "400" ]
@@ -335,7 +330,8 @@ Phoenix, we can add images to the `assets/static/images` folder and they'll be
 available from anywhere in our application (this is how the `phoenix.png` image
 was displayed on the default start page when we first started our Phoenix
 server). Let's move our `character.gif` file inside that folder. This will make
-our character image available at `/images/character.gif`.
+our character image available at `/images/character.gif` when we reference it
+in our application.
 
 At the bottom of our `Platformer.elm` file, we can now add to the view to render our
 new game character:
@@ -382,8 +378,8 @@ character position. The SVG attributes need to work with strings as values, but
 for our purposes it's more helpful to think of the character's position in
 number values. We can use Elm's `let` expressions to refactor.
 
-Instead of manually setting the `x` attribute to a value of `"1"`, let's hoist
-that value up to a `let` expression assignment:
+Instead of manually setting the `x` attribute to a value of `"1"`, let's move
+that value up to a `let` expression:
 
 ```elm
 viewCharacter : Svg Msg
@@ -394,7 +390,7 @@ viewCharacter =
     in
         image
             [ xlinkHref "/images/character.gif"
-            , x (toString characterPositionX)
+            , x (String.fromInt characterPositionX)
             , y "300"
             , width "50"
             , height "50"
@@ -416,14 +412,14 @@ viewCharacter =
         characterPositionY =
             300
     in
-        image
-            [ xlinkHref "/images/character.gif"
-            , x (toString characterPositionX)
-            , y (toString characterPositionY)
-            , width "50"
-            , height "50"
-            ]
-            []
+    image
+        [ xlinkHref "/images/character.gif"
+        , x (String.fromInt characterPositionX)
+        , y (String.fromInt characterPositionY)
+        , width "50"
+        , height "50"
+        ]
+        []
 ```
 
 Our code is still working the same way, we're just moving things around to
@@ -458,7 +454,8 @@ as an argument, so we can pass that along to the `viewGame` function like this:
 ```elm
 view : Model -> Html Msg
 view model =
-    div [] [ viewGame model ]
+    div []
+        [ viewGame model ]
 ```
 
 Then, we'll update both the type annotation and function declaration for
@@ -490,8 +487,8 @@ viewCharacter : Model -> Svg Msg
 viewCharacter model =
     image
         [ xlinkHref "/images/character.gif"
-        , x (toString model.characterPositionX)
-        , y (toString model.characterPositionY)
+        , x (String.fromInt model.characterPositionX)
+        , y (String.fromInt model.characterPositionY)
         , width "50"
         , height "50"
         ]
@@ -514,9 +511,9 @@ initialModel =
 
 ## Adding an Item
 
-Our character is looking pretty lonely in our minigame world. Let's add an item
-to our world, and then we'll work towards having our character be able to pick
-up the item in the next chapter.
+Our character is looking pretty lonely in our minigame world. Let's add an
+item, and then we'll work towards having our character be able to pick up the
+item in the next chapter.
 
 We're going to follow many of the same steps we did for our character image, so
 we'll move quickly in this section. First, let's add a `coin.svg` image to our
@@ -574,8 +571,8 @@ viewItem : Model -> Svg Msg
 viewItem model =
     image
         [ xlinkHref "/images/coin.svg"
-        , x (toString model.itemPositionX)
-        , y (toString model.itemPositionY)
+        , x (String.fromInt model.itemPositionX)
+        , y (String.fromInt model.itemPositionY)
         , width "20"
         , height "20"
         ]

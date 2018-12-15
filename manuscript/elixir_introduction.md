@@ -22,6 +22,7 @@ output should look like when we create our project:
 ```shell
 $ mix new temporary
 * creating README.md
+* creating .formatter.exs
 * creating .gitignore
 * creating mix.exs
 * creating config
@@ -63,13 +64,13 @@ application is working as intended.
 ## Elixir Testing
 
 Depending on which programming languages you've worked with in the past, you
-might potentially have a lot of experience writing tests, or perhaps not.
+may have a lot of experience writing tests, or perhaps not.
 
 If you haven't written tests before, the basic idea is that tests give us a way
 to feel confidence that our code is actually working as expected. We write our
 expectations (or "assertions"), and they give us a quick way to check that the
 code we're writing works (and doesn't break other code). We'll delve deeper
-into testing with our Phoenix app, but for now let's just try it out.
+into testing with our Phoenix app later, but for now let's just try it out.
 
 Run the `mix test` command inside the `temporary` folder:
 
@@ -86,7 +87,7 @@ Generated temporary app
 ..
 
 Finished in 0.03 seconds
-2 tests, 0 failures
+1 doctest, 1 test, 0 failures
 
 Randomized with seed 670956
 ```
@@ -100,14 +101,15 @@ helpful because it means we'll catch errors early instead of having to debug our
 app while we're using it.
 
 In fact, if we run the `mix test` command again, we'll see that Elixir doesn't
-need to recompile the code because we haven't made any changes:
+need to recompile the code because we haven't made any changes (note the line
+about compiling files is now missing):
 
 ```shell
 $ mix test
 ..
 
 Finished in 0.03 seconds
-2 tests, 0 failures
+1 doctest, 1 test, 0 failures
 
 Randomized with seed 114557
 ```
@@ -133,7 +135,7 @@ defmodule Temporary do
 
   ## Examples
 
-      iex> Temporary.hello
+      iex> Temporary.hello()
       :world
 
   """
@@ -196,7 +198,7 @@ defmodule Temporary do
 
   ## Examples
 
-      iex> Temporary.hello
+      iex> Temporary.hello()
       :world
 
   """
@@ -206,7 +208,7 @@ defmodule Temporary do
 end
 ```
 
-This tells us that we should be able to run `Temporary.hello` and it should
+This tells us that we should be able to run `Temporary.hello()` and it should
 return `:world`. This is where things get interesting, so let's run `mix test`
 again:
 
@@ -216,22 +218,14 @@ $ mix test
 
 Since we no longer have our `hello` function, it's not surprising that our
 tests failed. But we actually have _two_ test failures. One of them is from the
-test file located in the `test` folder, but the first failure is actually
+test file located in the `test` folder, but the other failure is actually
 coming from the example in our documentation (which is called a **doctest**).
 
 ```shell
 $ mix test
 Compiling 1 file (.ex)
 
-  1) test doc at Temporary.add/2 (1) (TemporaryTest)
-     test/temporary_test.exs:3
-     Doctest failed: got UndefinedFunctionError with message "function Temporary.hello/0 is undefined or private"
-     code: Temporary.hello
-     stacktrace:
-       (temporary) Temporary.hello()
-       (for doctest at) lib/temporary.ex:11: (test)
-
-  2) test greets the world (TemporaryTest)
+  1) test greets the world (TemporaryTest)
      test/temporary_test.exs:5
      ** (UndefinedFunctionError) function Temporary.hello/0 is undefined or private
      code: assert Temporary.hello() == :world
@@ -239,14 +233,22 @@ Compiling 1 file (.ex)
        (temporary) Temporary.hello()
        test/temporary_test.exs:6: (test)
 
+  2) doctest Temporary.add/2 (1) (TemporaryTest)
+     test/temporary_test.exs:3
+     Doctest failed: got UndefinedFunctionError with message "function Temporary.hello/0 is undefined or private"
+     code: Temporary.hello()
+     stacktrace:
+       (temporary) Temporary.hello()
+       (for doctest at) lib/temporary.ex:11: (test)
+
 Finished in 0.04 seconds
-2 tests, 2 failures
+1 doctest, 1 test, 2 failures
 
 Randomized with seed 520513
 ```
 
-Let's update the documentation so that it shows an example of how to use our
-new `add` function:
+Let's update the documentation so it shows an example of how to use our new
+`add` function:
 
 ```elixir
 defmodule Temporary do
@@ -287,7 +289,7 @@ Compiling 1 file (.ex)
        test/temporary_test.exs:6: (test)
 
 Finished in 0.03 seconds
-2 tests, 1 failure
+1 doctest, 1 test, 1 failure
 
 Randomized with seed 682227
 ```
@@ -348,7 +350,7 @@ $ mix test
 ....
 
 Finished in 0.03 seconds
-4 tests, 0 failures
+1 doctest, 3 tests, 0 failures
 
 Randomized with seed 867380
 ```
@@ -387,7 +389,9 @@ iex(2)> Temporary.add(1.5, 1.5)
 ```
 
 Everything works as expected in the tests, and now we have an interactive way
-of checking our code too.
+of checking our code too. Feel free to tinker around with writing some Elixir
+code in the interactive environment, and then press `Control + C` twice on your
+keyboard when you're ready to exit.
 
 ## The Pipe Operator
 
@@ -433,7 +437,7 @@ example, let's inspect what value is getting passed to `assert` at the end:
 test "the add function returns a number" do
   Temporary.add(1.5, 3.5)
   |> is_number
-  |> IO.inspect
+  |> IO.inspect()
   |> assert
 end
 ```
@@ -442,11 +446,11 @@ We can run `mix test` from the command line to see the results:
 
 ```shell
 $ mix test
-...true
-.
+true
+....
 
 Finished in 0.03 seconds
-4 tests, 0 failures
+1 doctest, 3 tests, 0 failures
 
 Randomized with seed 312071
 ```
@@ -469,7 +473,7 @@ test "the add function returns a number" do
   1.5
   |> Temporary.add(3.5)
   |> is_number
-  |> IO.inspect
+  |> IO.inspect()
   |> assert
 end
 ```
@@ -583,7 +587,9 @@ def add(0, y), do: y
 def add(x, y), do: x + y
 ```
 
-And we can do the same thing when the second argument is `0`:
+On the first line, we're basically just ignoring the `0` argument and returning
+the value of `y` for the result. Next, we can do the same thing when the second
+argument is `0`:
 
 ```elixir
 def add(0, y), do: y
@@ -591,7 +597,9 @@ def add(x, 0), do: x
 def add(x, y), do: x + y
 ```
 
-We can even add another clause that "matches" for when both arguments are `0`s:
+On the second line, we ignore the `0` argument again and just return the value
+of `x` for the result. Next, we can even add another clause that "matches" for
+when both arguments are `0`s:
 
 ```elixir
 def add(0, 0), do: 0
@@ -640,7 +648,7 @@ they're working with the right values.
 
 Our `add/2` function is only designed to work with numbers. They can be integers
 or floating point numbers, but we don't want to add strings together (string
-concetenation would actually require the use of the `<>` operator).
+concatenation would actually require the use of the `<>` operator).
 
 We can use the `when` keyword along with the `is_number/1` function we saw
 previously to make sure that our function is working with numerical values.
@@ -683,7 +691,6 @@ more Elixir experience before continuing:
 
 - [Elixir Getting Started Guide](http://elixir-lang.org/getting-started/introduction.html)
 - [Elixir School](https://elixirschool.com/en/lessons/basics/basics)
-- [Try Elixir Course](https://www.codeschool.com/courses/try-elixir)
 
 Feel free to delete the `temporary` project, and in the next chapter we'll
 continue working towards building our platform application.

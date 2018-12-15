@@ -6,11 +6,11 @@ This book is intended for developers with some previous experience, so
 installing these languages and tools shouldn't be overly difficult or
 time-consuming. Having said that, it's easy to get tripped up with installation
 and configuration steps, so feel free to
-[create a GitHub issue](https://github.com/elixir-elm-tutorial/elixir-elm-tutorial-book/issues) if you
-think there's an easier approach to setting things up.
+[create a GitHub issue](https://github.com/elixir-elm-tutorial/elixir-elm-tutorial-book/issues)
+if you think there's an easier approach to setting things up.
 
-The intention for this chapter is that we want to get everything we'll need
-installed quickly so we can start creating Phoenix projects.
+The intention for this chapter is to get everything we'll need installed
+quickly so we can start creating Phoenix projects.
 
 These instructions assume that you're running macOS, but instructions can also
 be found online for installing these tools on Linux.
@@ -31,7 +31,7 @@ command:
 ```shell
 $ elixir -v
 Erlang/OTP 20
-Elixir 1.5.2
+Elixir 1.7.0
 ```
 
 Any trouble with this step? Check out the
@@ -89,10 +89,10 @@ check out the [asdf version manager](https://github.com/asdf-vm/asdf).
 
 ## Recommended Tools
 
-In this book, we opted for a simple approach that would allow us to learn about
-Elixir, Phoenix, and Elm as we put together our demo application. As you start
-to develop more involved projects, it's a good idea to review existing tools
-and services that can make your life easier.
+Throughout this book, we opt for a simple approach to afford ourselves an
+opportunity to learn about Elixir, Phoenix, and Elm as we put together a demo
+application. As you start to develop more involved projects, it's a good idea
+to review additional tools and services that can make your life easier.
 
 The [hex.pm](https://hex.pm) package manager is an invaluable tool for finding
 useful libraries for your projects. For example, if you want to allow your

@@ -21,11 +21,11 @@ web applications as well.
 
 ## Acknowledgements
 
-I would like to thank **Envy Labs** and **Code School** for fostering environments where I was able to work hard and learn and grow. I'd also like
+I would like to thank **Envy Labs** and **Code School** for fostering
+environments where I was able to work hard and learn and grow. I'd also like
 to thank **José Valim** and **Evan Czaplicki** for crafting such beautiful and
-fun languages. Thanks to **Michael Hartl** for setting the standard for
-technical writing with The Ruby on Rails Tutorial, and **Bret Victor** for
-inspiring all of us with his visions of the future.
+fun programming languages. And thanks to **Bret Victor** for inspiring all of
+us with his visions of the future.
 
 ## Who Is This Book For?
 
@@ -44,7 +44,7 @@ about the fundamentals and concepts so you can be productive. But there are
 other books that will provide more depth when it comes to learning more about
 the languages themselves:
 
-- [Programming Elixir](https://pragprog.com/book/elixir13/programming-elixir-1-3)
+- [Programming Elixir](https://pragprog.com/book/elixir16/programming-elixir-1-6)
   by Dave Thomas
 - [An Introduction to Elm](https://guide.elm-lang.org) by Evan Czaplicki
 
@@ -81,10 +81,10 @@ building scalable and maintainable applications.
   across multiple cores so our programs can outperform our competitors. As an
   example, compare the latest
   [13-inch Macbook Pro models](http://www.apple.com/shop/buy-mac/macbook-pro/13-inch)
-  with dual-core processors with
+  with 2-core processors with
   [15-inch Macbook Pro models](http://www.apple.com/shop/buy-mac/macbook-pro/15-inch)
-  with quad-core processors. Then, see how many cores you'll have access to
-  when you deploy your application to a
+  with 6-core processors. Then, see how many cores (or "virtual CPUs") you'll
+  have access to when you deploy your application to a
   [multi-core web server](https://www.digitalocean.com/pricing/#droplet).
 - The Phoenix web framework provides us with the ability to create new projects
   quickly. For web developers that have worked with Ruby on Rails, the concepts
@@ -160,9 +160,9 @@ If you're coming from a background in working with Ruby on Rails or JavaScript
 web frameworks, then you'll have a head start in being able to grasp the
 content and move smoothly through the book. Something to keep in mind is that
 Elixir and Elm are _functional_ languages. If you're coming from an
-_object-oriented_ background, you may find some of the programmatic approaches
-to be unfamiliar at first, but the initial discomfort will pay off in the long
-run as you learn to solve problems in an elegant functional manner.
+_object-oriented_ background, you may find some of the concepts unfamiliar at
+first, but the initial discomfort will pay off over time as you learn to solve
+problems in an elegant functional manner.
 
 ## Summary
 

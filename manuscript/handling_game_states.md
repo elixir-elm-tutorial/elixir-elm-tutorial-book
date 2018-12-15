@@ -18,9 +18,9 @@ press to start the game.
 We'll also want to add states for when the game is currently being played,
 a success state for when the player wins, and a game over screen.
 
-## Union Types
+## Custom Types
 
-This is a great opportunity to talk about union types in Elm. Types can be
+This is a great opportunity to talk about custom types in Elm. Types can be
 a helpful way to think about something that has a limited set of possible
 states. In our case, we want to create a `GameState` type that handles all the
 scenarios we mentioned above. You can add this type right above the `Model`
@@ -30,7 +30,7 @@ type alias:
 type GameState = StartScreen | Playing | Success | GameOver
 ```
 
-I like to think of union types in this way on a single line. We're creating a
+I like to think of custom types in this way on a single line. We're creating a
 `GameState` type that has four possibilities, and it's easy to reason about.
 Once the code gets formatted, it should look like this instead:
 
@@ -108,8 +108,7 @@ all the relevant view functions we created previously:
 viewGameState : Model -> List (Svg Msg)
 viewGameState model =
     case model.gameState of
-        StartScreen ->
-            []
+        -- ...
 
         Playing ->
             [ viewGameWindow
@@ -122,11 +121,7 @@ viewGameState model =
             , viewGameTime model
             ]
 
-        Success ->
-            []
-
-        GameOver ->
-            []
+        -- ...
 ```
 
 Now we can update our `viewGame` function to reference this new function that
@@ -199,37 +194,24 @@ add that feature now. It will also be useful as a way to reset to default
 values when we need to.
 
 We already have a `KeyDown` message that we've been using to track keyboard
-input, so we can use that to handle space bar key presses with `32` as the key
-code. Update the contents of the `KeyDown` action with the following:
+input for things like `"ArrowRight"`. We can use this same approach to handl
+the space bar with `" "` (a string with a space character). Update the contents
+of the `KeyDown` action with the following:
 
 ```elm
-KeyDown keyCode ->
-    case keyCode of
-        32 ->
-            ( { model
-                | gameState = Playing
-                }
-            , Cmd.none
-            )
+KeyDown key ->
+    case key of
+        "ArrowLeft" ->
+            -- ...
 
-        37 ->
-            ( { model
-                | characterDirection = Left
-                , characterPositionX = model.characterPositionX - 15
-                }
-            , Cmd.none
-            )
+        "ArrowRight" ->
+            -- ...
 
-        39 ->
-            ( { model
-                | characterDirection = Right
-                , characterPositionX = model.characterPositionX + 15
-                }
-            , Cmd.none
-            )
+        " " ->
+            ( { model | gameState = Playing }, Cmd.none )
 
         _ ->
-            ( model, Cmd.none )
+            -- ...
 ```
 
 ## Clean Starting State
@@ -246,16 +228,9 @@ conditional to check that we're in the `Playing` state before the left and
 right arrow keys become usable.
 
 ```elm
-KeyDown keyCode ->
-    case keyCode of
-        32 ->
-            ( { model
-                | gameState = Playing
-                }
-            , Cmd.none
-            )
-
-        37 ->
+KeyDown key ->
+    case key of
+        "ArrowLeft" ->
             if model.gameState == Playing then
                 ( { model
                     | characterDirection = Left
@@ -263,10 +238,11 @@ KeyDown keyCode ->
                     }
                 , Cmd.none
                 )
+
             else
                 ( model, Cmd.none )
 
-        39 ->
+        "ArrowRight" ->
             if model.gameState == Playing then
                 ( { model
                     | characterDirection = Right
@@ -274,11 +250,14 @@ KeyDown keyCode ->
                     }
                 , Cmd.none
                 )
+
             else
                 ( model, Cmd.none )
 
-        _ ->
-            ( model, Cmd.none )
+        " " ->
+            ( { model | gameState = Playing }, Cmd.none )
+
+        -- ...
 ```
 
 We also don't want our timer to start counting down until our players are in
@@ -339,11 +318,11 @@ viewGameState model =
 ```
 
 In order to trigger the success screen, we'll need to create another condition
-in our `TimeUpdate` for when the user's score arrives at a value of `10`.
+in our `GameLoop` for when the user's score arrives at a value of `10`.
 Inside the `update` function, adapt the code with the following:
 
 ```elm
-TimeUpdate time ->
+GameLoop time ->
     if characterFoundItem model then
         ( { model
             | itemsCollected = model.itemsCollected + 1
@@ -351,8 +330,10 @@ TimeUpdate time ->
             }
         , Random.generate SetNewItemPositionX (Random.int 50 500)
         )
+
     else if model.itemsCollected >= 10 then
         ( { model | gameState = Success }, Cmd.none )
+
     else
         ( model, Cmd.none )
 ```
@@ -379,9 +360,11 @@ restart the game. If the user isn't currently in the `Playing` state, they
 can use the space bar to start the game from a clean state:
 
 ```elm
-KeyDown keyCode ->
-    case keyCode of
-        32 ->
+KeyDown key ->
+    case key of
+        -- ...
+
+        " " ->
             if model.gameState /= Playing then
                 ( { model
                     | characterDirection = Right
@@ -393,6 +376,7 @@ KeyDown keyCode ->
                     }
                 , Cmd.none
                 )
+
             else
                 ( model, Cmd.none )
 
@@ -450,12 +434,12 @@ viewGameState model =
 ```
 
 We'll also need to add another condition for when the timer reaches `0` and the
-player has collected less than `10` coins. Let's update the `TimeUpdate`
+player has collected less than `10` coins. Let's update the `GameLoop`
 message to set the `gameState` to `GameOver` when those conditions arise during
 gameplay:
 
 ```elm
-TimeUpdate time ->
+GameLoop time ->
     if characterFoundItem model then
         ( { model
             | itemsCollected = model.itemsCollected + 1
@@ -463,10 +447,13 @@ TimeUpdate time ->
           }
         , Random.generate SetNewItemPositionX (Random.int 50 500)
         )
+
     else if model.itemsCollected >= 10 then
         ( { model | gameState = Success }, Cmd.none )
+
     else if model.itemsCollected < 10 && model.timeRemaining == 0 then
         ( { model | gameState = GameOver }, Cmd.none )
+
     else
         ( model, Cmd.none )
 ```

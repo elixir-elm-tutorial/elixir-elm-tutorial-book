@@ -1,4 +1,4 @@
-# Layout and Design
+# Design and Usability
 
 Although this isn't a book about design, our application could certainly
 benefit from an effort to make it more usable and nicer to look at. In this
@@ -20,7 +20,7 @@ application.
   - Edit Player Page (`/players/:id/edit`)
 - Games
   - Games Index JSON Page (`/api/games`)
-  - Games Index Page (`/api/games`)
+  - Show Game JSON Page (`/api/games/:id`)
 - Sessions
   - Player Sign In Page (`/sessions/new`)
 
@@ -67,138 +67,109 @@ contents (note that the content has been trimmed for readability):
 <html lang="en">
   <head>
     <!-- ... -->
-    <title>Platform</title>
-    <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
+    <title>Platform · Phoenix Framework</title>
+    <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>">
   </head>
 
   <body>
-    <div class="container">
-      <header class="header"><!-- ... --></header>
-      <!-- ... -->
-      <main role="main"><!-- ... --></main>
-    </div> <!-- /container -->
-    <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
+    <header><!-- ... --></header>
+    <main role="main" class="container"><!-- ... --></main>
+    <script src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
   </body>
 </html>
 ```
 
-We can see that our `<title>` and stylesheets (`"/css/app.css"`) are loaded in
-the `<head>` section. For the purposes of this book, I'm going to continue
-using the generic name "Platform" for our application, but feel free to get
-creative and change the `<title>` tag as you see fit.
+For the purposes of this book, we'll continue using the generic name "Platform"
+for our application, but feel free to get creative and change the `<title>` tag
+as you see fit.
 
-```html
-<title>Platform</title>
-```
+Phoenix will bundle any CSS styles we write in the `/assets/css` folder and
+include the `app.css` file here with the `<link>` tag.
 
-You can see the change in the browser tab if you adjust the title and load the
-page:
+Towards the bottom of the page, we can also see that any JavaScript code we
+write in the `assets/js` folder will be bundled and included via the `app.js`
+file in the `<script>` tag.
 
-![Platform Title](images/layout_design/platform_title.png)
+## Styling and Classes
 
-## Bootstrap
+Phoenix comes preloaded with a minimalist CSS framework called
+[Milligram](https://milligram.io). We can use this to style our pages quickly
+by adding classes to our HTML elements.
 
-Inside our `<body>` tag, we create a `<div>` element with the `container`
-class. Phoenix comes preloaded with [Bootstrap](http://getbootstrap.com) by
-default, and this class is the reason our application is centered on the page.
-
-Let's change this class to `container-fluid` so we can use the full width of
-the page.
+For example, in our `app.html.eex` file, we can see the `<section>` element and
+`<main>` element both have a `.container` class, which explains why our header
+section and main content area are centered on the page.
 
 ```html
 <body>
-  <div class="container-fluid">
-    <!-- ... -->
-  </div>
+  <header>
+    <section class="container"><!-- ... --></section>
+  </header>
+  <main role="main" class="container"><!-- ... --></main>
 </body>
 ```
 
-Notice how the layout of our application changes as we switch to a fluid
-container:
+Let's remove the `.container` class from our `<main>` element so our content
+can stretch the full width of the page.
 
-![Fluid Container](images/layout_design/fluid_container.png)
+```html
+<body>
+  <header>
+    <section class="container"><!-- ... --></section>
+  </header>
+  <main role="main"><!-- ... --></main>
+</body>
+```
 
-## Logo
+This will allow our header content to stay centered in a container while our
+player and game content stretches the full width of the page.
+
+## Writing New Styles
 
 Instead of displaying the Phoenix logo in our header, let's display a simple
 link that we can use to navigate back to our home page.
 
-Here's the line that's currently being used to apply a `logo` class and render
-the default Phoenix logo:
+Here are the lines in the `app.html.eex` file that are currently used to apply
+a `.phx-logo` class (from the `assets/css/phoenix.css` file) and render the
+default Phoenix logo:
 
 ```html
-<span class="logo"></span>
+<a href="http://phoenixframework.org/" class="phx-logo">
+  <img src="<%= Routes.static_path(@conn, "/images/phoenix.png") %>"
+  alt="Phoenix Framework Logo"/>
+</a>
 ```
 
-We can replace this with a Phoenix
+Let's replace those lines with a Phoenix
 [`link`](https://hexdocs.pm/phoenix_html/Phoenix.HTML.Link.html#link/2) that
-routes back to our home page with `page_path(@conn, :index)`. We'll keep it
-simple with the `"Platform"` text, and we're still going to apply the `logo`
-class so we can adjust the styles.
+routes back to our home page with `Routes.page_path(@conn, :index)`. We'll keep
+it simple with the `"Platform"` text, and we'll add a `.logo` class so we can
+adjust the styles with our own custom CSS.
 
 ```embdedded_elixir
-<%= link "Platform", to: page_path(@conn, :index), class: "logo" %>
+<h1><%= link "Platform", to: Routes.page_path(@conn, :index), class: "logo" %></h1>
 ```
 
-Next, open up the `phoenix.css` file inside the `assets/css` folder and we'll
-scroll down to find the `/* Custom page header */` section.
-
-Let's remove the `.header` CSS declaration that's adding a thin line beneath
-our header section. Then, we'll adjust the `.logo` CSS declaration so we can
-remove our Phoenix background image and style the `"Platform"` text in our
-link:
+Next, open up the `assets/css/app.css` file that will contain all of our custom
+CSS declarations. Below the `@import` line, add the following:
 
 ```css
-/* Custom page header */
-.logo {
-  text-decoration: none;
-  font-weight: bold;
-  font-size: 3em;
-  color: #333;
+header {
+  border-bottom: none;
+  margin-bottom: 0;
 }
 
-.logo:hover {
-  text-decoration: none;
+.logo {
+  font-weight: bold;
 }
 ```
 
-This gives us a working link we can use to reload the home page:
+These are minor style changes, but it's a good demonstration of how we can
+write a mix of HTML, CSS, and Elixir to add features to our application. And we
+now have a link at the top of every page in our application that will allow
+users to navigate back to the home page.
 
-![Phoenix Logo Replaced with Link](images/layout_design/phoenix_logo_replaced.png)
-
-## app.css
-
-We've looked at the default styles that Phoenix gives us in the `phoenix.css`
-file. For the rest of this chapter, let's work with the `app.css` file that's
-also located inside the `assets/css` folder. In fact, let's remove all the
-custom CSS declarations at the bottom of the `phoenix.css` file and migrate the
-few we'll need to `app.css`.
-
-In other words, we'll leave all the minified Bootstrap CSS code in our
-`phoenix.css` file. But we'll delete all the custom CSS declarations from the
-bottom, and our `app.css` file should just look like this:
-
-```css
-/* This file is for your main application css. */
-
-/* Phoenix flash messages */
-.alert:empty { display: none; }
-
-/* Custom page header */
-.logo {
-  text-decoration: none;
-  font-weight: bold;
-  font-size: 3em;
-  color: #333;
-}
-
-.logo:hover {
-  text-decoration: none;
-}
-```
-
-This will allow us to add all of our styles to the `app.css` file and we won't
-have to bounce between files.
+![Phoenix Logo Replaced with Link](images/design_and_usability/phoenix_logo_replaced.png)
 
 ## Featured Section
 
@@ -207,8 +178,8 @@ our Elm application where we handle our game data. Beneath the header, we're
 going to add a "featured" section where we can feature a game that stands out
 from the rest of the content.
 
-Let's open up our `Main.elm` file in the `assets/elm` folder, and we'll update
-the `view` function while adding a new `featured` function just below it:
+Let's open up our `assets/elm/src/Main.elm` file, and we'll update the `view`
+function while adding a new `featured` function just below it:
 
 ```elm
 view : Model -> Html Msg
@@ -223,16 +194,17 @@ view model =
 featured : Model -> Html msg
 featured model =
     div [ class "row featured" ]
-        [ h1 [] [ text "Featured" ] ]
+        [ h2 [] [ text "Featured" ] ]
 ```
 
-Note that we added a `featured` class so we can use CSS to style this section.
-The `row` class comes from Bootstrap, and allows this section to stretch to the
-full width of the window. Open up the `app.css` file where we can add custom
-CSS for our application, and add the following:
+Note that we added a `.featured` class so we can use CSS to style this section.
+The `.row` class comes from our preloaded CSS framework, and allows this
+section to stretch the full width of the window.
+
+Open up the `assets/css/app.css` file where we can add our custom CSS and add
+the following:
 
 ```css
-/* Featured section */
 .featured {
   height: 360px;
   background-color: black;
@@ -300,10 +272,10 @@ featured model =
                     [ div [ class "featured-img" ]
                         [ img [ class "featured-thumbnail", src game.thumbnail ] [] ]
                     , div [ class "featured-data" ]
-                        [ h1 [] [ text "Featured" ]
-                        , h2 [] [ text game.title ]
+                        [ h2 [] [ text "Featured" ]
+                        , h3 [] [ text game.title ]
                         , p [] [ text game.description ]
-                        , button [ class "btn btn-lg btn-primary" ] [ text "Play Now!" ]
+                        , button [ class "button" ] [ text "Play Now!" ]
                         ]
                     ]
                 ]
@@ -320,7 +292,6 @@ Let's add a couple of CSS declarations to clean things up. Open the `app.css`
 file and we'll add the following to our featured CSS declarations:
 
 ```css
-/* Featured section */
 .featured {
   height: 360px;
   background-color: black;
@@ -351,61 +322,42 @@ section on smaller screens.
 These aren't the fanciest of styles, but our featured game section works well
 for now:
 
-![Featured Section](images/layout_design/featured-section.png)
+![Featured Section](images/design_and_usability/featured-section.png)
 
 ## Authentication Section
 
 You may have noticed that our authentication information at the top right of
 the window doesn't look great. Let's open our `app.html.eex` file and we'll
-make a few more changes. We'll change the classes we're using for our buttons,
-and we'll display our "Signed in" text with a new class too:
+make a few more changes.
 
-```embedded_elixir
-<header class="header">
-  <nav role="navigation">
-    <ul class="nav nav-pills pull-right">
-    <%= if @current_user do %>
-        <p class="navbar-text">Signed in as <strong><%= @current_user.username %></strong></p>
-        <%= link "Sign Out", to: player_session_path(@conn, :delete, @current_user), method: "delete", class: "btn navbar-btn btn-danger" %>
-    <% else %>
-        <%= link "Sign Up", to: player_path(@conn, :new), class: "btn navbar-btn btn-success" %>
-        <%= link "Sign In", to: player_session_path(@conn, :new), class: "btn navbar-btn btn-primary" %>
-    <% end %>
-    </ul>
-  </nav>
-  <%= link "Platform", to: page_path(@conn, :index), class: "logo" %>
-</header>
-```
-
-We can add a quick CSS rule so our nav elements at the top right of the window
-look okay and don't break our layout on small screens:
-
-```css
-.nav {
-  margin-top: 6px;
-  max-height: 50px;
-  overflow: hidden;
-}
-```
-
-Next, let's allow the currently signed in player to edit their account. Update
-the `nav` element with the following:
+Let's allow the currently signed in player to edit their account. Update the
+`nav` element with the following:
 
 ```embedded_elixir
 <nav role="navigation">
-  <ul class="nav nav-pills pull-right">
+  <ul>
     <%= if @current_user do %>
-      <p class="navbar-text">
-        Signed in as
-        <strong><%= link @current_user.username, to: player_path(@conn, :edit, @current_user) %></strong>
+      <p class="nav-text">
+        Signed in as&nbsp;
+        <strong><%= link @current_user.username, to: Routes.player_path(@conn, :edit, @current_user) %></strong>
       </p>
-      <span><%= link "Sign Out", to: player_session_path(@conn, :delete, @current_user), method: "delete", class: "btn navbar-btn btn-danger" %></span>
+      <%= link "Sign Out", to: Routes.player_session_path(@conn, :delete, @current_user), method: "delete", class: "button" %>
     <% else %>
-      <%= link "Sign Up", to: player_path(@conn, :new), class: "btn navbar-btn btn-success" %>
-      <%= link "Sign In", to: player_session_path(@conn, :new), class: "btn navbar-btn btn-primary" %>
+      <%= link "Sign Up", to: Routes.player_path(@conn, :new), class: "button" %>
+      <%= link "Sign In", to: Routes.player_session_path(@conn, :new), class: "button" %>
     <% end %>
   </ul>
 </nav>
+```
+
+In the `assets/css/app.css` file, we'll add some CSS to the bottom of the file
+and make our signed in player info look a little nicer:
+
+```css
+.nav-text {
+  display: inline-flex;
+  margin-right: 5px;
+}
 ```
 
 This adds a link for the current user to access their **Edit Player** page and
@@ -413,7 +365,7 @@ change their account. Keep in mind that we still haven't restricted access to
 pages, so users can technically edit each other's accounts. But we'll fix this
 issue soon.
 
-![Current User Edit Feature](images/layout_design/current_user_edit_feature.png)
+![Current User Edit Feature](images/design_and_usability/current_user_edit_feature.png)
 
 ## User Deletion
 
@@ -433,40 +385,48 @@ Here's what the contents of the `<tbody>` tag should look like:
       <td><%= player.username %></td>
       <td><%= player.score %></td>
 
-      <td class="text-right">
-        <span><%= link "Show", to: player_path(@conn, :show, player), class: "btn btn-default btn-xs" %></span>
+      <td>
+        <%= link "Show", to: Routes.player_path(@conn, :show, player) %>
       </td>
     </tr>
 <% end %>
 ```
 
 In the `lib/platform_web/templates/player/edit.html.eex` file, we'll add the
-delete button to the list of buttons at the bottom of our **Edit Player** page.
+delete button at the bottom of our **Edit Player** page. Note that we're also
+adding `.button` classes so that all the buttons at the bottom of the page look
+consistent.
 
 ```embedded_elixir
-<div class="form-group">
-  <%= submit "Submit", class: "btn btn-primary" %>
-  <span><%= link "Delete Account", to: player_path(@conn, :delete, @player), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger" %></span>
-  <span><%= link "Back", to: page_path(@conn, :index), class: "btn btn-default" %></span>
-</div>
+<h1>Edit Player</h1>
+
+<%= form_for @changeset, Routes.player_path(@conn, :update, @player), fn f -> %>
+  <%= ... %>
+
+  <div>
+    <%= submit "Save" %>
+    <%= link "Delete Account", to: Routes.player_path(@conn, :delete, @player), method: :delete, data: [confirm: "Are you sure?"], class: "button" %>
+    <%= link "Back", to: Routes.player_path(@conn, :index), class: "button" %>
+  </div>
+<% end %>
 ```
 
 In the screenshot below, we created a `newuser` account to test that the delete
 button works.
 
-![Delete Account Button](images/layout_design/delete_account_button.png)
+![Delete Account Button](images/design_and_usability/delete_account_button.png)
 
 After verifying that a player wants to delete their account, the deletion
 should be successful:
 
-![Successful Player Deletion](images/layout_design/successful_deletion.png)
+![Successful Player Deletion](images/design_and_usability/successful_deletion.png)
 
 ## Authorization
 
 You may have noticed a serious issue with our account deletion approach.
 Players can now delete their accounts, but players could delete the accounts of
 other players too! For example, the `chrismccord` account could sign in to the
-platform, and then use the `http://0.0.0.0:4000/players/1/edit` URL to
+platform, and then use the `http://localhost:4000/players/1/edit` URL to
 deviously delete José Valim's account.
 
 For player authorization, we're going to take a simple approach similar to the
@@ -481,8 +441,7 @@ access the page. Add the following private function at the bottom of the
 
 ```elixir
 defp authorize(conn, _opts) do
-  current_player_id =
-    conn.assigns.current_user().id
+  current_player_id = conn.assigns.current_user().id
 
   requested_player_id =
     conn.path_params["id"]
@@ -493,7 +452,7 @@ defp authorize(conn, _opts) do
   else
     conn
     |> put_flash(:error, "Your account is not authorized to access that page.")
-    |> redirect(to: page_path(conn, :index))
+    |> redirect(to: Routes.page_path(conn, :index))
     |> halt()
   end
 end
@@ -506,16 +465,27 @@ continue. If a player is trying to access an account that's not theirs, then we
 redirect back to the index page and provide the user a message telling them
 their account is not authorized.
 
-To get this working for the **Edit Player** page, add the following line above
-the `index/2` function in the `PlayerController` module:
+To get this working for the **Edit Player** page, we'll add our `authorize`
+function as a `plug` at the top of the `PlayerController` module (between the
+aliases and the `index` function).
 
 ```elixir
-plug :authorize when action in [:edit]
+defmodule PlatformWeb.PlayerController do
+  # ...
+
+  plug(:authorize when action in [:edit])
+
+  def index(conn, _params) do
+    # ...
+  end
+
+  # ...
+end
 ```
 
-This is the same simple approach we took in the `PageController` when
-authenticating users. Now, when players try to access the **Edit Player** page,
-it'll pipe them through the `authorize/2` function.
+This is the same approach we took in the `PageController` when authenticating
+users. Now, when players try to access the **Edit Player** page, it'll pipe
+them through the `authorize/2` function.
 
 To make the comparison, we get the currently signed in player's `id` from the
 `current_user()`, and we also get the requested player's `id` from the
@@ -527,13 +497,13 @@ they are redirected).
 Here's an example of how the currently signed in user (`chrismccord`) can view
 the **Edit Player** page for their own account:
 
-![Authorized Player](images/layout_design/authorized_player.png)
+![Authorized Player](images/design_and_usability/authorized_player.png)
 
 But if the player tries to access an account that does not belong to them
-(`http://0.0.0.0:4000/players/1/edit`), they should be redirected back to the
+(`http://localhost:4000/players/1/edit`), they should be redirected back to the
 home page and see a flash message:
 
-![Unauthorized Player](images/layout_design/unauthorized_player.png)
+![Unauthorized Player](images/design_and_usability/unauthorized_player.png)
 
 ## Fixing Our Tests
 
@@ -544,11 +514,10 @@ to return the `conn` when we're in the `Mix.env` test environment.
 
 ```elixir
 defp authorize(conn, _opts) do
-  if Mix.env == :test do
+  if Mix.env() == :test do
     conn
   else
-    current_player_id =
-      conn.assigns.current_user().id
+    current_player_id = conn.assigns.current_user().id
 
     requested_player_id =
       conn.path_params["id"]
@@ -559,15 +528,15 @@ defp authorize(conn, _opts) do
     else
       conn
       |> put_flash(:error, "Your account is not authorized to access that page.")
-      |> redirect(to: page_path(conn, :index))
+      |> redirect(to: Routes.page_path(conn, :index))
       |> halt()
     end
   end
 end
 ```
 
-This isn't an ideal solution, but it's a quick way for us to get our tests
-passing and keep moving.
+This is admittedly a hacky solution, but it allows us to at least keep our test
+suite passing so we can keep moving in the book.
 
 We've taken an admittedly reductive approach to authorization, but it works well
 for our simple application. If you're looking to build a more involved
@@ -578,107 +547,144 @@ popular options.
 
 ## List of Games
 
-For our list of games, it looks like Bootstrap has a
-[media object component](https://getbootstrap.com/docs/3.3/components/#media)
-that will work well for our needs.
+For our list of games, let's display the game's `thumbnail` image along with
+the game's `title` and `description` information.
 
-We'll add a `media-list` class to our list of games, and then we'll use
-`media-left` for the thumbnail and `media-body` for the text information. Feel
-free to take a look at the examples in the Bootstrap documentation if you're
-interested in tinkering around with the styles for our application.
-
-We also want to wrap the each game in a link tag so that the clickable area is
-large for users to click on and access the game. We don't have a game to send
-users to yet, so we're just adding `href "#"` for now.
+In our `assets/elm/src/Main.elm` file, we already have view functions for our
+`gamesIndex`, `gamesList`, and `gamesListItem`. Let's start by adding a
+`.container` class so our games will be centered on the page under the featured
+section that spans the full width of the page.
 
 ```elm
-gamesList : List Game -> Html msg
-gamesList games =
-    ul [ class "games-list media-list" ] (List.map gamesListItem games)
+gamesIndex : Model -> Html msg
+gamesIndex model =
+    -- ...
+        div [ class "games-index container" ]
+            [ h2 [] [ text "Games" ]
+            , gamesList model.gamesList
+            ]
+```
 
+Next, we'll update our `gamesListItem` function so that each game is displayed
+as a large, clickable link that users can click on to access the game. We don't
+have a game to send users to yet, so we're just adding `a [ href "#" ]` for
+now. Inside the `li` element for each game, we're splitting the game's data
+into two sections. The first section will render the thumnail image for the
+game, which we'll style with the `.game-image` class. The second section will
+display the game's `title` and `description`, which we'll style with the
+`.game-info` class.
 
+```elm
 gamesListItem : Game -> Html msg
 gamesListItem game =
     a [ href "#" ]
-        [ li [ class "game-item media" ]
-            [ div [ class "media-left" ]
-                [ img [ class "media-object", src game.thumbnail ] []
+        [ li [ class "game-item" ]
+            [ div [ class "game-image" ]
+                [ img [ src game.thumbnail ] []
                 ]
-            , div [ class "media-body media-middle" ]
-                [ h4 [ class "media-heading" ] [ text game.title ]
+            , div [ class "game-info" ]
+                [ h3 [] [ text game.title ]
                 , p [] [ text game.description ]
                 ]
             ]
         ]
 ```
 
-Bootstrap takes care of most of the heavy lifting for us, but let's add a
-couple of custom styles to the `app.css` file. Add the following CSS code to
-style our list of games:
+Next, we can switch over to our `app.css` file to add styling for our list of
+games.
 
 ```css
-/* Games section */
-.game-item {
-  margin-bottom: 15px;
-  border: 2px solid black;
-  border-radius: 10px;
+.games-index {
+  margin-top: 2rem;
 }
 
-.media-object {
-  height: 120px;
+.game-item {
+  display: flex;
+}
+
+.game-info {
+  margin-left: 2em;
 }
 ```
+
+This is a great start! We added CSS classes so we're able to style the parts
+of our UI as we see fit. Instead of displaying a bulleted list of games, we're
+iterating through all of our games and displaying them as links. It's
+admittedly not much to look at since we only have a single sample game so far,
+but feel free to add games and get creative with the styles.
+
+![Games List](images/design_and_usability/games_list.png)
 
 ## List of Players
 
-Lastly, let's style our list of players into a leaderboard. Bootstrap has a
-[panel component](https://getbootstrap.com/docs/3.3/components/#panels) that we
-can use to wrap around our player list. Then, we can use the
-[list group component](https://getbootstrap.com/docs/3.3/components/#list-group)
-to display each player along with their current score.
+Lastly, let's style our list of players into a leaderboard.
 
-Update the `playersList` function and `playersListItem` function with the
-following and Bootstrap will take care of the styling for us:
+We'll start by updating our `playersIndex` function to center the players on
+the page like we did above for the list of games.
 
 ```elm
-playersList : List Player -> Html msg
-playersList players =
-    div [ class "players-list panel panel-info" ]
-        [ div [ class "panel-heading" ] [ text "Leaderboard" ]
-        , ul [ class "list-group" ] (List.map playersListItem players)
-        ]
-
-
-playersListItem : Player -> Html msg
-playersListItem player =
-    let
-        displayName =
-            if player.displayName == Nothing then
-                player.username
-            else
-                Maybe.withDefault "" player.displayName
-
-        playerLink =
-            "players/" ++ (toString player.id)
-    in
-        li [ class "player-item list-group-item" ]
-            [ strong [] [ a [ href playerLink ] [ text displayName ] ]
-            , span [ class "badge" ] [ text (toString player.score) ]
+playersIndex : Model -> Html msg
+playersIndex model =
+    -- ...
+        div [ class "players-index container" ]
+            [ h2 [] [ text "Players" ]
+            , model.playersList
+                |> playersSortedByScore
+                |> playersList
             ]
 ```
 
-Looks like this works well for our purposes. We've got our sorted list of
-players displaying inside a leaderboard with their display names and scores.
-And we also added links to the individual player pages, which we can use to
-track more detailed score data later.
+Next, we'll update the `playersListItem` function to display each player's name
+and score information. We're also adding links to the individual player pages,
+which we can use to track more detailed score data later.
 
-![Player Leaderboard](images/layout_design/player_leaderboard.png)
+```elm
+playersListItem : Player -> Html msg
+playersListItem player =
+    let
+        playerLink name =
+            a [ href ("players/" ++ String.fromInt player.id) ]
+                [ strong [ class "player-name" ] [ text name ] ]
+    in
+    li [ class "player-item" ]
+        [ p [ class "player-score" ] [ text (String.fromInt player.score) ]
+        , case player.displayName of
+            Just displayName ->
+                playerLink displayName
+
+            Nothing ->
+                playerLink player.username
+        ]
+```
+
+To finish up with styling our list of players, let's switch back over to the
+`app.css` file and add the following:
+
+```css
+.player-item {
+  display: flex;
+}
+
+.player-score {
+  margin-bottom: 0;
+}
+
+.player-name {
+  margin-left: 1em;
+}
+```
+
+![Player Leaderboard](images/design_and_usability/player_leaderboard.png)
 
 ## Summary
 
 This book is primarily focused on working with Elixir and Elm, but this chapter
 was a fun aside into seeing how we can still use a familiar approach to styling
-with CSS and Bootstrap within the context of a Phoenix application.
+with CSS within the context of a Phoenix application.
+
+We used the default CSS framework that comes bundled with Phoenix by default,
+but it's worth noting that it's relatively trivial to drop in a CSS file for
+any other CSS framework that you like to use.
 
 We have our Phoenix API up and running, and our Elm application is pulling in
 all the sample data. Let's move on to creating a game with Elm and pulling

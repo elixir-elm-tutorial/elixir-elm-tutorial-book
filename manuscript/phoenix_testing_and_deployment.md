@@ -25,22 +25,23 @@ $ mix test
      test/platform_web/controllers/page_controller_test.exs:4
      Assertion with =~ failed
      code:  assert html_response(conn, 200) =~ "Welcome to Phoenix!"
-     left:  "<!DOCTYPE html><html lang=\"en\"><body><div class=\"container\"><main role=\"main\">\n<a class=\"btn btn-success\" href=\"/players/new\">Create Player Account</a>\n<a class=\"btn btn-info\" href=\"/players\">List All Players</a></main></div></body></html>"
+     left:  "<!DOCTYPE html><html lang=\"en\"><body><div class=\"container\"><main role=\"main\">\n<a href=\"/players/new\">Create Player Account</a>\n<a href=\"/players\">List All Players</a></main></div></body></html>"
      right: "Welcome to Phoenix!"
      stacktrace:
        test/platform_web/controllers/page_controller_test.exs:6: (test)
 
 Finished in 0.2 seconds
-20 tests, 1 failure
+19 tests, 1 failure
 
 Randomized with seed 905
 ```
 
-The good news is it looks like we already have 20 tests. Some of them came with
+The good news is it looks like we already have 19 tests. Some of them came with
 Phoenix by default when we ran `mix phx.new platform`. Other tests were created
 when we ran the `mix phx.gen.html` generator for our players resource.
 
-The bad news is one of our tests is no longer passing. Let's take a look at the
+The bad news is one of our tests is no longer passing due to the changes we
+made to our home page. Let's take a look at the
 `test/platform_web/controllers/page_controller_test.exs` file:
 
 ```elixir
@@ -55,7 +56,7 @@ end
 ```
 
 It looks like this test is making an HTTP `get` request to the default route
-(`"/"`). If we look at the `http://0.0.0.0:4000/` URL, you can think of that
+(`"/"`). If we look at the `http://localhost:4000/` URL, you can think of that
 trailing slash as the default `/` route.
 
 Our test is expecting the text `"Welcome to Phoenix!"` to appear somewhere on
@@ -88,8 +89,8 @@ We can run our tests again, and we should see all green:
 $ mix test
 ....................
 
-Finished in 0.4 seconds
-20 tests, 0 failures
+Finished in 0.3 seconds
+19 tests, 0 failures
 
 Randomized with seed 187055
 ```
@@ -119,7 +120,7 @@ commands will allow us to push our local application to GitHub (you'll need to
 add your username on the first line):
 
 ```shell
-$ git remote add origin https://github.com/YOURUSERNAME/platform.git
+$ git remote add origin https://github.com/YOUR-GITHUB-USERNAME/platform.git
 $ git push -u origin master
 ```
 
@@ -152,7 +153,7 @@ to your account. Since we have an existing Git repository, we can use the
 following command to add our application to Heroku:
 
 ```shell
-$ heroku git:remote -a YOURAPPNAME
+$ heroku git:remote -a YOUR-HEROKU-APP-NAME
 ```
 
 Now inside our `platform` folder, we can run the `git remote` command and see
@@ -192,12 +193,14 @@ Buildpack added. Next release on platform will use:
 Run git push heroku master to create a new release using these buildpacks.
 ```
 
-To set up the correct versions we need for our application, create a file
-called `elixir_buildpack.config` in the `platform` folder.
+To set up the correct versions and settings we need for our application, create
+a file called `elixir_buildpack.config` in the `platform` folder. Inside the
+file, add the following contents:
 
 ```config
 erlang_version=20.0
-elixir_version=1.5.2
+elixir_version=1.7.0
+always_rebuild=true
 ```
 
 Since we're using the latest versions of Erlang, Elixir, and Phoenix, these
@@ -206,14 +209,11 @@ settings are necessary for the deployment to work.
 ## Heroku Configuration
 
 There are still a couple more steps we need to take to make sure our application
-is secured to be pushed live to Heroku. Let's create a `Procfile` to tell
-Heroku which command we want to run to start the Phoenix server. We'll also add
-a line to make sure that database migrations are successful before we start the
-server in the production environment. Create a file called `Procfile` inside
-the `platform` folder, and add the following code:
+is ready to be pushed live to Heroku. Let's create a `Procfile` to tell
+Heroku which command we want to run to start the Phoenix server. Create a file
+called `Procfile` inside the `platform` folder, and add the following code:
 
 ```Procfile
-release: MIX_ENV=prod mix ecto.migrate
 web: MIX_ENV=prod mix phx.server
 ```
 
@@ -290,27 +290,29 @@ explanatory comments:
 
 ```elixir
 config :platform, PlatformWeb.Endpoint,
-  load_from_system_env: true,
+  http: [:inet6, port: System.get_env("PORT") || 4000],
   url: [host: "example.com", port: 80],
   cache_static_manifest: "priv/static/cache_manifest.json"
 ```
 
-Let's make a couple of quick changes so it looks like this (replace the
-YOURAPPNAME with the app name you created on Heroku):
+Let's make a couple of changes so it looks like this (replace
+`YOUR-HEROKU-APP-NAME` with the app name you created on Heroku):
 
 ```elixir
 config :platform, PlatformWeb.Endpoint,
-  load_from_system_env: true,
-  url: [host: "YOURAPPNAME.herokuapp.com", port: 80],
+  http: [:inet6, port: System.get_env("PORT") || 4000],
+  url: [scheme: "https", host: "YOUR-HEROKU-APP-NAME.herokuapp.com", port: 443],
+  force_ssl: [rewrite_on: [:x_forwarded_proto]],
   cache_static_manifest: "priv/static/cache_manifest.json",
-  secret_key_base: System.get_env("SECRET_KEY_BASE")
+  secret_key_base: Map.fetch!(System.get_env(), "SECRET_KEY_BASE")
 ```
 
-This is how Heroku knows to use the `SECRET_KEY_BASE` environment variable in
-the production environment. Below that, we also want to add a new block of code
-to configure our database:
+This allows us to set the `port`, the `host` name, and `secret_key_base`. We're
+also configuring our app to use `https`. Right below that configuration code,
+we also want to add a new block of code to configure our database:
 
 ```elixir
+# Database configuration
 config :platform, Platform.Repo,
   adapter: Ecto.Adapters.Postgres,
   url: System.get_env("DATABASE_URL"),
@@ -332,6 +334,36 @@ character at the beginning of the line:
 You can also delete the `prod.secret.exs` file if you'd like since we won't
 need it anymore.
 
+## Static Asset Compilation
+
+Phoenix uses [Webpack](https://webpack.js.org) to compile the static assets for
+the front-end. We already added the Heroku buildpack for Phoenix static assets,
+and now we just need to add configuration files to compile the assets as we
+deploy our application to the production environment.
+
+The buildpack we're using is highly configurable, and we can take a look at the
+[configuration options](https://github.com/gjaldon/heroku-buildpack-phoenix-static#configuration)
+available in the README. We're going to stick with the default options, but
+we'll need to add a shell script file called `compile` (note that there's no
+file extension and the file is simply named `compile`).
+
+Let's go ahead and create our `compile` file now at the root of our project and
+add the following contents:
+
+```shell
+npm run deploy
+cd $phoenix_dir
+mix "${phoenix_ex}.digest"
+```
+
+This allows our application to compile the front-end assets whenever we deploy
+to Heroku. It runs the `"deploy"` script from the `package.json` file that's
+located in the `assets` folder of our Phoenix project. That script runs the
+`webpack --mode production` command for our front-end assets. Then, the
+`compile` script changes back to the root Phoenix directory and runs the
+`mix phx.digest` command to compress all our static files for the production
+environment.
+
 ## Deployment
 
 Let's run our tests one more time to make sure we didn't break anything:
@@ -340,7 +372,9 @@ Let's run our tests one more time to make sure we didn't break anything:
 $ mix test
 ```
 
-If everything is still passing, let's commit our latest changes:
+If everything is still passing, we'll commit our latest changes. If you ran
+into any issues, check out the Phoenix docs for a similar set of steps for
+[deploying an application to Heroku](https://hexdocs.pm/phoenix/heroku.html).
 
 ```shell
 $ git add .
@@ -361,20 +395,22 @@ $ git push heroku master
 
 We'll see _a lot_ of output when we deploy. If something goes wrong with the
 deployment, it will let us know. Don't worry too much if you run into an issue
-or two, because this process is admittedly tedious. There are Stack Overflow
-sections for both [Heroku](https://stackoverflow.com/questions/tagged/heroku)
+or two, because this process is admittedly tedious. The likelihood of
+forgetting a comma or confusing the application names is high, but it's usually
+just a matter of calmly working through any errors you come across. There are
+Stack Overflow sections for both
+[Heroku](https://stackoverflow.com/questions/tagged/heroku)
 and [Phoenix](https://stackoverflow.com/questions/tagged/phoenix-framework)
-that can be really useful if you run into any errors.
+that can be really useful if you run into issues.
 
 It's worth the trouble once we get to see our app up and running live in
 production!
 
 ## Up and Running
 
-Our app is finally up and running on Heroku! The `Procfile` we created
-automatically handles production database migrations. Inside the `platform`
-folder, let's run the following from the command line to see our application
-running on Heroku:
+Once the deploy finishes, our app is finally up and running on Heroku! Inside
+the `platform` folder, let's run the following from the command line to
+see our application running on Heroku:
 
 ```shell
 $ heroku open
@@ -383,6 +419,26 @@ $ heroku open
 ![Working Heroku Deploy](images/phoenix_testing_and_deployment/working_heroku_deploy.png)
 
 Our application is working in production!
+
+## Running Migrations
+
+Now that we managed to successfully get our application up and running on
+Heroku, we can take one more step to automate our database migrations each time
+we deploy to production.
+
+Open up the `Procfile` we created before, and add a new `release` line at the
+top of the file:
+
+```shell
+release: MIX_ENV=prod mix ecto.migrate
+web: MIX_ENV=prod mix phoenix.server
+```
+
+This allows us to automate the database migrations before the Phoenix web
+server starts in the production environment. And our app should now be fully
+functional on Heroku with a working production database.
+
+![Working Production Players Index Page](images/phoenix_testing_and_deployment/working_players_page.png)
 
 ## Summary
 

@@ -62,15 +62,15 @@ $ iex -S mix phx.server
 Now we can query for our players with the following:
 
 ```elixir
-iex> Platform.Accounts.list_players
+iex> Platform.Accounts.list_players()
 [debug] QUERY OK source="players" db=3.0ms decode=3.7ms
 SELECT a0."id", a0."score", a0."username", a0."inserted_at", a0."updated_at" FROM "players" AS a0 []
 [%Platform.Accounts.Player{__meta__: #Ecto.Schema.Metadata<:loaded, "players">,
-  id: 1, inserted_at: ~N[2017-04-08 14:55:28.674971], score: 1000,
-  updated_at: ~N[2017-04-08 14:55:28.681607], username: "josevalim"},
+  id: 1, inserted_at: ~N[2018-11-08 14:55:28.674971], score: 1000,
+  updated_at: ~N[2018-11-08 14:55:28.681607], username: "josevalim"},
  %Platform.Accounts.Player{__meta__: #Ecto.Schema.Metadata<:loaded, "players">,
-  id: 2, inserted_at: ~N[2017-04-08 14:55:34.139085], score: 2000,
-  updated_at: ~N[2017-04-08 14:55:34.139091], username: "evancz"}]
+  id: 2, inserted_at: ~N[2018-11-08 14:55:34.139085], score: 2000,
+  updated_at: ~N[2018-11-08 14:55:34.139091], username: "evancz"}]
 ```
 
 This function provides a good demonstration of how Phoenix uses well-named
@@ -126,8 +126,6 @@ To start adding our new fields, let's update the
 defmodule Platform.Accounts.Player do
   use Ecto.Schema
   import Ecto.Changeset
-  alias Platform.Accounts.Player
-
 
   schema "players" do
     field :display_name, :string
@@ -140,7 +138,7 @@ defmodule Platform.Accounts.Player do
   end
 
   @doc false
-  def changeset(%Player{} = player, attrs) do
+  def changeset(player, attrs) do
     player
     |> cast(attrs, [:display_name, :password, :score, :username])
     |> validate_required([:username])
@@ -165,7 +163,7 @@ In the code example above, note that we didn't just change the player schema.
 We also updated the `changeset/2` function with the following:
 
 ```elixir
-def changeset(%Player{} = player, attrs) do
+def changeset(player, attrs) do
   player
   |> cast(attrs, [:display_name, :password, :score, :username])
   |> validate_required([:username])
@@ -190,7 +188,7 @@ accounts with the same `username`.
 
 ## Generating a Migration
 
-Now we'll need to update the database so it knows about the new fields we we're
+Now we'll need to update the database so it knows about the new fields we are
 adding to our players. Let's run the following command to generate a migration
 file:
 
@@ -204,7 +202,7 @@ file, which we'll update next:
 ```shell
 $ mix ecto.gen.migration add_fields_to_player_accounts
 * creating priv/repo/migrations
-* creating priv/repo/migrations/20170812150719_add_fields_to_player_accounts.exs
+* creating priv/repo/migrations/20180812150719_add_fields_to_player_accounts.exs
 ```
 
 Let's update the migration file that we created in the `priv/repo/migrations`
@@ -255,11 +253,11 @@ We'll start with what we want our users to do when they first sign up. Open up
 the `lib/platform_web/templates/player/new.html.eex` file:
 
 ```embedded_elixir
-<h2>New Player</h2>
+<h1>New Player</h1>
 
-<%= render "form.html", Map.put(assigns, :action, player_path(@conn, :create)) %>
+<%= render "form.html", Map.put(assigns, :action, Routes.player_path(@conn, :create)) %>
 
-<span><%= link "Back", to: player_path(@conn, :index) %></span>
+<span><%= link "Back", to: Routes.player_path(@conn, :index) %></span>
 ```
 
 From the looks of the code here, the page is rendering a `"form.html"` file,
@@ -287,37 +285,36 @@ be able to delete the shared `form.html.eex` file as a result.
 Let's start by updating our `new.html.eex` file:
 
 ```embedded_elixir
-<h2>New Player</h2>
+<h1>New Player</h1>
 
-<%= form_for @changeset, player_path(@conn, :create), fn f -> %>
+<%= form_for @changeset, Routes.player_path(@conn, :create), fn f -> %>
   <%= if @changeset.action do %>
     <div class="alert alert-danger">
       <p>Oops, something went wrong! Please check the errors below.</p>
     </div>
   <% end %>
 
-  <div class="form-group">
-    <%= label f, :username, "Player Username", class: "control-label" %>
-    <%= text_input f, :username, placeholder: "Enter username...", class: "form-control" %>
-    <%= error_tag f, :username %>
-  </div>
+  <%= label f, :username %>
+  <%= text_input f, :username %>
+  <%= error_tag f, :username %>
 
-  <div class="form-group">
-    <%= label f, :password, "Player Password", class: "control-label" %>
-    <%= password_input f, :password, placeholder: "Enter password...", class: "form-control" %>
-    <%= error_tag f, :password %>
-  </div>
+  <%= label f, :password %>
+  <%= password_input f, :password %>
+  <%= error_tag f, :password %>
 
-  <div class="form-group">
-    <%= submit "Submit", class: "btn btn-primary" %>
+  <div>
+    <%= submit "Save" %>
   </div>
 <% end %>
+
+<span><%= link "Back", to: Routes.player_path(@conn, :index) %></span>
 ```
 
 We're basically moving some of the content from the `form.html.eex` file into
-our `new.html.eex` file along with some minor changes. On a successful
-submission, we're using the `create` action from our player controller. This is
-what it should look like in the browser:
+our `new.html.eex` file along with some minor changes to support our `password`
+field instead of a `score` field. On a successful submission, we're using the
+`create` action from our player controller. This is what the **New Player**
+page should look like in the browser:
 
 ![Updated New Player Page](images/phoenix_sign_up/phoenix_updated_sign_up.png)
 
@@ -337,7 +334,7 @@ Let's update the `lib/platform_web/templates/player/show.html.eex` file with
 the following:
 
 ```embedded_elixir
-<h2>Show Player</h2>
+<h1>Show Player</h1>
 
 <ul>
   <li><strong>ID: </strong><%= @player.id %></li>
@@ -346,14 +343,14 @@ the following:
   <li><strong>Score: </strong><%= @player.score %></li>
 </ul>
 
-<span><%= link "Edit", to: player_path(@conn, :edit, @player), class: "btn btn-default" %></span>
-<span><%= link "Back", to: page_path(@conn, :index), class: "btn btn-default" %></span>
+<span><%= link "Edit", to: Routes.player_path(@conn, :edit, @player) %></span>
+<span><%= link "Back", to: Routes.player_path(@conn, :index) %></span>
 ```
 
-We display all the relevant data on the page, and added a few classes to the
-buttons at the bottom to make things look nicer. Users can choose to **Edit**
-their accounts from here, and if they click the **Back** button they can
-navigate back to the home page.
+Here we're displaying all the relevant player data (`id`, `display_name`,
+`username`, and `score`) on the page. Users can choose to **Edit** their
+accounts from here, and if they click the **Back** button they can navigate
+back to the home page.
 
 ![Show Player Page](images/phoenix_sign_up/phoenix_show_player_page.png)
 
@@ -371,38 +368,33 @@ Update the `lib/platform_web/templates/player/edit.html.eex` file to contain
 the following:
 
 ```embedded_elixir
-<h2>Edit Player</h2>
+<h1>Edit Player</h1>
 
-<%= form_for @changeset, player_path(@conn, :update, @player), fn f -> %>
+<%= form_for @changeset, Routes.player_path(@conn, :update, @player), fn f -> %>
   <%= if @changeset.action do %>
     <div class="alert alert-danger">
       <p>Oops, something went wrong! Please check the errors below.</p>
     </div>
   <% end %>
 
-  <div class="form-group">
-    <%= label f, :display_name, "Change Display Name", class: "control-label" %>
-    <%= text_input f, :display_name, placeholder: "Enter display name...", class: "form-control" %>
-    <%= error_tag f, :display_name %>
-  </div>
+  <%= label f, :display_name %>
+  <%= text_input f, :display_name %>
+  <%= error_tag f, :display_name %>
 
-  <div class="form-group">
-    <%= label f, :username, "Change Username", class: "control-label" %>
-    <%= text_input f, :username, placeholder: "Enter username...", class: "form-control" %>
-    <%= error_tag f, :username %>
-  </div>
+  <%= label f, :username %>
+  <%= text_input f, :username %>
+  <%= error_tag f, :username %>
 
-  <div class="form-group">
-    <%= label f, :password, "Change Password", class: "control-label" %>
-    <%= text_input f, :password, placeholder: "Enter password...", class: "form-control" %>
-    <%= error_tag f, :password %>
-  </div>
+  <%= label f, :password %>
+  <%= password_input f, :password %>
+  <%= error_tag f, :password %>
 
-  <div class="form-group">
-    <%= submit "Submit", class: "btn btn-primary" %>
-    <span><%= link "Back", to: page_path(@conn, :index), class: "btn btn-default" %></span>
+  <div>
+    <%= submit "Save" %>
   </div>
 <% end %>
+
+<span><%= link "Back", to: Routes.player_path(@conn, :index) %></span>
 ```
 
 After saving that file, we can go back to the **Edit Player** page and change
@@ -432,7 +424,7 @@ Compiling 2 files (.ex)
 ....................
 
 Finished in 0.2 seconds
-20 tests, 0 failures
+19 tests, 0 failures
 ```
 
 If everything is passing, let's go ahead and commit our changes:

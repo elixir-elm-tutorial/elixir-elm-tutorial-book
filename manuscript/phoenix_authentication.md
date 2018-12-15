@@ -18,14 +18,16 @@ handful that Phoenix includes by default.
 ```elixir
 defp deps do
   [
-    {:phoenix, "~> 1.3.0"},
-    {:phoenix_pubsub, "~> 1.0"},
-    {:phoenix_ecto, "~> 3.2"},
+    {:phoenix, "~> 1.4.0"},
+    {:phoenix_pubsub, "~> 1.1"},
+    {:phoenix_ecto, "~> 4.0"},
+    {:ecto_sql, "~> 3.0"},
     {:postgrex, ">= 0.0.0"},
-    {:phoenix_html, "~> 2.10"},
-    {:phoenix_live_reload, "~> 1.0", only: :dev},
+    {:phoenix_html, "~> 2.11"},
+    {:phoenix_live_reload, "~> 1.2", only: :dev},
     {:gettext, "~> 0.11"},
-    {:cowboy, "~> 1.0"}
+    {:jason, "~> 1.0"},
+    {:plug_cowboy, "~> 2.0"}
   ]
 end
 ```
@@ -35,13 +37,13 @@ ironically) [comeonin](https://hex.pm/packages/comeonin). This is what the
 syntax looks like for adding a new dependency:
 
 ```elixir
-{:comeonin, "~> 4.0"}
+{:comeonin, "~> 4.1"}
 ```
 
 In Elixir, this syntax is called a **tuple**. It's commonly used as a way to
 reference keys and values. In this example, the first element of the tuple is
 an atom (`:comeonin`), and the second element is a string that indicates the
-version number (`"~> 4.0"`).
+version number (`"~> 4.1"`).
 
 Comeonin allows us to choose from different password hashing algorithms, so
 we'll also need to import another dependency called
@@ -51,16 +53,18 @@ working. Let's update our `deps/0` function with the following:
 ```elixir
 defp deps do
   [
-    {:phoenix, "~> 1.3.0"},
-    {:phoenix_pubsub, "~> 1.0"},
-    {:phoenix_ecto, "~> 3.2"},
+    {:phoenix, "~> 1.4.0"},
+    {:phoenix_pubsub, "~> 1.1"},
+    {:phoenix_ecto, "~> 4.0"},
+    {:ecto_sql, "~> 3.0"},
     {:postgrex, ">= 0.0.0"},
-    {:phoenix_html, "~> 2.10"},
-    {:phoenix_live_reload, "~> 1.0", only: :dev},
+    {:phoenix_html, "~> 2.11"},
+    {:phoenix_live_reload, "~> 1.2", only: :dev},
     {:gettext, "~> 0.11"},
-    {:cowboy, "~> 1.0"},
-    {:comeonin, "~> 4.0"},
-    {:bcrypt_elixir, "~> 1.0"},
+    {:jason, "~> 1.0"},
+    {:plug_cowboy, "~> 2.0"},
+    {:comeonin, "~> 4.1"},
+    {:bcrypt_elixir, "~> 1.1"}
   ]
 end
 ```
@@ -78,16 +82,13 @@ We should see the following results:
 $ mix deps.get
 Resolving Hex dependencies...
 Dependency resolution completed:
-  bcrypt_elixir 1.0.5
-  comeonin 4.0.3
+...
+New
+  bcrypt_elixir 1.1
+  comeonin 4.1
   ...
 * Getting comeonin (Hex package)
-  Checking package (https://repo.hex.pm/tarballs/comeonin-4.0.3.tar)
-  Fetched package
 * Getting bcrypt_elixir (Hex package)
-  Checking package (https://repo.hex.pm/tarballs/bcrypt_elixir-1.0.5.tar)
-  Fetched package
-  ...
 ```
 
 ## Player Changesets
@@ -96,7 +97,7 @@ Now that we've included our new dependencies, let's take a look at the existing
 `changeset/2` function inside the `lib/platform/accounts/player.ex` file.
 
 ```elixir
-def changeset(%Player{} = player, attrs) do
+def changeset(player, attrs) do
   player
   |> cast(attrs, [:display_name, :password, :score, :username])
   |> validate_required([:username])
@@ -106,7 +107,7 @@ end
 
 This is where we can add additional validations for our data and ensure that it
 conforms to our expectations. This function will remain our default player
-changeset, but we'll also add a separate one called `registration_changeset/2`
+changeset, and we'll also add a separate one called `registration_changeset/2`
 for when players create a new account.
 
 Let's add some validations and a new function that will allow us to encrypt
@@ -115,24 +116,24 @@ and add the following code:
 
 ```elixir
 @doc false
-def changeset(%Player{} = player, attrs) do
+def changeset(player, attrs) do
   player
   |> cast(attrs, [:display_name, :password, :score, :username])
   |> validate_required([:username])
   |> unique_constraint(:username)
   |> validate_length(:username, min: 2, max: 100)
-  |> validate_length(:password, min: 6, max: 100)
+  |> validate_length(:password, min: 2, max: 100)
   |> put_pass_digest()
 end
 
 @doc false
-def registration_changeset(%Player{} = player, attrs) do
+def registration_changeset(player, attrs) do
   player
   |> cast(attrs, [:password, :username])
   |> validate_required([:password, :username])
   |> unique_constraint(:username)
   |> validate_length(:username, min: 2, max: 100)
-  |> validate_length(:password, min: 6, max: 100)
+  |> validate_length(:password, min: 2, max: 100)
   |> put_pass_digest()
 end
 
@@ -174,7 +175,7 @@ This is primarily due to the fact that we're allowing users to sign up with a
 `password` field when they edit an account. But the main idea is that we can
 have different changesets that apply to different situations. In our case, we
 wanted to use the `registration_changeset/2` for when players sign up, and use
-a separate `changeset` function for any other player changes.
+a separate `changeset/2` function for any other player changes.
 
 ## Using Our New Changeset
 
@@ -228,7 +229,12 @@ made to our player schema:
 
 ```elixir
 @valid_attrs %{password: "some password", username: "some username"}
-@update_attrs %{display_name: "some updated display name", password: "some updated password", score: 43, username: "some updated username"}
+@update_attrs %{
+  display_name: "some updated display name",
+  password: "some updated password",
+  score: 43,
+  username: "some updated username"
+}
 @invalid_attrs %{password: nil, username: nil}
 ```
 
@@ -315,8 +321,7 @@ def player_fixture(attrs \\ %{}) do
     |> Map.from_struct()
     |> Map.delete(:password)
 
-  %Player{}
-  |> Map.merge(player_attrs_map)
+  Map.merge(%Player{}, player_attrs_map)
 end
 ```
 
@@ -325,9 +330,9 @@ we're converting the struct to a map using `Map.from_struct()` and then
 deleting the `password` field with `Map.delete(:password)`. This gives us a map
 of all the player attributes except the `password` field.
 
-At the bottom of the function, we create a player struct with
-`%Player{}` and then merge all of the fields in our map together using
-`Map.merge(player_attrs_map)`.
+At the bottom of the function, we use `Map.merge(%Player{}, player_attrs_map)`
+to merge all the fields together and convert the results back into a player
+struct, which we return as our player fixture.
 
 Keep in mind that this is a lot to take in as we're dealing with new data
 structures and a lot of new functions, so don't worry if this seems slightly
@@ -349,7 +354,12 @@ following:
 
 ```elixir
 @create_attrs %{password: "some password", username: "some username"}
-@update_attrs %{display_name: "some updated display name", password: "some updated password", score: 43, username: "some updated username"}
+@update_attrs %{
+  display_name: "some updated display name",
+  password: "some updated password",
+  score: 43,
+  username: "some updated username"
+}
 @invalid_attrs %{password: nil, username: nil}
 ```
 
@@ -361,7 +371,7 @@ $ mix test
 ....................
 
 Finished in 4.4 seconds
-20 tests, 0 failures
+19 tests, 0 failures
 
 Randomized with seed 77808
 ```
@@ -380,8 +390,7 @@ Let's add a configuration setting at the bottom of our `config/test.exs` file:
 config :bcrypt_elixir, :log_rounds, 4
 ```
 
-Save the file, and then let's try running our tests again to see if there's a
-difference:
+Let's save the file and run our tests again to see if there's a difference:
 
 ```shell
 $ mix test
@@ -402,7 +411,7 @@ the amount of time our tests took to run (from 4.4 seconds to 0.2 seconds).
 ## Authentication Plug
 
 Players are currently able to create new accounts at
-`http://0.0.0.0:4000/players/new`. But we'll want to add features so that users
+`http://localhost:4000/players/new`. But we'll want to add features so that users
 can sign in and sign out.
 
 ![Player Sign Up Page](images/phoenix_sign_up/phoenix_updated_sign_up.png)
@@ -472,9 +481,9 @@ end
 
 This plug is going to allow us to restrict access to certain pages. Let's
 update our application so users will be redirected to the **New Player** page
-at `http://0.0.0.0:4000/players/new` if they haven't already signed in.
+at `http://localhost:4000/players/new` if they haven't already signed in.
 
-Currently, when we access `http://0.0.0.0:4000` in the browser, we see the
+Currently, when we access `http://localhost:4000` in the browser, we see the
 index page from our `PageController`. In the upcoming chapters, we'll be
 turning this into our Elm front-end application.
 
@@ -500,7 +509,7 @@ defp authenticate(conn, _opts) do
   else
     conn
     |> put_flash(:error, "You must be signed in to access that page.")
-    |> redirect(to: player_path(conn, :new))
+    |> redirect(to: Routes.player_path(conn, :new))
     |> halt()
   end
 end
@@ -542,7 +551,7 @@ defmodule PlatformWeb.PageController do
     else
       conn
       |> put_flash(:error, "You must be signed in to access that page.")
-      |> redirect(to: player_path(conn, :new))
+      |> redirect(to: Routes.player_path(conn, :new))
       |> halt()
     end
   end
@@ -554,7 +563,7 @@ end
 If you're wondering if the updates above broke our tests, you're right. We
 usually run our test suite with `mix test`, but this time let's manually test
 things out in the browser. Open up your browser and try visiting the
-`PageController` index page at `http://0.0.0.0:4000`:
+`PageController` index page at `http://localhost:4000`:
 
 ![Restricted Page Alert](images/phoenix_authentication/restricted_page.png)
 
@@ -565,16 +574,16 @@ wrote in the `authenticate/2` function at the bottom of the `PageController`.
 
 ## Fixing Our Tests
 
-Let's push a quick fix for our tests. Open the `test/platform_web/controllers/page_controller_test.exs` file and replace it
-with the following code that tests our default route and the redirect that
-we created:
+Let's push a quick fix for our tests. Open the
+`test/platform_web/controllers/page_controller_test.exs` file and replace it
+with the following code that tests our default route and our new redirect:
 
 ```elixir
 defmodule PlatformWeb.PageControllerTest do
   use PlatformWeb.ConnCase
 
   test "redirects unauthenticated users away from index page", %{conn: conn} do
-    conn = get conn, "/"
+    conn = get(conn, "/")
     assert html_response(conn, 302) =~ "redirect"
   end
 end
@@ -610,7 +619,8 @@ def create(conn, %{"player" => player_params}) do
       conn
       |> PlatformWeb.PlayerAuthController.sign_in(player)
       |> put_flash(:info, "Player created successfully.")
-      |> redirect(to: player_path(conn, :show, player))
+      |> redirect(to: Routes.player_path(conn, :show, player))
+
     {:error, %Ecto.Changeset{} = changeset} ->
       render(conn, "new.html", changeset: changeset)
   end
@@ -618,7 +628,7 @@ end
 ```
 
 Let's try it out. Go to the **New Player** page at
-`http://0.0.0.0:4000/players/new` and create a new user with both the
+`http://localhost:4000/players/new` and create a new user with both the
 `username` and `password` fields set to `chrismccord`:
 
 ![Creating a New User](images/phoenix_authentication/new_user_to_sign_in.png)
@@ -629,7 +639,7 @@ the **Show Player** page for the new user.
 ![Show Player Page](images/phoenix_authentication/show_player_page_after_sign_in.png)
 
 Now, let's try to access the `PageController` index page to verify that the
-user is authenticated. Go to the `http://0.0.0.0:4000` page in your browser:
+user is authenticated. Go to the `http://localhost:4000` page in your browser:
 
 ![Signed In Access to Index Page](images/diving_in/updated_home_page.png)
 
@@ -639,9 +649,9 @@ authenticated the new player at the same time.
 ## Sessions
 
 To complete our authentication features, we'll need to handle user sessions. We
-were able to handle sign ins in the previous section because we took care of it
-while creating an account, but now we'll also want to allow users to sign out
-and sign back in whenever they'd like.
+were able to handle the sign in feature in the previous section because we took
+care of it while creating an account, but now we'll also want to allow users to
+sign out and sign back in whenever they'd like.
 
 Let's start by creating a `PlayerSessionController`. Create a new file called
 `lib/platform_web/controllers/player_session_controller.ex`, and add the
@@ -652,15 +662,21 @@ defmodule PlatformWeb.PlayerSessionController do
   use PlatformWeb, :controller
 
   def new(conn, _) do
-    render conn, "new.html"
+    render(conn, "new.html")
   end
 
   def create(conn, %{"session" => %{"username" => user, "password" => pass}}) do
-    case PlatformWeb.PlayerAuthController.sign_in_with_username_and_password(conn, user, pass, repo: Platform.Repo) do
+    case PlatformWeb.PlayerAuthController.sign_in_with_username_and_password(
+           conn,
+           user,
+           pass,
+           repo: Platform.Repo
+         ) do
       {:ok, conn} ->
         conn
         |> put_flash(:info, "Welcome back!")
-        |> redirect(to: page_path(conn, :index))
+        |> redirect(to: Routes.page_path(conn, :index))
+
       {:error, _reason, conn} ->
         conn
         |> put_flash(:error, "Invalid username/password combination.")
@@ -671,7 +687,7 @@ defmodule PlatformWeb.PlayerSessionController do
   def delete(conn, _) do
     conn
     |> PlatformWeb.PlayerAuthController.sign_out()
-    |> redirect(to: player_session_path(conn, :new))
+    |> redirect(to: Routes.player_session_path(conn, :new))
   end
 end
 ```
@@ -702,23 +718,19 @@ We'll also need to create the corresponding template. Create a
 `new.html.eex` file inside with the following content:
 
 ```embedded_elixir
-<h2>Player Sign In</h2>
+<h1>Player Sign In</h1>
 
-<%= form_for @conn, player_session_path(@conn, :create), [as: :session], fn f -> %>
-  <div class="form-group">
-    <%= label f, :username, "Player Username", class: "control-label" %>
-    <%= text_input f, :username, placeholder: "Enter username...", class: "form-control" %>
-    <%= error_tag f, :username %>
-  </div>
+<%= form_for @conn, Routes.player_session_path(@conn, :create), [as: :session], fn f -> %>
+  <%= label f, :username %>
+  <%= text_input f, :username %>
+  <%= error_tag f, :username %>
 
-  <div class="form-group">
-    <%= label f, :password, "Player Password", class: "control-label" %>
-    <%= password_input f, :password, placeholder: "Enter password...", class: "form-control" %>
-    <%= error_tag f, :password %>
-  </div>
+  <%= label f, :password %>
+  <%= password_input f, :password %>
+  <%= error_tag f, :password %>
 
-  <div class="form-group">
-    <%= submit "Sign In", class: "btn btn-primary" %>
+  <div>
+    <%= submit "Sign In" %>
   </div>
 <% end %>
 ```
@@ -751,7 +763,7 @@ sessions to sign in and out of the platform.
 
 Lastly, we'll create the functions in our `PlayerAuthController` that tie
 everything together. Add the `sign_in_with_username_and_password/4` function and
-the `sign_out/1` functions below the `sign_in/2` function at the bottom of the
+the `sign_out/1` function below the `sign_in/2` function at the bottom of the
 `lib/platform_web/controllers/player_auth_controller.ex` file.
 
 ```elixir
@@ -762,8 +774,10 @@ def sign_in_with_username_and_password(conn, username, given_pass, opts) do
   cond do
     player && Comeonin.Bcrypt.checkpw(given_pass, player.password_digest) ->
       {:ok, sign_in(conn, player)}
+
     player ->
       {:error, :unauthorized, conn}
+
     true ->
       Comeonin.Bcrypt.dummy_checkpw()
       {:error, :not_found, conn}
@@ -791,9 +805,9 @@ you're using Google Chrome on macOS, you can create a new incognito window with
 `Command + Shift + N`. It's also a good idea to restart your Phoenix server
 with `mix phx.server` at this point to get things up and running.
 
-We can test out the sign in process with the same account that we created in
-the previous sections. Go to the **Player Sign In** page at
-`http://0.0.0.0:4000/sessions/new` and try entering `chrismccord` for both the
+We can test out the sign in process with the same account we created in the
+previous sections. Go to the **Player Sign In** page at
+`http://localhost:4000/sessions/new` and try entering `chrismccord` for both the
 `username` and `password` fields.
 
 ![Player Sign In Page](images/phoenix_authentication/player_sign_in_page.png)
@@ -816,14 +830,18 @@ remove the default Phoenix header.
 Update the contents of the `<header>` tag with the following:
 
 ```embedded_elixir
-<header class="header">
-  <nav role="navigation">
-    <ul class="nav nav-pills pull-right">
-      <%= link "Sign Up", to: player_path(@conn, :new), class: "btn btn-sm btn-success" %>
-      <%= link "Sign In", to: player_session_path(@conn, :new), class: "btn btn-sm btn-primary" %>
-    </ul>
-  </nav>
-  <span class="logo"></span>
+<header>
+  <section class="container">
+    <nav role="navigation">
+      <ul>
+        <%= link "Sign Up", to: Routes.player_path(@conn, :new), class: "button" %>
+        <%= link "Sign In", to: Routes.player_session_path(@conn, :new), class: "button" %>
+      </ul>
+    </nav>
+    <a href="http://phoenixframework.org/" class="phx-logo">
+      <img src="<%= Routes.static_path(@conn, "/images/phoenix.png") %>" alt="Phoenix Framework Logo"/>
+    </a>
+  </section>
 </header>
 ```
 
@@ -839,19 +857,23 @@ want to show them their `username` in the header along with a sign out button.
 Let's update our `<header>` tag again with the following:
 
 ```embedded_elixir
-<header class="header">
-  <nav role="navigation">
-    <ul class="nav nav-pills pull-right">
-      <%= if @current_user do %>
-        <p class="small">Signed in as <strong><%= @current_user.username %></strong></p>
-        <%= link "Sign Out", to: player_session_path(@conn, :delete, @current_user), method: "delete", class: "btn btn-sm btn-danger" %>
-      <% else %>
-        <%= link "Sign Up", to: player_path(@conn, :new), class: "btn btn-sm btn-success" %>
-        <%= link "Sign In", to: player_session_path(@conn, :new), class: "btn btn-sm btn-primary" %>
-      <% end %>
-    </ul>
-  </nav>
-  <span class="logo"></span>
+<header>
+  <section class="container">
+    <nav role="navigation">
+      <ul>
+        <%= if @current_user do %>
+          <p>Signed in as <strong><%= @current_user.username %></strong></p>
+          <%= link "Sign Out", to: Routes.player_session_path(@conn, :delete, @current_user), method: "delete", class: "button" %>
+        <% else %>
+          <%= link "Sign Up", to: Routes.player_path(@conn, :new), class: "button" %>
+          <%= link "Sign In", to: Routes.player_session_path(@conn, :new), class: "button" %>
+        <% end %>
+      </ul>
+    </nav>
+    <a href="http://phoenixframework.org/" class="phx-logo">
+      <img src="<%= Routes.static_path(@conn, "/images/phoenix.png") %>" alt="Phoenix Framework Logo"/>
+    </a>
+  </section>
 </header>
 ```
 

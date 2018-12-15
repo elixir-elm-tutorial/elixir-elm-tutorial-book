@@ -14,76 +14,40 @@ to the user's mouse position, and it will allow to track the mouse location as
 it changes over time. Don't worry if it sounds a little confusing, we'll take a
 look at how we can subscribe to keyboard input now.
 
-## Importing the Keyboard Package
+## Subscribing to Keyboard Input
 
-In order to work with keyboard input, we'll need to start by importing the Elm
-[`Keyboard`](http://package.elm-lang.org/packages/elm-lang/keyboard/latest/Keyboard)
-package.
-
-From the command line, let's switch to the `assets` folder and
-run the following command:
-
-```shell
-$ elm-package install elm-lang/keyboard
-```
-
-After agreeing to install the package by entering the `Y` key, here's the
-output we should see:
-
-```shell
-$ elm-package install elm-lang/keyboard
-To install elm-lang/keyboard I would like to add the following
-dependency to elm-package.json:
-
-    "elm-lang/keyboard": "1.0.1 <= v < 2.0.0"
-
-May I add that to elm-package.json for you? [Y/n] Y
-
-Some new packages are needed. Here is the upgrade plan.
-
-  Install:
-    elm-lang/dom 1.1.1
-    elm-lang/keyboard 1.0.1
-
-Do you approve of this plan? [Y/n] Y
-Starting downloads...
-
-  ● elm-lang/keyboard 1.0.1
-  ● elm-lang/dom 1.1.1
-
-Packages configured successfully!
-```
-
-Now that we have the package installed, let's import it at the top of our
-`Platformer.elm` file. We'll need to import `KeyCode`s along with the `downs`
-function. Each key on your keyboard is represented by an integer. The Elm core
-library comes with functions called `fromCode` and `toCode` to convert back and
-forth between keyboard keys and their related integer representations.
+In order to work with user keyboard input, we'll need to work with the
+[`Browser.Events`](https://package.elm-lang.org/packages/elm/browser/latest/Browser-Events)
+module. We'll subscribe to "key down" events for when players press the arrow
+keys on their keyboard. And we'll also need to use `Json.Decode` to decode the
+"key" responses, which are strings like `"ArrowRight"` that represent keys on
+the keyboard.
 
 As an example, we're going to want our character to move right when we press
-the right arrow key on the keyboard. That key is represented by the integer
-`39` (you can use [keycode.info](http://keycode.info) to type on your keyboard
-and see the related integer value, but these values are easy to look up online,
-so we don't need to memorize them). In our application, we'll be able to
+the right arrow key on the keyboard. In our application, we'll be able to
 determine that users are pressing the right arrow key, and adjust our
 character's position accordingly.
 
-Let's update the top of our `Platformer.elm` file with the following:
+Let's update the top of our `Platformer.elm` file with the following for the
+`Browser.Events` and `Json.Decode` features:
 
 ```elm
-module Platformer exposing (..)
+module Games.Platformer exposing (main)
 
+import Browser
+import Browser.Events
 import Html exposing (Html, div)
-import Keyboard exposing (KeyCode, downs)
+import Json.Decode as Decode
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
 ```
 
 ## Tracking Key Presses
 
-In order to track key presses, we'll need to make two changes:
+In order to track key presses, we'll need to make three changes:
 
 - subscribe to key presses in our `subscriptions` function
+- decode the key presses with a new `keyDecoder` function
 - handle the key presses in our `update` function
 
 Let's start with the `subscriptions` function. Instead of `Sub.none`, let's
@@ -92,30 +56,46 @@ subscribe to key presses with the following code:
 ```elm
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.batch [ downs KeyDown ]
+    Sub.batch
+        [ Browser.Events.onKeyDown (Decode.map KeyDown keyDecoder)
+        ]
 ```
 
 One thing to keep in mind is that this code won't work until we add `KeyDown`
 to our `update` function. The `Sub.batch` function allows us to batch together
 different subscriptions, so we could also subscribe to mouse input if we needed
 to. For now, all we need to know is that we're using the Elm Architecture to
-subscribe to keyboard input via the `downs` function, and we're going to
-handle these presses with the `KeyDown` message in the `update` function.
+subscribe to keyboard input via the `onKeyDown` function. We'll decode the
+keys that are pressed, and then handle them with the `KeyDown` message in the
+`update` function.
+
+Below the `subscriptions` function, we'll add our decoder to handle the keys
+pressed. We touched briefly on JSON decoding earlier in the book, but here
+we're just decoding a single field for string values like `"ArrowUp"` for arrow
+keys and strings like `"a"` for letters that are pressed on the keyboard. In
+other words, `onKeyDown` creates the subscription for us using the
+`keyDecoder`, and we'll handle the response in the `KeyDown` update.
+
+```elm
+keyDecoder : Decode.Decoder String
+keyDecoder =
+    Decode.field "key" Decode.string
+```
 
 As an initial way to get keyboard input working, we're going to set things up
-so that any key press will move the character slightly to the right on the
-screen (towards the coin item). To accomplish this, we'll start by creating our
-new `KeyDown` update message, that takes a `KeyCode` as an argument:
+so that _any_ key press will move the character slightly to the right on the
+screen (towards the coin item). To accomplish this, we'll start by adding
+`KeyDown` (which takes the key as a `String` argument) to our `Msg` type:
 
 ```elm
 type Msg
-    = NoOp
-    | KeyDown KeyCode
+    = KeyDown String
+    | NoOp
 ```
 
-We have two update actions, the first is to perform no operation with `NoOp`,
-and the second will perform an update to the model based on `KeyDown` actions
-from the user.
+We have two possibilities in our `Msg` type. One is to perform no operation
+with `NoOp`, and the second will perform an update to the model based on
+`KeyDown` actions from the user.
 
 Let's finish getting things working again with a big change to our `update`
 function:
@@ -124,11 +104,11 @@ function:
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        KeyDown key ->
+            ( { model | characterPositionX = model.characterPositionX + 15 }, Cmd.none )
+
         NoOp ->
             ( model, Cmd.none )
-
-        KeyDown keyCode ->
-            ( { model | characterPositionX = model.characterPositionX + 15 }, Cmd.none )
 ```
 
 There's a lot going on here, so don't worry if it seems a little overwhelming
@@ -160,26 +140,26 @@ pixels.
 It's exciting to see our character moving around the screen, but we want to
 be able to change direction based on the specific key we're pressing.
 
-In order to accomplish this, let's add a `case` expression inside our `update`
-function. We only want our character to move to the right when we press the
-right arrow key (which has the key code `39`) on our keyboard. We're already
-passing the `keyCode` to our `KeyDown` message, so we can use our `case`
+In order to accomplish this, let's add another `case` expression inside our
+`update` function. We only want our character to move to the right when we
+press the right arrow key (`"ArrowRight"`) on our keyboard. We're already
+passing the `key` to our `KeyDown` message, so we can use our `case`
 expression to check which key is being pressed and respond with the following:
 
 ```elm
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        NoOp ->
-            ( model, Cmd.none )
-
-        KeyDown keyCode ->
-            case keyCode of
-                39 ->
+        KeyDown key ->
+            case key of
+                "ArrowRight" ->
                     ( { model | characterPositionX = model.characterPositionX + 15 }, Cmd.none )
 
                 _ ->
                     ( model, Cmd.none )
+
+        NoOp ->
+            ( model, Cmd.none )
 ```
 
 Our game is basically performing the same way it was before, where the
@@ -210,17 +190,17 @@ the keys are pressed.
 ## Changing Direction
 
 Let's go ahead and add the ability for our character to move in the left
-direction as well. This will involve some familiar changes to our `KeyDown`
-message, where we're going to add a case for the left arrow key (`37`) and
-subtract from the character's horizontal position value:
+direction as well. This will involve some familiar changes to `KeyDown`, where
+we're going to add a case for the left arrow key (`"ArrowLeft"`) and subtract
+from the character's horizontal position value:
 
 ```elm
-KeyDown keyCode ->
-    case keyCode of
-        37 ->
+KeyDown key ->
+    case key of
+        "ArrowLeft" ->
             ( { model | characterPositionX = model.characterPositionX - 15 }, Cmd.none )
 
-        39 ->
+        "ArrowRight" ->
             ( { model | characterPositionX = model.characterPositionX + 15 }, Cmd.none )
 
         _ ->
@@ -230,8 +210,8 @@ KeyDown keyCode ->
 ## Character Direction
 
 We now have the ability to move our character to the left and the right on the
-screen. Let's add a new `Direction` union type so that the character can face
-the correct direction when moving left and right.
+screen. Let's add a new `Direction` type so that the character can face the
+correct direction when moving left and right.
 
 ```elm
 type Direction
@@ -278,15 +258,16 @@ pressed.
 
 The format of the record update syntax may look a little different than what
 we've been used to seeing so far, but we're still doing the same thing. When
-players press the left arrow key (`37`), the character will move `15` pixels to
-the left and the `characterDirection` will be set to `Left`. Similarly, when
-players press the right arrow key (`39`), the character will move `15` pixels to
-the right and the `characterDirection` will be set to `Right`.
+players press the left arrow key (`"ArrowLeft"`), the character will move `15`
+pixels to the left and the `characterDirection` will be set to `Left`.
+Similarly, when players press the right arrow key (`"ArrowRight"`), the
+character will move `15` pixels to the right and the `characterDirection` will
+be set to `Right`.
 
 ```elm
-KeyDown keyCode ->
-    case keyCode of
-        37 ->
+KeyDown key ->
+    case key of
+        "ArrowLeft" ->
             ( { model
                 | characterDirection = Left
                 , characterPositionX = model.characterPositionX - 15
@@ -294,7 +275,7 @@ KeyDown keyCode ->
             , Cmd.none
             )
 
-        39 ->
+        "ArrowRight" ->
             ( { model
                 | characterDirection = Right
                 , characterPositionX = model.characterPositionX + 15
@@ -319,7 +300,7 @@ and click the Tools > Flip Horizontal option.
 
 ![character-right.gif](images/adding_interaction/character-right.gif)
 
-This assets are also available in the reposotiry for this book if you'd like
+These assets are also available in the repository for this book if you'd like
 to download them from GitHub.
 
 - [character-left.gif](https://github.com/elixir-elm-tutorial/elixir-elm-tutorial-book/tree/master/manuscript/images/adding_interaction/character-left.gif)
@@ -345,14 +326,14 @@ viewCharacter model =
                 Right ->
                     "/images/character-right.gif"
     in
-        image
-            [ xlinkHref characterImage
-            , x (toString model.characterPositionX)
-            , y (toString model.characterPositionY)
-            , width "50"
-            , height "50"
-            ]
-            []
+    image
+        [ xlinkHref characterImage
+        , x (String.fromInt model.characterPositionX)
+        , y (String.fromInt model.characterPositionY)
+        , width "50"
+        , height "50"
+        ]
+        []
 ```
 
 And with that change, we should be able to see our character changing direction
@@ -373,8 +354,8 @@ One way that we can start thinking about this is to figure out what we want to
 do when the character reaches the item. Let's add a `characterFoundItem`
 function below our `update` function that will return a boolean value about
 whether or not the character has discovered the item. We'll use the position of
-both the character and the item to see if they match, and then we'll return
-`True` if the character's position matches the item's position.
+both the character and the item to see if they match, which will return `True`
+if the character's position matches the item's position.
 
 ```elm
 characterFoundItem : Model -> Bool
@@ -392,19 +373,18 @@ the character has not found the item.
 ```elm
 viewItem : Model -> Svg Msg
 viewItem model =
-    case characterFoundItem model of
-        True ->
-            svg [] []
+    if characterFoundItem model then
+        svg [] []
 
-        False ->
-            image
-                [ xlinkHref "/images/coin.svg"
-                , x (toString model.itemPositionX)
-                , y (toString model.itemPositionY)
-                , width "20"
-                , height "20"
-                ]
-                []
+    else
+        image
+            [ xlinkHref "/images/coin.svg"
+            , x (String.fromInt model.itemPositionX)
+            , y (String.fromInt model.itemPositionY)
+            , width "20"
+            , height "20"
+            ]
+            []
 ```
 
 If you try this out in the browser, you'll see that it _roughly_ accomplishes
@@ -465,113 +445,64 @@ gameplay until we can find a better approach.
 
 ## Spawning Items
 
-In order to animate our scene, we'll need to start by importing the Elm
-[`AnimationFrame`](http://package.elm-lang.org/packages/elm-lang/animation-frame/latest/AnimationFrame)
-package.
+In order to animate our scene, we'll start working with animation frames from
+the `Browser.Events` module.
 
-From the command line, let's switch to the `assets` folder and
-run the following command:
-
-```shell
-$ elm-package install elm-lang/animation-frame
-```
-
-After agreeing to install the package by entering the `Y` key, here's the
-output we should see:
-
-```shell
-$ elm-package install elm-lang/animation-frame
-To install elm-lang/animation-frame I would like to add the following
-dependency to elm-package.json:
-
-    "elm-lang/animation-frame": "1.0.1 <= v < 2.0.0"
-
-May I add that to elm-package.json for you? [Y/n]
-
-Some new packages are needed. Here is the upgrade plan.
-
-  Install:
-    elm-lang/animation-frame 1.0.1
-
-Do you approve of this plan? [Y/n]
-Starting downloads...
-
-  ● elm-lang/animation-frame 1.0.1
-
-Packages configured successfully!
-```
-
-We now have mechanisms for moving our character around the screen, and we
+We currently have mechanisms for moving our character around the screen, and we
 managed to add some initial code for the character to find items. But we don't
-just want to hide the item when the character finds it. We'd like to create
-new coins in new locations, and this is an opportunity to start making our game
+just want to hide the item when the character finds it. We'd like to create new
+coins in new locations, and this is an opportunity to start making our game
 come to life.
 
-Let's get started by importing a handful of new packages that we'll need for
-our game at the top of our file. We'll import
-[`AnimationFrame`](http://package.elm-lang.org/packages/elm-lang/animation-frame/latest/AnimationFrame),
-[`Random`](http://package.elm-lang.org/packages/elm-lang/core/latest/Random),
-and
-[`Time`](http://package.elm-lang.org/packages/elm-lang/core/latest/Time) (note
-that I tend to sort my imports in alphabetical order):
+Let's get started by working with a function called
+[`onAnimationFrameDelta`](https://package.elm-lang.org/packages/elm/browser/latest/Browser-Events#onAnimationFrameDelta).
+This will be helpful for our game, because it enables us to render smooth
+animations and subscribe to differences over time (in milliseconds).
 
-```elm
-module Platformer exposing (..)
-
-import AnimationFrame exposing (diffs)
-import Html exposing (Html, div)
-import Keyboard exposing (KeyCode, downs)
-import Random
-import Svg exposing (..)
-import Svg.Attributes exposing (..)
-import Time exposing (Time)
-```
-
-The `AnimationFrame` library will be helpful for our game, because it enables
-us to render smooth animations and subscribe to differences over time. We can
-start by updating our `subscriptions` function to use the
-[`diffs`](http://package.elm-lang.org/packages/elm-lang/animation-frame/latest/AnimationFrame#diffs)
-function from the `AnimationFrame` library, and we'll pass a new message that
-we'll create momentarily. Update `subscriptions` with the following:
+Let's update our `subscriptions` function to include
+`Browser.Events.onAnimationFrameDelta` below the existing subscription to user
+keyboard input:
 
 ```elm
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        [ downs KeyDown
-        , diffs TimeUpdate
+        [ Browser.Events.onKeyDown (Decode.map KeyDown keyDecoder)
+        , Browser.Events.onAnimationFrameDelta GameLoop
         ]
 ```
 
-This means we'll need to add a new `TimeUpdate` message along with a change to
+This means we'll need to add a new `GameLoop` message along with a change to
 our `update` function:
 
 ```elm
 type Msg
-    = NoOp
-    | KeyDown KeyCode
-    | TimeUpdate Time
+    = GameLoop Float
+    | KeyDown String
+    | NoOp
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        -- ...
-
-        TimeUpdate time ->
+        GameLoop time ->
             ( model, Cmd.none )
+
+        -- ...
 ```
 
 This may not seem like a big deal, but it is. We now have the ability to change
 things over time in our game, so we could have items and enemies moving around
-as time moves forward. Let's update our `TimeUpdate` message to perform some
-action. We want to change the position of our item when our character finds it,
-so let's use our `characterFoundItem` function to make changes to the `model`:
+as time moves forward. Let's update our `GameLoop` inside the `update` function
+to perform some action. We want to change the position of our item when our
+character finds it, so let's use our `characterFoundItem` function to make
+changes to the `model`:
 
 ```elm
-TimeUpdate time ->
+GameLoop time ->
     if characterFoundItem model then
         ( { model | itemPositionX = model.itemPositionX - 100 }, Cmd.none )
+
     else
         ( model, Cmd.none )
 ```
@@ -585,8 +516,8 @@ viewItem : Model -> Svg Msg
 viewItem model =
     image
         [ xlinkHref "/images/coin.svg"
-        , x (toString model.itemPositionX)
-        , y (toString model.itemPositionY)
+        , x (String.fromInt model.itemPositionX)
+        , y (String.fromInt model.itemPositionY)
         , width "20"
         , height "20"
         ]
@@ -602,17 +533,39 @@ location `100` pixels to the left.
 ## Working with Randomness
 
 Instead of manually moving the coin to the left, let's take a look at the
-`Random` library to move it to a random new location on the x-axis.
+[`Random`](https://package.elm-lang.org/packages/elm/random/latest) package to
+move it to a random new location on the x-axis.
 
-To accomplish this, we'll start by changing our `TimeUpdate` message, and then
+First, let's install the `elm/random` package with the following:
+
+```shell
+$ elm install elm/random
+```
+
+Next, we can import the `Random` module at the top of `Platformer.elm`. Here is
+our full list of imports:
+
+```elm
+import Browser
+import Browser.Events
+import Html exposing (Html, div)
+import Json.Decode as Decode
+import Random
+import Svg exposing (..)
+import Svg.Attributes exposing (..)
+```
+
+Next, we'll need to change the `GameLoop` in our `update` function, and then
 we'll add a new `SetNewItemPositionX` message to change the position of the
 item in the model.
 
-First, let's change our `TimeUpdate` message to remove the manual shifting of
-the coin, and replace it with a new random number generator:
+First, let's change our `GameLoop` message to remove the manual shifting of
+the coin, and replace it with a new random number generator (note that we're
+using `50` and `500` as values because that's the range where the item will
+be visible on the screen):
 
 ```elm
-TimeUpdate time ->
+GameLoop time ->
     if characterFoundItem model then
         ( model, Random.generate SetNewItemPositionX (Random.int 50 500) )
     else
@@ -621,14 +574,13 @@ TimeUpdate time ->
 
 We're using two different functions from the `Random` library here. We'll use
 `Random.int`, which takes two integer values and gives us a random number in
-between those values. Then we use the `Random.generate` function, which takes
+between those values. Then, we use the `Random.generate` function, which takes
 another message (which we'll use to update the model) along with the random
 integer we're creating. It's admittedly confusing, but keep in mind that
 generating a random number is actually an effect, because a function that
 returns different values depending on the inputs is by nature impure. Working
 with random numbers this way allows us to have _managed_ effects and make sure
-they don't wreak havoc on our application (we'll learn more about this
-elsewhere in the book so don't worry too much for now).
+they don't wreak havoc on our application.
 
 Now that we have a new value, we can use it to update the model with the
 `SetNewItemPositionX` message. Here are the changes in context with the message
@@ -636,22 +588,22 @@ types and full `update` function:
 
 ```elm
 type Msg
-    = NoOp
-    | KeyDown KeyCode
+    = GameLoop Float
+    | KeyDown String
+    | NoOp
     | SetNewItemPositionX Int
-    | TimeUpdate Time
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        -- ...
-
-        TimeUpdate time ->
+        GameLoop time ->
             if characterFoundItem model then
                 ( model, Random.generate SetNewItemPositionX (Random.int 50 500) )
             else
                 ( model, Cmd.none )
+
+        -- ...
 
         SetNewItemPositionX newPositionX ->
             ( { model | itemPositionX = newPositionX }, Cmd.none )

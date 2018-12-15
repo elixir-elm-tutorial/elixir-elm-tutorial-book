@@ -29,7 +29,7 @@ mistakes and make Elm code easier to write.
 Let's take a look at our existing Elm application:
 
 ```elm
-module Main exposing (..)
+module Main exposing (main)
 
 import Html exposing (Html, text)
 
@@ -58,11 +58,16 @@ start with something like this:
 ## Elm View
 
 Instead of displaying our `"Hello from Elm inside Phoenix!"` text, let's
-create our games list in the `main` function. We'll start with an empty `div`
-element:
+create our games list in the `main` function.
+
+We'll start by importing the
+[`div`](http://package.elm-lang.org/packages/elm-lang/html/latest/Html#div)
+function from Elm's
+[`Html`](http://package.elm-lang.org/packages/elm-lang/html/latest/Html)
+module. Then, we'll render a `div` element in our `main` function:
 
 ```elm
-module Main exposing (..)
+module Main exposing (main)
 
 import Html exposing (Html, text, div)
 
@@ -72,11 +77,7 @@ main =
     div [] []
 ```
 
-Note that the first step is to import the
-[`div`](http://package.elm-lang.org/packages/elm-lang/html/latest/Html#div)
-function from Elm's
-[`Html`](http://package.elm-lang.org/packages/elm-lang/html/latest/Html)
-module. Then, we replace our original text with `div [] []`. Those empty square
+Note that we replaced our original text with `div [] []`. Those empty square
 brackets indicate that we're passing two empty lists to the `div` function. The
 first one will be a list of attributes (like our class name), and the second
 will be the contents of our `div` (our unordered list).
@@ -84,7 +85,7 @@ will be the contents of our `div` (our unordered list).
 In order to use the `class` attribute, we'll need to import that too:
 
 ```elm
-module Main exposing (..)
+module Main exposing (main)
 
 import Html exposing (Html, text, div)
 import Html.Attributes exposing (class)
@@ -104,7 +105,7 @@ while we're in development mode and we can go back later and refactor to import
 only what we need. Let's adjust our import declarations with the following:
 
 ```elm
-module Main exposing (..)
+module Main exposing (main)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -120,7 +121,7 @@ still only have an empty `div` on the page, so let's start adding our list.
 
 ## Creating a List of Games
 
-Remember that we are passing two lists to our `div` function:
+Remember that we are passing two lists as arguments to our `div` function:
 
 ```elm
 div [ class "games-index" ] []
@@ -155,7 +156,7 @@ inside an unordered list, which is nested inside our `div`. But let's finish
 adding our current example by adding our list items:
 
 ```elm
-module Main exposing (..)
+module Main exposing (main)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -186,7 +187,7 @@ assigning everything directly to our `main` function, let's split things up
 into a games index container, a list, and individual list items.
 
 ```elm
-module Main exposing (..)
+module Main exposing (main)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -235,7 +236,8 @@ gamesListItem =
 
 And now we can fill out our functions with the existing example we created in
 our `main` function. Note that we're only going to add a single list item for
-now, and then we're going to extract our data into a separate list:
+now, and then we're going to extract our data (the data currently consists of
+the game titles like `"Platform Game"`) into a separate list:
 
 ```elm
 gamesIndex : Html msg
@@ -257,7 +259,7 @@ With our `main` function, we can create a `div` that will display a header and
 our `gamesIndex` to render our new structure to the page with a single game:
 
 ```elm
-module Main exposing (..)
+module Main exposing (main)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -297,7 +299,7 @@ things to go. In this example, we're going to start our `model` as an empty
 list:
 
 ```elm
-module Main exposing (..)
+module Main exposing (main)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -353,9 +355,9 @@ model =
 ```
 
 Having the comma characters at the beginning of the line might seem foreign if
-you're coming from other languages, but it's easy to get used to. And if you're
-using elm-format then we're able to focus less on syntax and more on the
-overall concepts we're learning here.
+you're coming from other languages, but it's easy to get used to. Another
+benefit to using elm-format is that we're able to focus less on syntax and more
+on the overall concepts we're learning.
 
 ## Passing Data to the View
 
@@ -363,12 +365,12 @@ We're going to work towards displaying our full list of games, but we'll start
 with trying to display a single game from our list because it introduces some
 interesting concepts in Elm.
 
-What if we want to find the first game in our list, and then pass that to the
+What if we want to find the first game in our list and then pass that to the
 `gamesListItem` function instead of using the hard-coded string we currently
 have there?
 
 Our first step would be to use the `model` list and find the first item. To do
-that, we'd head to the Elm documentation for the `List` module, and try to find
+that, we'll go to the Elm documentation for the `List` module, and try to find
 a function that would give us the results we're looking for. Take a look at the
 [`List`](http://package.elm-lang.org/packages/elm-lang/core/latest/List)
 module documentation and find the `head` function.
@@ -390,30 +392,31 @@ firstGame =
 
 You might think that `firstGame` would be set to `"Platform Game"`, but in
 actuality we're working with something called a "Maybe" in Elm. The `List.head`
-function doesn't return the result itself, it returns a `Maybe`. The reason for
-this is that our list of data _could_ be empty.
+function doesn't return the result itself, it returns a `Maybe`. This happens
+because our list of data _could_ be empty.
 
 To illustrate what's happening, we can take a quick look in the interactive
-Elm REPL. From the command line, type `elm-repl` to get started:
+Elm REPL. From the command line, type `elm repl` to get started:
 
 ```shell
-$ elm-repl
+$ elm repl
 ```
 
 This will display an interactive prompt where we can type in some Elm code and
-view the output. Here's an example where we're accessing the `head` from a
-list that contains a couple of strings and another example where we're trying
-to access the `head` from an empty list.
+view the output. It's similar to the `iex` environment we saw previously for
+Elixir. Here's an example where we're accessing the `head` from a list that
+contains a couple of strings and another example where we're trying to access
+the `head` from an empty list.
 
 ```elm
-$ elm-repl
----- elm-repl 0.18.0 -----------------------------------------------------------
- :help for help, :exit to exit, more at <https://github.com/elm-lang/elm-repl>
+$ elm repl
+---- Elm 0.19.0 ----------------------------------------------------------------
+Read <https://elm-lang.org/0.19.0/repl> to learn more: exit, help, imports, etc.
 --------------------------------------------------------------------------------
 > List.head [ "Platform Game", "Adventure Game" ]
-Just "Platform Game"
+Just ("Platform Game") : Maybe String
 > List.head []
-Nothing
+Nothing : Maybe a
 ```
 
 ## Elm Maybe
@@ -464,9 +467,9 @@ firstGameTitle =
             ""
 ```
 
-If this is overwhelming or confusing, don't worry too much. Sometimes it just
-takes repeated exposure to these concepts before they become obvious. The
-naming in our example should help with our understanding.
+If this is overwhelming or confusing, try not to worry. Sometimes it just takes
+repeated exposure to these concepts before they become more obvious. The naming
+in our example should help with our understanding.
 
 We're trying to get the first game title from our `model`. So we start by using
 `List.head`, which returns a `Maybe` type, and we assign that to
@@ -564,7 +567,8 @@ gamesList gameTitles =
 There's a lot going on here. We're accepting a list of strings as the argument
 to our `gamesList` function. Then, we're going to iterate through those game
 titles one at a time using `List.map`. Take a look at the documentation for the
-[`List.map`](http://package.elm-lang.org/packages/elm-lang/core/latest/List#map) function, and we see that it takes two arguments: a function and a list.
+[`List.map`](http://package.elm-lang.org/packages/elm-lang/core/latest/List#map)
+function. `List.map` takes two arguments: a function `(a -> b)` and a list.
 
 We're passing the list of all our game titles to the `List.map` function, and
 it's splitting them apart and sending the titles one at a time to the
@@ -598,7 +602,7 @@ we removed our `firstGameMaybe` and `firstGameTitle` functions now that we're
 mapping through all the titles):
 
 ```elm
-module Main exposing (..)
+module Main exposing (main)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)

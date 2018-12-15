@@ -35,22 +35,20 @@ everything work by tying them together in the `main` function.
 
 We're going to be breaking our original Elm application with all the changes
 we make in this chapter. But we don't want elm-format to keep warning us of
-errors while we're working. Let's comment out our original `main` function so
-we can keep working and using elm-format without it trying to build our full
-application for us:
+errors while we're working. Let's adjust our original `main` function to simply
+return an empty `div` element for now:
 
 ```elm
 -- MAIN
--- main : Html msg
--- main =
---     div []
---         [ h1 [] [ text "Games" ]
---         , gamesIndex model
---         ]
+
+
+main : Html msg
+main =
+     div [] []
 ```
 
-At the end of this chapter, we'll create a new version of the `main` function
-that will pull everything together for us.
+At the end of this chapter, we'll change our `main` function so it can pull
+everything together for us.
 
 ## Starting with the Model
 
@@ -83,23 +81,23 @@ type alias Model =
 
 
 type alias Game =
-    { gameTitle : String
-    , gameDescription : String
+    { title : String
+    , description : String
     }
 
 
 initialModel : Model
 initialModel =
-    [ { gameTitle = "Platform Game", gameDescription = "Platform game example." }
-    , { gameTitle = "Adventure Game", gameDescription = "Adventure game example." }
+    [ { title = "Platform Game", description = "Platform game example." }
+    , { title = "Adventure Game", description = "Adventure game example." }
     ]
 ```
 
 This is our first look at creating type aliases. We're creating one type alias
 for our overall `Model`, which is a list of games. Then, we define the type of
-our `Game` records. Each game is a record that will contain a `gameTitle` field
-and a `gameDescription` field, both of which are `String` types. We also add a
-type annotation for our `initialModel` function to ensure that it follows the
+our `Game` records. Each game is a record that will contain a `title` field and
+a `description` field, both of which are `String` types. We also add a type
+annotation for our `initialModel` function to ensure that it follows the
 `Model` type alias structure that we created above.
 
 Let's make a slight change to help further our understanding of what we're
@@ -113,16 +111,16 @@ type alias Model =
 
 
 type alias Game =
-    { gameTitle : String
-    , gameDescription : String
+    { title : String
+    , description : String
     }
 
 
 initialModel : Model
 initialModel =
     { gamesList =
-        [ { gameTitle = "Platform Game", gameDescription = "Platform game example." }
-        , { gameTitle = "Adventure Game", gameDescription = "Adventure game example." }
+        [ { title = "Platform Game", description = "Platform game example." }
+        , { title = "Adventure Game", description = "Adventure game example." }
         ]
     }
 ```
@@ -140,19 +138,20 @@ Since we commented out our `main` function, we can also remove our original
 reference:
 
 ```elm
-module Main exposing (..)
+module Main exposing (main)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
 
 
 -- MAIN
--- main : Html msg
--- main =
---     div []
---         [ h1 [] [ text "Games" ]
---         , gamesIndex model
---         ]
+
+
+main : Html msg
+main =
+     div [] []
+
+
 -- MODEL
 
 
@@ -162,23 +161,23 @@ type alias Model =
 
 
 type alias Game =
-    { gameTitle : String
-    , gameDescription : String
+    { title : String
+    , description : String
     }
 
 
 initialModel : Model
 initialModel =
     { gamesList =
-        [ { gameTitle = "Platform Game", gameDescription = "Platform game example." }
-        , { gameTitle = "Adventure Game", gameDescription = "Adventure game example." }
+        [ { title = "Platform Game", description = "Platform game example." }
+        , { title = "Adventure Game", description = "Adventure game example." }
         ]
     }
 ```
 
-When we add our new `main` function later, we'll want to initialize our model
-into an `init` function. But for now let's move on to the update section so we
-can introduce the necessary concepts as they arise.
+When we set up our `main` function later, we'll want to initialize our model
+into an `init` function. For now, let's move on to the update section so we can
+introduce the necessary concepts as they arise.
 
 ## Update
 
@@ -269,7 +268,7 @@ or not we're going to display our list of game data.
 
 Let's add a `displayGamesList` field that will be set to either `True` or
 `False`. We'll update the type alias for our `Model` and also set an initial
-value of `False` in our `initialModel`:
+value of `True` in our `initialModel`:
 
 ```elm
 type alias Model =
@@ -279,18 +278,18 @@ type alias Model =
 
 
 type alias Game =
-    { gameTitle : String
-    , gameDescription : String
+    { title : String
+    , description : String
     }
 
 
 initialModel : Model
 initialModel =
     { gamesList =
-        [ { gameTitle = "Platform Game", gameDescription = "Platform game example." }
-        , { gameTitle = "Adventure Game", gameDescription = "Adventure game example." }
+        [ { title = "Platform Game", description = "Platform game example." }
+        , { title = "Adventure Game", description = "Adventure game example." }
         ]
-    , displayGamesList = False
+    , displayGamesList = True
     }
 ```
 
@@ -365,55 +364,75 @@ view : Model -> Html Msg
 view model =
     div []
         [ h1 [ class "games-section" ] [ text "Games" ]
-        , button [ class "btn btn-success" ] [ text "Display Games List" ]
-        , button [ class "btn btn-danger" ] [ text "Hide Games List" ]
+        , button [ class "button" ] [ text "Display Games List" ]
+        , button [ class "button" ] [ text "Hide Games List" ]
         ]
 ```
 
 These `button` elements won't be fully functioning yet, but the good news is
 that we finally have enough code to start displaying our application in the
-browser. Let's add our `main` function, and we'll come back to the `view` so
-we can get all our features working.
+browser. We'll import Elm's `Browser` module and update our `main` function,
+and then we can come back to the `view` to get all our features working.
 
-## The Main Function
+## The Browser Module
 
-Let's go back to the top of our `Main.elm` file and add the following `main`
-function back in just below the `import` declarations. This code is how the Elm
-runtime pulls all the different functions we've created together:
+The
+[Browser](https://package.elm-lang.org/packages/elm/browser/latest/Browser#element)
+module allows us to create different types of Elm applications for web
+browsers, depending on our needs. Simple applications can use `Browser.sandbox`,
+whereas full single page apps (SPAs) can use `Browser.application`.
+
+We're going to get started with `Browser.element`, which will allow us to tie
+all of our work together and embed our Elm program within our Phoenix
+application.
+
+Go back to the top of our `Main.elm` file and import the `Browser` module above
+the existing imports:
 
 ```elm
-main : Program Never Model Msg
+import Browser
+import Html exposing (..)
+import Html.Attributes exposing (..)
+```
+
+Now we can update our `main` function with the following:
+
+```elm
 main =
-    Html.program
+    Browser.element
         { init = init
-        , view = view
         , update = update
         , subscriptions = subscriptions
+        , view = view
         }
 ```
 
 Adding our `main` function means we'll need to initialize our model with an
-`init` function. Add the following below the `initialModel` function:
+`init` function. Add the following below the `initialModel`:
 
 ```elm
-init : ( Model, Cmd Msg )
-init =
+init : () -> ( Model, Cmd Msg )
+init _ =
     ( initialModel, Cmd.none )
 ```
 
 This code tells Elm that we want to start with the `initialModel` as our data.
-We don't need to worry too much about `Cmd` yet, but it will basically allow us
-to run a
-["Command"](http://package.elm-lang.org/packages/elm-lang/core/latest/Platform-Cmd)
-in Elm to fetch additional data. We're going to cover Elm commands in detail in
-the next chapter, but for now we can just think of a command as an action that
-may succeed or fail. For instance, we could perform an HTTP request when we
-start our Elm application to gather initial data, and we'd have to handle the
-situations where that HTTP fetch was successful and situations where that might
-fail to fetch the data.
 
-With these changes to our model, we'll have to change our `update` function
-too:
+Elm also allows us to use "flags" if we want to pull in information from
+outside the application. When you see the empty tuple `()` as an argument, that
+just means we're choosing not to pull in additional data when we initialize our
+Elm application. We'll see more on this topic later in the book as we pull user
+data from Phoenix into our Elm application.
+
+We're also using `Cmd.none`, which means we don't need to worry about Elm
+["Commands"](http://package.elm-lang.org/packages/elm-lang/core/latest/Platform-Cmd)
+yet. We'll cover Elm commands in detail in the next chapter, but for now we can
+just think of a command as an action that may succeed or fail. For instance, we
+could perform an HTTP request when we start our Elm application to gather
+initial data, and we'd have to handle the situations where that HTTP fetch was
+successful as well as situations where it might fail to fetch the data.
+
+With the changes we made above, we'll have to change our `update` function too:
 
 ```elm
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -428,8 +447,8 @@ update msg model =
 
 At this point, our `main` function is pulling everything together and we're
 finally able to see our application rendered to the screen in the browser.
-Our buttons aren't set up to work yet, but we're now able to see them rendering
-on the screen.
+Our buttons aren't set up to work yet, but we're finally able to see them on
+the screen.
 
 ![Working Application Using Elm Architecture](images/elm_architecture/working_elm_application.png)
 
@@ -446,10 +465,11 @@ view : Model -> Html Msg
 view model =
     div []
         [ h1 [ class "games-section" ] [ text "Games" ]
-        , button [ class "btn btn-success" ] [ text "Display Games List" ]
-        , button [ class "btn btn-danger" ] [ text "Hide Games List" ]
+        , button [ class "button" ] [ text "Display Games List" ]
+        , button [ class "button" ] [ text "Hide Games List" ]
         , gamesIndex model
         ]
+
 
 gamesIndex : Model -> Html msg
 gamesIndex model =
@@ -467,15 +487,15 @@ gamesList games =
 gamesListItem : Game -> Html msg
 gamesListItem game =
     li [ class "game-item" ]
-        [ strong [] [ text game.gameTitle ]
-        , p [] [ text game.gameDescription ]
+        [ strong [] [ text game.title ]
+        , p [] [ text game.description ]
         ]
 ```
 
 We start by passing our full `model` to the `gamesIndex`, which passes the
 `gamesList` from the model along to the `gamesList` function. Then we pass
 those individual games to the `gamesListItem` function. For each `game`, we
-display both the `gameTitle` (in a `strong` element) and the `gameDescription`
+display both the `title` (in a `strong` element) and the `description`
 (in a `p` element).
 
 ![Displaying the List of Games](images/elm_architecture/rendering_the_games_list.png)
@@ -504,8 +524,8 @@ view : Model -> Html Msg
 view model =
     div []
         [ h1 [ class "games-section" ] [ text "Games" ]
-        , button [ class "btn btn-success", onClick DisplayGamesList ] [ text "Display Games List" ]
-        , button [ class "btn btn-danger", onClick HideGamesList ] [ text "Hide Games List" ]
+        , button [ class "button", onClick DisplayGamesList ] [ text "Display Games List" ]
+        , button [ class "button", onClick HideGamesList ] [ text "Hide Games List" ]
         , gamesIndex model
         ]
 ```
@@ -524,8 +544,8 @@ view : Model -> Html Msg
 view model =
     div []
         [ h1 [ class "games-section" ] [ text "Games" ]
-        , button [ class "btn btn-success", onClick DisplayGamesList ] [ text "Display Games List" ]
-        , button [ class "btn btn-danger", onClick HideGamesList ] [ text "Hide Games List" ]
+        , button [ class "button", onClick DisplayGamesList ] [ text "Display Games List" ]
+        , button [ class "button", onClick HideGamesList ] [ text "Hide Games List" ]
         , if model.displayGamesList then
             gamesIndex model
           else
@@ -546,19 +566,13 @@ gamesList games =
 gamesListItem : Game -> Html msg
 gamesListItem game =
     li [ class "game-item" ]
-        [ strong [] [ text game.gameTitle ]
-        , p [] [ text game.gameDescription ]
+        [ strong [] [ text game.title ]
+        , p [] [ text game.description ]
         ]
 ```
 
-We should be able to click the buttons and see the list of games displayed or
-hidden based on our interactions:
-
-![Working Buttons to Display and Hide the List of Games](images/elm_architecture/working_button_interactions.png)
-
-Now that we're changing state in our application, we can also start using the
-Elm debugger by clicking the Explore History tab at the bottom right corner of
-the browser to see changes to our model as they occur over time.
+We should now be able to click the buttons and see the list of games displayed
+or hidden based on our user interactions!
 
 ## Summary
 
