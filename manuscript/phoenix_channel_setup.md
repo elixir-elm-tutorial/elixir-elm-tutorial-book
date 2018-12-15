@@ -1,5 +1,10 @@
 # Phoenix Channel Setup
 
+**Warning!** *The content in this chapter is still in the process of being
+rewritten. This version of the book was released to allow users to work through
+updated content using the latest versions of Phoenix and Elm, but please
+consider the information in this chapter experimental and subject to change!*
+
 We have our game platform up and running, where users can sign in and play a
 simple Elm game that tracks a score. Now, let's work towards syncing the Elm
 front-end of our application with the Phoenix back-end. We'll learn about
@@ -16,7 +21,7 @@ we'll approach the topics:
 - Configuring the Elm front-end to work with channels
 - Joining the channel and pushing data over the socket
 
-## Warning
+## Caveats
 
 Now that we're working at the intersection of Elm and Phoenix, it's good to
 keep in mind that things are still rapidly changing in the community. There's

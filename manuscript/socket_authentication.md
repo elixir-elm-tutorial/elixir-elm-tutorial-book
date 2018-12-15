@@ -1,5 +1,10 @@
 # Socket Authentication
 
+**Warning!** *The content in this chapter is still in the process of being
+rewritten. This version of the book was released to allow users to work through
+updated content using the latest versions of Phoenix and Elm, but please
+consider the information in this chapter experimental and subject to change!*
+
 In the previous chapters, we've gotten our Phoenix channel configured and it's
 now up and running. We're able to send data over the socket, but we currently
 don't have a way to differentiate between players.

@@ -1,5 +1,10 @@
 # Syncing Score Data
 
+**Warning!** *The content in this chapter is still in the process of being
+rewritten. This version of the book was released to allow users to work through
+updated content using the latest versions of Phoenix and Elm, but please
+consider the information in this chapter experimental and subject to change!*
+
 We created our `ScoreChannel` and set up our socket connection in the last
 chapter, but we haven't really worked with Phoenix channels much outside of the
 initial configuration. In this chapter, we'll take that data from our Elm
