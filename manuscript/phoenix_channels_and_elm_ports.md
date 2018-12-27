@@ -1,27 +1,17 @@
-# Phoenix Channel Setup
-
-**Warning!** *The content in this chapter is still in the process of being
-rewritten. This version of the book was released to allow users to work through
-updated content using the latest versions of Phoenix and Elm, but please
-consider the information in this chapter experimental and subject to change!*
+# Phoenix Channels and Elm Ports
 
 We have our game platform up and running, where users can sign in and play a
-simple Elm game that tracks a score. Now, let's work towards syncing the Elm
-front-end of our application with the Phoenix back-end. We'll learn about
-Phoenix channels with the goal of being able to communicate the score from
-games back to a player's account in real-time.
+simple Elm game that tracks a score. Now, we'll be working at the intersection
+of Elixir, Elm, and JavaScript to sync the data between the front-end and
+back-end.
 
-Since this chapter is fairly tedious in terms of learning about channels and
-configuring both the back-end and the front-end, here's a brief outline of how
-we'll approach the topics:
+We'll learn about Phoenix channels with the goal of being able to communicate
+the score from our game to other players using WebSockets as well as saving the
+scores to the database. We'll also get an introduction to using Elm ports,
+which allow us to communicate between Elm and JavaScript while retaining the
+typesafe benefits of working with Elm.
 
-- Introduction to Phoenix channels and WebSockets
-- Creating our first Phoenix channel on the back-end
-- Setting up the Phoenix channel for joining and handling messages
-- Configuring the Elm front-end to work with channels
-- Joining the channel and pushing data over the socket
-
-## Caveats
+## A Brief Warning
 
 Now that we're working at the intersection of Elm and Phoenix, it's good to
 keep in mind that things are still rapidly changing in the community. There's
@@ -30,7 +20,7 @@ and techniques tend to change, it's also good to keep in mind that the overall
 concepts in Elixir and Elm both tend to stay the same. In other words, the
 material in this chapter is subject to change as new integration techniques
 become standard practice, but the concepts we're using to build our application
-will still be useful even as things change.
+will still be useful even as things evolve.
 
 ## Channels
 
