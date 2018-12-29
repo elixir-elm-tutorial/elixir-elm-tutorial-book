@@ -2,27 +2,30 @@
 
 We have our game platform up and running, where users can sign in and play a
 simple Elm game that tracks a score. Now, we'll be working at the intersection
-of Elixir, Elm, and JavaScript to sync the data between the front-end and
-back-end.
+of Elixir, Elm, and JavaScript to sync the data between the Elm front-end and
+the Phoenix back-end.
 
 We'll learn about Phoenix channels with the goal of being able to communicate
 the score from our game to other players using WebSockets as well as saving the
-scores to the database. We'll also get an introduction to using Elm ports,
-which allow us to communicate between Elm and JavaScript while retaining the
-typesafe benefits of working with Elm.
+scores to the database and display them on the screen. We'll also get an
+introduction to Elm ports, which allow us to communicate between Elm and
+JavaScript while retaining the typesafe benefits of working with Elm.
 
 ## A Brief Warning
 
-Now that we're working at the intersection of Elm and Phoenix, it's good to
-keep in mind that things are still rapidly changing in the community. There's
-no "official" client to hook up Elm and Phoenix yet. Although the libraries
-and techniques tend to change, it's also good to keep in mind that the overall
-concepts in Elixir and Elm both tend to stay the same. In other words, the
-material in this chapter is subject to change as new integration techniques
-become standard practice, but the concepts we're using to build our application
-will still be useful even as things evolve.
+It's good to keep in mind that the communities for Elixir and Elm are rapidly
+evolving, and the approach for integrating these languages can change quickly
+as well.
 
-## Channels
+There will likely be a time in the near future where packages make it very
+simple for developers to integrate the two languages with a straightforward
+API, but currently it can be a tedious process to connect things properly.
+
+The good news is that this knowledge is very valuable, because any non-trivial
+Elm application is likely going to need to work with JavaScript code and
+knowing how to use ports is essential.
+
+## Introduction to Channels
 
 Essentially, Phoenix channels give us a way to send and receive messages. A
 chatroom application is a common example of how channels work. When users enter
@@ -118,7 +121,7 @@ end
 
 Now, let's add another function that will allow us to handle incoming messages
 from the client. We'll use the `handle_in/3` function, and we'll listen for a
-`"save_score"` message to trigger it.
+`"broadcast_score"` message to trigger it.
 
 ```elixir
 defmodule PlatformWeb.ScoreChannel do
@@ -128,490 +131,353 @@ defmodule PlatformWeb.ScoreChannel do
     {:ok, socket}
   end
 
-  def handle_in("save_score", payload, socket) do
-    broadcast(socket, "save_score", payload)
+  def handle_in("broadcast_score", payload, socket) do
+    broadcast(socket, "broadcast_score", payload)
     {:noreply, socket}
   end
 end
 ```
 
-This will allow us to listen for a `"save_score"` message that we'll send from
-our Elm client. Inside the `handle_in/3` function, we use the
+This will allow us to listen for a `"broadcast_score"` message that we'll send
+from our Elm client. Inside the `handle_in/3` function, we use the
 [`broadcast/3`](https://hexdocs.pm/phoenix/Phoenix.Channel.html#broadcast/3)
 function, which will relay the results to all players on the channel. We'll
 make some additional changes to this `handle_in/3` function in the next chapter
 too, but for now all we need to know is that players will be able to join our
-channel and then send `"save_score"` messages to broadcast their score to all
-other players connected to the socket (and any other messages that don't match
-our `"save_score"` name will be ignored automatically).
-
-Before we move back to our Elm application, let's enable some settings in our
-Phoenix endpoint to ensure everything we need is enabled. Open the
-`lib/platform_web/endpoint.ex` file and set both the `websocket` and `longpoll`
-settings to a value of `true`:
-
-```elixir
-defmodule PlatformWeb.Endpoint do
-  # ...
-
-  socket "/socket", PlatformWeb.UserSocket,
-    websocket: true,
-    longpoll: true
-
-  # ...
-end
-```
+channel and then send `"broadcast_score"` messages to broadcast their score to
+all other players connected to the socket (and any other messages that don't
+match our `"broadcast_score"` name will be ignored automatically).
 
 We haven't configured our front-end to work with the channel yet, but we've
 managed to take care of the initial channel setup on the back-end.
 
-## Elm and Phoenix Channels
+## Introduction to Elm Ports
 
-While channel features come bundled with the Phoenix framework, we'll still
-need to import a new package on the Elm side to enable communication between
-the front-end and back-end.
+Now that we've configured our Phoenix channel feature, we need to figure out
+how to get data from our Elm front-end application to the back-end. To
+accomplish this, we'll use Elm ports.
 
-To get started, let's move to the `assets/elm` folder in our project and run
-the following command to install the
-[`slashmili/phoenix-socket`](https://package.elm-lang.org/packages/slashmili/phoenix-socket/latest)
-package:
+The official Elm guide has a
+[ports chapter](https://guide.elm-lang.org/interop/ports.html) if you're
+interested in reading it as a quick introduction. For our purposes, all you
+need to know is that ports give us a way to send data out of our Elm
+application (the player score) and to receive data back into our Elm
+application (data from Phoenix).
 
-```shell
-$ elm install slashmili/phoenix-socket
-```
+One thing to keep in mind is that ports don't communicate directly from Elm to
+Elixir. Ports allow for interoperability between Elm and JavaScript. That means
+JavaScript will be the glue between our Elm front-end and our Phoenix back-end.
 
-In the near future, we'll likely have different options for how we want to
-connect Elm and Phoenix. And it's also likely that a standard approach will
-develop over time. We're using `slashmili/phoenix-socket` in this book because
-it works well with the latest version of Elm, but if you're interested in
-pursuing your own approach and pushing the boundaries, be sure to check out the
-prior art that's available in packages like `fbonetti/elm-phoenix-socket` and
-`saschatimme/elm-phoenix`.
+In other words, we'll continue writing our Elm code in the
+`assets/elm/src/Games/Platformer.elm` file. And we'll continue writing Elixir
+code for our channel in `lib/platform_web/channels/score_channel.ex`. And we'll
+use the `assets/js/app.js` (we worked with this file in previous chapters when
+we initialized our Elm application) to tie everything together.
 
-With this package installed, we can move on and update our Elm front-end
-application to send messages over the channel to the Phoenix back-end.
+You might be surprised at how easy it is to set up Elm ports at first. But one
+more thing to note is that Elm is a strongly typed language where we're
+deliberate about the types of values we work with. For instance, our
+`playerScore` field is an `Int` type in our Elm application. As we work with
+JavaScript code, we'll need to encode and decode the values properly.
 
-## Configuring Elm with Phoenix Channels
+## Configuring Elm Ports
 
-We've already imported a handful of packages at the top of our `Platformer.elm`
-file, and now we'll need to import a handful of new ones to work with Phoenix
-channels. Let's update the top of `Platformer.elm` with the following:
+The first step we need to take is to update the first line of code in our
+`Platformer.elm` file. We're going to add `port` at the very beginning to
+indicate that this module communicates with the outside world.
 
 ```elm
-module Games.Platformer exposing (main)
+port module Games.Platformer exposing (main)
+```
 
+Let's also take this opportunity to update the imports at the top of our file
+as well. We already have the `Json.Decode` package imported, and now let's also
+include the `Json.Encode` package (which we'll alias to `Encode`) so we can
+send JSON data out of our Elm application.
+
+We're going to create a button to trigger our port too, so let's add a couple
+of `Html` imports as well.
+
+```elm
 import Browser
 import Browser.Events
-import Html exposing (Html, div)
+import Html exposing (Html, button, div)
+import Html.Attributes
+import Html.Events
 import Json.Decode as Decode
 import Json.Encode as Encode
-import Phoenix
-import Phoenix.Channel
-import Phoenix.Message
-import Phoenix.Push
-import Phoenix.Socket
 import Random
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
 import Time
 ```
 
-We're importing several new modules here. We'll use `Json.Encode` to encode our
-player score data as JSON before we send it to the back-end. We're also
-importing a total of five different `Phoenix` modules from the
-`slashmili/phoenix-socket` package, and we'll use each of them throughout the
-rest of this chapter.
+Before we worry about receiving data from outside our Elm application, let's
+start by creating a port to send data from Elm to JavaScript.
 
-Next, let's can add a `phxSocket` field to our model. We'll update our `Model`
-type first, and then provide an initial value in our `initialModel` that points
-to a new function we'll call `initialSocket`.
+We're going to call our first port `broadcastScore`, and our goal will be to
+take the `playerScore` field from our model and encode it as JSON when we
+send it out to JavaScript (which we'll later handle with Phoenix too).
 
 ```elm
-type alias Model =
-    { characterDirection : Direction
-    , characterPositionX : Int
-    , characterPositionY : Int
-    , gameState : GameState
-    , itemPositionX : Int
-    , itemPositionY : Int
-    , itemsCollected : Int
-    , phxSocket : Phoenix.Socket.Socket Msg
-    , playerScore : Int
-    , timeRemaining : Int
-    }
+-- PORTS
 
-
-initialModel : Model
-initialModel =
-    { characterDirection = Right
-    , characterPositionX = 50
-    , characterPositionY = 300
-    , gameState = StartScreen
-    , itemPositionX = 500
-    , itemPositionY = 300
-    , itemsCollected = 0
-    , phxSocket = initialSocket
-    , playerScore = 0
-    , timeRemaining = 10
-    }
+port broadcastScore : Encode.Value -> Cmd msg
 ```
 
-Here's the new `initialSocket` function we can use to initialize the socket
-connection with `Phoenix.Socket.init`. When our Phoenix server is running,
-we'll be able to use the `devSocketServer` value for the WebSocket connection
-that's being served as the default from Phoenix.
+Bear in mind that you can put this code wherever you like in the
+`Platformer.elm` file. But I like to put the code for my ports just below the
+`subscriptions` function since we tend to subscribe to outside data as well.
 
-```elm
-initialSocket : Phoenix.Socket.Socket Msg
-initialSocket =
-    let
-        devSocketServer =
-            "ws://localhost:4000/socket/websocket"
-    in
-    Phoenix.Socket.init devSocketServer
-```
+You'll notice that the syntax for our `broadcastScore` is pretty simple. We're
+basically just saying that we'll take a JSON encoded value and create a command
+with it, which we can then trigger with an update message.
 
-This is a good start because it means we're already initializing the socket
-connection as soon as our Elm application loads. But we'll have to take a few
-more steps before we're able to send messages.
+## Triggering the Port in the Update
 
-## The Update Function
-
-Next, let's update our `Msg` type first to handle Phoenix socket messages with
-`PhoenixMsg`.
+Next, let's update our `Msg` type with a new `BroadcastScore` message that
+takes `Encode.Value` as an argument:
 
 ```elm
 type Msg
-    = CountdownTimer Time.Posix
+    = BroadcastScore Encode.Value
+    | CountdownTimer Time.Posix
     | GameLoop Float
     | KeyDown String
     | NoOp
-    | PhoenixMsg (Phoenix.Message.Msg Msg)
     | SetNewItemPositionX Int
 ```
 
-And we can add the following inside the `case` expression of our `update`
-function:
+Then, we'll add to our `update` function with the following:
 
 ```elm
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        -- ...
-
-        PhoenixMsg phxMsg ->
-            let
-                ( updatedSocket, updatedCmd ) =
-                    Phoenix.update PhoenixMsg phxMsg model.phxSocket
-            in
-            ( { model | phxSocket = updatedSocket }, updatedCommand )
+        BroadcastScore value ->
+            ( model, broadcastScore value )
 
         -- ...
 ```
 
-This enables us to track changes in state using the `phxSocket` field in our
-model.
+So far so good. We've got a port called `broadcastScore` configured to send
+our score as a JSON value out to JavaScript. And now that we have
+`BroadcastScore` in our `update` function, we have a way to trigger the port
+to send out the data.
 
-## Socket Subscription
+## Triggering the Port to Send Data
 
-Lastly, we can add to our `subscriptions` function to subscribe to changes over
-time.
+Let's create a button at the bottom of our view that we can use to trigger
+`BroadcastScore` and send the `playerScore` data from our model.
+
+We'll call the button `viewBroadcastScoreButton` with text that says
+`"Broadcast Score Over Socket"`. We're using a `let` expression to give a
+clearer indication of how the data flows through. We start with the current
+score stored in `model.playerScore`, which gets encoded as an integer with
+`Encode.int`. Then, we send that to `BroadcastScore` and trigger it when we
+click the button.
 
 ```elm
-subscriptions : Model -> Sub Msg
-subscriptions model =
-    Sub.batch
-        [ Browser.Events.onKeyDown (Decode.map KeyDown keyDecoder)
-        , Browser.Events.onAnimationFrameDelta GameLoop
-        , Time.every 1000 CountdownTimer
-        , Phoenix.listen PhoenixMsg model.phxSocket
+viewBroadcastScoreButton : Model -> Html Msg
+viewBroadcastScoreButton model =
+    let
+        broadcastEvent =
+            model.playerScore
+                |> Encode.int
+                |> BroadcastScore
+                |> Html.Events.onClick
+    in
+    button
+        [ broadcastEvent
+        , Html.Attributes.class "button"
         ]
+        [ text "Broadcast Score Over Socket" ]
 ```
 
-At this point, we should have a working socket connection when we visit
-`http://localhost:4000/games/platformer` in our browser. You may need to
-restart your local Phoenix server to get things up and running, but if you
-load the page and wait a few moments, you should be able to see something like
-the following in the server server console:
-
-```shell
-[info] GET /games/platformer
-[info] Sent 200 in 5ms
-[info] CONNECT PlatformWeb.UserSocket
-  Transport: :longpoll
-  Connect Info: %{}
-  Parameters: %{}
-[info] Replied PlatformWeb.UserSocket :ok
-```
-
-## Sending Data Over the Socket
-
-Our goal for this chapter is to send data over the socket. We want to send the
-score that we already have available in the Elm model over the socket to the
-Phoenix back-end. It'll be a two-step process of joining the channel first and
-then sending the data, so let's set up our `Msg` type and `update` function.
-
-First, add `SaveScore` to our `Msg` type:
-
-```elm
-type Msg
-    = CountdownTimer Time.Posix
-    | GameLoop Float
-    | KeyDown String
-    | NoOp
-    | PhoenixMsg (Phoenix.Message.Msg Msg)
-    | SaveScore
-    | SetNewItemPositionX Int
-```
-
-Then, let's add the following to the `update` function:
-
-```elm
-SaveScore ->
-    let
-        payload =
-            Encode.object [ ( "player_score", Encode.int model.playerScore ) ]
-    in
-    ( model, Cmd.none )
-```
-
-With `SaveScore`, we're starting to construct a `payload` that we'll use to
-send our Elm data. We take the `playerScore` that's part of our Elm model, and
-we encode it as a JSON integer with `Encode.int`. Then, we wrap that up in a
-JSON object that we can use to send it to the Phoenix back-end. Keep in mind
-that we're still using `(model, Cmd.none)` so far, so we're not actually
-pushing data over the socket yet.
-
-## Phoenix.Push
-
-To continue, we'll use the `Phoenix.Push` module that we imported at the top of
-our file. We want to initialize using the `"score:platformer"` channel that we
-created on the Phoenix side, and we'll use the `payload` we constructed to send
-along the relevant data. We'll also use the pipe operator to pass data along
-and handle the success and failure cases.
-
-```elm
-SaveScore ->
-    let
-        payload =
-            Encode.object [ ( "player_score", Encode.int model.playerScore ) ]
-
-        phxPush =
-            Phoenix.Push.init "save_score" "score:platformer"
-                |> Phoenix.Push.withPayload payload
-                |> Phoenix.Push.onOk SaveScoreSuccess
-                |> Phoenix.Push.onError SaveScoreError
-    in
-    ( model, Cmd.none )
-```
-
-We'll need to scaffold out new messages for `SaveScoreSuccess` and
-`SaveScoreError` for the success and failure cases, respectively. We can add
-these to our `Msg` type first, and they'll both take an `Encode.Value` as an
-argument:
-
-```elm
-type Msg
-    = CountdownTimer Time.Posix
-    | GameLoop Float
-    | KeyDown String
-    | NoOp
-    | SaveScoreSuccess Encode.Value
-    | SaveScoreError Encode.Value
-    | SaveScore
-    | PhoenixMsg (Phoenix.Message.Msg Msg)
-    | SetNewItemPositionX Int
-```
-
-And we can add cases at the bottom of our `update` function to get our code
-back to a state with no errors, and we're one step closer to connecting our
-front-end with our back-end.
-
-```elm
-SaveScoreSuccess value ->
-    Debug.log "Successfully sent score over socket."
-        ( model, Cmd.none )
-
-SaveScoreError message ->
-    Debug.log "Error sending score over socket."
-        ( model, Cmd.none )
-```
-
-## Finishing the Push Setup
-
-In our `SaveScore` case, we're going to connect everything together by sending
-data over the `phxSocket`.
-
-```elm
-SaveScore ->
-    let
-        payload =
-            Encode.object [ ( "player_score", Encode.int model.playerScore ) ]
-
-        phxPush =
-            Phoenix.Push.init "save_score" "score:platformer"
-                |> Phoenix.Push.withPayload payload
-                |> Phoenix.Push.onOk SaveScoreSuccess
-                |> Phoenix.Push.onError SaveScoreError
-
-        ( updatedSocket, updatedCommand ) =
-            Phoenix.push PhoenixMsg phxPush model.phxSocket
-    in
-    ( { model | phxSocket = updatedSocket }, updatedCommand)
-```
-
-## Joining the Score Channel
-
-Now that we have everything in place to push our data over the socket, we'll
-just need to join the `"score:platformer"` channel and broadcast the player's
-score. We'll accomplish this in two steps. First, we'll create a button that
-allows players to join the channel. Then, we'll add another button that enables
-us to save scores.
-
-Below our `initialSocket` function, let's start by creating a new function
-called `initialChannel`.
-
-```elm
-initialChannel : Phoenix.Channel.Channel Msg
-initialChannel =
-    "score:platformer"
-        |> Phoenix.Channel.init
-        |> Phoenix.Channel.on "save_score" SaveScoreSuccess
-```
-
-Next, we'll update our `Msg` type with a new `JoinChannel` message:
-
-```elm
-type Msg
-    = CountdownTimer Time.Posix
-    | GameLoop Float
-    | JoinChannel
-    | KeyDown String
-    | NoOp
-    | SaveScoreSuccess Encode.Value
-    | SaveScoreError Encode.Value
-    | SaveScore
-    | PhoenixMsg (Phoenix.Message.Msg Msg)
-    | SetNewItemPositionX Int
-```
-
-With our `initialChannel` and `JoinChannel` code in place, we can set up our
-`update` function. For the `JoinChannel` case, we're taking the existing socket
-connection with `model.phxSocket` and using `Phoenix.join` with our
-`initialChannel` function to join the channel and update it in the model.
-
-```elm
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
-    case msg of
-        -- ...
-
-        JoinChannel ->
-            let
-                ( updatedSocket, updatedCommand ) =
-                    Phoenix.join PhoenixMsg initialChannel model.phxSocket
-            in
-            ( { model | phxSocket = updatedSocket }, updatedCommand )
-
-        -- ...
-```
-
-## Triggering JoinChannel and SaveScore
-
-Finally, we just need to trigger the `JoinChannel` and `SaveScore` messages
-to send our score over the socket. We'll set it up so that we can click a
-button and then check the server console to view the `payload` that's being
-sent over the socket.
-
-At the top of our file, let's import the `onClick` functionality from
-`Html.Events`. While we're here, we also want to make a quick change to the
-`Html` import so we can use the `button` element. Here are the `Html` imports:
-
-```elm
-import Html exposing (Html, button, div)
-import Html.Events exposing (onClick)
-```
-
-## Adding a Button to the View
-
-Now, we can create new `viewJoinChannelButton` and `viewSaveScoreButton`
-functions and add them to our main `view` to trigger the `JoinChannel` and
-`SaveScore` messages.
+Don't forget that we'll need to add this to our main `view` function to see it
+appear when we load our application:
 
 ```elm
 view : Model -> Html Msg
 view model =
-    div []
+    div [ class "container" ]
         [ viewGame model
-        , viewJoinChannelButton
-        , viewSaveScoreButton
-        ]
-
-
-viewJoinChannelButton : Html Msg
-viewJoinChannelButton =
-    div []
-        [ button [ onClick JoinChannel, class "button" ]
-            [ text "Join Channel" ]
-        ]
-
-
-viewSaveScoreButton : Html Msg
-viewSaveScoreButton =
-    div []
-        [ button [ onClick SaveScore, class "button" ]
-            [ text "Save Score" ]
+        , viewBroadcastScoreButton model
         ]
 ```
 
-## Testing Out the Socket
+## Seeing the Results with JavaScript
 
-We've got everything configured, and we should be able to test out our working
-socket payload. Here are the steps to try it:
+We might be tempted to load the application and try things out now, but we
+still need to set up the JavaScript side before we see the data that we're
+sending from Elm.
 
-- Start the server with `mix phx.server` and load the game in the browser.
-- Play the game and collect a few coins to increment the player's score.
-- Click the "Join Channel" button.
-- Click the "Save Score" button.
+Let's open our `assets/js/app.js` file and use JavaScript to handle the data
+we're sending from the Elm side.
 
-Although we won't see any changes in the UI, we should be able to check the
-server console and see things working.
+At the bottom of the file, we're initializing our `Platformer` game with the
+following code:
 
-When the game loads on the page we see that we connect to the socket:
+```javascript
+if (platformer) {
+  Elm.Games.Platformer.init({ node: platformer });
+}
+```
+
+Let's update this code so we can assign our application to a variable called
+`app` and then use `app.ports.broadcastScore.subscribe()` to subscribe to the
+data coming from our Elm application.
+
+```javascript
+if (platformer) {
+  let app = Elm.Games.Platformer.init({ node: platformer });
+
+  app.ports.broadcastScore.subscribe(function (scoreData) {
+    console.log(`Broadcasting ${scoreData} score data from Elm using the broadcastScore port.`);
+    // Later, we'll push the score data to the Phoenix channel
+  });
+}
+```
+
+If we start our server and load the game we're now at a point where we can test
+things out. You can start a game and collect a couple coins to get a value for
+the `playerScore` field. Then, we can click the "Broadcast Score Over Socket"
+button and see the `console.log()` statement in the DevTools console. In this
+screenshot, the player collected two coins and then triggered the
+`broadcastScore` port with the button, which produces the console output.
+
+![Working Elm Port with Console Output](images/working_elm_port.png)
+
+This is great news because it means we now have the ability to send data from
+our Elm application outside to JavaScript. We're admittedly not doing anything
+with the data yet, but we're on the right track since it's available outside of
+our Elm application.
+
+## Initializing the Socket and Joining the Channel
+
+We've made it a long way so far in this chapter. We created our `ScoreChannel`,
+which will listen for a `"broadcast_score"` message. And we have our Elm
+application sending out score data to JavaScript with the `broadcastScore`
+port.
+
+Next, we'll need to initialize the Phoenix socket in our `assets/js/app.js`
+file and join the channel (as a side note, there's a file called
+`assets/js/socket.js` that can be used to set up the socket connections too.
+But we're opting to keep everything in the `app.js` file in this book to make
+things easier).
+
+Let's open the `app.js` file and add the following code above the Elm section
+to import the Phoenix socket library and start the socket connection.
+
+```javascript
+// Phoenix Socket
+import { Socket } from "phoenix"
+
+let socket = new Socket("/socket", {})
+
+socket.connect()
+
+// Elm
+// ...
+```
+
+And now that we're connected to the socket, we can add the code to join the
+`score` channel for our `platformer` game. Note that some code has been trimmed
+below to highlight the changes. We're successfully connecting to the socket,
+and then we're only going to join the channel for the `"score:platformer"`
+topic when we're on the page that has the `div` element with our `platformer`
+game.
+
+```javascript
+// Phoenix Socket
+import { Socket } from "phoenix"
+
+let socket = new Socket("/socket", {})
+
+socket.connect()
+
+// Elm
+// ...
+
+if (platformer) {
+  let app = Elm.Games.Platformer.init({ node: platformer });
+
+  let channel = socket.channel("score:platformer", {})
+
+  channel.join()
+    .receive("ok", resp => { console.log("Joined successfully", resp) })
+    .receive("error", resp => { console.log("Unable to join", resp) })
+
+  app.ports.broadcastScore.subscribe(function (scoreData) {
+    console.log(`Broadcasting ${scoreData} score data from Elm using the broadcastScore port.`);
+    // Later, we'll push the score data to the Phoenix channel
+  });
+}
+```
+
+We now have a working socket connection and ability to join the score channel
+we created. And when we load the page in the browser we should see the console
+output about successfully joining the channel.
+
+![Working Socket Connection and Channel Join](images/working_socket_connection.png)
+
+## Pushing Data Over the Socket
+
+We have everything we need at this point to send data from Elm to JavaScript to
+our Phoenix channel. The port is taking the `playerScore` data from the Elm
+game and making it available in the `broadcastScore` port in our JavaScript
+code. Now, we can use `channel.push()` to send data from JavaScript to the
+Phoenix channel.
+
+Let's update the `broadcastScore` port in our `app.js` file to push our
+`scoreData` over the channel to the `"broadcast_score"` message that our
+channel is listening for.
+
+```javascript
+app.ports.broadcastScore.subscribe(function (scoreData) {
+  console.log(`Broadcasting ${scoreData} score data from Elm using the broadcastScore port.`);
+  channel.push("broadcast_score", { player_score: scoreData });
+});
+```
+
+We've successfully managed to send data from Elm to JavaScript to Phoenix at
+this point. To test it out, you can start the Phoenix server with
+`mix phx.server` and load the game in the browser. Collect a few coins and
+trigger the broadcast by clicking the button. Not only will we see the messages
+in the DevTools console to show that we successfully joined the channel and
+sent the score data over the socket, but we can also look at the output for our
+Phoenix server and see the results.
 
 ```shell
-[info] GET /games/platformer
 [info] CONNECT PlatformWeb.UserSocket
+  Transport: :websocket
+  Connect Info: %{}
+  Parameters: %{"vsn" => "2.0.0"}
 [info] Replied PlatformWeb.UserSocket :ok
-```
-
-Then, when we click the "Join Channel" button we see the successful join
-message:
-
-```shell
 [info] JOIN "score:platformer" to PlatformWeb.ScoreChannel
+  Transport:  :websocket
+  Serializer: Phoenix.Socket.V2.JSONSerializer
+  Parameters: %{}
 [info] Replied score:platformer :ok
+[debug] INCOMING "broadcast_score" on "score:platformer" to PlatformWeb.ScoreChannel
+  Parameters: %{"player_score" => 200}
 ```
 
-Lastly, when we click the "Save Score" button we see the data being sent over
-the socket:
-
-```shell
-[debug] INCOMING "save_score" on "score:platformer" to PlatformWeb.ScoreChannel
-  Parameters: %{"player_score" => 300}
-```
-
-When we trigger the `"save_score"` event, we're broadcasting the data over the
-socket. The broadcast allows us to send the data in real-time to any other
-players connected to the socket. In the example above, you can see that we
-collected three coins for a score of `300`, and that is reflected in the
-payload with `%{"player_score" => 300}`.
+We're successfully connecting to the socket and joining the
+`"score:platformer"` topic for the `ScoreChannel`. And then we're handling the
+`"broadcast_score"` message we triggered with the click of a button to send the
+`player_score` data.
 
 ## Summary
 
 We made it a _long_ way in this chapter. We managed to take care of most of the
 hard work, and we're successfully sending data from the Elm front-end to the
-Phoenix back-end. We created a new Phoenix channel, installed a package, and
-configured our game to send a payload. But we're not displaying the player
-scores in our application or persisting the data anywhere yet. We'll take a
-look at these topics in the next chapter.
+Phoenix back-end. We created a new Phoenix channel, set up a port from Elm to
+JavaScript, and sent the score data from Elm to JavaScript to Phoenix.
+
+Although we're sending data out of our Elm application, we haven't set up
+another port to receive data back in so we can display the scores on the page.
+And we don't have a way to differentiate between which players are connected to
+the socket and playing a game yet. We'd also like to give users the option to
+save their scores to the database and persist the gameplay data. We'll take a
+look at these topics in the next couple chapters.
