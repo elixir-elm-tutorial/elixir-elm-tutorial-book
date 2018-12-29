@@ -468,6 +468,13 @@ We're successfully connecting to the socket and joining the
 `"broadcast_score"` message we triggered with the click of a button to send the
 `player_score` data.
 
+We moved quickly through some of these concepts, so feel free to check out the
+Phoenix documentation on
+[getting started with channels](https://hexdocs.pm/phoenix/channels.html).
+Although the examples don't contain any Elm code, they provide a great high
+level overview of how channels work and show the intersection of how Phoenix
+and JavaScript can work well together.
+
 ## Summary
 
 We made it a _long_ way in this chapter. We managed to take care of most of the
