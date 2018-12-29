@@ -346,7 +346,7 @@ button and see the `console.log()` statement in the DevTools console. In this
 screenshot, the player collected two coins and then triggered the
 `broadcastScore` port with the button, which produces the console output.
 
-![Working Elm Port with Console Output](images/working_elm_port.png)
+![Working Elm Port with Console Output](images/phoenix_channels_and_elm_ports/working_elm_port.png)
 
 This is great news because it means we now have the ability to send data from
 our Elm application outside to JavaScript. We're admittedly not doing anything
@@ -419,7 +419,7 @@ We now have a working socket connection and ability to join the score channel
 we created. And when we load the page in the browser we should see the console
 output about successfully joining the channel.
 
-![Working Socket Connection and Channel Join](images/working_socket_connection.png)
+![Working Socket Connection and Channel Join](images/phoenix_channels_and_elm_ports/working_socket_connection.png)
 
 ## Pushing Data Over the Socket
 

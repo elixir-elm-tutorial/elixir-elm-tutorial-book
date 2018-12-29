@@ -271,7 +271,7 @@ With the channels and ports all working together, we did it! Elm and Phoenix
 and JavaScript are all now communicating to successfully send and receive the
 player score data over the socket.
 
-![Working Broadcast and Receive](images/working_broadcast_and_receive.png)
+![Working Broadcast and Receive](images/syncing_score_data/working_broadcast_and_receive.png)
 
 We've not only been successful in sending data over the socket, we can also
 open multiple browser windows now and see the data being broadcast. In this
@@ -280,7 +280,7 @@ and triggered a broadcast of the score data. And both the left and right
 sides of the screen were able to receive the score data and display it on
 the page.
 
-![Working Broadcast for Multiple Players](images/working_broadcast_multiple.png)
+![Working Broadcast for Multiple Players](images/syncing_score_data/working_broadcast_multiple.png)
 
 ## Summary
 
