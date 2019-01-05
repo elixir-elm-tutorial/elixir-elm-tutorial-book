@@ -17,13 +17,13 @@ It's good to keep in mind that the communities for Elixir and Elm are rapidly
 evolving, and the approach for integrating these languages can change quickly
 as well.
 
-There will likely be a time in the near future where packages make it very
-simple for developers to integrate the two languages with a straightforward
-API, but currently it can be a tedious process to connect things properly.
+There will likely be a time in the near future where packages make it simple
+for developers to integrate the two languages with a straightforward API, but
+currently it can be a tedious process to connect things properly.
 
-The good news is that this knowledge is very valuable, because any non-trivial
-Elm application is likely going to need to work with JavaScript code and
-knowing how to use ports is essential.
+The good news is that this knowledge is valuable, because any non-trivial Elm
+application is likely going to need to work with JavaScript code and knowing
+how to use ports is essential.
 
 ## Introduction to Channels
 
@@ -183,8 +183,8 @@ JavaScript code, we'll need to encode and decode the values properly.
 ## Configuring Elm Ports
 
 The first step we need to take is to update the first line of code in our
-`Platformer.elm` file. We're going to add `port` at the very beginning to
-indicate that this module communicates with the outside world.
+`Platformer.elm` file. We're going to add `port` at the beginning to indicate
+that this module communicates with the outside world.
 
 ```elm
 port module Games.Platformer exposing (main)
@@ -350,8 +350,8 @@ screenshot, the player collected two coins and then triggered the
 
 This is great news because it means we now have the ability to send data from
 our Elm application outside to JavaScript. We're admittedly not doing anything
-with the data yet, but we're on the right track since it's available outside of
-our Elm application.
+with the data yet, but we're moving in the right direction since it's available
+outside of our Elm application.
 
 ## Initializing the Socket and Joining the Channel
 

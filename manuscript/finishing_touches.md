@@ -9,9 +9,8 @@ we display player scores for our game by fetching the players and gameplays
 from the database.
 
 We'll be moving quickly through some of the content in this chapter since we've
-seen many of these concepts before. Be sure to refer back to the
-**Elm API Data** chapter for a refresher on the `Http` module and JSON
-decoding.
+seen many of these concepts before. Be sure to refer to the **Elm API Data**
+chapter for a refresher on the `Http` module and JSON decoding.
 
 ## Fetching Gameplays
 
@@ -217,10 +216,10 @@ fetchPlayersList =
 ```
 
 Next, we can add the JSON decoders just like we did for `gameplays`. If this
-all looks very familiar, it's because we took a very similar approach when we
-decoded our list of players in the **Elm API Data** chapter. We're using
-`Decode.maybe` for the `display_name` field on the back-end given that it may
-or may not have a value we can use.
+all looks familiar, it's because we took a similar approach when we decoded our
+list of players in the **Elm API Data** chapter. We're using `Decode.maybe` for
+the `display_name` field on the back-end given that it may or may not have a
+value we can use.
 
 ```elm
 decodePlayersList : Decode.Decoder (List Player)
