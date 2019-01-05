@@ -150,17 +150,20 @@ attempt to break down the topics and concepts covered within each chapter.
 
 - **Finishing Touches**
 
-  - Fetching data from the database to display for our game.
-  - ...
+  - Fetching saved gameplays from the database to display for our game.
+  - Fetching the list of players from the database.
+  - Creating helper functions to associate players and gameplays.
+  - Displaying player names and scores for gameplays.
 
 - **What's Next?**
 
   - Additional features and ideas that didn't make it into the book.
-  - Planning for future versions of this book.
+  - Planning for possible future versions of this book.
 
 - **Appendix**
 
   - Quick installation instructions.
+  - Tooling recommendations.
 
 - **Contact**
 
