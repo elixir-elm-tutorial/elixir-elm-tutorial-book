@@ -20,6 +20,7 @@ phoenix_channels_and_elm_ports.md
 syncing_score_data.md
 socket_authentication.md
 saving_score_data.md
+finishing_touches.md
 whats_next.md
 outline.md
 appendix.md

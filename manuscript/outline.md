@@ -122,24 +122,36 @@ attempt to break down the topics and concepts covered within each chapter.
   - Rendering different elements depending on current game states.
   - Creating start, success, and game over states.
 
-- **Phoenix Channel Setup**
+- **Phoenix Channels and Elm Ports**
 
   - Getting started with Phoenix channels.
   - Creating and joining a channel.
-  - Configuring Elm and Phoenix channels.
+  - Introduction to Elm ports and connecting Elm to Phoenix.
   - Sending data over the socket.
 
 - **Syncing Score Data**
 
   - Sending and receiving data over the socket.
-  - Saving data from channels to the database.
   - Displaying the results on the game page.
+  - Working at the intersection of Phoenix, JavaScript, and Elm.
 
 - **Socket Authentication**
 
   - Working with Phoenix user tokens for socket authentication.
-  - Using Elm flags to initialize the application with data from Phoenix.
   - Enabling multiple players to track changes over the socket.
+  - Extending gameplays with additional data.
+  - Refactoring channels with pattern matching.
+
+- **Saving Score Data**
+
+  - Using the channel to save scores to the database.
+  - Working with Elm flags to send data from JavaScript to Elm.
+  - Differentiating between authenticated and anonymous players.
+
+- **Finishing Touches**
+
+  - Fetching data from the database to display for our game.
+  - ...
 
 - **What's Next?**
 
@@ -151,5 +163,6 @@ attempt to break down the topics and concepts covered within each chapter.
   - Quick installation instructions.
 
 - **Contact**
-  - Congrats and plea for feedback and ideas.
-  - Access to Slack for live help and sharing.
+
+  - Congrats and contact information.
+  - Request for feedback and ideas for the future.
