@@ -58,7 +58,7 @@ decoder functions next.
 
 Remember that the JSON data from our endpoint will look something like this:
 
-```json
+```javascript
 {
   data: [
     {
