@@ -51,12 +51,13 @@ Fetch and install dependencies? [Yn] Y
 * running mix deps.get
 * running mix deps.compile
 * running cd assets && npm install && node node_modules/webpack/bin/webpack.js --mode development
+```
 
 We are all set! Go into your application by running:
 
     $ cd platform
 
-Then configure your database in config/dev.exs and run:
+Then configure your database in `config/dev.exs` and run:
 
     $ mix ecto.create
 
@@ -67,7 +68,6 @@ Start your Phoenix app with:
 You can also run your app inside IEx (Interactive Elixir) as:
 
     $ iex -S mix phx.server
-```
 
 Phoenix displays _a lot_ of helpful information. First, the output shows all
 the files that were generated (don't worry if it seems overwhelming at first;
@@ -216,15 +216,15 @@ $ mix phx.gen.html Accounts Player players username:string score:integer
 * injecting lib/platform/accounts/accounts.ex
 * creating test/platform/accounts/accounts_test.exs
 * injecting test/platform/accounts/accounts_test.exs
+```
 
-Add the resource to your browser scope in lib/platform_web/router.ex:
+Add the resource to your browser scope in `lib/platform_web/router.ex`:
 
     resources "/players", PlayerController
 
 Remember to update your repository by running migrations:
 
     $ mix ecto.migrate
-```
 
 ## Routing
 
