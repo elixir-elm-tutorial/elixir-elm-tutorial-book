@@ -70,7 +70,7 @@ are some additional prerequisites to keep in mind:
 
 ### Elixir
 
-[Elixir](http://elixir-lang.org) is a dynamic, functional language designed for
+[Elixir](https://elixir-lang.org) is a dynamic, functional language designed for
 building scalable and maintainable applications.
 
 - Elixir is built on top of the Erlang virtual machine, and therefore inherits
@@ -80,9 +80,9 @@ building scalable and maintainable applications.
   need to write our programs in such a way that allows them to be distributed
   across multiple cores so our programs can outperform our competitors. As an
   example, compare the latest
-  [13-inch Macbook Pro models](http://www.apple.com/shop/buy-mac/macbook-pro/13-inch)
+  [13-inch Macbook Pro models](https://www.apple.com/shop/buy-mac/macbook-pro/13-inch)
   with 2-core processors with
-  [15-inch Macbook Pro models](http://www.apple.com/shop/buy-mac/macbook-pro/15-inch)
+  [15-inch Macbook Pro models](https://www.apple.com/shop/buy-mac/macbook-pro/15-inch)
   with 6-core processors. Then, see how many cores (or "virtual CPUs") you'll
   have access to when you deploy your application to a
   [multi-core web server](https://www.digitalocean.com/pricing/#droplet).
@@ -98,7 +98,7 @@ building scalable and maintainable applications.
 
 ### Elm
 
-[Elm](http://elm-lang.org) is an exciting new functional language that is still
+[Elm](https://elm-lang.org) is an exciting new functional language that is still
 evolving. It's the fastest, most reliable front-end web programming language
 currently available.
 

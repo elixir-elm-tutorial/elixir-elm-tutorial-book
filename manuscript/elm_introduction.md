@@ -58,10 +58,10 @@ provided in that `main` function.
 
 Speaking of imports, the next line says `import Html`. This allows us to use
 any function from Elm's built-in
-[Html library](http://package.elm-lang.org/packages/elm-lang/html/latest/Html).
+[Html library](https://package.elm-lang.org/packages/elm-lang/html/latest/Html).
 
 The function that we're using in this program is the
-[`Html.text`](http://package.elm-lang.org/packages/elm-lang/html/latest/Html#text)
+[`Html.text`](https://package.elm-lang.org/packages/elm-lang/html/latest/Html#text)
 function, which takes a single string as an argument. If we take a look at the
 documentation for the `text` function, we can see the Elm type syntax:
 
@@ -95,7 +95,7 @@ with than it is to read about, so let's finally run our example.
 Before we can run Elm code, we'll need to install Elm. There are different
 ways of doing it, but the easiest way is to use `npm` since most web developers
 have [Node.js](https://nodejs.org/en) installed already. Alternatively, there
-are also installers available on the [Elm home page](http://elm-lang.org).
+are also installers available on the [Elm home page](https://elm-lang.org).
 
 ```shell
 $ npm install -g elm
@@ -284,9 +284,9 @@ main =
 
 Inside the `main` function, we start with the raw `"Hello World"` string. Then,
 we pipe that to the
-[`toUpper`](http://package.elm-lang.org/packages/elm-lang/core/latest/String#toUpper)
+[`toUpper`](https://package.elm-lang.org/packages/elm-lang/core/latest/String#toUpper)
 function from the
-[`String`](http://package.elm-lang.org/packages/elm-lang/core/latest/String)
+[`String`](https://package.elm-lang.org/packages/elm-lang/core/latest/String)
 module. Then, we pipe the result of that to the `text` function that will
 return the `Html msg` that our function is meant to return.
 

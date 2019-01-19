@@ -425,7 +425,7 @@ Elm application. We'll see more on this topic later in the book as we pull user
 data from Phoenix into our Elm application.
 
 We're also using `Cmd.none`, which means we don't need to worry about Elm
-["Commands"](http://package.elm-lang.org/packages/elm-lang/core/latest/Platform-Cmd)
+["Commands"](https://package.elm-lang.org/packages/elm-lang/core/latest/Platform-Cmd)
 yet. We'll cover Elm commands in detail in the next chapter, but for now we can
 just think of a command as an action that may succeed or fail. For instance, we
 could perform an HTTP request when we start our Elm application to gather

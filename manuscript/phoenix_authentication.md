@@ -838,7 +838,7 @@ Update the contents of the `<header>` tag with the following:
         <%= link "Sign In", to: Routes.player_session_path(@conn, :new), class: "button" %>
       </ul>
     </nav>
-    <a href="http://phoenixframework.org/" class="phx-logo">
+    <a href="https://phoenixframework.org/" class="phx-logo">
       <img src="<%= Routes.static_path(@conn, "/images/phoenix.png") %>" alt="Phoenix Framework Logo"/>
     </a>
   </section>
@@ -870,7 +870,7 @@ Let's update our `<header>` tag again with the following:
         <% end %>
       </ul>
     </nav>
-    <a href="http://phoenixframework.org/" class="phx-logo">
+    <a href="https://phoenixframework.org/" class="phx-logo">
       <img src="<%= Routes.static_path(@conn, "/images/phoenix.png") %>" alt="Phoenix Framework Logo"/>
     </a>
   </section>
