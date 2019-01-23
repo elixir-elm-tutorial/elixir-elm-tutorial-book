@@ -689,7 +689,7 @@ to build a practical real-world application, and we'll learn what we need along
 the way. But check out these free resources if you want to get a little
 more Elixir experience before continuing:
 
-- [Elixir Getting Started Guide](http://elixir-lang.org/getting-started/introduction.html)
+- [Elixir Getting Started Guide](https://elixir-lang.org/getting-started/introduction.html)
 - [Elixir School](https://elixirschool.com/en/lessons/basics/basics)
 
 Feel free to delete the `temporary` project, and in the next chapter we'll

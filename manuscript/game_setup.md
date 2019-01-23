@@ -285,7 +285,7 @@ iex> Platform.Products.get_game!(1) |> Platform.Products.update_game(%{slug: "pl
   inserted_at: ~N[2018-12-08 20:37:44.080271],
   players: #Ecto.Association.NotLoaded<association :players is not loaded>,
   slug: "platformer",
-  thumbnail: "http://via.placeholder.com/300x200",
+  thumbnail: "https://via.placeholder.com/300x200",
   title: "Platformer",
   updated_at: ~N[2018-12-08 20:37:44.080277]}}
 ```

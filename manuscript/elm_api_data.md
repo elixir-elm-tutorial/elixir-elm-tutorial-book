@@ -113,8 +113,8 @@ Phoenix back-end for the JSON game data (`http://localhost:4000/api/games`),
 and then to decode that JSON into our Elm application. To get started, let's
 import the libraries we'll need to use:
 
-- [Http](http://package.elm-lang.org/packages/elm-lang/http/latest)
-- [Json.Decode](http://package.elm-lang.org/packages/elm-lang/core/latest/Json-Decode)
+- [Http](https://package.elm-lang.org/packages/elm-lang/http/latest)
+- [Json.Decode](https://package.elm-lang.org/packages/elm-lang/core/latest/Json-Decode)
 
 From the command line, we'll type the following commands from inside the
 `assets/elm` folder where our `elm.json` file lives:
@@ -198,7 +198,7 @@ our endpoint.
   data: [
     {
       title: "Platformer",
-      thumbnail: "http://via.placeholder.com/300x200",
+      thumbnail: "https://via.placeholder.com/300x200",
       id: 1,
       featured: true,
       description: "Platform game example."
@@ -216,10 +216,10 @@ take care of the details afterward. The fields that we're looking to pull from
 our API are the `title` and `description`.
 
 Let's create a `decodeGame` function, and we'll use the
-[`map2`](http://package.elm-lang.org/packages/elm-lang/core/latest/Json-Decode#map2)
+[`map2`](https://package.elm-lang.org/packages/elm-lang/core/latest/Json-Decode#map2)
 function since we're only looking to decode two fields. Note that we're also
 using the `Json.Decode` package's
-[`field`](http://package.elm-lang.org/packages/elm-lang/core/latest/Json-Decode#field)
+[`field`](https://package.elm-lang.org/packages/elm-lang/core/latest/Json-Decode#field)
 function that allows us to safely ensure that the fields will contain the
 correct type of data we're looking for (strings in our case).
 
@@ -232,9 +232,9 @@ decodeGame =
 ```
 
 Next, we can pipe the results of our decoded game to the
-[`list`](http://package.elm-lang.org/packages/elm-lang/core/latest/Json-Decode#list)
+[`list`](https://package.elm-lang.org/packages/elm-lang/core/latest/Json-Decode#list)
 function and the
-[`at`](http://package.elm-lang.org/packages/elm-lang/core/latest/Json-Decode#at)
+[`at`](https://package.elm-lang.org/packages/elm-lang/core/latest/Json-Decode#at)
 function to finish decoding the full list of games in our API's data list.
 
 ```elm
@@ -618,7 +618,7 @@ playersIndex model =
 
 We're passing the list of players from our model to the `playersList` function
 at the bottom. Our first approach to sorting our players will be to use the
-[`List.sortBy`](http://package.elm-lang.org/packages/elm-lang/core/latest/List#sortBy)
+[`List.sortBy`](https://package.elm-lang.org/packages/elm-lang/core/latest/List#sortBy)
 function and pass the `.score` field. If we look at the documentation, we see
 that the sorting is from lowest to highest. So we'll also have to pipe our data
 to the `List.reverse` function as well. This works pretty well:

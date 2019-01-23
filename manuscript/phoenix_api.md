@@ -338,21 +338,21 @@ can't see the `iex>` prompt, you can press the ENTER key in the Terminal to
 see a new prompt.
 
 ```elixir
-iex> Platform.Products.create_game(%{title: "Platformer", description: "Platform game example.", thumbnail: "http://via.placeholder.com/300x200", featured: true})
+iex> Platform.Products.create_game(%{title: "Platformer", description: "Platform game example.", thumbnail: "https://via.placeholder.com/300x200", featured: true})
 ```
 
 We're setting values for the game's `title`, `description`, `thumbnail`, and
 `featured` fields. And the output should look something like this:
 
 ```elixir
-iex> Platform.Products.create_game(%{title: "Platformer", description: "Platform game example.", thumbnail: "http://via.placeholder.com/300x200", featured: true})
+iex> Platform.Products.create_game(%{title: "Platformer", description: "Platform game example.", thumbnail: "https://via.placeholder.com/300x200", featured: true})
 # ...
 {:ok,
  %Platform.Products.Game{__meta__: #Ecto.Schema.Metadata<:loaded, "games">,
   description: "Platform game example.", featured: true, id: 1,
   inserted_at: ~N[2018-12-04 15:16:16.957673],
   players: #Ecto.Association.NotLoaded<association :players is not loaded>,
-  thumbnail: "http://via.placeholder.com/300x200",
+  thumbnail: "https://via.placeholder.com/300x200",
   title: "Platformer", updated_at: ~N[2018-12-04 15:16:16.967729]}}
 ```
 

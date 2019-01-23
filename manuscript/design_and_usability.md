@@ -134,7 +134,7 @@ a `.phx-logo` class (from the `assets/css/phoenix.css` file) and render the
 default Phoenix logo:
 
 ```html
-<a href="http://phoenixframework.org/" class="phx-logo">
+<a href="https://phoenixframework.org/" class="phx-logo">
   <img src="<%= Routes.static_path(@conn, "/images/phoenix.png") %>"
   alt="Phoenix Framework Logo"/>
 </a>

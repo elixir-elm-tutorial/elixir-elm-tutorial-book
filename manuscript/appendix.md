@@ -53,7 +53,7 @@ Any trouble with this step? Check out the
 
 ### Phoenix
 
-[Phoenix](http://phoenixframework.org) is a web application framework built
+[Phoenix](https://phoenixframework.org) is a web application framework built
 with the Elixir language. You can install the latest version with the following
 command:
 

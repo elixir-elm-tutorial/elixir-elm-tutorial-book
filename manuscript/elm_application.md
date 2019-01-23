@@ -61,9 +61,9 @@ Instead of displaying our `"Hello from Elm inside Phoenix!"` text, let's
 create our games list in the `main` function.
 
 We'll start by importing the
-[`div`](http://package.elm-lang.org/packages/elm-lang/html/latest/Html#div)
+[`div`](https://package.elm-lang.org/packages/elm-lang/html/latest/Html#div)
 function from Elm's
-[`Html`](http://package.elm-lang.org/packages/elm-lang/html/latest/Html)
+[`Html`](https://package.elm-lang.org/packages/elm-lang/html/latest/Html)
 module. Then, we'll render a `div` element in our `main` function:
 
 ```elm
@@ -372,7 +372,7 @@ have there?
 Our first step would be to use the `model` list and find the first item. To do
 that, we'll go to the Elm documentation for the `List` module, and try to find
 a function that would give us the results we're looking for. Take a look at the
-[`List`](http://package.elm-lang.org/packages/elm-lang/core/latest/List)
+[`List`](https://package.elm-lang.org/packages/elm-lang/core/latest/List)
 module documentation and find the `head` function.
 
 The `List.head` function is exactly what we need to grab the first item from
@@ -493,9 +493,9 @@ gamesListItem =
 ## Maybe.withDefault
 
 Since this is a common pattern in Elm, there is a function called
-[`withDefault`](http://package.elm-lang.org/packages/elm-lang/core/latest/Maybe#withDefault)
+[`withDefault`](https://package.elm-lang.org/packages/elm-lang/core/latest/Maybe#withDefault)
 in the
-[`Maybe`](http://package.elm-lang.org/packages/elm-lang/core/latest/Maybe)
+[`Maybe`](https://package.elm-lang.org/packages/elm-lang/core/latest/Maybe)
 module that can be really helpful to gather the results we're looking for.
 Let's refactor our `firstGameTitle` function with the following approach:
 
@@ -534,7 +534,7 @@ Elm, but it becomes one of our most treasured assets.
 We know how to display a single item from our `model` using `List.head`. But
 how do we iterate through all the game titles and display them on the page?
 We can use
-[`List.map`](http://package.elm-lang.org/packages/elm-lang/core/latest/List#map)
+[`List.map`](https://package.elm-lang.org/packages/elm-lang/core/latest/List#map)
 to iterate through our values and pass them to our `gamesList` function.
 
 We can start by refactoring our view functions to accept arguments. This is
@@ -567,7 +567,7 @@ gamesList gameTitles =
 There's a lot going on here. We're accepting a list of strings as the argument
 to our `gamesList` function. Then, we're going to iterate through those game
 titles one at a time using `List.map`. Take a look at the documentation for the
-[`List.map`](http://package.elm-lang.org/packages/elm-lang/core/latest/List#map)
+[`List.map`](https://package.elm-lang.org/packages/elm-lang/core/latest/List#map)
 function. `List.map` takes two arguments: a function `(a -> b)` and a list.
 
 We're passing the list of all our game titles to the `List.map` function, and

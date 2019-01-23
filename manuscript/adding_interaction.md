@@ -401,7 +401,7 @@ for now let's keep in mind that our current goal is to just make the game
 playable and to track the player's score. So let's find a workable solution
 that will involve giving the item a _range_ instead of an exact position. And
 we'll use this opportunity to learn to use a few new functions from the
-[`List`](http://package.elm-lang.org/packages/elm-lang/core/latest/List)
+[`List`](https://package.elm-lang.org/packages/elm-lang/core/latest/List)
 module.
 
 Instead of using the exact `model.itemPositionX` value like we did above, we
@@ -409,13 +409,13 @@ want to add a lower and upper bound for where the character should be able to
 find the item. We'll use a `let` expression inside our `characterFoundItem`
 function to set values for the `approximateItemLowerBound` and
 `approximateItemUpperBound`. Then we'll use the
-[`List.range`](http://package.elm-lang.org/packages/elm-lang/core/latest/List#range)
+[`List.range`](https://package.elm-lang.org/packages/elm-lang/core/latest/List#range)
 function to create a range of numbers where the character can discover the
 item.
 
 After we create a range of values where our character can find the item, we use
 the
-[`List.member`](http://package.elm-lang.org/packages/elm-lang/core/latest/List#member)
+[`List.member`](https://package.elm-lang.org/packages/elm-lang/core/latest/List#member)
 function to determine whether or not the character position is currently
 somewhere inside the item's range. Let's update our `characterFoundItem`
 function to see how this works:
