@@ -569,7 +569,7 @@ Next, we'll update our `gamesListItem` function so that each game is displayed
 as a large, clickable link that users can click on to access the game. We don't
 have a game to send users to yet, so we're just adding `a [ href "#" ]` for
 now. Inside the `li` element for each game, we're splitting the game's data
-into two sections. The first section will render the thumnail image for the
+into two sections. The first section will render the thumbnail image for the
 game, which we'll style with the `.game-image` class. The second section will
 display the game's `title` and `description`, which we'll style with the
 `.game-info` class.
