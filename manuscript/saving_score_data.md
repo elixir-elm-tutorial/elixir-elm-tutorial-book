@@ -463,7 +463,7 @@ init flags =
 ```
 
 This will allow us to use `flags` as an argument to our `initialModel` function
-and also add a new field called `playerToken` too. Note taht we're assigning
+and also add a new field called `playerToken` too. Note that we're assigning
 `flags.token` to our `playerToken` field.
 
 ```elm

@@ -118,7 +118,7 @@ With this code, we're using the `Phoenix.Token.verify/4` function to check the
 user's token. Also, keep in mind that this is admittedly overwhelming at first,
 but the Phoenix documentation is really useful for checking out other examples.
 What's happening here is that we're deconstructing the `token` value when one
-is present, and when we successfully verify the token, we us that to assign the
+is present, and when we successfully verify the token, we use that to assign the
 `current_user_id` to the `player_id` in the socket. We also fall back to the
 original `connect/2` clause for anonymous users.
 

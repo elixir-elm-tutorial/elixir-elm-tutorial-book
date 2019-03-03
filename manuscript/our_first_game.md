@@ -85,7 +85,7 @@ We have all the things we need to get started:
 - a default `update` function with a "NoOp" placeholder case that allows us
   to perform no operation. This may seem confusing at first, but it's helpful
   to have a default message to work with before we start updating our model.
-- an intitial `subscriptions` function that starts with `Sub.none`.
+- an initial `subscriptions` function that starts with `Sub.none`.
 - a simple `view` with a container `div` and some text that we can see to
   ensure that our application is working.
 

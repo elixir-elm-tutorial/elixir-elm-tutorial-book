@@ -368,7 +368,7 @@ subscriptions model =
 ## Incorporating Time
 
 Now that we're subscribing to time with every passing second, we can think
-think about how we want to add this to our game. Let's try thinking of our game
+about how we want to add this to our game. Let's try thinking of our game
 as having small levels where players have to collect ten coins in ten seconds
 to advance.
 
