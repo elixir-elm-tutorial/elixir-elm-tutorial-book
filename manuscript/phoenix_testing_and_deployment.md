@@ -431,7 +431,7 @@ top of the file:
 
 ```shell
 release: MIX_ENV=prod mix ecto.migrate
-web: MIX_ENV=prod mix phoenix.server
+web: MIX_ENV=prod mix phx.server
 ```
 
 This allows us to automate the database migrations before the Phoenix web
