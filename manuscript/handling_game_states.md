@@ -194,7 +194,7 @@ add that feature now. It will also be useful as a way to reset to default
 values when we need to.
 
 We already have a `KeyDown` message that we've been using to track keyboard
-input for things like `"ArrowRight"`. We can use this same approach to handl
+input for things like `"ArrowRight"`. We can use this same approach to handle
 the space bar with `" "` (a string with a space character). Update the contents
 of the `KeyDown` action with the following:
 
