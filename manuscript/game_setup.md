@@ -32,7 +32,7 @@ main =
 
 ## Configuring Webpack
 
-Now that we have mutiple Elm source code files, we'll need to update our
+Now that we have multiple Elm source code files, we'll need to update our
 Webpack configuration. This is what our existing Elm configuration looks like
 in the `assets/webpack.config.js` file:
 
